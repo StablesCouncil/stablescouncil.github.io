@@ -903,9 +903,22 @@
                 }
             });
 
-            // Handle RTL
+            // Handle RTL and Currency Logic
             if (lang === 'fa') {
                 document.documentElement.dir = 'rtl';
+                // Apply 100,000x multiplier for mIRT
+                document.querySelectorAll('[data-key^="mock-val-"]').forEach(el => {
+                    let text = el.innerText;
+                    if (text.includes('mIRT')) {
+                        let num = parseFloat(text.replace(/[^0-9.]/g, ''));
+                        if (!isNaN(num)) {
+                            // If base value is in mUSD/mCAD etc (e.g. 3,500), we multiply
+                            // For simplicity, if it's the default 3,500 or 6.98, we scale it
+                            let scaled = num * 100000;
+                            el.innerHTML = (text.startsWith('-') ? '- ' : '+ ') + scaled.toLocaleString() + ' mIRT';
+                        }
+                    }
+                });
             } else {
                 document.documentElement.dir = 'ltr';
             }
