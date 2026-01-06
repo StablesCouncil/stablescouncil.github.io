@@ -20,13 +20,9 @@ The Stables platform is currently under active development by the **Council**. W
 
 ## Access the Presentation
 
-Explore the core concepts and the roadmap of the Stables platform through our interactive presentations:
+Explore the core concepts and the roadmap of the Stables platform through our interactive presentation:
 
-*   [**Global English Version**](https://stablescouncil.github.io/)
-*   [**Bilingual: English & French**](https://stablescouncil.github.io/fr/)
-*   [**Bilingual: English & Spanish**](https://stablescouncil.github.io/es/)
-*   [**Bilingual: English & German**](https://stablescouncil.github.io/de/)
-*   [**Bilingual: English & Farsi**](https://stablescouncil.github.io/fa/)
+*   **[Stables Presentation](https://stablescouncil.github.io/)** – A unified presentation with built-in multi-language support (English, French, Spanish, German, and Farsi). Use the language switcher in the top-right corner to change languages.
 
 ---
 
