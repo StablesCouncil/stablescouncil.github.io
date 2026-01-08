@@ -76,6 +76,11 @@
             padding: 4rem 0;
         }
 
+        section#hero {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
         section.visible {
             opacity: 1;
             transform: translateY(0);
@@ -282,7 +287,8 @@
         h1.hero-title {
             font-size: clamp(3rem, 8vw, 5.25rem);
             font-weight: 800;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
+            margin-top: 0;
             letter-spacing: -0.02em;
             word-spacing: normal;
             line-height: 0.95;
@@ -292,7 +298,8 @@
             font-size: clamp(1.125rem, 2.5vw, 1.5rem);
             font-weight: 500;
             color: var(--muted);
-            margin-bottom: 48px;
+            margin-bottom: 32px;
+            margin-top: 0;
             max-width: 600px;
         }
 
@@ -302,6 +309,7 @@
             align-items: center;
             width: 100%;
             text-align: center;
+            margin-top: -2rem;
         }
 
 
@@ -348,7 +356,7 @@
             width: 100%;
             max-width: clamp(600px, 90vw, 1200px);
             height: auto;
-            margin: 20px auto 30px;
+            margin: 10px auto 20px;
         }
 
         @media (max-width: 1023px) {
@@ -513,6 +521,14 @@
                     <h1 class="hero-title" data-key="hero-title">Money Platform</h1>
                     <p class="hero-tagline" data-key="hero-tagline">Money that is truly yours. Secure, Pseudonymous and
                         Unstoppable</p>
+                    <div class="btn-group">
+                        <a class="btn btn-primary"><span data-key="btn-testing">Start Testing</span> <span class="btn-label"
+                                data-key="btn-soon">Coming Soon</span></a>
+                        <a href="https://x.com/StablesCouncil" target="_blank" class="btn btn-secondary"
+                            data-key="btn-follow">Follow on X</a>
+                        <a href="https://www.instagram.com/stablescouncil" target="_blank" class="btn btn-secondary"
+                            data-key="btn-instagram">Follow on Instagram</a>
+                    </div>
                 </div>
             </div>
         </section>
