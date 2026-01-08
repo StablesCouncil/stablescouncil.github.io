@@ -32,6 +32,9 @@ Follow our journey and stay updated with the latest developments on our official
 
 *   **X (Twitter)**: [@StablesCouncil](https://x.com/StablesCouncil)
 *   **Instagram**: [@StablesCouncil](https://www.instagram.com/StablesCouncil/)
+*   **Telegram**: [@StablesCouncil](https://t.me/StablesCouncil)
+*   **Discord**: [StablesCouncil](https://discord.gg/stablescouncil)
+*   **Email**: [contact@stablescouncil.com](mailto:contact@stablescouncil.com)
 
 ---
 
