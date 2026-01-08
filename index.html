@@ -117,6 +117,16 @@
             gap: var(--section-gap);
         }
 
+        /* Mobile: Ensure text comes before image */
+        @media (max-width: 1023px) {
+            .split-layout .content-block {
+                order: 1;
+            }
+            .split-layout .mockup-frame {
+                order: 2;
+            }
+        }
+
         @media (min-width: 1024px) {
             .split-layout {
                 grid-template-columns: 1fr 1fr;
@@ -128,6 +138,12 @@
 
             .split-layout.reversed>* {
                 direction: ltr;
+            }
+            
+            /* Reset order on desktop */
+            .split-layout .content-block,
+            .split-layout .mockup-frame {
+                order: unset;
             }
         }
 
