@@ -28,8 +28,9 @@ Explore the core concepts and the roadmap of the Stables platform through our in
 
 ## Join the Council
 
-Follow our journey and stay updated with the latest developments on our official social channels:
+Follow our journey and stay updated with the latest developments on our official channels:
 
+*   **Website**: [stablescouncil.github.io](https://stablescouncil.github.io)
 *   **X (Twitter)**: [@StablesCouncil](https://x.com/StablesCouncil)
 *   **Instagram**: [@StablesCouncil](https://www.instagram.com/StablesCouncil/)
 *   **Telegram**: [@StablesCouncil](https://t.me/StablesCouncil)
