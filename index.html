@@ -10,7 +10,7 @@
     <link rel="apple-touch-icon" href="https://stablescouncil.github.io/brand/assets/logo-symbol.png">
 
     <!-- Social Previews (Open Graph) -->
-    <meta property="og:title" content="Stables | Banking App">
+    <meta property="og:title" content="Stables | Be your own bank">
     <meta property="og:description"
         content="Money that is truly yours. Secure, Pseudonymous and Unstoppable. Built on Minima.">
     <meta property="og:image" content="https://stablescouncil.github.io/brand/assets/twitter-header.png">
@@ -21,11 +21,11 @@
 
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Stables | Banking App">
+    <meta name="twitter:title" content="Stables | Be your own bank">
     <meta name="twitter:description" content="Money that is truly yours. Secure, Pseudonymous and Unstoppable.">
     <meta name="twitter:image" content="https://stablescouncil.github.io/brand/assets/twitter-header.png">
 
-    <title>Stables | Banking App</title>
+    <title>Stables | Be your own bank</title>
     <style>
         :root {
             --bg: #0b0f14;
@@ -673,7 +673,7 @@
                     <a href="https://minima.global" target="_blank" class="minima-badge">Built on
                         <strong>MINIMA</strong></a>
                     <img src="brand/assets/logo-wordmark.png" alt="Stables" class="logo-wordmark">
-                    <h1 class="hero-title" data-key="hero-title">Banking App</h1>
+                    <h1 class="hero-title" data-key="hero-title">Be your own bank</h1>
                     <p class="hero-tagline" data-key="hero-tagline">Money that is truly yours. Secure, Pseudonymous and
                         Unstoppable</p>
                     <div class="btn-group">
@@ -808,7 +808,7 @@
     <script>
         const translations = {
             eu: {
-                "hero-title": "Banku Aplikazioa",
+                "hero-title": "Izan zure bankua",
                 "hero-tagline": "Zure dirua benetan zurea dena. Segurua, pseudonimoa eta geldiezin",
                 "btn-testing": "Probak Hasi",
                 "btn-soon": "Laster",
@@ -849,7 +849,7 @@
                 "mock-apy": "APY Oraingoa"
             },
             en: {
-                "hero-title": "Banking App",
+                "hero-title": "Be your own bank",
                 "hero-tagline": "Money that is truly yours. Secure, Pseudonymous and Unstoppable",
                 "btn-testing": "Start Testing",
                 "btn-soon": "Coming Soon",
@@ -890,7 +890,7 @@
                 "mock-apy": "Current APY"
             },
             fr: {
-                "hero-title": "Application Bancaire",
+                "hero-title": "Soyez votre propre banque",
                 "hero-tagline": "L'argent qui est vraiment le vôtre. Sécurisé, pseudonyme et inarrêtable",
                 "btn-testing": "Commencer le test",
                 "btn-soon": "Prochainement",
@@ -931,7 +931,7 @@
                 "mock-apy": "APY Actuel"
             },
             es: {
-                "hero-title": "Aplicación Bancaria",
+                "hero-title": "Sé tu propio banco",
                 "hero-tagline": "Dinero que es realmente tuyo. Seguro, seudónimo e imparable",
                 "btn-testing": "Comenzar Prueba",
                 "btn-soon": "Próximamente",
@@ -972,7 +972,7 @@
                 "mock-apy": "APY Actual"
             },
             de: {
-                "hero-title": "Banking-App",
+                "hero-title": "Sei deine eigene Bank",
                 "hero-tagline": "Geld, das wirklich Ihnen gehört. Sicher, pseudonym und unaufhaltsam",
                 "btn-testing": "Test Starten",
                 "btn-soon": "Demnächst",
@@ -1013,7 +1013,7 @@
                 "mock-apy": "Aktueller APY"
             },
             fa: {
-                "hero-title": "برنامه بانکی",
+                "hero-title": "بانک خود باشید",
                 "hero-tagline": "پولی که واقعاً مال شماست. امن، مستعار و غیرقابل توقیف",
                 "btn-testing": "شروع تست",
                 "btn-soon": "به زودی",
@@ -1054,7 +1054,7 @@
                 "mock-apy": "APY فعلی"
             },
             tr: {
-                "hero-title": "Bankacılık Uygulaması",
+                "hero-title": "Kendi bankanız olun",
                 "hero-tagline": "Gerçekten sizin olan para. Güvenli, takma adlı ve durdurulamaz",
                 "btn-testing": "Teste Başla",
                 "btn-soon": "Yakında",
@@ -1096,6 +1096,37 @@
             }
         };
 
+        // Detect browser language and set default
+        function detectBrowserLanguage() {
+            // Get browser language (e.g., 'en-US', 'fr-FR', 'es-ES')
+            const browserLang = navigator.language || navigator.userLanguage;
+            // Extract language code (first 2 characters)
+            const langCode = browserLang.split('-')[0].toLowerCase();
+            
+            // Map browser language to our supported languages
+            const languageMap = {
+                'eu': 'eu', // Basque
+                'de': 'de', // German
+                'en': 'en', // English
+                'es': 'es', // Spanish
+                'fr': 'fr', // French
+                'fa': 'fa', // Persian/Farsi
+                'tr': 'tr'  // Turkish
+            };
+            
+            // Check if we support this language
+            const detectedLang = languageMap[langCode];
+            
+            // If we support it, use it; otherwise default to English
+            return detectedLang || 'en';
+        }
+
+        // Set language on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const defaultLang = detectBrowserLanguage();
+            updateLanguage(defaultLang);
+        });
+
         function toggleLangMenu() {
             document.getElementById('langMenu').classList.toggle('active');
         }
@@ -1118,7 +1149,7 @@
 
         async function handleShare() {
             const url = window.location.href;
-            const title = 'Stables | Banking App';
+            const title = 'Stables | Be your own bank';
             const text = 'Money that is truly yours. Secure, Pseudonymous and Unstoppable. Built on Minima.';
 
             // Try native Web Share API first (mobile)
@@ -1144,7 +1175,7 @@
 
         function shareToTwitter() {
             const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent('Stables | Banking App - Money that is truly yours. Secure, Pseudonymous and Unstoppable.');
+            const text = encodeURIComponent('Stables | Be your own bank - Money that is truly yours. Secure, Pseudonymous and Unstoppable.');
             window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank', 'width=550,height=420');
             document.getElementById('shareMenu').classList.remove('active');
         }
@@ -1163,14 +1194,14 @@
 
         function shareToWhatsApp() {
             const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent('Stables | Banking App - Money that is truly yours. Secure, Pseudonymous and Unstoppable.');
+            const text = encodeURIComponent('Stables | Be your own bank - Money that is truly yours. Secure, Pseudonymous and Unstoppable.');
             window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
             document.getElementById('shareMenu').classList.remove('active');
         }
 
         function shareToTelegram() {
             const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent('Stables | Banking App - Money that is truly yours. Secure, Pseudonymous and Unstoppable.');
+            const text = encodeURIComponent('Stables | Be your own bank - Money that is truly yours. Secure, Pseudonymous and Unstoppable.');
             window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
             document.getElementById('shareMenu').classList.remove('active');
         }
