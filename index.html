@@ -601,6 +601,7 @@
             </svg>
         </button>
         <div id="langMenu" class="lang-menu">
+            <button onclick="updateLanguage('bg')">Български</button>
             <button onclick="updateLanguage('eu')">Euskara</button>
             <button onclick="updateLanguage('en')">English</button>
             <button onclick="updateLanguage('en-edgy')">English (Edgy)</button>
@@ -1261,6 +1262,47 @@
                 "mock-pos": "Tekotevẽ oĩva",
                 "mock-yield": "Jepy'apy",
                 "mock-apy": "APY ag̃agua"
+            },
+            bg: {
+                "hero-title": "Бъди своя банка",
+                "hero-tagline": "Пари, които наистина са твои. Сигурни, анонимни и неспираеми",
+                "btn-testing": "Започни тестване",
+                "btn-soon": "Скоро",
+                "btn-follow": "Следвай в X",
+                "btn-instagram": "Следвай в Instagram",
+                "btn-telegram": "Следвай в Telegram",
+                "badge-you": "ЗА ТЕБ",
+                "wallet-title": "Плащай мигновено. Притежавай напълно.",
+                "wallet-p": "Изживей пари, които се движат толкова бързо, колкото съобщение. Няма банки да замразят сметката ти. Няма скрити такси. Просто прост и мощен портфейл, който ти дава 100% контрол върху активите.",
+                "wallet-li1": "<strong>100% Самостопанство:</strong> Само ти имаш ключовете.",
+                "wallet-li2": "<strong>Готов за всекидневна употреба:</strong> Бързо, евтино и просто.",
+                "wallet-li3": "<strong>Stables:</strong> Проектирани да запазят стойността си.",
+                "badge-business": "ЗА БИЗНЕС",
+                "biz-title": "Разплащане за секунди. Свържи се директно.",
+                "biz-p1": "Спрете да чакате дни за парите си. С Stables плащанията се потвърждават и разплащат за секунди. Изградете директна връзка с клиентите си без посредници, които взимат комисионна.",
+                "biz-p2": "Идеално за модерната търговия, от местни магазини до глобални услуги.",
+                "badge-growth": "ЗА РАСТЕЖ",
+                "growth-title": "Мултипликаторът.",
+                "growth-p1": "Нов начин за участие в стабилността на екосистемата. Използвайте Мултипликатора, за да увеличите експозицията си и да подкрепите устойчивостта на мрежата.",
+                "growth-p2": "Напреднали инструменти за тези, които искат да правят повече от просто плащане.",
+                "cta-title": "Готов да оформиш бъдещето?",
+                "cta-p": "Присъедини се към публичния тест. Опитай се да счупиш системата. Помогни ни да изградим най-надеждната парична платформа в света.",
+                "footer": "Stables - Информационен преглед v1.0",
+                "mock-wallet": "Портфейл",
+                "mock-coffee": "Кафене",
+                "mock-salary": "Заплата",
+                "mock-val-coffee": "- 6.98 sBGN",
+                "mock-val-salary": "+ 3.500 sBGN",
+                "mock-merchant": "Изглед на търговец",
+                "mock-status": "Статус: Онлайн",
+                "mock-paid": "ПЛАТЕНО",
+                "mock-order": "Поръчка #8291",
+                "mock-receipt": "Принтиране на разписка",
+                "mock-investment": "Инвестиция",
+                "mock-multi": "Мултипликатор",
+                "mock-pos": "Активна позиция",
+                "mock-yield": "Доходност",
+                "mock-apy": "Текущ APY"
             }
         };
 
@@ -1273,6 +1315,7 @@
             
             // Map browser language to our supported languages
             const languageMap = {
+                'bg': 'bg', // Bulgarian
                 'eu': 'eu', // Basque
                 'de': 'de', // German
                 'en': 'en', // English
