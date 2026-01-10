@@ -25,11 +25,25 @@
     <meta name="twitter:description" content="Money that is truly yours. Secure, Pseudonymous and Unstoppable.">
     <meta name="twitter:image" content="https://stablescouncil.github.io/brand/assets/twitter-header.png">
 
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
     <title>Stables | Be your own bank</title>
     <style>
         :root {
+            /* Color Palette - EXACT HEX CODES */
             --bg: #0b0f14;
             --panel: #101826;
+            --text-primary: #e6edf3;
+            --text-secondary: #9fb0c0;
+            --accent-cyan: #67e8f9;
+            --accent-purple: #a78bfa;
+            --accent-pink: #f472b6;
+            --accent-amber: #fbbf24;
+            
+            /* Legacy vars for compatibility */
             --text: #e6edf3;
             --muted: #9fb0c0;
             --accent: #67e8f9;
@@ -38,6 +52,7 @@
             --button-main: #d1d5db;
             --button-sec: #1f2937;
             --glow: rgba(103, 232, 249, 0.15);
+            
             /* Fluid Spacing */
             --container-pad: clamp(1rem, 5vw, 2.5rem);
             --section-gap: clamp(2rem, 10vw, 6.25rem);
@@ -50,11 +65,12 @@
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+            background: radial-gradient(circle at top, rgba(103, 232, 249, 0.18), transparent 55%) #0b0f14;
+            color: var(--text-primary);
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
             overflow-x: hidden;
             line-height: 1.6;
+            font-weight: 400;
         }
 
         .container {
@@ -74,6 +90,7 @@
             transition: all 1s ease-out;
             position: relative;
             padding: 4rem 0;
+            background: radial-gradient(circle at top, rgba(103, 232, 249, 0.18), transparent 55%) #0b0f14;
         }
 
         section#hero {
@@ -99,24 +116,31 @@
         /* Badge Style */
         .badge {
             display: inline-block;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 6px 14px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(103, 232, 249, 0.5);
+            padding: 8px 18px;
             border-radius: 999px;
             font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            color: #67e8f9;
             text-transform: uppercase;
             margin-bottom: 24px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 0 20px rgba(103, 232, 249, 0.2);
         }
 
         .badge-growth {
-            color: var(--accent-growth);
+            color: #a78bfa;
+            border-color: rgba(167, 139, 250, 0.5);
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.2);
         }
 
         .badge-business {
-            color: var(--accent-business);
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.5);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
         }
 
         /* Unified Layouts - RESPONSIVE GRIDS */
@@ -158,18 +182,43 @@
         }
 
         .content-block h2 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 800;
+            font-size: clamp(2rem, 4vw, 3.75rem);
+            font-weight: 900;
             margin-bottom: 24px;
             line-height: 1.1;
-            letter-spacing: -1.5px;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 0%, #67e8f9 50%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .content-block p {
-            font-size: clamp(1rem, 2vw, 1.25rem);
-            color: var(--muted);
+            font-size: clamp(1.25rem, 2vw, 1.375rem);
+            font-weight: 400;
+            color: var(--text-secondary);
             margin-bottom: 32px;
             max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .content-block h2,
+        .content-block h3 {
+            font-size: clamp(2rem, 4vw, 3.75rem);
+            font-weight: 900;
+            margin-bottom: 24px;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, #67e8f9 50%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        @media (max-width: 768px) {
+            .content-block h2,
+            .content-block h3 {
+                font-size: clamp(1.75rem, 6vw, 2.5rem);
+            }
         }
 
         .check-list {
@@ -180,21 +229,26 @@
         }
 
         .check-list li {
-            font-size: clamp(1rem, 1.5vw, 1.125rem);
-            color: var(--text);
+            font-size: clamp(1.25rem, 2vw, 1.375rem);
+            font-weight: 400;
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
 
         .check-list li strong {
-            color: var(--text);
+            color: var(--text-primary);
+            font-weight: 600;
         }
 
         /* Mockup Placeholders - FLEXIBLE */
         .mockup-frame {
-            background: var(--panel);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, rgba(103, 232, 249, 0.12), rgba(15, 23, 42, 0.95));
+            border: 1px solid rgba(103, 232, 249, 0.5);
             border-radius: 24px;
             padding: clamp(1.25rem, 3vw, 2rem);
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(103, 232, 249, 0.15);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             min-height: 350px;
             width: 100%;
             max-width: 600px;
@@ -244,29 +298,49 @@
             justify-content: center;
             width: 220px;
             height: 64px;
-            border-radius: 12px;
+            border-radius: 16px;
             text-decoration: none;
-            font-weight: 700;
+            font-weight: 600;
             font-size: 16px;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             cursor: pointer;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(103, 232, 249, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(103, 232, 249, 0.15);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), 0 0 50px rgba(103, 232, 249, 0.25);
+            border-color: rgba(103, 232, 249, 0.5);
         }
 
         .btn-primary {
-            background: var(--button-main);
-            color: #000;
+            background: linear-gradient(135deg, rgba(103, 232, 249, 0.3), rgba(167, 139, 250, 0.3));
+            color: #e6edf3;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, rgba(103, 232, 249, 0.4), rgba(167, 139, 250, 0.4));
         }
 
         .btn-secondary {
-            background: var(--button-sec);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 23, 42, 0.6);
+            color: #e6edf3;
+            border: 1px solid rgba(103, 232, 249, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: rgba(103, 232, 249, 0.5);
         }
 
         .btn-label {
             font-size: 11px;
             font-weight: 400;
-            opacity: 0.6;
+            opacity: 0.7;
+            font-family: 'Inter', sans-serif;
         }
 
         /* Nav Dots - HIDDEN ON MOBILE */
@@ -304,47 +378,57 @@
         .footer-note {
             margin-top: 80px;
             font-size: 11px;
-            color: var(--muted);
-            opacity: 0.5;
-            letter-spacing: 1px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            opacity: 0.6;
+            letter-spacing: 0.05em;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
         }
 
         /* Hero Specific Overrides */
         h1.hero-title {
             font-size: clamp(3rem, 8vw, 5.25rem);
-            font-weight: 800;
+            font-weight: 900;
             margin-bottom: 4px;
             margin-top: 0;
             letter-spacing: -0.02em;
             word-spacing: normal;
-            line-height: 1.2;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, #67e8f9 50%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         @media (max-width: 768px) {
             h1.hero-title {
                 margin-bottom: 3px;
+                font-size: clamp(2.5rem, 10vw, 3.5rem);
             }
         }
 
         .hero-tagline {
-            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+            font-size: clamp(1.25rem, 2.5vw, 1.5rem);
             font-weight: 500;
-            color: var(--muted);
+            color: var(--text-secondary);
             margin-bottom: 16px;
             margin-top: 0;
             max-width: 600px;
+            line-height: 1.5;
         }
 
         @media (max-width: 768px) {
             .hero-tagline {
                 margin-bottom: 12px;
+                font-size: clamp(1rem, 3vw, 1.25rem);
             }
         }
 
         .hero-cta-text {
-            font-size: clamp(1rem, 2vw, 1.125rem);
+            font-size: clamp(1.25rem, 2.5vw, 1.375rem);
             font-weight: 600;
-            color: var(--text);
+            color: var(--text-primary);
             margin-bottom: 12px;
             margin-top: 0;
         }
@@ -352,7 +436,7 @@
         @media (max-width: 768px) {
             .hero-cta-text {
                 margin-bottom: 10px;
-                font-size: clamp(0.95rem, 2vw, 1rem);
+                font-size: clamp(1rem, 3vw, 1.125rem);
             }
         }
 
@@ -374,14 +458,15 @@
 
         .scroll-indicator-text {
             font-size: 0.875rem;
-            color: var(--muted);
+            color: var(--text-secondary);
             font-weight: 500;
+            font-family: 'Inter', sans-serif;
         }
 
         .scroll-indicator-icon {
             width: 20px;
             height: 30px;
-            border: 2px solid var(--muted);
+            border: 2px solid rgba(103, 232, 249, 0.5);
             border-radius: 15px;
             position: relative;
         }
@@ -394,9 +479,10 @@
             transform: translateX(-50%);
             width: 4px;
             height: 8px;
-            background: var(--muted);
+            background: #67e8f9;
             border-radius: 2px;
             animation: scrollDown 2s infinite;
+            box-shadow: 0 0 8px rgba(103, 232, 249, 0.5);
         }
 
         @keyframes bounce {
@@ -454,26 +540,41 @@
         }
 
         .minima-badge {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #fff;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(103, 232, 249, 0.5);
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #67e8f9;
             text-decoration: none;
             margin-bottom: 12px;
             margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 0 20px rgba(103, 232, 249, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .minima-badge:hover {
+            border-color: rgba(103, 232, 249, 0.8);
+            box-shadow: 0 0 30px rgba(103, 232, 249, 0.4);
+            transform: translateY(-1px);
         }
 
         @media (max-width: 768px) {
             .minima-badge {
                 margin-bottom: 8px;
+                padding: 6px 16px;
+                font-size: 10px;
             }
         }
 
         .minima-badge strong {
-            color: var(--accent);
+            color: #67e8f9;
+            font-weight: 600;
         }
 
         /* Logo Wordmark */
@@ -513,32 +614,39 @@
         }
 
         .globe-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 8px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(103, 232, 249, 0.5);
+            color: #67e8f9;
+            padding: 10px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 0 20px rgba(103, 232, 249, 0.2);
+            width: 44px;
+            height: 44px;
         }
 
         .globe-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
+            background: rgba(15, 23, 42, 0.8);
+            border-color: rgba(103, 232, 249, 0.8);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(103, 232, 249, 0.4);
         }
 
         .lang-menu {
             position: absolute;
             top: 100%;
             right: 0;
-            background: rgba(15, 15, 15, 0.95);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(103, 232, 249, 0.5);
+            border-radius: 16px;
             padding: 8px;
             margin-top: 10px;
             display: none;
@@ -548,7 +656,7 @@
             max-height: 60vh;
             overflow-y: auto;
             overflow-x: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(103, 232, 249, 0.15);
         }
 
         .lang-menu.active {
@@ -559,20 +667,22 @@
         .lang-menu button {
             background: transparent;
             border: none;
-            color: white;
+            color: var(--text-primary);
             padding: 10px 16px;
             text-align: left;
             cursor: pointer;
             border-radius: 8px;
             font-size: 14px;
             font-weight: 500;
-            transition: background 0.2s;
+            transition: all 0.2s ease;
             white-space: nowrap;
             flex-shrink: 0;
+            font-family: 'Inter', sans-serif;
         }
 
         .lang-menu button:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(103, 232, 249, 0.15);
+            color: #67e8f9;
         }
 
         /* Custom scrollbar for language menu */
@@ -650,39 +760,46 @@
 
         /* Share Button Styles */
         .share-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 8px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(103, 232, 249, 0.5);
+            color: #67e8f9;
+            padding: 10px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 0 20px rgba(103, 232, 249, 0.2);
+            width: 44px;
+            height: 44px;
         }
 
         .share-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
+            background: rgba(15, 23, 42, 0.8);
+            border-color: rgba(103, 232, 249, 0.8);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(103, 232, 249, 0.4);
         }
 
         .share-menu {
             position: absolute;
             top: 100%;
             right: 0;
-            background: rgba(15, 15, 15, 0.95);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(103, 232, 249, 0.5);
+            border-radius: 16px;
             padding: 8px;
             margin-top: 10px;
             display: none;
             flex-direction: column;
             gap: 4px;
             min-width: 160px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(103, 232, 249, 0.15);
         }
 
         .share-menu.active {
@@ -693,21 +810,23 @@
         .share-menu button {
             background: transparent;
             border: none;
-            color: white;
+            color: var(--text-primary);
             padding: 10px 16px;
             text-align: left;
             cursor: pointer;
             border-radius: 8px;
             font-size: 14px;
             font-weight: 500;
-            transition: background 0.2s;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-family: 'Inter', sans-serif;
         }
 
         .share-menu button:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(103, 232, 249, 0.15);
+            color: #67e8f9;
         }
 
         .share-menu button svg {
