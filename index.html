@@ -191,6 +191,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-align: center;
         }
 
         .content-block p {
@@ -212,6 +213,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
@@ -399,6 +401,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
@@ -448,6 +451,7 @@
             gap: 8px;
             opacity: 0.6;
             animation: bounce 2s infinite;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
@@ -719,6 +723,18 @@
         /* RTL Support */
         [dir="rtl"] {
             text-align: right;
+        }
+
+        /* Center headlines in RTL */
+        [dir="rtl"] h1.hero-title,
+        [dir="rtl"] .content-block h2,
+        [dir="rtl"] .content-block h3 {
+            text-align: center;
+        }
+
+        /* Center scroll indicator in RTL */
+        [dir="rtl"] .scroll-indicator {
+            text-align: center;
         }
 
         [dir="rtl"] .split-layout {
