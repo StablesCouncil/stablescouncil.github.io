@@ -276,6 +276,7 @@
         section#cta h2 {
             font-size: clamp(3rem, 7vw, 5rem);
             margin-bottom: 16px;
+            text-align: center;
         }
 
         section#cta p {
@@ -743,7 +744,12 @@
 
         [dir="rtl"] .split-layout>* {
             direction: rtl;
-            text-align: right;
+        }
+        
+        /* Keep headlines centered in RTL split-layout */
+        [dir="rtl"] .split-layout .content-block h2,
+        [dir="rtl"] .split-layout .content-block h3 {
+            text-align: center;
         }
 
         [dir="rtl"] .check-list {
