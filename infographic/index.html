@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Sovereign Banking System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="../2_current/assets/1_symbol_favicon.png">
+    <style>
+        :root {
+            --bg: #0b0f14;
+            --accent: #67e8f9;
+            --text-main: #ffffff;
+            --text-mut: #94a3b8;
+            --card-radius: 20px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 60px 40px 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            /* Prevent horizontal scroll when radial container overflows narrow viewports */
+            overflow-x: clip;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 50%;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at top, rgba(103,232,249,0.08), transparent 70%);
+            transform: translateX(-50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ── Header ── */
+        .header {
+            max-width: 960px; width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 56px;
+        }
+
+        .brand { display: flex; align-items: center; gap: 16px; }
+        .brand img { height: 48px; width: 48px; }
+        .brand-text { display: flex; flex-direction: column; }
+        .brand-name { font-size: 28px; font-weight: 900; letter-spacing: 0.04em; }
+        .brand-slogan { font-size: 14px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+
+        .header-links { display: flex; align-items: center; gap: 20px; }
+        .presentation-link {
+            color: var(--accent); text-decoration: none; font-size: 14px;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+            transition: opacity 0.2s;
+        }
+        .presentation-link:hover { opacity: 0.8; text-decoration: underline; }
+
+        .badge-pill {
+            display: inline-block;
+            background: rgba(15,23,42,0.6);
+            border: 1px solid rgba(103,232,249,0.5);
+            color: #67e8f9;
+            padding: 8px 18px; border-radius: 999px;
+            font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            text-decoration: none;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 20px rgba(103,232,249,0.2);
+            transition: all 0.3s ease;
+        }
+        .badge-pill:hover {
+            transform: translateY(-2px);
+            border-color: rgba(103,232,249,0.8);
+            box-shadow: 0 0 30px rgba(103,232,249,0.4);
+        }
+
+        /* ── Title block ── */
+        .title-block { text-align: center; margin-bottom: 56px; }
+
+        h1 {
+            font-size: 48px; font-weight: 900;
+            margin: 0 0 16px;
+            letter-spacing: -0.03em; line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, #67e8f9 50%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 20px; color: #9fb0c0;
+            max-width: 720px; margin: 0 auto 20px;
+            line-height: 1.6; font-weight: 400;
+        }
+
+        /* Full custody – title block badge */
+        .custody-badge-title {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: rgba(103,232,249,0.06);
+            border: 1px solid rgba(103,232,249,0.22);
+            border-radius: 999px;
+            padding: 7px 16px;
+            font-size: 12px; font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase; letter-spacing: 0.06em;
+        }
+        .custody-badge-title svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+        /* ── Radial container ── */
+        /*
+         * Hub centre:  (480, 400)
+         * Hub size:    360 × 360   (±180 from centre)
+         * Ring r:      120 px      (participants sit on ring)
+         * Satellite r: 270 px      (pentagon, starting at top)
+         *
+         * Satellite centres (pentagon, r=270, starting at 270° going clockwise in screen coords):
+         *   Mint/Burn  270°  (480, 130)
+         *   Earn       342°  (737, 317)
+         *   Coverage   54°   (639, 618)
+         *   Liquidity  126°  (321, 618)
+         *   xMinima    198°  (223, 317)
+         *
+         * Hub ring edges (r=120 from centre 480,400) toward each satellite:
+         *   → Mint/Burn  (480, 280)
+         *   → Earn       (594, 363)
+         *   → Coverage   (551, 497)
+         *   → Liquidity  (409, 497)
+         *   → xMinima    (366, 363)
+         */
+        .radial-container {
+            position: relative;
+            width: 960px;
+            height: 940px;
+            overflow: visible;
+            flex-shrink: 0;
+            /* align-self: center ensures true centering even when wider than viewport.
+               margin: 0 auto alone fails in flex when child > parent width. */
+            align-self: center;
+        }
+
+        /* ── Connection SVG ── */
+        .connection-svg {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+            overflow: visible;
+        }
+
+        /* ── Economy hub ── */
+        .economy-hub {
+            position: absolute;
+            left: 480px; top: 500px;
+            transform: translate(-50%, -50%);
+            width: 360px; height: 360px;
+            z-index: 2;
+        }
+
+        .hub-svg {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+        }
+
+        /* Participant nodes on the ring */
+        .hub-node {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: rgba(103,232,249,0.07);
+            border: 1px solid rgba(103,232,249,0.28);
+            border-radius: 10px;
+            padding: 9px 16px;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+        .hub-node:hover {
+            background: rgba(103,232,249,0.13);
+            border-color: rgba(103,232,249,0.5);
+        }
+        .hub-node-text { font-size: 15px; font-weight: 700; color: #e6edf3; }
+        .hub-node-sub  { font-size: 11px; color: #9fb0c0; margin-top: 2px; }
+
+        /* Stablecoins centre label */
+        .hub-center {
+            position: absolute;
+            left: 180px; top: 180px;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none; z-index: 3;
+        }
+        .hub-center-glow {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 130px; height: 130px;
+            background: radial-gradient(circle, rgba(103,232,249,0.14), transparent 70%);
+            border-radius: 50%;
+        }
+        .hub-center-label {
+            position: relative;
+            font-size: 15px; font-weight: 800;
+            color: var(--accent);
+            text-transform: uppercase; letter-spacing: 0.08em;
+        }
+        .hub-center-sub {
+            position: relative;
+            font-size: 11px; color: #9fb0c0;
+            margin-top: 5px;
+        }
+
+        /* Fee note – small text at bottom of ring */
+        .hub-fee-note {
+            position: absolute;
+            left: 50%; top: 338px;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: rgba(103,232,249,0.38);
+            font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            white-space: nowrap; pointer-events: none;
+        }
+
+        /* ── Satellite cards ── */
+        .satellite {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            width: 182px;
+            background: rgba(16,24,38,0.9);
+            backdrop-filter: blur(20px);
+            border-radius: var(--card-radius);
+            padding: 18px 20px;
+            z-index: 2;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .satellite:hover { transform: translate(-50%, -50%) translateY(-4px); }
+
+        /* Types */
+        .satellite.mintburn   { border: 1px solid rgba(103,232,249,0.40); }
+        .satellite.entry      { border: 1px solid rgba(103,232,249,0.30); }
+        .satellite.protocol   { border: 1px solid rgba(167,139,250,0.28); }
+        .satellite.governance { border: 1px solid rgba(251,191,36,0.38); }
+
+        .sat-tag {
+            font-size: 10px; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 0.08em;
+            margin-bottom: 5px;
+        }
+        .mintburn   .sat-tag { color: var(--accent); }
+        .entry      .sat-tag { color: var(--accent); }
+        .protocol   .sat-tag { color: #a78bfa; }
+        .governance .sat-tag { color: #fbbf24; }
+
+        .sat-title {
+            font-size: 18px; font-weight: 900;
+            color: var(--text-main); margin-bottom: 6px;
+        }
+        .sat-sub {
+            font-size: 12px; color: #9fb0c0;
+            font-weight: 400; line-height: 1.45;
+        }
+
+        /* Hexagon satellite positions  –  6 satellites at 60° intervals
+         *  r=270, hub centre (480, 400)
+         *  pos = (cx + r·cos θ,  cy + r·sin θ),  θ from +x axis, clockwise in screen coords */
+        .sat-mintburn  { left: 480px; top: 230px; }   /* 270° – top          */
+        .sat-earn      { left: 714px; top: 365px; }   /* 330° – upper-right  */
+        .sat-coverage  { left: 714px; top: 635px; }   /* 30°  – lower-right  */
+        .sat-council   { left: 480px; top: 770px; display: none; } /* hidden desktop – shown as ring */
+        .sat-liqfund   { left: 246px; top: 635px; }   /* 150° – lower-left   */
+        .sat-xminima   { left: 246px; top: 365px; }   /* 210° – upper-left   */
+
+        /* ── Council outer ring label ── */
+        .council-ring-label {
+            position: absolute;
+            left: 480px; top: 88px;
+            transform: translateX(-50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 3;
+            white-space: nowrap;
+        }
+        .council-ring-title {
+            font-size: 20px; font-weight: 800;
+            color: rgba(251,191,36,0.85);
+            text-transform: uppercase; letter-spacing: 0.13em;
+        }
+        .council-ring-sub {
+            font-size: 15px; color: rgba(251,191,36,0.60);
+            margin-top: 6px; font-weight: 500;
+        }
+
+        /* ── Footer ── */
+        footer {
+            margin-top: 16px; text-align: center;
+            color: var(--text-mut); font-size: 16px;
+            line-height: 1.6; max-width: 800px;
+        }
+
+        /* ── Tablet: gentle scale-down ── */
+        @media (min-width: 701px) and (max-width: 1080px) {
+            .radial-container {
+                transform-origin: top center;
+                transform: scale(0.82);
+                height: 771px; /* 940 × 0.82 */
+            }
+        }
+
+        /* ── Mobile-first layout (≤ 700px) ── */
+        @media (max-width: 700px) {
+            body { padding: 30px 16px 50px; }
+
+            /* Header: stack brand + links */
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 14px;
+                margin-bottom: 32px;
+            }
+
+            h1 { font-size: 32px; }
+            .subtitle { font-size: 16px; }
+
+            /* Radial container becomes a vertical flex column */
+            .radial-container {
+                width: 100%;
+                height: auto !important;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 14px;
+                transform: none !important;
+            }
+
+            /* Hide SVG connector lines and ring label — layout replaces them */
+            .connection-svg { display: none; }
+            .council-ring-label { display: none; }
+            /* Show Council as a card on mobile */
+            .sat-council { display: block !important; }
+
+            /* Hub: static, scaled down, compensate for transform whitespace */
+            .economy-hub {
+                position: relative !important;
+                left: auto !important;
+                top: auto !important;
+                transform: scale(0.82) !important;
+                transform-origin: top center;
+                margin-bottom: -65px; /* scale(0.82) leaves 65px dead space below */
+                order: 2;
+                flex-shrink: 0;
+            }
+
+            /* Satellite cards: static, full width */
+            .satellite {
+                position: relative !important;
+                left: auto !important;
+                top: auto !important;
+                transform: none !important;
+                width: 100%;
+                max-width: 400px;
+            }
+            .satellite:hover { transform: translateY(-3px) !important; }
+
+            /* Reading order: Mint/Burn → Hub → Earn → xMinima → Coverage → Liquidity */
+            .sat-mintburn { order: 1; }
+            .sat-earn     { order: 3; }
+            .sat-xminima  { order: 4; }
+            .sat-coverage { order: 5; }
+            .sat-liqfund  { order: 6; }
+            .sat-council  { order: 7; }
+
+            footer { font-size: 14px; margin-top: 8px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="brand">
+            <img src="data:image/png;base64,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" alt="Stables">
+            <div class="brand-text">
+                <span class="brand-name">STABLES</span>
+                <span class="brand-slogan">Be Your Own Bank</span>
+            </div>
+        </div>
+        <div class="header-links">
+            <a href="https://stablescouncil.github.io/" target="_blank" class="presentation-link">View Presentation</a>
+            <a href="https://minima.global" target="_blank" class="badge-pill">Built on MINIMA</a>
+        </div>
+    </header>
+
+    <div class="title-block">
+        <h1>Our Sovereign Banking System</h1>
+        <p class="subtitle">Everybody's Own Bank</p>
+        <div class="custody-badge-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            Full Custody at Every Step
+        </div>
+    </div>
+
+    <div class="radial-container">
+
+        <!-- ════════════════════════════════════════════
+             CONNECTION SVG  (z-index 0, behind all cards)
+             Hub centre: 480,400   Ring r: 120
+             ════════════════════════════════════════════ -->
+        <svg class="connection-svg" viewBox="0 0 960 940">
+            <defs>
+                <!-- Bright entry/exit arrow (cyan) -->
+                <marker id="arr-in" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0,8 3,0 6" fill="rgba(103,232,249,0.7)"/>
+                </marker>
+                <!-- Reversed (for bidirectional start) -->
+                <marker id="arr-in-r" markerWidth="8" markerHeight="6" refX="1" refY="3" orient="auto-start-reverse">
+                    <polygon points="0 0,8 3,0 6" fill="rgba(103,232,249,0.7)"/>
+                </marker>
+                <!-- Soft protocol arrow (purple) -->
+                <marker id="arr-proto" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0,8 3,0 6" fill="rgba(167,139,250,0.6)"/>
+                </marker>
+                <marker id="arr-proto-r" markerWidth="8" markerHeight="6" refX="1" refY="3" orient="auto-start-reverse">
+                    <polygon points="0 0,8 3,0 6" fill="rgba(167,139,250,0.6)"/>
+                </marker>
+                <!-- Fee flow arrow (cyan, medium) -->
+                <marker id="arr-fee" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0,8 3,0 6" fill="rgba(103,232,249,0.5)"/>
+                </marker>
+            </defs>
+
+            <!--
+              Hexagon layout  –  hub centre (480,400), ring r=120, satellite r=270
+              Angles & ring-edge points:
+                270° Mint/Burn  ring (480,280)  sat (480,130)
+                330° Earn       ring (584,340)  sat (714,265)
+                 30° Coverage   ring (584,460)  sat (714,535)
+                 90° Council    ring (480,520)  sat (480,670)
+                150° Liquidity  ring (376,460)  sat (246,535)
+                210° xMinima    ring (376,340)  sat (246,265)
+
+              Vertical lines trimmed to open gap between the two cards.
+              Diagonal lines trimmed 50 px from satellite end so arrowheads are visible.
+            -->
+
+            <!-- ① Mint/Burn ↔ circle  bidirectional vertical
+                 Card bottom ≈ y180, People node top ≈ y257 -->
+            <line x1="480" y1="283" x2="480" y2="353"
+                stroke="rgba(103,232,249,0.55)" stroke-width="1.8"
+                stroke-dasharray="5 4"
+                marker-end="url(#arr-in)" marker-start="url(#arr-in-r)"/>
+
+            <!-- ② Earn → circle  (714,265)→(584,340)  entry solid -->
+            <line x1="671" y1="390" x2="584" y2="440"
+                stroke="rgba(103,232,249,0.55)" stroke-width="1.8"
+                stroke-dasharray="5 4"
+                marker-end="url(#arr-in)" marker-start="url(#arr-in-r)"/>
+
+            <!-- ③ circle → Coverage Fund  (584,460)→(714,535)  dashed fee flow -->
+            <line x1="584" y1="560" x2="671" y2="610"
+                stroke="rgba(103,232,249,0.55)" stroke-width="1.8"
+                stroke-dasharray="5 4"
+                marker-end="url(#arr-in)" marker-start="url(#arr-in-r)"/>
+
+            <!-- ④ THE COUNCIL — outer governance ring
+                 r=380 from hub centre (480,400): encompasses all 5 satellites (max corner ≈ 375px)
+                 Glow layer (thick, very low opacity) + dashed ring -->
+            <circle cx="480" cy="500" r="380"
+                stroke="rgba(251,191,36,0.07)" stroke-width="14" fill="none"/>
+            <circle cx="480" cy="500" r="380"
+                stroke="rgba(251,191,36,0.22)" stroke-width="1.5"
+                stroke-dasharray="10 8" fill="none"/>
+
+            <!-- ⑤ Liquidity Fund ↔ circle  (376,460)↔(246,535)  protocol dashed -->
+            <line x1="376" y1="560" x2="289" y2="610"
+                stroke="rgba(103,232,249,0.55)" stroke-width="1.8"
+                stroke-dasharray="5 4"
+                marker-end="url(#arr-in)" marker-start="url(#arr-in-r)"/>
+
+            <!-- ⑥ xMinima ↔ circle  (376,340)↔(246,265)  protocol dashed -->
+            <line x1="376" y1="440" x2="289" y2="390"
+                stroke="rgba(103,232,249,0.55)" stroke-width="1.8"
+                stroke-dasharray="5 4"
+                marker-end="url(#arr-in)" marker-start="url(#arr-in-r)"/>
+        </svg>
+
+        <!-- ════════════════════════
+             ECONOMY HUB  (360×360)
+             Hub-local centre: (180,180)
+             Ring r: 120
+             People at (180,60)  = page (480,280)
+             Merchants at (180,300) = page (480,520)
+             ════════════════════════ -->
+        <div class="economy-hub">
+
+            <!-- Ring + arc-flow arrows -->
+            <svg class="hub-svg" viewBox="0 0 360 360">
+                <!-- Dashed ring -->
+                <circle cx="180" cy="180" r="120"
+                    stroke="rgba(103,232,249,0.20)" stroke-dasharray="8 6" fill="none"/>
+                <!-- Clockwise arc arrow: right side (300,180) pointing down -->
+                <polyline points="293,173 300,183 307,173"
+                    stroke="rgba(103,232,249,0.65)" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <!-- Clockwise arc arrow: left side (60,180) pointing up -->
+                <polyline points="53,187 60,177 67,187"
+                    stroke="rgba(103,232,249,0.65)" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+
+            <!-- Stablecoins centre -->
+            <div class="hub-center">
+                <div class="hub-center-glow"></div>
+                <div class="hub-center-label">Stables</div>
+                <div class="hub-center-sub">USDs, EURs, JPYs and many more</div>
+            </div>
+
+            <!-- People – top of ring  hub-local (180, 60) -->
+            <div class="hub-node" style="left:180px; top:60px;">
+                <div class="hub-node-text">People</div>
+                <div class="hub-node-sub">Buyers, savers, senders</div>
+            </div>
+
+            <!-- Merchants & Friends – bottom of ring  hub-local (180, 300) -->
+            <div class="hub-node" style="left:180px; top:300px;">
+                <div class="hub-node-text">Merchants &amp; Friends</div>
+                <div class="hub-node-sub">Sellers, providers, recipients</div>
+            </div>
+
+            <!-- Fee note -->
+            <div class="hub-fee-note">transactions generate fees &rarr; coverage fund</div>
+
+        </div>
+
+        <!-- ════════════════════
+             SATELLITE CARDS
+             ════════════════════ -->
+
+        <!-- ① Mint / Burn – top (480, 130) -->
+        <div class="satellite mintburn sat-mintburn">
+            <div class="sat-tag">Financial Entry</div>
+            <div class="sat-title">Mint / Burn</div>
+            <div class="sat-sub">only Minima</div>
+        </div>
+
+        <!-- ② Earn – upper-right (737, 317) -->
+        <div class="satellite entry sat-earn">
+            <div class="sat-tag">Work Entry</div>
+            <div class="sat-title">Earn</div>
+            <div class="sat-sub">Provide goods or services &middot; get paid in Stables</div>
+        </div>
+
+        <!-- ③ Coverage Fund – lower-right (639, 618) -->
+        <div class="satellite protocol sat-coverage">
+            <div class="sat-tag">Protocol</div>
+            <div class="sat-title">Coverage Fund</div>
+            <div class="sat-sub">Yield &amp; Stability · earns all transaction fees</div>
+        </div>
+
+        <!-- ④ Liquidity Fund – lower-left (321, 618) -->
+        <div class="satellite protocol sat-liqfund">
+            <div class="sat-tag">Protocol</div>
+            <div class="sat-title">Liquidity Fund</div>
+            <div class="sat-sub">xMinima / Minima</div>
+        </div>
+
+        <!-- ⑤ xMinima – upper-left (246, 265) -->
+        <div class="satellite protocol sat-xminima">
+            <div class="sat-tag">Protocol</div>
+            <div class="sat-title">xMinima</div>
+            <div class="sat-sub">Protocol Wealth</div>
+        </div>
+
+        <!-- The Council: outer ring label (desktop) + satellite card (mobile) -->
+        <div class="council-ring-label">
+            <div class="council-ring-title">The Council</div>
+            <div class="council-ring-sub">Every token holder governs the protocol via the Minima blockchain</div>
+        </div>
+
+        <div class="satellite governance sat-council">
+            <div class="sat-tag">Governance</div>
+            <div class="sat-title">The Council</div>
+            <div class="sat-sub">Every token holder governs the protocol via the Minima blockchain</div>
+        </div>
+
+    </div>
+
+    <footer>
+        <strong>"Money that is truly yours. Secure, Pseudonymous and Unstoppable."</strong><br><br>
+        Stables is governed entirely by token holders via the Council. All operations run
+        on-chain via the Minima network, eliminating trusted intermediaries.
+    </footer>
+
+</body>
+</html>
