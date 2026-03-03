@@ -453,9 +453,12 @@
               Diagonal lines trimmed 50 px from satellite end so arrowheads are visible.
             -->
 
-            <!-- ① Mint/Burn ↔ circle  bidirectional vertical
-                 Card bottom ≈ y180, People node top ≈ y257 -->
-            <line x1="480" y1="283" x2="480" y2="353"
+            <!-- ① Mint/Burn ↔ circle  V-shape around People node, hits ring either side -->
+            <line x1="480" y1="283" x2="422" y2="396"
+                stroke="rgba(103,232,249,0.55)" stroke-width="1.8"
+                stroke-dasharray="5 4"
+                marker-end="url(#arr-in)" marker-start="url(#arr-in-r)"/>
+            <line x1="480" y1="283" x2="538" y2="396"
                 stroke="rgba(103,232,249,0.55)" stroke-width="1.8"
                 stroke-dasharray="5 4"
                 marker-end="url(#arr-in)" marker-start="url(#arr-in-r)"/>
