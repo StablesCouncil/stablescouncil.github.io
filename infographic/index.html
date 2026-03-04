@@ -308,17 +308,8 @@
             line-height: 1.6; max-width: 800px;
         }
 
-        /* ── Tablet: gentle scale-down ── */
-        @media (min-width: 701px) and (max-width: 1080px) {
-            .radial-container {
-                transform-origin: top center;
-                transform: scale(0.82);
-                height: 771px; /* 940 × 0.82 */
-            }
-        }
-
-        /* ── Mobile (≤ 700px): diagram scales to fit, JS sets exact scale ── */
-        @media (max-width: 700px) {
+        /* ── Responsive: JS handles scaling for all widths < 1080px ── */
+        @media (max-width: 1079px) {
             body {
                 padding: 24px 20px 50px;
                 overflow-x: hidden;
@@ -334,10 +325,8 @@
             h1        { font-size: 26px; text-align: center; }
             .subtitle { font-size: 15px; text-align: center; }
 
-            .radial-container {
-                transform-origin: top center;
-                /* exact scale + margin-bottom applied by JS below */
-            }
+            /* transform + marginBottom set precisely by JS */
+            .radial-container { transform-origin: top center; }
 
             footer { font-size: 14px; text-align: center; }
         }
@@ -595,18 +584,18 @@
     <script>
         (function () {
             var c = document.querySelector('.radial-container');
-            var W = 960;
+            var DESIGN = 960;   /* original canvas width */
+            var FULL   = 1080;  /* above this: no scaling */
             function fit() {
                 var vw = window.innerWidth || document.documentElement.clientWidth;
-                if (vw >= W) {
-                    c.style.transform = '';
+                if (vw >= FULL) {
+                    c.style.transform   = '';
                     c.style.marginBottom = '';
                     return;
                 }
-                var s = vw / W;
-                c.style.transform = 'scale(' + s + ')';
-                c.style.transformOrigin = 'top center';
-                c.style.marginBottom = Math.round(W * (s - 1)) + 'px';
+                var s = vw / DESIGN;
+                c.style.transform    = 'scale(' + s + ')';
+                c.style.marginBottom = Math.round(DESIGN * (s - 1)) + 'px';
             }
             window.addEventListener('resize', fit);
             fit();
