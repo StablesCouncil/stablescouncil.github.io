@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=960, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Our Own Banking System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,8 +29,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            /* Prevent horizontal scroll when radial container overflows narrow viewports */
-            overflow-x: clip;
+            overflow-x: auto;
         }
 
         body::before {
@@ -318,70 +317,36 @@
             }
         }
 
-        /* ── Mobile-first layout (≤ 700px) ── */
+        /* ── Mobile (≤ 700px): full-size diagram, scroll to explore ── */
         @media (max-width: 700px) {
-            body { padding: 30px 16px 50px; }
+            body {
+                padding: 30px 0 50px;
+                align-items: flex-start;
+            }
 
-            /* Header: stack brand + links */
+            /* Header: stack and pad */
             .header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 14px;
-                margin-bottom: 32px;
+                margin-bottom: 28px;
+                padding: 0 20px;
+                width: 100%;
+                box-sizing: border-box;
             }
 
-            h1 { font-size: 32px; }
-            .subtitle { font-size: 16px; }
+            h1        { font-size: 28px; padding: 0 20px; }
+            .subtitle { font-size: 15px; padding: 0 20px; }
+            .custody-badge { margin: 0 20px 8px; }
 
-            /* Radial container becomes a vertical flex column */
+            /* Diagram: stays full 960px, page scrolls horizontally */
             .radial-container {
-                width: 100%;
-                height: auto !important;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 14px;
-                transform: none !important;
-            }
-
-            /* Hide SVG connector lines and ring label — layout replaces them */
-            .connection-svg { display: none; }
-            .council-ring-label { display: none; }
-            /* Show Council as a card on mobile */
-            .sat-council { display: block !important; }
-
-            /* Hub: static, scaled down, compensate for transform whitespace */
-            .economy-hub {
-                position: relative !important;
-                left: auto !important;
-                top: auto !important;
-                transform: scale(0.82) !important;
-                transform-origin: top center;
-                margin-bottom: -65px; /* scale(0.82) leaves 65px dead space below */
-                order: 2;
                 flex-shrink: 0;
-            }
-
-            /* Satellite cards: static, full width */
-            .satellite {
-                position: relative !important;
-                left: auto !important;
-                top: auto !important;
                 transform: none !important;
-                width: 100%;
-                max-width: 400px;
+                height: 960px !important;
             }
-            .satellite:hover { transform: translateY(-3px) !important; }
 
-            /* Reading order: Mint/Burn → Hub → Earn → xMinima → Coverage → Liquidity */
-            .sat-mintburn { order: 1; }
-            .sat-earn     { order: 3; }
-            .sat-xminima  { order: 4; }
-            .sat-coverage { order: 5; }
-            .sat-liqfund  { order: 6; }
-            .sat-council  { order: 7; }
-
-            footer { font-size: 14px; margin-top: 8px; }
+            footer { font-size: 14px; padding: 0 20px; }
         }
     </style>
 </head>
