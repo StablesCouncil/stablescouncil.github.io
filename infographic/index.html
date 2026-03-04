@@ -140,7 +140,7 @@
         .radial-container {
             position: relative;
             width: 960px;
-            height: 940px;
+            height: 960px;
             overflow: visible;
             flex-shrink: 0;
             /* align-self: center ensures true centering even when wider than viewport.
@@ -277,7 +277,8 @@
         .sat-mintburn  { left: 480px; top: 230px; }   /* 270° – top          */
         .sat-earn      { left: 714px; top: 365px; }   /* 330° – upper-right  */
         .sat-coverage  { left: 714px; top: 635px; }   /* 30°  – lower-right  */
-        .sat-council   { left: 480px; top: 770px; display: none; } /* hidden desktop – shown as ring */
+        .sat-treasury  { left: 480px; top: 770px; }   /* 90°  – bottom       */
+        .sat-council   { left: 480px; top: 880px; display: none; } /* hidden desktop – shown as ring */
         .sat-liqfund   { left: 246px; top: 635px; }   /* 150° – lower-left   */
         .sat-xminima   { left: 246px; top: 365px; }   /* 210° – upper-left   */
 
@@ -419,7 +420,7 @@
              CONNECTION SVG  (z-index 0, behind all cards)
              Hub centre: 480,400   Ring r: 120
              ════════════════════════════════════════════ -->
-        <svg class="connection-svg" viewBox="0 0 960 940">
+        <svg class="connection-svg" viewBox="0 0 960 960">
             <defs>
                 <!-- Bright entry/exit arrow (cyan) -->
                 <marker id="arr-in" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
@@ -439,6 +440,10 @@
                 <!-- Fee flow arrow (cyan, medium) -->
                 <marker id="arr-fee" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
                     <polygon points="0 0,8 3,0 6" fill="rgba(103,232,249,0.5)"/>
+                </marker>
+                <!-- Gold arrow – fee flows & listing fees -->
+                <marker id="arr-gold" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                    <polygon points="0 0,8 3,0 6" fill="rgba(251,191,36,0.85)"/>
                 </marker>
             </defs>
 
@@ -494,6 +499,18 @@
                 stroke="rgba(103,232,249,0.55)" stroke-width="1.8"
                 stroke-dasharray="5 4"
                 marker-end="url(#arr-in)" marker-start="url(#arr-in-r)"/>
+
+            <!-- ⑦ Transaction fees: economy ring → Coverage Fund  gold one-directional -->
+            <line x1="714" y1="512" x2="714" y2="587"
+                stroke="rgba(251,191,36,0.65)" stroke-width="1.8"
+                stroke-dasharray="5 4"
+                marker-end="url(#arr-gold)"/>
+
+            <!-- ⑧ Council Treasury ↔ circle  90° hub ring (480,620) → Treasury (480,770) -->
+            <line x1="480" y1="625" x2="480" y2="722"
+                stroke="rgba(251,191,36,0.55)" stroke-width="1.8"
+                stroke-dasharray="5 4"
+                marker-end="url(#arr-gold)" marker-start="url(#arr-gold)"/>
         </svg>
 
         <!-- ════════════════════════
@@ -579,6 +596,13 @@
             <div class="sat-tag">Protocol</div>
             <div class="sat-title">xMinima</div>
             <div class="sat-sub">Protocol Wealth</div>
+        </div>
+
+        <!-- ⑥ Council Treasury – bottom (480, 770) -->
+        <div class="satellite governance sat-treasury">
+            <div class="sat-tag">Treasury</div>
+            <div class="sat-title">Council Treasury</div>
+            <div class="sat-sub">Funded by listing fees</div>
         </div>
 
         <!-- The Council: outer ring label (desktop) + satellite card (mobile) -->
