@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=960, user-scalable=yes">
     <title>Our Own Banking System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -217,16 +217,19 @@
             margin-top: 5px;
         }
 
-        /* Fee note – small text at bottom of ring */
+        /* Fee note – between Earn and Coverage Fund on the right, at Stables height */
         .hub-fee-note {
             position: absolute;
-            left: 50%; top: 338px;
-            transform: translateX(-50%);
+            left: 714px; top: 500px;
+            max-width: 130px;
+            white-space: normal;
+            text-align: center;
+            transform: translate(-50%, -50%);
             font-size: 9px;
-            color: rgba(103,232,249,0.38);
+            color: rgba(103,232,249,0.45);
             font-weight: 700;
             text-transform: uppercase; letter-spacing: 0.06em;
-            white-space: nowrap; pointer-events: none;
+            line-height: 1.6; pointer-events: none;
         }
 
         /* ── Satellite cards ── */
@@ -536,8 +539,6 @@
                 <div class="hub-node-sub">Sellers, providers, recipients</div>
             </div>
 
-            <!-- Fee note -->
-            <div class="hub-fee-note">transactions generate fees &rarr; coverage fund</div>
 
         </div>
 
@@ -549,7 +550,7 @@
         <div class="satellite mintburn sat-mintburn">
             <div class="sat-tag">Financial Entry</div>
             <div class="sat-title">Mint / Burn</div>
-            <div class="sat-sub"></div>
+            <div class="sat-sub">with Minima</div>
         </div>
 
         <!-- ② Earn – upper-right (737, 317) -->
@@ -581,15 +582,18 @@
         </div>
 
         <!-- The Council: outer ring label (desktop) + satellite card (mobile) -->
+        <!-- Fee note – right side between Earn and Coverage Fund -->
+        <div class="hub-fee-note">transactions<br>generate fees<br>&rarr; coverage fund</div>
+
         <div class="council-ring-label">
             <div class="council-ring-title">The Council</div>
-            <div class="council-ring-sub">Every token holder governs the protocol via the Minima blockchain</div>
+            <div class="council-ring-sub">Every token holder governs the protocol via the voting power granted by holding any of the protocol tokens</div>
         </div>
 
         <div class="satellite governance sat-council">
             <div class="sat-tag">Governance</div>
             <div class="sat-title">The Council</div>
-            <div class="sat-sub">Every token holder governs the protocol via the Minima blockchain</div>
+            <div class="sat-sub">Every token holder governs the protocol via the voting power granted by holding any of the protocol tokens</div>
         </div>
 
     </div>
