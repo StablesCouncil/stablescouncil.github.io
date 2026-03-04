@@ -317,34 +317,26 @@
             }
         }
 
-        /* ── Mobile (≤ 700px): full-size diagram, scroll to explore ── */
+        /* ── Mobile (≤ 700px): diagram scales to fit, JS sets exact scale ── */
         @media (max-width: 700px) {
             body {
-                padding: 30px 20px 50px;
-                /* keep align-items: center so header/title stay centred */
+                padding: 24px 20px 50px;
+                overflow-x: hidden;
             }
 
-            /* Header: stack */
             .header {
                 flex-direction: column;
                 align-items: center;
-                gap: 14px;
-                margin-bottom: 28px;
-                width: 100%;
+                gap: 12px;
+                margin-bottom: 24px;
             }
 
-            h1        { font-size: 28px; text-align: center; }
+            h1        { font-size: 26px; text-align: center; }
             .subtitle { font-size: 15px; text-align: center; }
 
-            /* Diagram: stays full 960px, body scrolls horizontally */
             .radial-container {
-                flex-shrink: 0;
-                transform: none !important;
-                height: 960px !important;
-                /* negative margin pulls it out of the padded body so it can scroll */
-                margin-left:  calc(-50vw + 50%);
-                margin-right: calc(-50vw + 50%);
-                width: 960px;
+                transform-origin: top center;
+                /* exact scale + margin-bottom applied by JS below */
             }
 
             footer { font-size: 14px; text-align: center; }
@@ -599,6 +591,27 @@
         Stables is governed entirely by token holders via the Council. All operations run
         on-chain via the Minima network, eliminating trusted intermediaries.
     </footer>
+
+    <script>
+        (function () {
+            var c = document.querySelector('.radial-container');
+            var W = 960;
+            function fit() {
+                var vw = window.innerWidth || document.documentElement.clientWidth;
+                if (vw >= W) {
+                    c.style.transform = '';
+                    c.style.marginBottom = '';
+                    return;
+                }
+                var s = vw / W;
+                c.style.transform = 'scale(' + s + ')';
+                c.style.transformOrigin = 'top center';
+                c.style.marginBottom = Math.round(W * (s - 1)) + 'px';
+            }
+            window.addEventListener('resize', fit);
+            fit();
+        }());
+    </script>
 
 </body>
 </html>
