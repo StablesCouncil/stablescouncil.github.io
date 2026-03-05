@@ -328,6 +328,37 @@
             white-space: nowrap;
         }
 
+        /* Drafting state — visible but not yet linked */
+        .link-item.drafting {
+            opacity: 0.65;
+            cursor: default;
+            pointer-events: none;
+            background: linear-gradient(135deg, rgba(251,191,36,0.06), rgba(15,23,42,0.7));
+            border-color: rgba(251,191,36,0.2);
+        }
+
+        .link-item.drafting .link-icon {
+            background: rgba(251,191,36,0.07);
+            border-color: rgba(251,191,36,0.15);
+        }
+
+        .link-item.drafting .link-icon svg {
+            fill: #fbbf24;
+        }
+
+        .drafting-badge {
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(251,191,36,0.85);
+            background: rgba(251,191,36,0.12);
+            border: 1px solid rgba(251,191,36,0.35);
+            border-radius: 4px;
+            padding: 2px 7px;
+            white-space: nowrap;
+        }
+
         .footer {
             text-align: center;
             margin-top: 3rem;
@@ -608,8 +639,8 @@
                 </div>
             </a>
 
-            <!-- Constitution — coming soon -->
-            <div class="link-item council coming-soon">
+            <!-- Constitution — internal draft -->
+            <div class="link-item council drafting">
                 <div class="link-icon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM6 20V4h5v7h7v9H6z"/>
@@ -619,7 +650,7 @@
                     <div class="link-title">Constitution</div>
                     <div class="link-description">The founding rules of the protocol</div>
                 </div>
-                <span class="coming-soon-badge">Soon</span>
+                <span class="drafting-badge">Drafting</span>
             </div>
 
             <!-- Roadmap — coming soon -->
