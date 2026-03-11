@@ -8,12 +8,12 @@ spending decisions will be made by the community.
 
 ---
 
-| Date | Description | Amount (EUR) | Method | Receipt |
+| Date | Description | Amount (EURs) | Method | Receipt |
 |------|-------------|--------|--------|---------|
-| 2026-03-11 | Domain registration — stablescouncil.org (1 year, via Njalla) | 15 € | Monero | [View](./2026-03-11%20StablesCoumcil.org%20registration.jpg) |
+| 2026-03-11 | Domain registration — stablescouncil.org (1 year, via Njalla) | 15 EURs | Monero | [View](./2026-03-11%20StablesCoumcil.org%20registration.jpg) |
 
 ---
 
-**Total to date: 15 €**
+**Total to date: 15 EURs**
 
 All expenses so far are personal donations to the Council pending collective governance.
