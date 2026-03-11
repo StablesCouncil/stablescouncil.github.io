@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://stablescouncil.github.io/brand/assets/logo-symbol.png">
-    <link rel="apple-touch-icon" href="https://stablescouncil.github.io/brand/assets/logo-symbol.png">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/favicon.png">
 
     <!-- Social Previews (Open Graph) -->
     <meta property="og:title" content="Stables | Be your own bank">
@@ -2346,6 +2346,304 @@
         sections.forEach(section => observer.observe(section));
         function scrollToSection(index) { sections[index].scrollIntoView({ behavior: 'smooth' }); }
     </script>
+
+    <!-- StablesAgent floating widget + popup -->
+    <style>
+        /* ── FAB ── */
+        .agent-fab {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            z-index: 9000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 0;
+        }
+        .agent-fab-tip {
+            background: rgba(10,14,20,0.92);
+            border: 1px solid rgba(103,232,249,0.3);
+            color: #e6edf3;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 10px;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateX(8px);
+            transition: all 0.25s ease;
+            pointer-events: none;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .agent-fab:hover .agent-fab-tip { opacity: 1; transform: translateX(0); }
+        .agent-fab-btn {
+            width: 58px; height: 58px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(103,232,249,0.25), rgba(167,139,250,0.25));
+            border: 1px solid rgba(103,232,249,0.45);
+            box-shadow: 0 0 24px rgba(103,232,249,0.2);
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            flex-shrink: 0; position: relative;
+        }
+        .agent-fab:hover .agent-fab-btn { transform: scale(1.1); box-shadow: 0 0 40px rgba(103,232,249,0.4); }
+        .agent-fab-btn img { width: 32px; height: 32px; object-fit: contain; }
+        .agent-fab-dot {
+            position: absolute; top: 3px; right: 3px;
+            width: 11px; height: 11px; border-radius: 50%;
+            background: #6b7280; border: 2px solid #0b0f14;
+            transition: background 0.4s ease;
+        }
+        .agent-fab-pulse {
+            position: absolute; width: 58px; height: 58px;
+            border-radius: 50%; border: 1px solid rgba(103,232,249,0.5);
+            animation: agent-radar 2.4s ease-out infinite; pointer-events: none;
+        }
+        .agent-fab-pulse:nth-child(2) { animation-delay: 0.8s; }
+        .agent-fab-pulse:nth-child(3) { animation-delay: 1.6s; }
+        @keyframes agent-radar {
+            0%   { transform: scale(1);   opacity: 0.6; }
+            100% { transform: scale(2.2); opacity: 0;   }
+        }
+
+        /* ── Backdrop (closes popup on outside click) ── */
+        .agent-backdrop {
+            display: none;
+            position: fixed; inset: 0;
+            z-index: 9050;
+            background: transparent;
+        }
+        .agent-backdrop.open { display: block; }
+
+        /* ── Popup panel ── */
+        .agent-popup {
+            position: fixed;
+            bottom: 104px;
+            right: 32px;
+            z-index: 9100;
+            width: 390px;
+            height: min(680px, calc(100vh - 130px));
+            background: #101826;
+            border: 1px solid rgba(103,232,249,0.3);
+            border-radius: 20px;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 40px rgba(103,232,249,0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px) scale(0.97);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            pointer-events: none;
+        }
+        .agent-popup.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+        }
+        .agent-popup-header {
+            display: flex; align-items: center; gap: 11px;
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            flex-shrink: 0;
+        }
+        .agent-popup-logo {
+            width: 34px; height: 34px; border-radius: 8px;
+            background: rgba(103,232,249,0.08);
+            border: 1px solid rgba(103,232,249,0.3);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .agent-popup-logo img { width: 22px; height: 22px; object-fit: contain; }
+        .agent-popup-title { flex: 1; }
+        .agent-popup-title-main {
+            font-size: 13px; font-weight: 700; color: #e6edf3;
+            font-family: 'Inter', sans-serif; letter-spacing: 0.03em;
+        }
+        .agent-popup-title-sub {
+            font-size: 11px; color: #9fb0c0;
+            font-family: 'Inter', sans-serif; margin-top: 1px;
+        }
+        .agent-popup-status {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 11px; color: #9fb0c0;
+            font-family: 'Inter', sans-serif;
+        }
+        .agent-popup-status-dot {
+            width: 7px; height: 7px; border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
+        }
+        /* Online dot is now the close affordance — no X needed */
+        .agent-popup-status {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 999px;
+            transition: background 0.2s;
+        }
+        .agent-popup-status:hover { background: rgba(255,255,255,0.07); }
+
+        /* Disclaimer bar */
+        .agent-popup-disclaimer {
+            padding: 7px 16px;
+            background: rgba(251, 191, 36, 0.08);
+            border-bottom: 1px solid rgba(251, 191, 36, 0.25);
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: #fbbf24;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .agent-popup-body {
+            flex: 1; position: relative; overflow: hidden;
+        }
+        .agent-popup-body iframe {
+            width: 100%; height: 100%; border: none;
+            background: #101826;
+        }
+        /* Fallback shown when iframe is blocked (HTTP on HTTPS page) */
+        .agent-popup-fallback {
+            display: none;
+            position: absolute; inset: 0;
+            flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 16px; padding: 32px; text-align: center;
+            background: #101826;
+        }
+        .agent-popup-fallback.visible { display: flex; }
+        .agent-popup-fallback p {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px; color: #9fb0c0; line-height: 1.6;
+        }
+        .agent-popup-fallback a {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 11px 22px; border-radius: 12px;
+            background: linear-gradient(135deg, rgba(103,232,249,0.25), rgba(167,139,250,0.25));
+            border: 1px solid rgba(103,232,249,0.4);
+            color: #e6edf3; font-family: 'Inter', sans-serif;
+            font-size: 14px; font-weight: 600; text-decoration: none;
+            transition: all 0.2s;
+        }
+        .agent-popup-fallback a:hover { box-shadow: 0 0 20px rgba(103,232,249,0.3); }
+
+        @media (max-width: 640px) {
+            .agent-fab { bottom: 20px; right: 20px; }
+            .agent-fab-tip { display: none; }
+            .agent-popup {
+                bottom: 0; right: 0; left: 0;
+                width: 100%; height: 75vh;
+                border-radius: 20px 20px 0 0;
+                border-bottom: none;
+            }
+        }
+    </style>
+
+    <!-- Backdrop -->
+    <div class="agent-backdrop" id="agentBackdrop" onclick="closeAgent()"></div>
+
+    <!-- Popup panel -->
+    <div class="agent-popup" id="agentPopup">
+        <div class="agent-popup-header">
+            <div class="agent-popup-logo">
+                <img src="/favicon.png" alt="StablesAgent" />
+            </div>
+            <div class="agent-popup-title">
+                <div class="agent-popup-title-main">StablesAgent</div>
+                <div class="agent-popup-title-sub">Ask anything about Stables</div>
+            </div>
+            <div class="agent-popup-status" onclick="closeAgent()" title="Close">
+                <span class="agent-popup-status-dot"></span>
+                <span>Online</span>
+            </div>
+        </div>
+        <div class="agent-popup-disclaimer">DO NOT SHARE PRIVATE OR SENSITIVE INFORMATION</div>
+        <div class="agent-popup-body">
+            <iframe id="agentFrame" title="StablesAgent Chat"></iframe>
+            <div class="agent-popup-fallback" id="agentFallback">
+                <img src="/favicon.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;" />
+                <p>The chat will load here directly once the secure connection is active.<br>For now, open it in a new tab:</p>
+                <a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer">
+                    Open StablesAgent ↗
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAB button -->
+    <button class="agent-fab" id="agentFab" onclick="toggleAgent()" aria-label="Chat with StablesAgent">
+        <span class="agent-fab-tip">Chat with StablesAgent</span>
+        <div class="agent-fab-btn">
+            <span class="agent-fab-pulse"></span>
+            <span class="agent-fab-pulse"></span>
+            <span class="agent-fab-pulse"></span>
+            <img src="/favicon.png" alt="StablesAgent" />
+            <span class="agent-fab-dot"></span>
+        </div>
+    </button>
+
+    <script>
+        const AGENT_URL   = 'https://agent.stablescouncil.org/chat?embed=1';
+        const HEALTH_URL  = 'https://agent.stablescouncil.org/health';
+        let agentOpen = false;
+
+        // ── Real status ping ──────────────────────────────────────────
+        function setStatus(online) {
+            const dot  = document.querySelector('.agent-popup-status-dot');
+            const label = document.querySelector('.agent-popup-status span:last-child');
+            const fabDot = document.querySelector('.agent-fab-dot');
+            const color = online ? '#22c55e' : '#6b7280';
+            const glow  = online ? 'rgba(34,197,94,0.2)' : 'none';
+            dot.style.background   = color;
+            dot.style.boxShadow    = `0 0 0 3px ${glow}`;
+            fabDot.style.background = color;
+            label.textContent = online ? 'Online' : 'Offline';
+        }
+
+        async function pingAgent() {
+            try {
+                const r = await fetch(HEALTH_URL, { method: 'GET', signal: AbortSignal.timeout(4000) });
+                setStatus(r.ok);
+            } catch {
+                setStatus(false);
+            }
+        }
+
+        // Check on load, then every 30 seconds
+        pingAgent();
+        setInterval(pingAgent, 30000);
+
+        function toggleAgent() {
+            agentOpen ? closeAgent() : openAgent();
+        }
+        function openAgent() {
+            const popup    = document.getElementById('agentPopup');
+            const backdrop = document.getElementById('agentBackdrop');
+            const frame    = document.getElementById('agentFrame');
+            const fb       = document.getElementById('agentFallback');
+            if (!frame.src || frame.src === window.location.href) {
+                frame.src = AGENT_URL;
+                const t = setTimeout(() => { fb.classList.add('visible'); }, 3000);
+                frame.onload = () => clearTimeout(t);
+            }
+            popup.classList.add('open');
+            backdrop.classList.add('open');
+            agentOpen = true;
+        }
+        function closeAgent() {
+            document.getElementById('agentPopup').classList.remove('open');
+            document.getElementById('agentBackdrop').classList.remove('open');
+            agentOpen = false;
+        }
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && agentOpen) closeAgent(); });
+    </script>
+
 </body>
 
 </html>
