@@ -2687,9 +2687,10 @@
             const backdrop = document.getElementById('agentBackdrop');
             const frame    = document.getElementById('agentFrame');
             const fb       = document.getElementById('agentFallback');
-            if (!frame.src || frame.src === window.location.href) {
-                const lang = typeof currentStablesLang !== 'undefined' ? currentStablesLang : 'en';
-                frame.src = AGENT_URL + '&lang=' + encodeURIComponent(lang || 'en');
+            const lang = typeof currentStablesLang !== 'undefined' ? currentStablesLang : 'en';
+            const agentSrc = AGENT_URL + '&lang=' + encodeURIComponent(lang || 'en');
+            if (frame.src !== agentSrc) {
+                frame.src = agentSrc;
                 const t = setTimeout(() => { fb.classList.add('visible'); }, 3000);
                 frame.onload = () => clearTimeout(t);
             }
