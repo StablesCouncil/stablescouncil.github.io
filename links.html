@@ -381,6 +381,44 @@
             color: var(--text-primary);
         }
 
+        /* Presentation button (matches bankingsystem) */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(103, 232, 249, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(103, 232, 249, 0.15);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), 0 0 50px rgba(103, 232, 249, 0.25);
+            border-color: rgba(103, 232, 249, 0.5);
+        }
+        .btn-secondary {
+            background: rgba(15, 23, 42, 0.6);
+            color: #e6edf3;
+        }
+        .btn-secondary:hover {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: rgba(103, 232, 249, 0.5);
+        }
+
         @media (max-width: 640px) {
             h1 {
                 font-size: 2rem;
@@ -683,13 +721,9 @@
         </div>
 
         <div class="footer">
-            <a href="https://stablescouncil.github.io" class="footer-link">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                </svg>
-                stablescouncil.github.io
-            </a>
+            <div class="btn-group">
+                <a href="https://stablescouncil.github.io/" class="btn btn-secondary">Presentation</a>
+            </div>
         </div>
     </div>
 
