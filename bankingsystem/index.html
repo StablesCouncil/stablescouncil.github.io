@@ -57,12 +57,6 @@
         .brand-slogan { font-size: 14px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
 
         .header-links { display: flex; align-items: center; gap: 20px; }
-        .presentation-link {
-            color: var(--accent); text-decoration: none; font-size: 14px;
-            font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
-            transition: opacity 0.2s;
-        }
-        .presentation-link:hover { opacity: 0.8; text-decoration: underline; }
 
         .badge-pill {
             display: inline-block;
@@ -81,6 +75,44 @@
             transform: translateY(-2px);
             border-color: rgba(103,232,249,0.8);
             box-shadow: 0 0 30px rgba(103,232,249,0.4);
+        }
+
+        /* ── Button (matches presentation Start Testing / All Links) ── */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(103, 232, 249, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(103, 232, 249, 0.15);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), 0 0 50px rgba(103, 232, 249, 0.25);
+            border-color: rgba(103, 232, 249, 0.5);
+        }
+        .btn-secondary {
+            background: rgba(15, 23, 42, 0.6);
+            color: #e6edf3;
+        }
+        .btn-secondary:hover {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: rgba(103, 232, 249, 0.5);
         }
 
         /* ── Title block ── */
@@ -578,7 +610,9 @@
         <strong>"Money that is truly yours. Secure, Pseudonymous and Unstoppable."</strong><br><br>
         Stables is governed entirely by token holders via the Council. All operations run
         on-chain via the Minima blockchain, eliminating trusted intermediaries.<br><br>
-        <a href="https://stablescouncil.github.io/" target="_blank" class="presentation-link">&#8592; Back to Presentation</a>
+        <div class="btn-group">
+            <a href="https://stablescouncil.github.io/" target="_blank" class="btn btn-secondary">Presentation</a>
+        </div>
     </footer>
 
     <script>
