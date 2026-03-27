@@ -8,8 +8,8 @@
     <link rel="icon" type="image/png" href="https://stablescouncil.github.io/brand/assets/logo-symbol.png">
     
     <!-- Social Previews -->
-    <meta property="og:title" content="Stables | Ambassador Program">
-    <meta property="og:description" content="The 16 Big Mac Economy: A Fair & Global Framework for Protocol Growth.">
+    <meta property="og:title" content="Stables | Ambassador Program Framework">
+    <meta property="og:description" content="The 16 Big Mac® Economy: A Fair & Global Framework for Protocol Growth. Official Community Draft.">
     <meta property="og:image" content="https://stablescouncil.github.io/brand/assets/twitter-header.png">
     <meta property="og:url" content="https://stablescouncil.github.io/ambassadorsprogramdesc.html">
     <meta property="og:type" content="article">
@@ -18,19 +18,19 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@StablesCouncil">
-    <meta name="twitter:title" content="Stables | Ambassador Program Framework">
-    <meta name="twitter:description" content="The 16 Big Mac Economy: Secure, Pseudonymous, and Unstoppable.">
+    <meta name="twitter:title" content="Stables | Ambassador Program: The 16 Big Mac® Economy">
+    <meta name="twitter:description" content="Secure, Pseudonymous, and Unstoppable. View the full specification.">
     
     <!-- Google Fonts - Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     
-    <title>Stables | Ambassador Program Specification</title>
+    <title>Stables | Ambassador Program Specification (v0.0.01)</title>
     <style>
         :root {
             --bg: #0b0f14;
-            --panel: rgba(15, 23, 42, 0.8);
+            --panel: rgba(15, 23, 42, 0.85);
             --text-primary: #e6edf3;
             --text-secondary: #9fb0c0;
             --accent-cyan: #67e8f9;
@@ -49,13 +49,13 @@
             color: var(--text-primary);
             font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
             min-height: 100vh;
-            line-height: 1.6;
+            line-height: 1.7;
             padding: 4rem 1rem;
             overflow-x: hidden;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 860px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
@@ -63,154 +63,152 @@
 
         .header {
             text-align: center;
-            margin-bottom: 4rem;
+            margin-bottom: 5rem;
         }
 
         .logo-wordmark {
-            max-width: 320px;
+            max-width: 340px;
             height: auto;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         h1 {
-            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-size: clamp(2.5rem, 6vw, 4rem);
             font-weight: 900;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             background: linear-gradient(135deg, #ffffff 0%, #67e8f9 50%, #a78bfa 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: -0.02em;
+            line-height: 1.1;
         }
 
-        .draft-banner {
-            display: inline-block;
-            background: rgba(251, 191, 36, 0.1);
-            border: 1px solid var(--accent-amber);
-            color: var(--accent-amber);
-            padding: 0.5rem 1.25rem;
-            border-radius: 999px;
-            font-size: 0.875rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 2rem;
+        .version-tag {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .draft-disclaimer {
+            font-size: 1rem;
+            font-style: italic;
+            max-width: 700px;
+            margin: 0 auto;
         }
 
         .section {
             background: var(--panel);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(103, 232, 249, 0.2);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(103, 232, 249, 0.15);
             border-radius: 24px;
-            padding: 3rem;
-            margin-bottom: 2.5rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            padding: clamp(2rem, 5vw, 4rem);
+            margin-bottom: 3rem;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
         }
 
         h2 {
-            font-size: 1.75rem;
+            font-size: 2rem;
+            font-weight: 800;
             color: var(--accent-cyan);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            margin-bottom: 2rem;
+            letter-spacing: -0.01em;
+            border-bottom: 1px solid rgba(103, 232, 249, 0.1);
+            padding-bottom: 1rem;
         }
 
         h3 {
-            font-size: 1.25rem;
+            font-size: 1.35rem;
+            font-weight: 700;
             color: #ffffff;
-            margin: 2rem 0 1rem;
+            margin: 2.5rem 0 1.25rem;
         }
 
         p {
             color: var(--text-secondary);
-            margin-bottom: 1.25rem;
-            font-size: 1.05rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
         }
 
         ul, ol {
-            margin-bottom: 1.5rem;
-            padding-left: 1.5rem;
-            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            padding-left: 1.75rem;
         }
 
         li {
-            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
         }
 
         strong {
             color: #ffffff;
+            font-weight: 700;
         }
 
-        .highlight-amber {
-            color: var(--accent-amber);
+        em {
+            color: var(--text-primary);
         }
 
-        .motto-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .motto-card {
-            background: rgba(103, 232, 249, 0.05);
-            border: 1px solid rgba(103, 232, 249, 0.1);
-            padding: 1.5rem;
-            border-radius: 16px;
-            text-align: center;
-        }
-
-        .motto-card strong {
-            display: block;
+        a {
             color: var(--accent-cyan);
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            transition: opacity 0.2s;
+        }
+
+        a:hover {
+            opacity: 0.8;
         }
 
         hr {
             border: none;
-            border-top: 1px solid rgba(103, 232, 249, 0.1);
+            border-top: 1px dashed rgba(103, 232, 249, 0.2);
             margin: 4rem 0;
+        }
+
+        .highlight-amber {
+            color: var(--accent-amber) !important;
         }
 
         .footer {
             text-align: center;
-            margin-top: 4rem;
+            margin-top: 6rem;
             padding-bottom: 4rem;
         }
 
         .built-on-minima {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            background: rgba(15, 23, 42, 0.6);
+            gap: 12px;
+            background: rgba(15, 23, 42, 0.7);
             border: 1px solid rgba(103, 232, 249, 0.5);
             color: var(--accent-cyan);
-            padding: 8px 18px;
+            padding: 10px 24px;
             border-radius: 999px;
             text-decoration: none;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.05em;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
             backdrop-filter: blur(12px);
-            box-shadow: 0 0 20px rgba(103, 232, 249, 0.2);
+            box-shadow: 0 0 30px rgba(103, 232, 249, 0.25);
             transition: all 0.3s ease;
         }
 
         .built-on-minima:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(103, 232, 249, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 0 45px rgba(103, 232, 249, 0.45);
             border-color: var(--accent-cyan);
         }
 
         .github-link {
             display: block;
-            margin-top: 2rem;
+            margin-top: 2.5rem;
             color: var(--text-secondary);
             text-decoration: none;
-            font-size: 0.875rem;
+            font-size: 0.95rem;
+            font-weight: 500;
             transition: color 0.3s ease;
         }
 
@@ -218,14 +216,14 @@
             color: var(--accent-cyan);
         }
 
+        /* Responsive spacing */
         @media (max-width: 640px) {
-            .section {
-                padding: 2rem 1.5rem;
-            }
-            
-            h1 {
-                font-size: 2.25rem;
-            }
+            body { padding-top: 2rem; }
+            .header { margin-bottom: 3rem; }
+            h1 { font-size: 2.5rem; }
+            .section { padding: 2rem 1.5rem; border-radius: 20px; }
+            h2 { font-size: 1.6rem; }
+            h3 { font-size: 1.25rem; }
         }
     </style>
 </head>
@@ -233,101 +231,279 @@
     <div class="container">
         <div class="header">
             <img src="https://stablescouncil.github.io/brand/assets/logo-wordmark.png" alt="Stables" class="logo-wordmark">
-            <div class="draft-banner">Version 0.0.01 | Community Draft</div>
-            <h1>The Ambassador Program</h1>
-            <p style="font-style: italic; max-width: 600px; margin: 0 auto;">This document represents an initial draft intended to stimulate protocol-wide community discussion and governance.</p>
+            <div class="version-tag">Version 0.0.01 | <span class="highlight-amber">Community Draft</span></div>
+            <h1>Stables Ambassador Program: The 16 Big Mac® Economy</h1>
+            <div class="draft-disclaimer"><span class="highlight-amber">This document represents an initial draft intended to stimulate protocol-wide community discussion and governance.</span></div>
         </div>
 
         <!-- 1. Purpose -->
-        <div class="section">
+        <div class="section" id="section-1">
             <h2>📋 1. Purpose</h2>
             <p>This document defines the core architecture of the Stables Ambassador program. Our primary objective is to build a professional, incentivized, Fair & Global network of paid Ambassadors to support the growth of the Stables payment accepting merchant network.</p>
-            <h3>Core Principles:</h3>
+            <h3><strong>Core Principles:</strong></h3>
             <ul>
-                <li><strong>Permissionless Entry:</strong> There is <strong>no acceptance mechanism</strong> or gatekeeping; any participant can act as an Ambassador as soon as they <strong>register themselves</strong> in the protocol.</li>
+                <li><strong>Permissionless Entry:</strong> There is <strong>no acceptance mechanism</strong> or gatekeeping; any participant (whether joining as a merchant or purely as an independent professional) can act as an Ambassador as soon as they register themselves in the protocol.</li>
                 <li><strong>The Human Layer:</strong> Ambassadors are the human layer that integrates merchants into the Stables economic loop and ensures a high-quality, trusted directory.</li>
-                <li><strong>Fair & Global Constraint:</strong> The economic model is designed to be universally applicable and fair across all geographies, anchored to the protocol's decentralized logic.</li>
+                <li>Fair & Global Constraint: The economic model is designed to be universally applicable and fair across all geographies, anchored to the protocol's decentralized logic and the <a href="https://worldpopulationreview.com/country-rankings/big-mac-index-by-country" target="_blank">Big Mac Index</a>.</li>
             </ul>
         </div>
 
         <!-- 2. Ecosystem -->
-        <div class="section">
+        <div class="section" id="section-2">
             <h2>💎 2. The Ecosystem: Five Primary Roles</h2>
-            <p>To ensure the system remains balanced and professional, we define five primary roles relating to merchant onboarding:</p>
+            <p>To ensure the system remains balanced and professional, we define five primary roles within the global Stables structure relating to merchant onboarding:</p>
             <ol>
                 <li><strong>The Merchants:</strong> Business owners who accept Stables. They choose to pay the 16 Big Mac® fee to be "Verified" and listed in the official directory.</li>
-                <li><strong>The Independent Participant:</strong> A merchant or future ambassador who registers directly through the app without an external pitch.</li>
+                <li><strong>The Independent Participant:</strong> A merchant or future ambassador who registers directly through the app without an external pitch. They are anchored to the protocol via the <strong>Universal Anchor</strong>.</li>
                 <li><strong>The Direct Ambassador (Active):</strong> The participant who performs the actual onboarding or pitch for another merchant.</li>
                 <li><strong>The Second Level Ambassador (Mentor):</strong> The participant who successfully onboarded and trained a Direct Ambassador.</li>
-                <li><strong>The Council & Treasury:</strong> The autonomous heart of the protocol. It collects anchor fees and arbitrage yield to fund community-voted growth.</li>
+                <li><strong>The Council & Treasury:</strong> The autonomous heart of the protocol. It collects the anchor fees and arbitrage yield to fund community-voted growth.</li>
             </ol>
         </div>
 
+        <!-- 3. Problem -->
+        <div class="section" id="section-3">
+            <h2>🛑 3. The Problem: Self-Onboarding Bypass</h2>
+            <p>How do we make sure that the merchants don't have a financial incentive to onboard themselves and capture the Ambassador pay?</p>
+            <p>In an open system, there is a risk that a merchant might try to bypass the Ambassador who pitched them to "self-capture" the onboarding reward.</p>
+        </div>
+
+        <!-- 4. Solution -->
+        <div class="section" id="section-4">
+            <h2>💡 4. Our Solution: The 16 Big Mac® Economy</h2>
+            <p>We solve this by ensuring the entry cost and the active reward are decoupled, and by making the Treasury the default mentor.</p>
+            <h3><strong>Economic Core:</strong></h3>
+            <ul>
+                <li><strong>Universal Anchor Fee:</strong> <strong>16 Big Mac®</strong> (Sunk cost for Independent Registration).</li>
+                <li><strong>Mentored Registration Fee:</strong> <strong>15 Big Mac®</strong> (1 Big Mac® Discount for being mentored by an Ambassador).</li>
+                <li><strong>Global Fairness:</strong> All fees are pegged to the <a href="https://worldpopulationreview.com/country-rankings/big-mac-index-by-country" target="_blank">Big Mac Index</a> to remain globally fair.</li>
+                <li><strong>Active Reward:</strong> <strong>8 Big Mac®</strong> (Fixed for the Direct Ambassador).</li>
+                <li><strong>Mentor Reward:</strong> <strong>1 Big Mac®</strong> (For the Second Level Ambassador).</li>
+                <li><strong>Council Share:</strong> <strong>6-16 Big Mac®</strong> (Standard: 6; plus any unclaimed mentor/premium shares).</li>
+                <li><strong>Listing Duration:</strong> The fee covers a <strong>12-month registration</strong>. Renewals follow the same economic logic.</li>
+                <li><strong>Settlement:</strong> The 16 Big Mac® fee and all Ambassador rewards (retrocession) can be paid and settled in <strong>any token of Stables including Minima</strong> (USDs, EURs, CADs, etc.). It may also be paid in <strong>xMinima</strong> or any other coverage funds share of the participant's choice.</li>
+            </ul>
+        </div>
+
         <!-- 5. Merchant's Choice -->
-        <div class="section">
-            <h2>🌟 5. The Merchant's Choice</h2>
-            <h3>Why Stables?</h3>
-            <p>Accept all your electronic payments in a <strong>Permissionless</strong> framework. Stables is built on three core mottos:</p>
-            <div class="motto-grid">
-                <div class="motto-card"><strong>Secure</strong>Military-grade security</div>
-                <div class="motto-card"><strong>Pseudonymous</strong>Privacy with compliance</div>
-                <div class="motto-card"><strong>Unstoppable</strong>No frozen funds</div>
-            </div>
-            <p><strong>Full Sovereignty:</strong> You own <strong>your bank</strong>, your node, your keys, and your customer relationships.</p>
-
-            <h3>Why Listing?</h3>
+        <div class="section" id="section-5">
+            <h2>🌟 5. The Merchant's Choice: Why Stables? Why listing? Why an Ambassador?</h2>
+            <h3><strong>Why Stables?</strong></h3>
+            <p>Accept all your electronic payments in a <strong>Permissionless</strong> framework where no permission is ever required. Stables is built on three core mottos:</p>
             <ul>
-                <li><strong>Visibility:</strong> Featured on the global Stables map and directory.</li>
-                <li><strong>Trust & Verification:</strong> Listing provides a "Verified" status.</li>
-                <li><strong>Discoverability:</strong> Customers find you based on category and geolocation.</li>
+                <li><strong>Secure:</strong> Military-grade on-chain security.</li>
+                <li><strong>Pseudonymous:</strong> Protect your financial privacy while <strong>remaining fully compliant</strong>.</li>
+                <li><strong>Unstoppable:</strong> No central authority can freeze your funds or block your business.</li>
             </ul>
-
-            <h3>Why Not List?</h3>
-            <p>Stables is an open protocol. A shop may decide to accept Stables <strong>without being listed</strong> for private operations or minimalist setups at zero cost.</p>
-        </div>
-
-        <!-- 4. Economic Core -->
-        <div class="section">
-            <h2>💡 4. The 16 Big Mac® Economy</h2>
+            <p><strong>Core Advantages:</strong></p>
             <ul>
-                <li><strong>Universal Anchor Fee:</strong> 16 Big Mac® (Independent Registration).</li>
-                <li><strong>Mentored Registration Fee:</strong> 15 Big Mac® (1 BM Discount).</li>
-                <li><strong>Active Reward:</strong> 8 Big Mac® (Fixed for Direct Ambassador).</li>
-                <li><strong>Mentor Reward:</strong> 1 Big Mac® (For the Mentor).</li>
-                <li><strong>Council Share:</strong> 6-16 Big Mac® (Treasury Growth).</li>
-                <li><strong>Settlement:</strong> Paid and settled in <strong>any token of Stables including Minima</strong> (USDs, EURs, CADs, etc.) or <strong>xMinima</strong>.</li>
+                <li><strong>Instant Settlement:</strong> Payments are received and <strong>fully settled</strong> in a matter of seconds, ready to be spent immediately.</li>
+                <li><strong>Zero Middleman Fees:</strong> Accept payments directly on-chain with no bank fees or card processor cuts.</li>
+                <li><strong>Full Sovereignty:</strong> You own <strong>your bank</strong>, your node, your keys, and your customer relationships.</li>
+            </ul>
+            <h3><strong>Why Listing?</strong></h3>
+            <p>Choosing to pay the 16 Big Mac® entry fee to be listed in the official Stables app provides critical advantages:</p>
+            <ul>
+                <li><strong>Visibility:</strong> Featured on the global Stables map and in the merchant directory.</li>
+                <li><strong>Trust & Verification:</strong> Listing provides a "Verified" status, showing the merchant is part of the official community.</li>
+                <li><strong>Discoverability:</strong> Customers looking to spend Stables can find the merchant based on categories and geolocation.</li>
+                <li><strong>Network Growth:</strong> Access to local Ambassador support and future protocol-wide marketing campaigns.</li>
+            </ul>
+            <h3><strong>Why Not List?</strong></h3>
+            <p>Stables is an open protocol. A shop may decide to accept Stables <strong>without being listed</strong> for several reasons:</p>
+            <ul>
+                <li><strong>Private Operations:</strong> Some merchants preferred to use Stables as a private payment terminal for exclusive or local-only clientele without public advertising.</li>
+                <li><strong>Minimalist Setup:</strong> By simply generating a Minima address, any merchant can accept payments for free and with zero permission.</li>
+                <li><strong>Zero Cost:</strong> If a merchant does not require the visibility, trust, or support layer of the Ambassador program, they can operate entirely for free.</li>
+            </ul>
+            <h3><strong>Why use an Ambassador?</strong></h3>
+            <ul>
+                <li><strong>Close Network Access:</strong> Become part of an exclusive, high-trust local network of verified merchants and professionals.</li>
+                <li><strong>Instant Discount:</strong> Save 1 Big Mac® immediately compared to self-onboarding (15 BM vs 16 BM).</li>
+                <li><strong>Expert Deployment:</strong> Avoid technical hurdles; get it right the first time with a dedicated professional.</li>
+                <li><strong>Peace of Mind:</strong> Have a local human contact who is financially incentivized to see your business grow.</li>
             </ul>
         </div>
 
-        <!-- 11. Treasury -->
-        <div class="section">
-            <h2>💎 11. Council Treasury: Investment & Ownership</h2>
-            <p>The Stables Council Treasury is the protocol's economic engine, designed for absolute transparency.</p>
-            <h3>The Investment Principle</h3>
-            <p>The entire Stables structure is owned collectively by its participants. The Treasury is the property of the collectivity, meaning the 16 Big Mac® fee is neither a payment nor a donation—it is a <strong>100% investment</strong> into the Stables infrastructure.</p>
-            <p>Your investment stays in the hands of the participants and is utilized exclusively for platform stability, arbitrage, and community-voted growth.</p>
+        <!-- 6. Scenario Breakdown -->
+        <div class="section" id="section-6">
+            <h2>🏗️ 6. Scenario Breakdown: The Ambassador Paths</h2>
+            <p>The Ambassador Program follows a logical progression from independent participation to mentored hub growth. All scenarios are anchored by the "The Shield Principle," ensuring no one can financially benefit from bypassing the protocol's mentorship layers.</p>
+            <h3><strong>Scenario 1: Protocol Direct (Independent Entry)</strong></h3>
+            <p>A merchant or participant registers directly with the protocol without an Ambassador.</p>
+            <ul>
+                <li><strong>Cost Paid:</strong> <strong>16 Big Mac®</strong> (The Universal Anchor).</li>
+                <li><strong>Distribution:</strong> 100% (16 Big Mac) → <strong>Council Treasury</strong>.</li>
+                <li><strong>Result:</strong> Participant is verified but has no dedicated Ambassador support.</li>
+            </ul>
+            <h3><strong>Scenario 2: Standard Onboarding (Direct Ambassador)</strong></h3>
+            <p>An Independent Ambassador (A) onboards a new merchant (B).</p>
+            <ul>
+                <li><strong>Cost Paid:</strong> <strong>15 Big Mac®</strong> (Mentorship Discount).</li>
+                <li><strong>Reward (Ambassador A):</strong> <strong>8 Big Mac®</strong>.</li>
+                <li><strong>Council Share:</strong> <strong>7 Big Mac®</strong> (6 standard + 1 unclaimed mentor share).</li>
+            </ul>
+            <h3><strong>Scenario 3: Mentored Onboarding (Ambassador + Mentor)</strong></h3>
+            <p>An Ambassador (B), who is already mentored by Mentor (A), onboards a new merchant (C).</p>
+            <ul>
+                <li><strong>Cost Paid:</strong> <strong>15 Big Mac®</strong> (Mentorship Discount).</li>
+                <li><strong>Active Reward (B):</strong> <strong>8 Big Mac®</strong>.</li>
+                <li><strong>Mentor Reward (A):</strong> <strong>1 Big Mac®</strong>.</li>
+                <li><strong>Council Share:</strong> <strong>6 Big Mac®</strong>.</li>
+            </ul>
+            <h3><strong>🛡️ The Shield Principle (Neutrality Proof)</strong></h3>
+            <p>The system is economically balanced so that bypassing a mentor provides <strong>zero advantage</strong>.</p>
+            <ul>
+                <li><strong>For the Merchant:</strong> Joining an Ambassador is always cheaper (15 vs 16).</li>
+                <li><strong>Against Self-Onboarding:</strong> A merchant trying to capture the 8 BM reward by "onboarding themselves" must first pay 16 BM to register as an independent participant. Their net cost would be 23 BM (16+15-8), making it far more expensive than simply paying 15 BM to a professional Ambassador.</li>
+            </ul>
         </div>
 
-        <!-- 12. Integrity -->
-        <div class="section">
+        <!-- 7. Service Lifecycle -->
+        <div class="section" id="section-7">
+            <h2>🛠️ 7. The Ambassador's Service Lifecycle</h2>
+            <p>The relationship between an Ambassador and a Merchant is not a one-time transaction; it is a professional partnership built on three pillars of service:</p>
+            <ol>
+                <li><strong>Phase 1: Expert Setup & Verification:</strong>
+                    <ul>
+                        <li>Walking the merchant through the 15 Big Mac® registration.</li>
+                        <li>Configuring the merchant's Minima node and Stables wallet.</li>
+                        <li>Ensuring the shop is correctly geolocated and categorized on the global map.</li>
+                        <li>Providing physical signage (stickers/QR codes) to signal "Stables Accepted Here."</li>
+                    </ul>
+                </li>
+                <li><strong>Phase 2: Continued Technical Support:</strong>
+                    <ul>
+                        <li>Acting as the first point of contact for technical issues or ledger updates.</li>
+                        <li>Training staff on how to accept payments and manage generalized transaction workflows.</li>
+                        <li>Providing periodic health checks on the merchant's listing and directory accuracy.</li>
+                    </ul>
+                </li>
+                <li><strong>Phase 3: Strategic Ads Campaign Management:</strong>
+                    <ul>
+                        <li>Helping the merchant launch protocol-wide publicity campaigns.</li>
+                        <li><strong>Strategic Parameters:</strong> Managing campaigns with varying <strong>scope, target audience, and duration</strong> to maximize merchant ROI.</li>
+                        <li>Analyzing customer review data and responding to feedback.</li>
+                        <li>Strategizing on local promotions to increase Stables spending at the location.</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <!-- 8. Annual Renewal Circle -->
+        <div class="section" id="section-8">
+            <h2>📅 8. The Annual Renewal Cycle: Sustaining Value</h2>
+            <p>To ensure merchants choose to maintain their listing with their original Ambassador (rather than going "independent" on renewal), the protocol enforces a persistent incentive:</p>
+            <ul>
+                <li><strong>The Renewal Discount:</strong> Merchants who renew via their Ambassador keep the <strong>15 Big Mac®</strong> mentored price.</li>
+                <li><strong>Service Continuity:</strong> Moving to an independent listing (Universal Anchor) results in a <strong>16 Big Mac®</strong> fee and the loss of the dedicated Ambassador support layer.</li>
+                <li><strong>Long-term Hub Integrity:</strong> The protocol recognizes the value of the trainer (Second Level Ambassador) by maintaining the 1 Big Mac® mentor share on all renewals, ensuring the original hub that grew the network is rewarded for its stability.</li>
+            </ul>
+        </div>
+
+        <!-- 9. Stables Platform -->
+        <div class="section" id="section-9">
+            <h2>💻 9. Stables Platform: Supporting the Ambassador</h2>
+            <p>The Stables platform is built to empower Ambassadors with professional-grade tools to manage their "Hub" like a business:</p>
+            <ol>
+                <li><strong>Ambassador Dashboard (CRM):</strong> A specialized view in the app to track all mentored merchants, their status, renewal dates, and performance.</li>
+                <li><strong>Merchant Communication Tools:</strong> Integrated messaging to broadcast updates, tips, or promotion ideas to the entire hub.</li>
+                <li><strong>Campaign Templates:</strong> Pre-built marketing assets (posters, social media kits, and ad templates) that Ambassadors can customize for their local merchants.</li>
+                <li><strong>Training Resources:</strong> A library of educational content and "Pitch Decks" to help Ambassadors close more deals and train their mentored merchants effectively.</li>
+                <li><strong>Community Discussion Topic:</strong> <a href="https://t.me/stablescommunity/358" target="_blank">t.me/stablescommunity/358</a> - The direct channel for specification feedback and hub coordination.</li>
+            </ol>
+        </div>
+
+        <!-- 10. Technical Implementation -->
+        <div class="section" id="section-10">
+            <h2>⚖️ 10. Technical Implementation: How the System Distinguishes</h2>
+            <p>The Stables ledger tracks an optional <em>mentor</em> address for every listed participant. This <em>mentor</em> is set only during the very first listing (Scenario 1) and can never be changed.</p>
+            <ul>
+                <li><strong>Self-Onboarded Merchant:</strong> The <em>mentor</em> field is NULL.</li>
+                <li><strong>Mentored Merchant:</strong> The <em>mentor</em> field is set to the Ambassador who performed the onboarding.</li>
+            </ul>
+            <p>When an Ambassador (B) registers a new merchant (C), the code checks <strong>B’s record:</strong></p>
+            <ol>
+                <li>Does B have a mentor?
+                    <ul>
+                        <li><strong>Yes (A mentored B):</strong> B is part of a Hub. Split is <strong>8 to B, 1 to A, 6 to Council</strong> (Total 15).</li>
+                        <li><strong>No (B is independent):</strong> B is solo. Split is <strong>8 to B, 7 to Council</strong> (The 1 mentor share reverts to Treasury. Total 15).</li>
+                    </ul>
+                </li>
+                <li>The active reward for B is <strong>always 8 Big Mac®</strong>. This fixed reward ensures B has no financial incentive to bypass their original mentor.</li>
+            </ol>
+            <h3><strong>No-Cost Payment Acceptance</strong></h3>
+            <p>Stables is built on open protocol technology. Any merchant can accept Stables payments immediately and without incurring any cost simply by generating a Minima address. Accepting payments is free and permissionless.</p>
+            <h3><strong>Ambassadors as Specialized Merchants</strong></h3>
+            <p>Ambassadors are themselves listed as a type of merchant within the app. This allows them to present their services and be found by other merchants based on geolocation and other criteria. A merchant can search for an Ambassador nearby to receive training, onboarding help, or technical support.</p>
+            <h3><strong>Side Letter Agreements</strong></h3>
+            <p>The Stables protocol defines the standard on-chain distribution of fees. However, we anticipate that Ambassadors and Merchants may enter into "Side Letter Agreements" to share commissions.</p>
+            <ul>
+                <li><strong>On-chain Transparency:</strong> These parameters can be agreed upon directly within the onboarding contract, making the kickback terms visible on-chain to anyone.</li>
+                <li><strong>Private Flexibility:</strong> Alternatively, these agreements can be made independently as a private second step outside the primary listing protocol.</li>
+            </ul>
+            <p>While the protocol default is the 8/1/6 split, these side letters allow for bespoke commercial relationships while the 16 Big Mac® anchor always protects the Treasury's baseline.</p>
+            <h3><strong>On-chain Review & Rating System</strong></h3>
+            <p>To ensure the quality of the Stables merchant network, the app includes a star review and comment system.</p>
+            <ul>
+                <li><strong>On-chain Verification:</strong> Every review is tied to an on-chain transaction, proving that the reviewer is a true customer.</li>
+                <li><strong>Anti-Spam Mechanism:</strong> To maintain high-integrity feedback, a review is only published if the customer has spent a <strong>minimum threshold amount</strong> at the merchant's shop.</li>
+                <li><strong>Ambassador Moderation:</strong> Ambassadors play a key role in monitoring these reviews to support their mentored merchants.</li>
+            </ul>
+        </div>
+
+        <!-- 11. Council Treasury -->
+        <div class="section" id="section-11">
+            <h2>💎 11. Council Treasury: The Autonomous Protocol Heart</h2>
+            <p>The Stables Council Treasury is the protocol's economic engine, designed for absolute transparency and self-sovereign growth.</p>
+            <h3><strong>The Treasury Flow: Where the Anchor Fees Go</strong></h3>
+            <p>Every 16 Big Mac® entry fee is a direct contribution to the network's liquidity and growth. The protocol's smart contract automatically distributes these fees based on the onboarding scenario:</p>
+            <ul>
+                <li><strong>Scenario 1 (Independent):</strong> <strong>16 Big Mac®</strong> enters the Treasury.</li>
+                <li><strong>Scenario 2 (Direct):</strong> <strong>7 Big Mac®</strong> enters the Treasury (6 standard + 1 unclaimed mentor share).</li>
+                <li><strong>Scenario 3 (Mentored):</strong> <strong>6 Big Mac®</strong> enters the Treasury.</li>
+            </ul>
+            <h3><strong>Governance & Control: Who Watches the Code?</strong></h3>
+            <p>To ensure the protocol remains "Unstoppable," the control of the Treasury is divided between autonomous code and human governance:</p>
+            <ul>
+                <li><strong>Rule of Code (No Arbitrary Access):</strong> The Treasury funds are locked in a protocol-owned contract. No individual, Council member, or developer can withdraw funds for personal gain or arbitrary reasons.</li>
+                <li><strong>The Council’s Role:</strong> The <strong>executive branch of the Council</strong> acts as the protocol’s <strong>Authorized Signatories</strong> and <strong>Curators</strong>. They are responsible for executing the strategic releases already approved by the community.</li>
+                <li><strong>The Community’s Power:</strong> All major budget allocations, protocol upgrades, and utility expansions are subject to <strong>Time-Weighted Voting</strong>. Community members with skin-in-the-game control the direction of the Treasury’s growth engine.</li>
+                <li><strong>Real-Time Audit:</strong> Because Stables is built on the Minima ledger, every Big Mac® equivalent that enters or leaves the Treasury is <strong>fully visible on-chain</strong>. Anyone can audit the Treasury’s health at any time.</li>
+            </ul>
+            <h3><strong>The Investment Principle: Participant Ownership</strong></h3>
+            <p>The entire Stables structure is owned collectively by its participants. The Council Treasury is the property of the collectivity, meaning the 16 Big Mac® fee is neither a payment nor a donation—it is a <strong>100% investment</strong> into the Stables infrastructure. While the funds may change wallet addresses as they move through the protocol, they remain in the hands of the participants and are utilized exclusively for the platform's stability, arbitrage, and community-voted growth.</p>
+        </div>
+
+        <!-- 12. Integrity Clause -->
+        <div class="section" id="section-12">
             <h2>🛡️ 12. The Integrity Clause: Risk & Transparency</h2>
-            <p>Stables is a "Ruled by Code" protocol. For early Ambassadors, transparency is critical:</p>
+            <p>Stables is a "Ruled by Code" protocol, but we recognize the human reality of a mission with no initial track record. For early Ambassadors and Merchants, the following transparency is critical:</p>
+            <h3><strong>The Early Adopter’s Journey</strong></h3>
+            <p>As of Version 0.0.01, Stables has no established reputation or historical performance. Participants are committing their capital (the 16 Big Mac® anchor) and their local reputation based on the protocol’s vision, not its history.</p>
+            <h3><strong>The Perception Risk</strong></h3>
+            <p>Ambassadors carry the "frontline" reputational risk. If the protocol fails to achieve mass adoption, there is a risk of being perceived as having fallen for a "scam" or a failed experiment.</p>
+            <h3><strong>Protections Built into the Code</strong></h3>
+            <p>To mitigate this risk logically (rather than emotionally), we rely on the primary mottos:</p>
             <ul>
-                <li><strong>The Early Adopter’s Journey:</strong> As of V0.0.01, Stables has no established track record. You are a pioneer.</li>
-                <li><strong>The Perception Risk:</strong> Ambassadors carry reputational risk. If adoption fails, it may be perceived as a failed experiment.</li>
-                <li><strong>Sovereignty is the Shield:</strong> Even if the brand vanishes, you remain in control of your Minima node and private keys.</li>
+                <li><strong>Sovereignty is the Shield:</strong> Even if the "Stables" brand or community disperses, you remain in control of your Minima node and your private keys. The system is designed so that no central authority—not even the original developers—can "rug pull" your funds or your data.</li>
+                <li><strong>Protocol vs. Platform:</strong> Stables is an open protocol first, and an app second. Your participation is a commitment to a decentralized standard of exchange that exists independently of its marketing.</li>
+                <li><strong>Skin in the Game:</strong> The entry fee is a transparent contribution to the global Council Treasury, which is itself governed by the protocol’s autonomous rules.</li>
             </ul>
+            <h3><strong>The Pioneer Advantage</strong></h3>
+            <p>High-integrity Ambassadors are the pioneers who will own the "prime real estate" of the local hubs once the track record is proven. We acknowledge the risk is real, but so is the sovereignty you gain from the first day you join.</p>
+        </div>
+
+        <!-- 13. Summary -->
+        <div class="section" id="section-13">
+            <h2>🎬 13. Summary</h2>
+            <p>This framework demonstrates a "ruled by code" economy that rewards mentorship while protecting the treasury. It turns human competition into a collaborative cells-and-hubs structure where the treasury always grows.</p>
         </div>
 
         <div class="footer">
-            <a href="https://minima.global" class="built-on-minima">BUILT ON MINIMA</a>
-            <a href="https://github.com/StablesCouncil/stables/blob/main/stream_3_governance/prod_protocol_specs/02_ambassadors/ambassador_framework_full_spec.md" class="github-link">View raw specification on GitHub</a>
+            <a href="https://minima.global" class="built-on-minima" target="_blank">BUILT ON MINIMA</a>
+            <a href="https://github.com/StablesCouncil/stables/blob/main/stream_3_governance/prod_protocol_specs/02_ambassadors/ambassador_framework_full_spec.md" class="github-link" target="_blank">View technical specification on GitHub</a>
         </div>
     </div>
-
-    <!-- StablesAgent Script Placeholder -->
-    <script>
-        console.log("StablesAgent ready for community support.");
-    </script>
 </body>
 </html>
