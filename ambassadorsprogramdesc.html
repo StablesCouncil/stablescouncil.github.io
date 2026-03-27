@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://stablescouncil.github.io/brand/assets/logo-symbol.png">
+    
+    <!-- Social Previews -->
+    <meta property="og:title" content="Stables | Ambassador Program">
+    <meta property="og:description" content="The 16 Big Mac Economy: A Fair & Global Framework for Protocol Growth.">
+    <meta property="og:image" content="https://stablescouncil.github.io/brand/assets/twitter-header.png">
+    <meta property="og:url" content="https://stablescouncil.github.io/ambassadorsprogramdesc.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Stables">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@StablesCouncil">
+    <meta name="twitter:title" content="Stables | Ambassador Program Framework">
+    <meta name="twitter:description" content="The 16 Big Mac Economy: Secure, Pseudonymous, and Unstoppable.">
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <title>Stables | Ambassador Program Specification</title>
+    <style>
+        :root {
+            --bg: #0b0f14;
+            --panel: rgba(15, 23, 42, 0.8);
+            --text-primary: #e6edf3;
+            --text-secondary: #9fb0c0;
+            --accent-cyan: #67e8f9;
+            --accent-purple: #a78bfa;
+            --accent-amber: #fbbf24;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at top, rgba(103, 232, 249, 0.18), transparent 55%) var(--bg);
+            color: var(--text-primary);
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            line-height: 1.6;
+            padding: 4rem 1rem;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .logo-wordmark {
+            max-width: 320px;
+            height: auto;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #67e8f9 50%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .draft-banner {
+            display: inline-block;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid var(--accent-amber);
+            color: var(--accent-amber);
+            padding: 0.5rem 1.25rem;
+            border-radius: 999px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2rem;
+        }
+
+        .section {
+            background: var(--panel);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(103, 232, 249, 0.2);
+            border-radius: 24px;
+            padding: 3rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            color: #ffffff;
+            margin: 2rem 0 1rem;
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1.25rem;
+            font-size: 1.05rem;
+        }
+
+        ul, ol {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 0.75rem;
+        }
+
+        strong {
+            color: #ffffff;
+        }
+
+        .highlight-amber {
+            color: var(--accent-amber);
+        }
+
+        .motto-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .motto-card {
+            background: rgba(103, 232, 249, 0.05);
+            border: 1px solid rgba(103, 232, 249, 0.1);
+            padding: 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .motto-card strong {
+            display: block;
+            color: var(--accent-cyan);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid rgba(103, 232, 249, 0.1);
+            margin: 4rem 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-bottom: 4rem;
+        }
+
+        .built-on-minima {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(103, 232, 249, 0.5);
+            color: var(--accent-cyan);
+            padding: 8px 18px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 20px rgba(103, 232, 249, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .built-on-minima:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(103, 232, 249, 0.4);
+            border-color: var(--accent-cyan);
+        }
+
+        .github-link {
+            display: block;
+            margin-top: 2rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.3s ease;
+        }
+
+        .github-link:hover {
+            color: var(--accent-cyan);
+        }
+
+        @media (max-width: 640px) {
+            .section {
+                padding: 2rem 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://stablescouncil.github.io/brand/assets/logo-wordmark.png" alt="Stables" class="logo-wordmark">
+            <div class="draft-banner">Version 0.0.01 | Community Draft</div>
+            <h1>The Ambassador Program</h1>
+            <p style="font-style: italic; max-width: 600px; margin: 0 auto;">This document represents an initial draft intended to stimulate protocol-wide community discussion and governance.</p>
+        </div>
+
+        <!-- 1. Purpose -->
+        <div class="section">
+            <h2>📋 1. Purpose</h2>
+            <p>This document defines the core architecture of the Stables Ambassador program. Our primary objective is to build a professional, incentivized, Fair & Global network of paid Ambassadors to support the growth of the Stables payment accepting merchant network.</p>
+            <h3>Core Principles:</h3>
+            <ul>
+                <li><strong>Permissionless Entry:</strong> There is <strong>no acceptance mechanism</strong> or gatekeeping; any participant can act as an Ambassador as soon as they <strong>register themselves</strong> in the protocol.</li>
+                <li><strong>The Human Layer:</strong> Ambassadors are the human layer that integrates merchants into the Stables economic loop and ensures a high-quality, trusted directory.</li>
+                <li><strong>Fair & Global Constraint:</strong> The economic model is designed to be universally applicable and fair across all geographies, anchored to the protocol's decentralized logic.</li>
+            </ul>
+        </div>
+
+        <!-- 2. Ecosystem -->
+        <div class="section">
+            <h2>💎 2. The Ecosystem: Five Primary Roles</h2>
+            <p>To ensure the system remains balanced and professional, we define five primary roles relating to merchant onboarding:</p>
+            <ol>
+                <li><strong>The Merchants:</strong> Business owners who accept Stables. They choose to pay the 16 Big Mac® fee to be "Verified" and listed in the official directory.</li>
+                <li><strong>The Independent Participant:</strong> A merchant or future ambassador who registers directly through the app without an external pitch.</li>
+                <li><strong>The Direct Ambassador (Active):</strong> The participant who performs the actual onboarding or pitch for another merchant.</li>
+                <li><strong>The Second Level Ambassador (Mentor):</strong> The participant who successfully onboarded and trained a Direct Ambassador.</li>
+                <li><strong>The Council & Treasury:</strong> The autonomous heart of the protocol. It collects anchor fees and arbitrage yield to fund community-voted growth.</li>
+            </ol>
+        </div>
+
+        <!-- 5. Merchant's Choice -->
+        <div class="section">
+            <h2>🌟 5. The Merchant's Choice</h2>
+            <h3>Why Stables?</h3>
+            <p>Accept all your electronic payments in a <strong>Permissionless</strong> framework. Stables is built on three core mottos:</p>
+            <div class="motto-grid">
+                <div class="motto-card"><strong>Secure</strong>Military-grade security</div>
+                <div class="motto-card"><strong>Pseudonymous</strong>Privacy with compliance</div>
+                <div class="motto-card"><strong>Unstoppable</strong>No frozen funds</div>
+            </div>
+            <p><strong>Full Sovereignty:</strong> You own <strong>your bank</strong>, your node, your keys, and your customer relationships.</p>
+
+            <h3>Why Listing?</h3>
+            <ul>
+                <li><strong>Visibility:</strong> Featured on the global Stables map and directory.</li>
+                <li><strong>Trust & Verification:</strong> Listing provides a "Verified" status.</li>
+                <li><strong>Discoverability:</strong> Customers find you based on category and geolocation.</li>
+            </ul>
+
+            <h3>Why Not List?</h3>
+            <p>Stables is an open protocol. A shop may decide to accept Stables <strong>without being listed</strong> for private operations or minimalist setups at zero cost.</p>
+        </div>
+
+        <!-- 4. Economic Core -->
+        <div class="section">
+            <h2>💡 4. The 16 Big Mac® Economy</h2>
+            <ul>
+                <li><strong>Universal Anchor Fee:</strong> 16 Big Mac® (Independent Registration).</li>
+                <li><strong>Mentored Registration Fee:</strong> 15 Big Mac® (1 BM Discount).</li>
+                <li><strong>Active Reward:</strong> 8 Big Mac® (Fixed for Direct Ambassador).</li>
+                <li><strong>Mentor Reward:</strong> 1 Big Mac® (For the Mentor).</li>
+                <li><strong>Council Share:</strong> 6-16 Big Mac® (Treasury Growth).</li>
+                <li><strong>Settlement:</strong> Paid and settled in <strong>any token of Stables including Minima</strong> (USDs, EURs, CADs, etc.) or <strong>xMinima</strong>.</li>
+            </ul>
+        </div>
+
+        <!-- 11. Treasury -->
+        <div class="section">
+            <h2>💎 11. Council Treasury: Investment & Ownership</h2>
+            <p>The Stables Council Treasury is the protocol's economic engine, designed for absolute transparency.</p>
+            <h3>The Investment Principle</h3>
+            <p>The entire Stables structure is owned collectively by its participants. The Treasury is the property of the collectivity, meaning the 16 Big Mac® fee is neither a payment nor a donation—it is a <strong>100% investment</strong> into the Stables infrastructure.</p>
+            <p>Your investment stays in the hands of the participants and is utilized exclusively for platform stability, arbitrage, and community-voted growth.</p>
+        </div>
+
+        <!-- 12. Integrity -->
+        <div class="section">
+            <h2>🛡️ 12. The Integrity Clause: Risk & Transparency</h2>
+            <p>Stables is a "Ruled by Code" protocol. For early Ambassadors, transparency is critical:</p>
+            <ul>
+                <li><strong>The Early Adopter’s Journey:</strong> As of V0.0.01, Stables has no established track record. You are a pioneer.</li>
+                <li><strong>The Perception Risk:</strong> Ambassadors carry reputational risk. If adoption fails, it may be perceived as a failed experiment.</li>
+                <li><strong>Sovereignty is the Shield:</strong> Even if the brand vanishes, you remain in control of your Minima node and private keys.</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <a href="https://minima.global" class="built-on-minima">BUILT ON MINIMA</a>
+            <a href="https://github.com/StablesCouncil/stables/blob/main/stream_3_governance/prod_protocol_specs/02_ambassadors/ambassador_framework_full_spec.md" class="github-link">View raw specification on GitHub</a>
+        </div>
+    </div>
+
+    <!-- StablesAgent Script Placeholder -->
+    <script>
+        console.log("StablesAgent ready for community support.");
+    </script>
+</body>
+</html>

@@ -65,24 +65,15 @@ April 1st. Stay tuned.
 ## 📣 Telegram
 
 ```
-🚀 Stables Showcase — April 1st
+**Stables Community,**
 
-Hey everyone,
+We are committing to a date for the first public showcase of the Stables MiniDapp. On April 1st, we will share a detailed look at the progress of the user interface we have built together.
 
-We're committing to a date: April 1st we share the first public showcase of the Stables app.
+This showcase will demonstrate a full self-custody experience, from holding assets on your own node to instant peer-to-peer transfers with a max one-cent fee. You will see a complete contact management system with favourites and a powerful search tool, all designed to remove the need for copy-pasting addresses. While the showcase displays various options, the community will collectively decide the available currencies at launch, with future management overseen by the Council.
 
-No joke. 😄
+This demonstration is built for everyone, from retail users and merchants to investors and speculators. It follows our core vision: your keys, your wallet, your bank.
 
-Here's a peek at what's coming:
-
-🏦 Self-custody multi-currency wallet — hold EURs, USDs and Minima on your own node
-⚡ Instant peer-to-peer transfers — $0.01 max fee, recipient gets the full amount
-⭐ Contact book with favourites — pin the people you send to most, one tap to select them
-🔍 Full contact picker — search by name, address or category, star to favourite
-
-This is a showcase version with demo data. The technology underneath is real — your keys, your wallet, your bank.
-
-📅 April 1st. Mark it.
+Please mark April 1st on your calendar.
 
 [3 screenshots attached]
 ```
