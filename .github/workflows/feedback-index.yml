@@ -1,0 +1,34 @@
+# Copy to StablesCouncil.github.io/.github/workflows/feedback-index.yml
+# Prerequisite: copy task_x_public_feedback_ledger/tools/build_feedback_index.mjs
+# into this repo as tools/build_feedback_index.mjs (pin version; do not curl blindly).
+name: Build feedback index
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'feedback/submissions/**'
+  workflow_dispatch:
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build index
+        run: node tools/build_feedback_index.mjs feedback/submissions feedback/index.json
+
+      - name: Commit index if changed
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add feedback/index.json
+          git diff --staged --quiet || (git commit -m "chore(feedback): rebuild index" && git push)
