@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "submitted_at": "2026-03-30T19:48:17.158Z",
+  "source": {
+    "app_build": "0.01.01",
+    "client": "stables-minidapp"
+  },
+  "topic_domain": "general_concept",
+  "topic_sub": null,
+  "app_context": {
+    "page_id": null,
+    "section_hint": null,
+    "element_hint": null
+  },
+  "kind": "comment",
+  "title": "test1",
+  "body": "test2",
+  "optional_minima_address": "test3",
+  "public_contact": "test4",
+  "consent_public_ledger": true,
+  "flags": {
+    "low_priority_freeform": false
+  }
+}
