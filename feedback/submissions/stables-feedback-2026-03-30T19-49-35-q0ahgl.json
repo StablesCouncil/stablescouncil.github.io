@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "consent_public_ledger": true,
+  "title": "curl test",
+  "body": "ok",
+  "submitted_at": "2026-03-30T12:00:00.000Z",
+  "source": {
+    "app_build": "curl",
+    "client": "test"
+  },
+  "topic_domain": "general_concept",
+  "topic_sub": {},
+  "app_context": {
+    "page_id": null,
+    "section_hint": null,
+    "element_hint": null
+  },
+  "kind": "comment",
+  "optional_minima_address": null,
+  "public_contact": null,
+  "flags": {}
+}
