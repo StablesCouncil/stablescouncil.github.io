@@ -19,6 +19,17 @@ Optional placeholder files (e.g. `.gitkeep`) may exist so empty folders are visi
 
 So this GitHub folder is the **public mirror** of accepted submissions, not always the very first write location.
 
+## Automated daily sync (server → GitHub)
+
+The Stables web agent only writes to **disk on the server**. To mirror new files into **`feedback/submissions/`** here without manual uploads, run **`tools/sync_feedback_to_github.mjs`** on a schedule (for example **cron** once per day on the same host as `web_agent.js`).
+
+- **Input:** directory where the agent stores JSON (often `feedback_submissions/` next to `web_agent.js`, or `FEEDBACK_SUBMISSIONS_DIR` if set).
+- **Behaviour:** for each local `*.json`, if that path does **not** yet exist on GitHub, it is **created** via the GitHub Contents API. Existing paths are **skipped** (safe to re-run).
+- **Secrets:** requires a **`GITHUB_TOKEN`** (PAT) with **Contents: write** on this repo. Store only on the server, never in git.
+- **After sync:** a push to **`feedback/submissions/**`** triggers the **Build feedback index** workflow, which updates **`feedback/index.json`**.
+
+See the Stables dev tree `task_x_public_feedback_ledger` for the script source and an example cron wrapper.
+
 ## Submission format
 
 Each file is a single JSON object (schema version **1**). Typical fields include:
