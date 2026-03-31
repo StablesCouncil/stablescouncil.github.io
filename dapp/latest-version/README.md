@@ -1,6 +1,6 @@
 # Latest MiniDapp package
 
-This folder contains the current Stables MiniDapp release (`Stables.mds.zip`) for node installs.
+This folder contains the current Stables MiniDapp release (`Stables_v0.01.01.mds.zip` or the version matching `APP_BUILD_VERSION`) for node installs.
 
 ## Version policy
 
