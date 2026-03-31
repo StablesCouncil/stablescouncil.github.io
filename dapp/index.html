@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/png" href="https://stablescouncil.github.io/brand/assets/logo-symbol.png">
+
+    <meta property="og:title" content="Stables | Showcase app — coming soon">
+    <meta property="og:description" content="Money that is truly yours. Secure, Pseudonymous and Unstoppable.">
+    <meta property="og:image" content="https://stablescouncil.github.io/brand/assets/twitter-header.png">
+    <meta property="og:url" content="https://stablescouncil.org/dapp/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Stables">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Stables | Showcase app — coming soon">
+    <meta name="twitter:description" content="Money that is truly yours. Secure, Pseudonymous and Unstoppable.">
+    <meta name="twitter:image" content="https://stablescouncil.github.io/brand/assets/twitter-header.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <title>Stables | Showcase — coming soon</title>
+    <style>
+        :root {
+            --bg: #0b0f14;
+            --panel: #101826;
+            --text-primary: #e6edf3;
+            --text-secondary: #9fb0c0;
+            --accent-cyan: #67e8f9;
+            --accent-purple: #a78bfa;
+            --glow: rgba(103, 232, 249, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at top, rgba(103, 232, 249, 0.18), transparent 55%) var(--bg);
+            color: var(--text-primary);
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.25rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -35%;
+            right: -8%;
+            width: 560px;
+            height: 560px;
+            background: radial-gradient(circle, rgba(103, 232, 249, 0.14) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -35%;
+            left: -8%;
+            width: 480px;
+            height: 480px;
+            background: radial-gradient(circle, rgba(167, 139, 250, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .wrap {
+            max-width: 520px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .logo {
+            width: min(320px, 88vw);
+            height: auto;
+            display: block;
+            margin: 0 auto 1.25rem;
+        }
+
+        .name {
+            font-size: clamp(1.75rem, 5vw, 2.25rem);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .soon {
+            display: inline-block;
+            font-size: 0.8125rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--accent-cyan);
+            margin-bottom: 1.75rem;
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            border: 1px solid rgba(103, 232, 249, 0.35);
+            background: rgba(16, 24, 38, 0.75);
+            box-shadow: 0 0 24px var(--glow);
+        }
+
+        .lead {
+            font-size: clamp(1.05rem, 2.8vw, 1.2rem);
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .mottos {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            align-items: center;
+        }
+
+        .mottos li {
+            font-size: clamp(1rem, 2.5vw, 1.125rem);
+            font-weight: 700;
+            color: var(--text-secondary);
+            letter-spacing: 0.04em;
+        }
+
+        .mottos li span {
+            color: var(--accent-cyan);
+            font-weight: 800;
+        }
+
+        .footer-note {
+            margin-top: 2.25rem;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .footer-note a {
+            color: var(--accent-cyan);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .footer-note a:hover {
+            color: var(--accent-purple);
+        }
+    </style>
+</head>
+<body>
+    <main class="wrap">
+        <img class="logo" src="/brand/assets/logo-wordmark.png" alt="Stables" width="640" height="200">
+        <h1 class="name">Stables</h1>
+        <p class="soon" role="status">Coming soon</p>
+        <p class="lead">Money that is truly yours.</p>
+        <ul class="mottos" aria-label="Core principles">
+            <li><span>Secure</span></li>
+            <li><span>Pseudonymous</span></li>
+            <li><span>Unstoppable</span></li>
+        </ul>
+        <p class="footer-note">
+            Public site: <a href="https://stablescouncil.org/">stablescouncil.org</a>
+            · <a href="https://stablescouncil.github.io/links.html">All links</a>
+        </p>
+    </main>
+</body>
+</html>
