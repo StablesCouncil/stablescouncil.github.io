@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stables - Component Browser</title>
+    <style>
+        :root {
+            --bg: #0b0f14;
+            --panel: #101826;
+            --text: #e6edf3;
+            --muted: #9fb0c0;
+            --line: #223044;
+            --accent: #67e8f9;
+            --good: #34d399;
+            --warn: #fbbf24;
+            --bad: #fb7185;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+            line-height: 1.35;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            background: rgba(11, 15, 20, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--line);
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--line);
+            background: var(--panel);
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--line);
+            background: var(--panel);
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: #0b0f14;
+            border-color: var(--accent);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .component-card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .component-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .component-id {
+            background: var(--accent);
+            color: #0b0f14;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 900;
+            font-family: monospace;
+        }
+
+        .component-name {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .component-category {
+            font-size: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .component-demo {
+            background: rgba(11, 15, 20, 0.4);
+            border: 2px dashed var(--line);
+            border-radius: 8px;
+            padding: 24px;
+            margin: 16px 0;
+        }
+
+        .component-code {
+            background: #000;
+            color: #00ff00;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin-top: 12px;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 6px 12px;
+            background: var(--accent);
+            color: #0b0f14;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .copy-btn:hover {
+            background: #38bdf8;
+        }
+
+        .specs-table {
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        .specs-table td {
+            padding: 6px 12px;
+            border-bottom: 1px solid rgba(34, 48, 68, 0.3);
+        }
+
+        .specs-table td:first-child {
+            color: var(--muted);
+            font-weight: 600;
+            width: 120px;
+        }
+
+        .specs-table td:last-child {
+            font-family: monospace;
+            color: var(--accent);
+        }
+
+        /* Component Styles (copied from main app) */
+        .primary {
+            background: var(--accent);
+            color: #0b0f14;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 900;
+            transition: all 0.2s;
+        }
+
+        .ghost {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid rgba(103, 232, 249, .3);
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 900;
+            transition: all 0.2s;
+        }
+
+        .tag {
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            background: rgba(159, 176, 192, .12);
+            color: var(--muted);
+        }
+
+        .tag.ok {
+            background: rgba(52, 211, 153, .15);
+            color: var(--good);
+        }
+
+        .tag.warn {
+            background: rgba(251, 191, 36, .15);
+            color: var(--warn);
+        }
+
+        .kpi {
+            font-size: 32px;
+            font-weight: 900;
+            line-height: 1.1;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            padding: 10px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(34, 48, 68, .85);
+            background: rgba(11, 15, 20, .20);
+            color: var(--text);
+            font-weight: 900;
+            font-family: inherit;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>📦 Stables Component Browser</h1>
+        <p style="color: var(--muted);">Use component IDs to reference exactly which element you want</p>
+
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="🔍 Search components..." oninput="filterComponents()">
+        </div>
+
+        <div class="filter-buttons" style="margin-top: 12px;">
+            <button class="filter-btn active" onclick="filterByCategory('all')">All</button>
+            <button class="filter-btn" onclick="filterByCategory('button')">Buttons</button>
+            <button class="filter-btn" onclick="filterByCategory('input')">Inputs</button>
+            <button class="filter-btn" onclick="filterByCategory('tag')">Tags</button>
+            <button class="filter-btn" onclick="filterByCategory('card')">Cards</button>
+            <button class="filter-btn" onclick="filterByCategory('layout')">Layouts</button>
+            <button class="filter-btn" onclick="filterByCategory('text')">Typography</button>
+        </div>
+    </div>
+
+    <div class="container" id="componentsList">
+        <!-- BUTTONS -->
+        <div class="component-card" data-category="button" data-search="button primary action send">
+            <div class="component-header">
+                <div>
+                    <div class="component-category">Button</div>
+                    <div class="component-name">Primary Button</div>
+                </div>
+                <div class="component-id">BTN-001</div>
+            </div>
+            <div class="component-demo">
+                <button class="primary" style="padding: 16px; font-size: 16px; font-weight: 900;">Primary
+                    Action</button>
+            </div>
+            <table class="specs-table">
+                <tr>
+                    <td>Padding</td>
+                    <td>16px</td>
+                </tr>
+                <tr>
+                    <td>Font Size</td>
+                    <td>16px</td>
+                </tr>
+                <tr>
+                    <td>Font Weight</td>
+                    <td>900</td>
+                </tr>
+                <tr>
+                    <td>Border Radius</td>
+                    <td>14px</td>
+                </tr>
+            </table>
+            <div class="component-code">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>&lt;button class="primary" style="padding: 16px; font-size: 16px; font-weight: 900;"&gt;
+  Button Text
+&lt;/button&gt;</pre>
+            </div>
+        </div>
+
+        <div class="component-card" data-category="button" data-search="button ghost secondary receive swap">
+            <div class="component-header">
+                <div>
+                    <div class="component-category">Button</div>
+                    <div class="component-name">Ghost Button</div>
+                </div>
+                <div class="component-id">BTN-002</div>
+            </div>
+            <div class="component-demo">
+                <button class="ghost" style="padding: 16px; font-size: 16px; font-weight: 900;">Ghost Action</button>
+            </div>
+            <table class="specs-table">
+                <tr>
+                    <td>Padding</td>
+                    <td>16px</td>
+                </tr>
+                <tr>
+                    <td>Font Size</td>
+                    <td>16px</td>
+                </tr>
+                <tr>
+                    <td>Border</td>
+                    <td>2px solid rgba(103, 232, 249, .3)</td>
+                </tr>
+            </table>
+            <div class="component-code">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>&lt;button class="ghost" style="padding: 16px; font-size: 16px; font-weight: 900;"&gt;
+  Button Text
+&lt;/button&gt;</pre>
+            </div>
+        </div>
+
+        <div class="component-card" data-category="button" data-search="button small inline set default">
+            <div class="component-header">
+                <div>
+                    <div class="component-category">Button</div>
+                    <div class="component-name">Small Inline Button</div>
+                </div>
+                <div class="component-id">BTN-003</div>
+            </div>
+            <div class="component-demo">
+                <button
+                    style="font-size: 9px; padding: 3px 8px; border-radius: 4px; background: transparent; color: var(--muted); border: 1px solid rgba(159, 176, 192, 0.3); cursor: pointer; font-weight: 600;">Set
+                    Default</button>
+            </div>
+            <table class="specs-table">
+                <tr>
+                    <td>Padding</td>
+                    <td>3px 8px</td>
+                </tr>
+                <tr>
+                    <td>Font Size</td>
+                    <td>9px</td>
+                </tr>
+                <tr>
+                    <td>Font Weight</td>
+                    <td>600</td>
+                </tr>
+            </table>
+            <div class="component-code">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>&lt;button style="font-size: 9px; padding: 3px 8px; border-radius: 4px; background: transparent; color: var(--muted); border: 1px solid rgba(159, 176, 192, 0.3); cursor: pointer; font-weight: 600;"&gt;
+  Set Default
+&lt;/button&gt;</pre>
+            </div>
+        </div>
+
+        <!-- INPUTS -->
+        <div class="component-card" data-category="input" data-search="input text field form">
+            <div class="component-header">
+                <div>
+                    <div class="component-category">Input</div>
+                    <div class="component-name">Text Input</div>
+                </div>
+                <div class="component-id">INP-001</div>
+            </div>
+            <div class="component-demo">
+                <label style="display: block; margin-bottom: 6px; color: var(--muted); font-size: 12px;">Label</label>
+                <input type="text" placeholder="Enter text" style="width: 100%; max-width: 400px;">
+            </div>
+            <table class="specs-table">
+                <tr>
+                    <td>Padding</td>
+                    <td>10px 12px</td>
+                </tr>
+                <tr>
+                    <td>Border Radius</td>
+                    <td>14px</td>
+                </tr>
+                <tr>
+                    <td>Font Weight</td>
+                    <td>900</td>
+                </tr>
+            </table>
+            <div class="component-code">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>&lt;input type="text" placeholder="Enter text" /&gt;</pre>
+            </div>
+        </div>
+
+        <div class="component-card" data-category="input" data-search="select dropdown option choice">
+            <div class="component-header">
+                <div>
+                    <div class="component-category">Input</div>
+                    <div class="component-name">Select/Dropdown</div>
+                </div>
+                <div class="component-id">INP-002</div>
+            </div>
+            <div class="component-demo">
+                <select style="width: 100%; max-width: 300px;">
+                    <option>Option 1</option>
+                    <option>Option 2</option>
+                    <option>Option 3</option>
+                </select>
+            </div>
+            <div class="component-code">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>&lt;select&gt;
+  &lt;option&gt;Option 1&lt;/option&gt;
+  &lt;option&gt;Option 2&lt;/option&gt;
+&lt;/select&gt;</pre>
+            </div>
+        </div>
+
+        <div class="component-card" data-category="input" data-search="radio button choice select">
+            <div class="component-header">
+                <div>
+                    <div class="component-category">Input</div>
+                    <div class="component-name">Radio Button</div>
+                </div>
+                <div class="component-id">INP-003</div>
+            </div>
+            <div class="component-demo">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="radio" name="demo" style="flex-shrink: 0;">
+                    <span style="font-weight: 900;">Option Label</span>
+                </label>
+            </div>
+            <table class="specs-table">
+                <tr>
+                    <td>Flex Shrink</td>
+                    <td>0 (prevents compression)</td>
+                </tr>
+            </table>
+            <div class="component-code">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>&lt;input type="radio" name="group" style="flex-shrink: 0;" /&gt;</pre>
+            </div>
+        </div>
+
+        <!-- TAGS -->
+        <div class="component-card" data-category="tag" data-search="tag badge label success ok">
+            <div class="component-header">
+                <div>
+                    <div class="component-category">Tag</div>
+                    <div class="component-name">Success Tag</div>
+                </div>
+                <div class="component-id">TAG-001</div>
+            </div>
+            <div class="component-demo">
+                <span class="tag ok">HOME</span>
+                <span class="tag ok">NEW</span>
+            </div>
+            <table class="specs-table">
+                <tr>
+                    <td>Padding</td>
+                    <td>2px 8px</td>
+                </tr>
+                <tr>
+                    <td>Font Size</td>
+                    <td>10px</td>
+                </tr>
+                <tr>
+                    <td>Font Weight</td>
+                    <td>700</td>
+                </tr>
+            </table>
+            <div class="component-code">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>&lt;span class="tag ok"&gt;HOME&lt;/span&gt;</pre>
+            </div>
+        </div>
+
+        <div class="component-card" data-category="tag" data-search="tag badge label warning">
+            <div class="component-header">
+                <div>
+                    <div class="component-category">Tag</div>
+                    <div class="component-name">Warning Tag</div>
+                </div>
+                <div class="component-id">TAG-002</div>
+            </div>
+            <div class="component-demo">
+                <span class="tag warn">TEST</span>
+            </div>
+            <div class="component-code">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>&lt;span class="tag warn"&gt;TEST&lt;/span&gt;</pre>
+            </div>
+        </div>
+
+        <div class="component-card" data-category="tag" data-search="tag badge inline default">
+            <div class="component-header">
+                <div>
+                    <div class="component-category">Tag</div>
+                    <div class="component-name">Inline Badge (DEFAULT)</div>
+                </div>
+                <div class="component-id">TAG-003</div>
+            </div>
+            <div class="component-demo">
+                <span
+                    style="background: rgba(34, 197, 94, 0.15); color: #22c55e; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">DEFAULT</span>
+            </div>
+            <div class="component-code">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>&lt;span style="background: rgba(34, 197, 94, 0.15); color: #22c55e; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;"&gt;
+  DEFAULT
+&lt;/span&gt;</pre>
+            </div>
+        </div>
+
+        <!-- TYPOGRAPHY -->
+        <div class="component-card" data-category="text" data-search="kpi metric number large">
+            <div class="component-header">
+                <div>
+                    <div class="component-category">Typography</div>
+                    <div class="component-name">KPI Display</div>
+                </div>
+                <div class="component-id">TXT-001</div>
+            </div>
+            <div class="component-demo">
+                <div style="color: var(--muted); font-size: 12px; margin-bottom: 4px;">Coverage Ratio</div>
+                <div class="kpi">3.25×</div>
+            </div>
+            <table class="specs-table">
+                <tr>
+                    <td>Font Size</td>
+                    <td>32px</td>
+                </tr>
+                <tr>
+                    <td>Font Weight</td>
+                    <td>900</td>
+                </tr>
+                <tr>
+                    <td>Line Height</td>
+                    <td>1.1</td>
+                </tr>
+            </table>
+            <div class="component-code">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>&lt;div class="kpi"&gt;1,234.56&lt;/div&gt;</pre>
+            </div>
+        </div>
+
+        <div class="component-card" data-category="text" data-search="header column uppercase label">
+            <div class="component-header">
+                <div>
+                    <div class="component-category">Typography</div>
+                    <div class="component-name">Column Header</div>
+                </div>
+                <div class="component-id">TXT-002</div>
+            </div>
+            <div class="component-demo">
+                <div
+                    style="color:var(--muted); font-size:11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                    PAYMENT CURRENCY
+                </div>
+            </div>
+            <table class="specs-table">
+                <tr>
+                    <td>Font Size</td>
+                    <td>11px</td>
+                </tr>
+                <tr>
+                    <td>Font Weight</td>
+                    <td>600</td>
+                </tr>
+                <tr>
+                    <td>Text Transform</td>
+                    <td>uppercase</td>
+                </tr>
+                <tr>
+                    <td>Letter Spacing</td>
+                    <td>0.5px</td>
+                </tr>
+            </table>
+            <div class="component-code">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>&lt;div style="color:var(--muted); font-size:11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"&gt;
+  Column Header
+&lt;/div&gt;</pre>
+            </div>
+        </div>
+
+        <!-- LAYOUTS -->
+        <div class="component-card" data-category="layout" data-search="button grid group three equal">
+            <div class="component-header">
+                <div>
+                    <div class="component-category">Layout</div>
+                    <div class="component-name">3-Button Grid</div>
+                </div>
+                <div class="component-id">LAY-001</div>
+            </div>
+            <div class="component-demo">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                    <button class="primary" style="padding: 16px; font-size: 16px; font-weight: 900;">Send</button>
+                    <button class="ghost" style="padding: 16px; font-size: 16px; font-weight: 900;">Receive</button>
+                    <button class="ghost" style="padding: 16px; font-size: 16px; font-weight: 900;">Swap</button>
+                </div>
+            </div>
+            <table class="specs-table">
+                <tr>
+                    <td>Grid Columns</td>
+                    <td>1fr 1fr 1fr</td>
+                </tr>
+                <tr>
+                    <td>Gap</td>
+                    <td>12px</td>
+                </tr>
+            </table>
+            <div class="component-code">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>&lt;div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;"&gt;
+  &lt;button class="primary"&gt;...&lt;/button&gt;
+  &lt;button class="ghost"&gt;...&lt;/button&gt;
+  &lt;button class="ghost"&gt;...&lt;/button&gt;
+&lt;/div&gt;</pre>
+            </div>
+        </div>
+
+        <div class="component-card" data-category="layout" data-search="asset row table list selectable">
+            <div class="component-header">
+                <div>
+                    <div class="component-category">Layout</div>
+                    <div class="component-name">Asset Row (3-column)</div>
+                </div>
+                <div class="component-id">LAY-002</div>
+            </div>
+            <div class="component-demo">
+                <div
+                    style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 12px; background: rgba(103,232,249,.08); border-radius: 12px; border: 1px solid rgba(103,232,249,.25); cursor: pointer;">
+                    <div style="width:220px; display:flex; align-items:center; gap:10px;">
+                        <input type="radio" name="assetDemo" style="flex-shrink: 0;">
+                        <span style="font-weight:900; font-size: 14px;">mCAD</span>
+                        <span
+                            style="background: rgba(34, 197, 94, 0.15); color: #22c55e; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">DEFAULT</span>
+                    </div>
+                    <div style="width:110px; text-align:right; font-weight:900; font-size: 14px;">1,500.00</div>
+                    <div style="width:110px; text-align:right; font-weight:900; font-size: 14px;">1,500.00</div>
+                </div>
+            </div>
+            <table class="specs-table">
+                <tr>
+                    <td>Column 1</td>
+                    <td>220px</td>
+                </tr>
+                <tr>
+                    <td>Column 2</td>
+                    <td>110px (right-aligned)</td>
+                </tr>
+                <tr>
+                    <td>Column 3</td>
+                    <td>110px (right-aligned)</td>
+                </tr>
+                <tr>
+                    <td>Padding</td>
+                    <td>12px</td>
+                </tr>
+                <tr>
+                    <td>Gap</td>
+                    <td>12px</td>
+                </tr>
+            </table>
+            <div class="component-code">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>&lt;div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 12px; background: rgba(103,232,249,.08); border-radius: 12px; border: 1px solid rgba(103,232,249,.25);"&gt;
+  &lt;div style="width:220px; display:flex; align-items:center; gap:10px;"&gt;
+    &lt;input type="radio" style="flex-shrink: 0;"&gt;
+    &lt;span style="font-weight:900; font-size: 14px;"&gt;Asset Name&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div style="width:110px; text-align:right; font-weight:900; font-size: 14px;"&gt;Qty&lt;/div&gt;
+  &lt;div style="width:110px; text-align:right; font-weight:900; font-size: 14px;"&gt;Value&lt;/div&gt;
+&lt;/div&gt;</pre>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let activeCategory = 'all';
+
+        function filterByCategory(category) {
+            activeCategory = category;
+
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Filter components
+            const cards = document.querySelectorAll('.component-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        function filterComponents() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.component-card');
+
+            cards.forEach(card => {
+                const searchText = card.dataset.search.toLowerCase();
+                const matchesSearch = search === '' || searchText.includes(search);
+                const matchesCategory = activeCategory === 'all' || card.dataset.category === activeCategory;
+
+                if (matchesSearch && matchesCategory) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const code = codeBlock.textContent;
+
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✓ Copied!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>
+
+

@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stables - Master Page Template Demo</title>
+    <style>
+        :root {
+            --bg: #0b0f14;
+            --text: #f0f4f8;
+            --muted: #9fb0c0;
+            --accent: #67e8f9;
+            --line: rgba(34, 48, 68, .6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 40px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .subtitle {
+            color: var(--muted);
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            position: relative;
+        }
+
+        /* Annotations */
+        .annotation {
+            position: absolute;
+            background: rgba(103, 232, 249, 0.1);
+            border: 2px dashed var(--accent);
+            pointer-events: none;
+        }
+
+        .annotation-label {
+            position: absolute;
+            background: var(--accent);
+            color: #0b0f14;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* Template Styles */
+        .primary {
+            background: var(--accent);
+            color: #0b0f14;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 900;
+            transition: all 0.2s;
+        }
+
+        .primary:hover {
+            background: #38bdf8;
+            transform: translateY(-1px);
+        }
+
+        .ghost {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid rgba(103, 232, 249, .3);
+            border-radius: 14px;
+            cursor: pointer;
+            font-weight: 900;
+            transition: all 0.2s;
+        }
+
+        .ghost:hover {
+            border-color: var(--accent);
+            background: rgba(103, 232, 249, .05);
+        }
+
+        .measurements {
+            margin-top: 50px;
+            padding: 20px;
+            background: rgba(103, 232, 249, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .measurements h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+
+        .measurements ul {
+            list-style: none;
+        }
+
+        .measurements li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(34, 48, 68, .3);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .measurements li:last-child {
+            border-bottom: none;
+        }
+
+        .measurements code {
+            background: rgba(103, 232, 249, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent);
+            font-family: 'Courier New', monospace;
+        }
+
+        .toggle-annotations {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: var(--accent);
+            color: #0b0f14;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .toggle-annotations:hover {
+            background: #38bdf8;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>📐 Stables Master Template</h1>
+    <p class="subtitle">Visual reference for consistent page design across the app</p>
+
+    <button class="toggle-annotations" onclick="toggleAnnotations()">Toggle Measurements</button>
+
+    <div class="demo-container" id="demoContainer">
+        <!-- TEMPLATE DEMONSTRATION -->
+        <div style="display:grid; gap:14px;">
+            <!-- Column Headers -->
+            <div style="display:flex; justify-content:space-between; color:var(--muted); font-size:11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 0;"
+                id="headers">
+                <div style="width:240px; padding-left: 0;">Payment Currency</div>
+                <div style="width:110px; text-align:right">Quantity</div>
+                <div style="width:110px; text-align:right">Value (mCAD)</div>
+            </div>
+
+            <!-- Content Row 1 (Selected) -->
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 12px; background: rgba(103,232,249,.08); border-radius: 12px; border: 1px solid rgba(103,232,249,.25); cursor: pointer;"
+                id="row1">
+                <div style="width:240px; display:flex; align-items:center; gap:10px;">
+                    <input type="radio" name="demo" checked style="flex-shrink: 0;" />
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-weight:900; color:var(--text); font-size: 14px;">mCAD</span>
+                        <span
+                            style="background: rgba(34, 197, 94, 0.15); color: #22c55e; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">DEFAULT</span>
+                    </div>
+                </div>
+                <div style="width:110px; text-align:right; font-weight:900; font-size: 14px;">1,500.00</div>
+                <div style="width:110px; text-align:right; font-weight:900; font-size: 14px;">1,500.00</div>
+            </div>
+
+            <!-- Content Row 2 -->
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 12px; background: rgba(103,232,249,.03); border-radius: 12px; border: 1px solid rgba(103,232,249,.10); cursor: pointer;"
+                id="row2">
+                <div style="width:240px; display:flex; align-items:center; gap:10px;">
+                    <input type="radio" name="demo" style="flex-shrink: 0;" />
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-weight:900; color:var(--text); font-size: 14px;">mUSD</span>
+                        <button
+                            style="font-size: 9px; padding: 3px 8px; border-radius: 4px; background: transparent; color: var(--muted); border: 1px solid rgba(159, 176, 192, 0.3); cursor: pointer; font-weight: 600;">Set
+                            Default</button>
+                    </div>
+                </div>
+                <div style="width:110px; text-align:right; font-weight:900; font-size: 14px;">950.50</div>
+                <div style="width:110px; text-align:right; font-weight:900; font-size: 14px;">946.25</div>
+            </div>
+
+            <!-- Content Row 3 -->
+            <div
+                style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 12px; background: rgba(103,232,249,.03); border-radius: 12px; border: 1px solid rgba(103,232,249,.10); cursor: pointer;">
+                <div style="width:240px; display:flex; align-items:center; gap:10px;">
+                    <input type="radio" name="demo" style="flex-shrink: 0;" />
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-weight:900; color:var(--text); font-size: 14px;">mEUR</span>
+                        <button
+                            style="font-size: 9px; padding: 3px 8px; border-radius: 4px; background: transparent; color: var(--muted); border: 1px solid rgba(159, 176, 192, 0.3); cursor: pointer; font-weight: 600;">Set
+                            Default</button>
+                    </div>
+                </div>
+                <div style="width:110px; text-align:right; font-weight:900; font-size: 14px;">500.00</div>
+                <div style="width:110px; text-align:right; font-weight:900; font-size: 14px;">492.60</div>
+            </div>
+
+            <!-- Total Section -->
+            <div style="margin-top: 10px; padding: 14px 10px; border-radius: 12px; background: rgba(11,15,20,.25);"
+                id="totalSection">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div
+                        style="font-size: 14px; font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;">
+                        Total Balance</div>
+                    <div style="font-size: 18px; font-weight: 900;">2,938.85 <span
+                            style="font-size: 13px; color: var(--muted); font-weight: 700;">mCAD</span></div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 10px;"
+                id="buttonGroup">
+                <button class="primary" style="padding: 16px; font-size: 16px; font-weight: 900;">Send</button>
+                <button class="ghost" style="padding: 16px; font-size: 16px; font-weight: 900;">Receive</button>
+                <button class="ghost" style="padding: 16px; font-size: 16px; font-weight: 900;">Swap</button>
+            </div>
+        </div>
+
+        <!-- Annotations (hidden by default) -->
+        <div id="annotations" class="hidden">
+            <!-- Gap annotation -->
+            <div class="annotation" style="top: 50px; left: -20px; width: 10px; height: 14px;"></div>
+            <div class="annotation-label" style="top: 52px; left: -80px;">gap: 14px</div>
+
+            <!-- Column width annotations -->
+            <div class="annotation" style="top: 35px; left: 30px; width: 220px; height: 2px;"></div>
+            <div class="annotation-label" style="top: 10px; left: 100px;">220px</div>
+
+            <div class="annotation" style="top: 35px; left: 270px; width: 110px; height: 2px;"></div>
+            <div class="annotation-label" style="top: 10px; left: 290px;">110px</div>
+
+            <div class="annotation" style="top: 35px; left: 400px; width: 110px; height: 2px;"></div>
+            <div class="annotation-label" style="top: 10px; left: 420px;">110px</div>
+
+            <!-- Padding annotation -->
+            <div class="annotation" style="top: 70px; left: 30px; width: 12px; height: 12px;"></div>
+            <div class="annotation-label" style="top: 85px; left: -85px;">padding: 12px</div>
+
+            <!-- Button gap -->
+            <div class="annotation" style="bottom: 30px; left: 220px; width: 12px; height: 50px;"></div>
+            <div class="annotation-label" style="bottom: 35px; left: 240px;">gap: 12px</div>
+
+            <!-- Button padding -->
+            <div class="annotation" style="bottom: 42px; left: 42px; width: 16px; height: 16px;"></div>
+            <div class="annotation-label" style="bottom: 10px; left: -70px;">padding: 16px</div>
+        </div>
+    </div>
+
+    <!-- Measurements Reference -->
+    <div class="measurements">
+        <h2>📏 Key Measurements</h2>
+        <ul>
+            <li><span>Main container gap</span> <code>14px</code></li>
+            <li><span>Button group gap</span> <code>12px</code></li>
+            <li><span>Content row padding</span> <code>12px</code></li>
+            <li><span>Button padding</span> <code>16px</code></li>
+            <li><span>Column 1 width</span> <code>240px</code></li>
+            <li><span>Column 2 & 3 width</span> <code>110px each</code></li>
+            <li><span>Header font size</span> <code>11px</code></li>
+            <li><span>Content font size</span> <code>14px</code></li>
+            <li><span>Button font size</span> <code>16px</code></li>
+            <li><span>Total font size</span> <code>18px</code></li>
+        </ul>
+    </div>
+
+    <div class="measurements" style="margin-top: 20px;">
+        <h2>🎨 Color System</h2>
+        <ul>
+            <li><span>Selected row background</span> <code>rgba(103,232,249,.08)</code></li>
+            <li><span>Selected row border</span> <code>rgba(103,232,249,.25)</code></li>
+            <li><span>Default row background</span> <code>rgba(103,232,249,.03)</code></li>
+            <li><span>Default row border</span> <code>rgba(103,232,249,.10)</code></li>
+            <li><span>Total section background</span> <code>rgba(11,15,20,.25)</code></li>
+        </ul>
+    </div>
+
+    <script>
+        function toggleAnnotations() {
+            const annotations = document.getElementById('annotations');
+            annotations.classList.toggle('hidden');
+        }
+    </script>
+</body>
+
+</html>
+
+

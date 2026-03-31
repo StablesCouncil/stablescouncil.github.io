@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stables - Complete Master Template</title>
+    <style>
+        /* Copy EXACT CSS from index.html */
+        :root {
+            --bg: #0b0f14;
+            --text: #f0f4f8;
+            --muted: #9fb0c0;
+            --accent: #67e8f9;
+            --cyan: #67e8f9;
+            --warn: #fbbf24;
+            --radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            font-feature-settings: 'kern' 1;
+            font-kerning: normal;
+        }
+
+        /* TOP BAR */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(11, 15, 20, .72);
+            backdrop-filter: blur(10px);
+        }
+
+        .topbar-inner {
+            padding: 14px 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            letter-spacing: .2px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 1px solid rgba(34, 48, 68, .85);
+            background: rgba(16, 24, 38, .65);
+            border-radius: 999px;
+            font-size: 13px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .pill .badge {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--warn);
+        }
+
+        .mini-pill {
+            border: 1px solid rgba(34, 48, 68, .85);
+            background: rgba(16, 24, 38, .55);
+            border-radius: 999px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: var(--muted);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            height: 36px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        .mini-pill strong {
+            color: var(--text);
+            font-weight: 800;
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        /* SHELL - CENTERED LAYOUT */
+        .shell {
+            max-width: 1180px;
+            /* 240px sidebar + 40px gap + 900px content */
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            top: 78px;
+            left: calc(50% - 590px);
+            /* Center with shell */
+            width: 240px;
+            max-height: calc(100vh - 78px);
+            overflow-y: auto;
+            border: 1px solid rgba(103, 232, 249, .15);
+            background: rgba(16, 24, 38, .75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, .3);
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            padding: 8px;
+            gap: 4px;
+        }
+
+        .nav a {
+            padding: 10px 10px;
+            border-radius: 14px;
+            color: var(--muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid transparent;
+            text-decoration: none;
+        }
+
+        .nav a:hover {
+            background: rgba(103, 232, 249, .08);
+            color: var(--text);
+        }
+
+        .nav a.active {
+            background: rgba(103, 232, 249, .12);
+            border-color: rgba(103, 232, 249, .25);
+            color: var(--text);
+        }
+
+        /* MAIN CONTENT */
+        main {
+            max-width: 900px;
+            min-height: 600px;
+            margin-left: 256px;
+            /* 240px sidebar + 16px gap */
+            padding: 16px;
+        }
+
+        /* BUTTONS */
+        button {
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: .15px;
+            border: 1px solid rgba(34, 48, 68, .85);
+            background: rgba(24, 34, 52, .65);
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: rgba(31, 42, 59, .95);
+        }
+
+        button.primary {
+            border-color: rgba(103, 232, 249, .45);
+            background: rgba(103, 232, 249, .12);
+        }
+
+        button.primary:hover {
+            background: rgba(103, 232, 249, .18);
+        }
+
+        button.ghost {
+            background: rgba(24, 34, 52, .45);
+        }
+
+        /* INPUTS */
+        input[type="text"],
+        input[type="number"],
+        select {
+            padding: 10px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(34, 48, 68, .85);
+            background: rgba(11, 15, 20, .55);
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 700;
+            width: 100%;
+        }
+
+        input::placeholder {
+            color: var(--muted);
+            opacity: 0.5;
+        }
+
+        /* CARDS/BOXES */
+        .card {
+            border: 1px solid rgba(34, 48, 68, .85);
+            background: rgba(11, 15, 20, .28);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        /* MODAL/BACKDROP */
+        .backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            padding-left: 148px;
+            z-index: 50;
+        }
+
+        .modal {
+            width: min(760px, 100%);
+            border: 1px solid rgba(34, 48, 68, .85);
+            background: rgba(11, 15, 20, .95);
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            padding: 24px;
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .hr {
+            height: 1px;
+            background: rgba(34, 48, 68, .6);
+            margin: 14px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div class="topbar-inner">
+            <a href="#" class="brand">
+                <span style="font-size: 18px;">💎</span>
+                <span>Stables</span>
+            </a>
+
+            <div class="pill">
+                <span class="badge"></span>
+                <span>Prototype - no real functionality yet</span>
+            </div>
+
+            <div class="right">
+                <div class="mini-pill"><span style="font-weight: 600;">MINIMA</span><strong
+                        style="color: var(--cyan);">$0.00950</strong></div>
+                <div class="mini-pill"><span style="font-weight: 600;">Wallet</span><strong
+                        style="font-family: monospace; font-size: 12px; font-weight: 700;">Mx688...</strong></div>
+                <div class="mini-pill"><span style="font-weight: 600;">Block</span><strong
+                        style="font-size: 15px; font-weight: 900;">1,874,589</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SHELL (CENTERED CONTAINER) -->
+    <div class="shell">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="nav">
+                <a href="#" class="active">
+                    <span>💳 Wallet</span>
+                    <span style="font-size: 10px; opacity: 0.5;">HOME</span>
+                </a>
+                <a href="#">
+                    <span>📊 Investment</span>
+                    <span style="font-size: 10px; opacity: 0.5;">NEW</span>
+                </a>
+                <a href="#">
+                    <span>🔄 Swap</span>
+                    <span style="font-size: 10px; opacity: 0.5;">TRADE</span>
+                </a>
+                <a href="#">
+                    <span>🏭 Factory</span>
+                    <span style="font-size: 10px; opacity: 0.5;">MINT</span>
+                </a>
+                <a href="#">
+                    <span>💬 Chat</span>
+                    <span style="font-size: 10px; opacity: 0.5;">NEW</span>
+                </a>
+                <a href="#">
+                    <span>👥 Contacts</span>
+                    <span style="font-size: 10px; opacity: 0.5;">NEW</span>
+                </a>
+                <a href="#">
+                    <span>🚰 Faucet</span>
+                    <span style="font-size: 10px; opacity: 0.5;">TEST</span>
+                </a>
+                <a href="#">
+                    <span>📜 Protocol</span>
+                    <span style="font-size: 10px; opacity: 0.5;">INFO</span>
+                </a>
+                <a href="#">
+                    <span>🏛️ Council</span>
+                    <span style="font-size: 10px; opacity: 0.5;">GOV</span>
+                </a>
+                <a href="#">
+                    <span>📝 Feedback</span>
+                    <span style="font-size: 10px; opacity: 0.5;">HELP</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT (900px max-width) -->
+        <main>
+            <h2 style="margin: 0 0 8px 0; font-size: 18px;">Complete Template - All UI Elements</h2>
+            <p class="muted" style="margin: 0 0 20px 0;">This shows all dimensions and components</p>
+
+            <div style="display:grid; gap:14px;">
+
+                <!-- COLUMN HEADERS (240px + 110px + 110px) -->
+                <div
+                    style="display:flex; justify-content:space-between; color:var(--muted); font-size:11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 0;">
+                    <div style="width:240px;">Payment Currency</div>
+                    <div style="width:110px; text-align:right">Quantity</div>
+                    <div style="width:110px; text-align:right">Value (mCAD)</div>
+                </div>
+
+                <!-- CONTENT ROW (Selected) -->
+                <div
+                    style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 12px; background: rgba(103,232,249,.08); border-radius: 12px; border: 1px solid rgba(103,232,249,.25); cursor: pointer;">
+                    <div style="width:240px; display:flex; align-items:center; gap:10px;">
+                        <input type="radio" name="demo" checked style="flex-shrink: 0;" />
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-weight:900; color:var(--text); font-size: 14px;">mCAD</span>
+                            <span
+                                style="background: rgba(34, 197, 94, 0.15); color: #22c55e; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">DEFAULT</span>
+                        </div>
+                    </div>
+                    <div style="width:110px; text-align:right; font-weight:900; font-size: 14px;">1,500.00</div>
+                    <div style="width:110px; text-align:right; font-weight:900; font-size: 14px;">1,500.00</div>
+                </div>
+
+                <!-- CONTENT ROW (Default) -->
+                <div
+                    style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 12px; background: rgba(103,232,249,.03); border-radius: 12px; border: 1px solid rgba(103,232,249,.10); cursor: pointer;">
+                    <div style="width:240px; display:flex; align-items:center; gap:10px;">
+                        <input type="radio" name="demo" style="flex-shrink: 0;" />
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-weight:900; color:var(--text); font-size: 14px;">mUSD</span>
+                            <button
+                                style="font-size: 9px; padding: 3px 8px; border-radius: 4px; background: transparent; color: var(--muted); border: 1px solid rgba(159, 176, 192, 0.3); cursor: pointer; font-weight: 600;">Set
+                                Default</button>
+                        </div>
+                    </div>
+                    <div style="width:110px; text-align:right; font-weight:900; font-size: 14px;">950.50</div>
+                    <div style="width:110px; text-align:right; font-weight:900; font-size: 14px;">946.25</div>
+                </div>
+
+                <div class="hr"></div>
+
+                <!-- TOTAL SECTION -->
+                <div style="margin-top: 10px; padding: 14px 10px; border-radius: 12px; background: rgba(11,15,20,.25);">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div
+                            style="font-size: 14px; font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;">
+                            Total Balance</div>
+                        <div style="font-size: 18px; font-weight: 900;">2,938.85 <span
+                                style="font-size: 13px; color: var(--muted); font-weight: 700;">mCAD</span></div>
+                    </div>
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 10px;">
+                    <button class="primary" style="padding: 16px; font-size: 16px; font-weight: 900;">Send</button>
+                    <button class="ghost" style="padding: 16px; font-size: 16px; font-weight: 900;">Receive</button>
+                    <button class="ghost" style="padding: 16px; font-size: 16px; font-weight: 900;">Swap</button>
+                </div>
+
+                <div class="hr"></div>
+
+                <!-- CARD/BOX EXAMPLES -->
+                <div class="card">
+                    <h3 style="margin: 0 0 8px; font-size: 14px;">Example Card / Box</h3>
+                    <p class="muted">This is a standard card with 16px padding</p>
+                </div>
+
+                <!-- INPUT EXAMPLES -->
+                <div class="card">
+                    <h3 style="margin: 0 0 12px; font-size: 14px;">Input Elements</h3>
+                    <div style="display: grid; gap: 12px;">
+                        <div>
+                            <label class="muted" style="display: block; margin-bottom: 6px;">Text Input</label>
+                            <input type="text" placeholder="Enter amount...">
+                        </div>
+                        <div>
+                            <label class="muted" style="display: block; margin-bottom: 6px;">Dropdown</label>
+                            <select>
+                                <option>mCAD</option>
+                                <option>mUSD</option>
+                                <option>mEUR</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BUTTON VARIATIONS -->
+                <div class="card">
+                    <h3 style="margin: 0 0 12px; font-size: 14px;">Button Types</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <button class="primary">Primary Button</button>
+                        <button class="ghost">Ghost Button</button>
+                        <button>Default Button</button>
+                        <button disabled>Disabled Button</button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- EXAMPLE MODAL (Hidden by default - click to show) -->
+    <div class="backdrop" style="display: none;" id="exampleModal">
+        <div class="modal">
+            <h2 style="margin: 0 0 8px; font-size: 18px;">Example Modal</h2>
+            <p class="muted" style="margin: 0 0 20px;">This shows centered modal positioning</p>
+            <div style="display: grid; gap: 12px;">
+                <input type="text" placeholder="Enter address...">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <button class="ghost"
+                        onclick="document.getElementById('exampleModal').style.display='none'">Cancel</button>
+                    <button class="primary">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Show modal on page load for demonstration
+        setTimeout(() => {
+            // Uncomment to show modal on load:
+            // document.getElementById('exampleModal').style.display = 'flex';
+        }, 1000);
+    </script>
+</body>
+
+</html>
+
+
+
