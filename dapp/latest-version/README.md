@@ -8,4 +8,7 @@ This folder contains the current Stables MiniDapp release (`Stables_v0.01.01.mds
 - `dapp/previous-versions/` stores all historical builds and is never pruned.
 - When a new version is published, move the outgoing `latest-version` package into `previous-versions` and then publish the new `latest-version`.
 
-Current status: package publication in progress.
+Current published build: **v0.01.01** — `Stables_v0.01.01.mds.zip` in this folder.
+
+Direct download (raw):  
+`https://github.com/StablesCouncil/stablescouncil.github.io/raw/main/dapp/latest-version/Stables_v0.01.01.mds.zip`
