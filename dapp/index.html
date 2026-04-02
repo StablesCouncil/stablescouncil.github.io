@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stables - Be Your Own Bank</title>
+    <title>Stables — By Stables on Minima</title>
     <!-- Official Favicon -->
     <link rel="icon" type="image/png" href="stables_icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -118,7 +118,67 @@
             align-items: center;
             gap: 9px;
             cursor: pointer;
-            user-select: none
+            user-select: none;
+            position: relative
+        }
+
+        .brand-hover-tip {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            max-width: min(300px, 88vw);
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: rgba(16, 24, 38, 0.98);
+            border: 1px solid rgba(103, 232, 249, 0.35);
+            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-4px);
+            transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+            z-index: 850;
+            pointer-events: none;
+        }
+
+        @media (hover: hover) {
+            .brand:hover .brand-hover-tip,
+            .brand:focus-visible .brand-hover-tip {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+        }
+
+        @media (hover: none) {
+            .brand:hover .brand-hover-tip,
+            .brand:focus-visible .brand-hover-tip {
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-4px);
+            }
+
+            .brand.brand--tip-open .brand-hover-tip {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            #topbarBrandSub {
+                text-decoration: underline dotted rgba(103, 232, 249, 0.4);
+                text-underline-offset: 3px;
+            }
+        }
+
+        .brand-hover-tip__text {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            line-height: 1.4;
+            background: linear-gradient(90deg, var(--c), var(--pu));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .brand img {
@@ -823,6 +883,177 @@
             justify-content: space-between
         }
 
+        /* On/Off Ramp — At a glance diagram (tap step to scroll to detail row) */
+        .ramp-diagram-step {
+            flex: 1;
+            min-width: 0;
+            max-width: 56px;
+            padding: 6px 2px 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(103, 232, 249, 0.28);
+            background: rgba(11, 15, 20, 0.5);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--c);
+            box-shadow: 0 0 0 1px rgba(103, 232, 249, 0.06);
+        }
+
+        .ramp-diagram-step:active {
+            opacity: 0.88;
+        }
+
+        .ramp-diagram-step:focus-visible {
+            outline: 2px solid var(--c);
+            outline-offset: 2px;
+        }
+
+        .ramp-diagram-step .ramp-diagram-ic {
+            font-size: 17px;
+            line-height: 1;
+        }
+
+        .ramp-diagram-step--opt {
+            border-style: dashed;
+            border-color: rgba(167, 139, 250, 0.55);
+            color: var(--pu);
+        }
+
+        /* On/Off Ramp — circular diagram (single fiat / Stables; top = on-ramp, bottom = off-ramp) */
+        .ramp-circle-stage {
+            position: relative;
+            width: 100%;
+            max-width: 340px;
+            margin: 0 auto 8px;
+            aspect-ratio: 340 / 320;
+        }
+
+        .ramp-circle-stage > svg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .ramp-circle-hit {
+            position: absolute;
+            z-index: 3;
+            overflow: visible;
+            width: 13%;
+            max-width: 48px;
+            aspect-ratio: 1;
+            margin-left: -6.5%;
+            margin-top: -6.5%;
+            padding: 0;
+            border-radius: 50%;
+            border: 1px solid rgba(103, 232, 249, 0.3);
+            background: rgba(11, 15, 20, 0.88);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1px;
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--c);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+        }
+
+        .ramp-circle-hit:active {
+            opacity: 0.9;
+        }
+
+        .ramp-circle-hit:focus-visible {
+            outline: 2px solid var(--c);
+            outline-offset: 2px;
+            z-index: 2;
+        }
+
+        #ramp-on-step-6:focus-visible,
+        #ramp-off-step-1:focus-visible {
+            outline: 2px solid var(--c);
+            outline-offset: 2px;
+        }
+
+        .ramp-circle-hit .ramp-diagram-ic {
+            font-size: 19px;
+            line-height: 1;
+            margin-top: 3px;
+        }
+
+        .ramp-circle-hit__ref {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            z-index: 1;
+            font-size: 8px;
+            font-weight: 900;
+            line-height: 1;
+            min-width: 14px;
+            padding: 2px 4px;
+            border-radius: 6px;
+            background: rgba(11, 15, 20, 0.92);
+            border: 1px solid rgba(103, 232, 249, 0.4);
+            color: var(--c);
+            pointer-events: none;
+        }
+
+        .ramp-circle-hit--off .ramp-circle-hit__ref {
+            border-color: rgba(167, 139, 250, 0.45);
+            color: var(--pu);
+        }
+
+        .ramp-circle-hit--opt {
+            border-style: dashed;
+            border-color: rgba(167, 139, 250, 0.6);
+            color: var(--pu);
+        }
+
+        .ramp-circle-hit--off {
+            border-color: rgba(167, 139, 250, 0.35);
+            color: var(--pu);
+        }
+
+        .ramp-circle-cap {
+            position: absolute;
+            z-index: 2;
+            width: 17.6%;
+            max-width: 60px;
+            aspect-ratio: 1;
+            margin-left: -8.8%;
+            margin-top: -8.8%;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(11, 15, 20, 0.75);
+            pointer-events: auto;
+            box-shadow: 0 0 14px rgba(103, 232, 249, 0.12);
+        }
+
+        .ramp-circle-cap--fiat {
+            border: 2px solid rgba(103, 232, 249, 0.45);
+            font-size: clamp(18px, 5vw, 26px);
+        }
+
+        .ramp-circle-cap--stables {
+            border: 2px solid rgba(167, 139, 250, 0.5);
+            line-height: 1.1;
+            padding: 4px 6px;
+            font-size: clamp(9px, 2.6vw, 11px);
+            font-weight: 800;
+            color: var(--t);
+            text-align: center;
+        }
+
         .bal-hidden {
             filter: blur(8px);
             opacity: 0.8 !important;
@@ -987,6 +1218,16 @@
         .fsel option {
             background: rgba(11, 15, 20, .95);
             color: var(--t);
+        }
+
+        /* Send / Receive: currency + balance in each option (tabular numbers read cleanly). */
+        .fsel.fsel--wallet-ccy {
+            min-width: 168px;
+            max-width: min(240px, 52vw);
+            font-size: 13px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.01em;
         }
 
         .flabel {
@@ -3484,16 +3725,21 @@
     <!-- TOP BAR -->
     <div class="topbar">
         <!-- Column 1: Brand (Left) -->
-        <div class="brand" onclick="navigate('wallet')" title="Home">
-            <img src="stables_icon.png" alt="Stables" style="width:34px;height:34px;flex-shrink:0">
-            <div style="display:flex;flex-direction:column;justify-content:center">
-                <span class="brand-name">Stables</span>
-                <span class="brand-sub">Be Your Own Bank</span>
+        <div class="brand" onclick="handleTopbarBrandClick(event)" role="link" tabindex="0"
+            aria-label="Wallet home. On touch screens, tap the cyan tagline to show or hide the Stables on Minima message. My bank made possible by Stables on Minima."
+            onkeydown="onTopbarBrandKeydown(event)">
+            <img id="topbarBrandImg" src="stables_icon.png" alt="Stables" style="width:34px;height:34px;flex-shrink:0">
+            <div style="display:flex;flex-direction:column;justify-content:center;min-width:0">
+                <span id="topbarBrandName" class="brand-name">Stables</span>
+                <span id="topbarBrandSub" class="brand-sub">By Stables on Minima</span>
+            </div>
+            <div id="topbarBrandTooltip" class="brand-hover-tip" role="tooltip">
+                <span class="brand-hover-tip__text">My bank made possible by Stables on Minima</span>
             </div>
         </div>
     <!-- Column 2: Test Pill (Center) -->
-    <div class="test-pill" style="justify-self: center;cursor:default">
-        Showcase · v00.00.01
+    <div id="topbarShowcasePill" class="test-pill" style="justify-self: center;cursor:default">
+        Showcase · v00.00.02
     </div>
     <!-- Column 3: Sync Pill (Right) -->
     <div class="sync-pill sync-pill--placeholder" title="Block height from your node (MDS)." style="justify-self: end;">
@@ -3833,10 +4079,11 @@
             </header>
 
             <!-- INVEST TABS -->
-            <div class="tab-row" style="margin-top:20px;margin-bottom:24px">
+            <div class="tab-row" style="margin-top:20px;margin-bottom:24px;flex-wrap:wrap">
                 <button class="tab-btn active" id="iTabMI" onclick="setInvestTab('mi')">My investment</button>
                 <button class="tab-btn" id="iTabCF" onclick="setInvestTab('cf')">Coverage fund</button>
                 <button class="tab-btn" id="iTabLP" onclick="setInvestTab('lp')">Liquidity funds</button>
+                <button class="tab-btn" id="iTabMX" onclick="setInvestTab('mx')">Maximize</button>
             </div>
 
             <!-- MY INVESTMENT: summary + balances (moved from Coverage fund) -->
@@ -3881,6 +4128,29 @@
                         </div>
                     </div>
                 </div>
+                </div>
+            </div>
+
+            <!-- STAKE MINIMA: Maximize (official Minima MiniDapp) -->
+            <div id="panelMX" style="display:none">
+                <div class="app-section app-section--caption-bottom">
+                    <div class="stitle-row">
+                        <div class="pool-section-title">Stake MINIMA</div>
+                        <button type="button" class="agent-mini-btn" onclick="openAgentExplain('Maximize MiniDapp: stake MINIMA on your Minima node')" title="StablesAgent">
+                            <img src="agent.png" alt="StablesAgent">
+                        </button>
+                    </div>
+                    <div class="cp-card app-section-card">
+                        <div style="background:rgba(16,24,38,.5);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:14px">
+                            <div class="xs mu" style="font-weight:800;margin-bottom:8px;color:var(--t)">Maximize</div>
+                            <p class="xs mu" style="margin:0 0 14px;line-height:1.5;color:var(--m)">Official Minima MiniDapp to <strong style="color:var(--t)">stake MINIMA</strong> from your node. Open <strong style="color:var(--t)">Maximize</strong> in the MiniDapp list on your Minima app (write mode if prompted), pick a lock period, and confirm on-chain. This Showcase screen only links out; staking happens in Minima.</p>
+                            <div style="display:flex;flex-direction:column;gap:10px">
+                                <a class="btn btn-primary" href="https://minima.global/ecosystem/minidapps" target="_blank" rel="noopener noreferrer" style="width:100%;max-width:100%;text-align:center;text-decoration:none;box-sizing:border-box">MiniDapps hub (Minima)</a>
+                                <a class="btn btn-secondary" href="https://docs.minima.global/docs/development/basic-minidapp" target="_blank" rel="noopener noreferrer" style="width:100%;max-width:100%;text-align:center;text-decoration:none;box-sizing:border-box">MiniDapp docs</a>
+                            </div>
+                            <p class="xs mu" style="margin:14px 0 0;line-height:1.45;color:var(--m)">If Maximize is not installed, add it from your node&apos;s MiniDapp store or the hub above. Rewards and terms are set by the Minima Maximize MiniDapp, not Stables.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -3963,12 +4233,17 @@
                         <div class="xs mu" style="font-weight:800;margin-bottom:6px">Deposit or withdraw</div>
                         <p class="xs mu" style="margin:0 0 10px;line-height:1.45;color:var(--m)">See <strong style="color:var(--t)">My investment</strong> for available balances.</p>
                         <div style="margin-bottom:8px">
-                            <select class="fsel" id="cfAssetCcy" style="margin-top:0" aria-label="Asset for deposit or withdraw"></select>
+                            <select class="fsel" id="cfAssetCcy" style="margin-top:0" aria-label="Asset for deposit or withdraw" onchange="updateCfDepositAvailLabel()"></select>
+                        </div>
+                        <div class="xs mu" id="cfDepositAvail" style="margin-bottom:6px;color:var(--m)">Available: —</div>
+                        <div class="fbet" style="gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
+                            <input class="finput" id="cfAmount" type="number" min="0" step="0.01" placeholder="Amount" style="min-width:0;flex:1">
+                            <button type="button" class="btn btn-g" style="height:42px;min-width:72px;padding:0 12px;font-size:11px;font-weight:800"
+                                onclick="setCfAmountMax()">MAX</button>
                         </div>
                         <div class="fbet" style="gap:8px">
-                            <input class="finput" id="cfAmount" type="number" min="0" step="0.01" placeholder="Amount">
-                            <button class="btn btn-g" style="height:42px;min-width:116px" onclick="depositCoverageFund()">Deposit</button>
-                            <button class="btn" style="height:42px;min-width:116px" onclick="withdrawCoverageFund()">Withdraw</button>
+                            <button class="btn btn-g" style="height:42px;min-width:116px;flex:1" onclick="depositCoverageFund()">Deposit</button>
+                            <button class="btn" style="height:42px;min-width:116px;flex:1" onclick="withdrawCoverageFund()">Withdraw</button>
                         </div>
                     </div>
                 </div>
@@ -4136,7 +4411,7 @@
                                 </div>
                                 <div class="calc-row" style="margin-bottom:0">
                                     <span class="mu">Current leverage</span>
-                                    <span style="font-weight:800;color:var(--pu)">x4.2</span>
+                                    <span id="xwmCurrentLeverageDisplay" style="font-weight:800;color:var(--pu)">x4.3</span>
                                 </div>
                             </div>
                             <div class="xs mu" style="margin-top:10px;line-height:1.45;color:var(--m)">
@@ -4150,6 +4425,20 @@
                             style="background:linear-gradient(135deg,rgba(167,139,250,.25),rgba(103,232,249,.15));border-color:rgba(167,139,250,.4);width:100%"
                             onclick="executeMintXwm()">Mint xWiniwa</button>
 
+                        <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(103,232,249,.12)">
+                            <div id="xwmLeverageChartHost" style="position:relative;width:100%;min-height:268px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.08);overflow:hidden;touch-action:none">
+                                <svg id="xwmLeverageChartSvg" viewBox="0 0 520 232" preserveAspectRatio="xMidYMid meet" style="width:100%;height:268px;display:block" aria-hidden="true"></svg>
+                                <div id="xwmLeverageChartCross" style="display:none;position:absolute;width:1px;margin-left:-1px;background:rgba(103,232,249,0.4);pointer-events:none;z-index:2;box-shadow:0 0 6px rgba(103,232,249,0.25)"></div>
+                                <div id="xwmLeverageChartTip" style="display:none;position:absolute;z-index:4;pointer-events:none;min-width:150px;max-width:min(240px,92vw);padding:9px 11px;border-radius:12px;background:rgba(16,24,38,0.97);border:1px solid rgba(103,232,249,0.22);font-size:11px;line-height:1.45;color:var(--t);box-shadow:0 10px 28px rgba(0,0,0,0.45)"></div>
+                                <div id="xwmLeverageChartHitLayer" style="display:none;position:absolute;left:0;top:0;width:100%;height:100%;cursor:crosshair;z-index:3;background:transparent"></div>
+                                <div id="xwmLeverageChartStatus" class="xs mu" style="position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;color:var(--m);pointer-events:none;line-height:1.4;z-index:5">Loading…</div>
+                            </div>
+                            <div class="fbet xs mu" style="margin-top:8px;flex-wrap:wrap;gap:10px 14px;line-height:1.35;color:var(--m)">
+                                <span><span style="display:inline-block;width:14px;height:3px;background:rgba(103,232,249,.95);margin-right:6px;vertical-align:middle;border-radius:1px"></span> Winiwa · USD</span>
+                                <span><span style="display:inline-block;width:14px;height:3px;background:rgba(167,139,250,.95);margin-right:6px;vertical-align:middle;border-radius:1px"></span> xWiniwa · USD</span>
+                                <span><span style="display:inline-block;width:14px;height:3px;background:rgba(52,211,153,.95);margin-right:6px;vertical-align:middle;border-radius:1px"></span> Leverage</span>
+                            </div>
+                        </div>
 
                         <!-- BURN xWINIWA - Reclaim Winiwa -->
                         <div style="margin-top:32px">
@@ -4197,7 +4486,7 @@
                 </div>
                 <div class="card app-section-card">
                     <div class="cb">
-                        <div style="font-size:16px;font-weight:900;margin-bottom:14px">&#x26CF;&#xFE0F; Mint Wables</div>
+                        <div id="mintWablesMintBlock" style="font-size:16px;font-weight:900;margin-bottom:14px;scroll-margin-top:16px">&#x26CF;&#xFE0F; Mint Wables</div>
                         <div style="margin-bottom:14px">
                             <div class="fbet xs mu" style="margin-bottom:5px">
                                 <div>Amount to issue</div>
@@ -4250,7 +4539,7 @@
                         <button type="button" class="btn btn-w btn-lg" id="issueMintWablesBtn"
                             onclick="executeMintWables()">Mint USDw</button>
                         <!-- Burn Wables reclaim -->
-                        <div style="margin-top:32px">
+                        <div id="mintWablesBurnBlock" style="margin-top:32px;scroll-margin-top:16px">
                             <div style="font-size:16px;font-weight:900;margin-bottom:14px">&#x1F525; Burn Wables
                             </div>
                             <div style="padding:0;background:transparent;border:none;border-radius:0">
@@ -4259,10 +4548,13 @@
                                         <div class="mu">Available Wables</div>
                                         <div id="availWablesBurn">&mdash;</div>
                                     </div>
-                                    <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+                                    <div class="xs mu" id="reclaimSelAvail" style="margin-bottom:6px;color:var(--m)">Available: —</div>
+                                    <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center">
                                         <input class="finput" type="text" id="reclaimAmt" placeholder="0.00"
                                             oninput="calcReclaim()" inputmode="decimal" autocomplete="off" style="min-width:0">
-                                        <select class="ex-sel" style="width:74px" id="reclaimCcy" onchange="calcReclaim()">
+                                        <button type="button" class="btn btn-g" style="width:auto;padding:10px 12px;font-size:12px"
+                                            onclick="setReclaimMax()">MAX</button>
+                                        <select class="ex-sel" style="width:74px" id="reclaimCcy" onchange="calcReclaim();updateReclaimSelectedAvail()">
                                             <option>USDw</option>
                                             <option>EURw</option>
                                             <option>GBPw</option>
@@ -4320,10 +4612,15 @@
                     style="margin-bottom:7px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">
                     Send
                 </div>
-                <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+                <div class="fbet xs mu" style="margin-bottom:6px;align-items:center">
+                    <span id="exSendAvailLine" style="color:var(--m)">Available: —</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center">
                     <input class="ex-input" type="number" id="exFrom" value="" placeholder="0" oninput="calcRate()"
                         inputmode="decimal" style="min-width:0">
-                    <select class="ex-sel" id="exFromCcy" onchange="calcRate()" style="width:90px">
+                    <button type="button" class="btn btn-g" style="width:auto;padding:8px 12px;font-size:11px;font-weight:800"
+                        onclick="setExchangeSendMax()">MAX</button>
+                    <select class="ex-sel" id="exFromCcy" onchange="calcRate();updateExchangeAvailDisplay()" style="width:90px">
                         <option>USDw</option>
                         <option>EURw</option>
                         <option>GBPw</option>
@@ -4345,10 +4642,13 @@
                     style="margin-bottom:7px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">
                     Receive
                 </div>
+                <div class="fbet xs mu" style="margin-bottom:6px;align-items:center">
+                    <span id="exRecvAvailLine" style="color:var(--m)">Balance: —</span>
+                </div>
                 <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
                     <input class="ex-input" type="number" id="exTo" value="" readonly placeholder="0"
                         style="opacity:.7;min-width:0">
-                    <select class="ex-sel" id="exToCcy" onchange="calcRate()" style="width:90px">
+                    <select class="ex-sel" id="exToCcy" onchange="calcRate();updateExchangeAvailDisplay()" style="width:90px">
                         <option>EURw</option>
                         <option>USDw</option>
                         <option>GBPw</option>
@@ -4394,10 +4694,74 @@
                 </div>
             </header>
 
+            <div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20" id="onoffRampFlowsSection">
+                <div class="stitle-row">
+                    <div class="stitle">Paper ↔ Stables (And back)</div>
+                    <button type="button" class="agent-mini-btn"
+                        onclick="openAgentExplain('On/Off Ramp: Paper ↔ Stables and back; top arc on-ramp 1–6; bottom arc off-ramp 1–6 from Stables toward fiat; optional bridge dashed; tap diagram or rows for detail')"
+                        title="StablesAgent">
+                        <img src="agent.png" alt="StablesAgent">
+                    </button>
+                </div>
+                <div class="card app-section-card" style="padding:14px" id="onoffRampDiagramCard">
+                    <div class="ramp-circle-stage" id="onoffRampCircleStage" role="img" aria-label="Circular ramp: cyan on-ramp arcs paper to Stables; off-ramp steps along bottom without track lines; optional bridge dashed on step buttons">
+                        <svg viewBox="0 0 340 320" preserveAspectRatio="xMidYMid meet" style="overflow:visible" aria-hidden="true">
+                            <!-- On-ramp outer + inner arcs only (no curved lines behind off-ramp icons) -->
+                            <path d="M 48 160 A 122 122 0 0 0 292 160" fill="none" stroke="rgba(103,232,249,0.22)" stroke-width="5" stroke-linecap="round"/>
+                            <path d="M 292 168 L 286 155 L 298 155 Z" fill="rgba(103,232,249,0.55)" stroke="rgba(103,232,249,0.35)" stroke-width="1"/>
+                            <path d="M 62 160 A 108 108 0 0 0 278 160" fill="none" stroke="rgba(103,232,249,0.38)" stroke-width="2.5"/>
+                            <text x="170" y="22" text-anchor="middle" style="font-size:11px;font-weight:800;fill:#67e8f9;font-family:Inter,system-ui,sans-serif">On-ramp →</text>
+                            <text x="170" y="312" text-anchor="middle" style="font-size:11px;font-weight:800;fill:#a78bfa;font-family:Inter,system-ui,sans-serif">← Off-ramp</text>
+                        </svg>
+                        <div class="ramp-circle-cap ramp-circle-cap--fiat" style="left:11.76%;top:50%" title="Paper money (fiat)" aria-hidden="true">&#x1F4B5;</div>
+                        <div class="ramp-circle-cap ramp-circle-cap--stables" style="left:88.24%;top:50%" title="Stables balances" aria-hidden="true">Stables</div>
+                        <button type="button" class="ramp-circle-hit" style="left:21.4%;top:35.3%" onclick="scrollToRampStep('on',1)" title="Deposit fiat in one of the partner exchanges (see list below)" aria-label="On-ramp step 1: deposit fiat at a partner exchange. Jump to details."><span class="ramp-circle-hit__ref">1</span><span class="ramp-diagram-ic" aria-hidden="true">&#x1F3E6;</span></button>
+                        <button type="button" class="ramp-circle-hit" style="left:30.2%;top:23.6%" onclick="scrollToRampStep('on',2)" title="Buy USDT" aria-label="On-ramp step 2: buy USDT. Jump to details."><span class="ramp-circle-hit__ref">2</span><span class="ramp-diagram-ic" aria-hidden="true">&#x1F4B3;</span></button>
+                        <button type="button" class="ramp-circle-hit ramp-circle-hit--opt" style="left:42.9%;top:17.1%" onclick="scrollToRampStep('on',3)" title="Optional bridge (USDT to MxUSDT when needed)" aria-label="On-ramp step 3, optional: bridge USDT to MxUSDT. Jump to details."><span class="ramp-circle-hit__ref">3</span><span class="ramp-diagram-ic" aria-hidden="true">&#x1F309;</span></button>
+                        <button type="button" class="ramp-circle-hit" style="left:57.1%;top:17.1%" onclick="scrollToRampStep('on',4)" title="Buy MINIMA" aria-label="On-ramp step 4: buy MINIMA. Jump to details."><span class="ramp-circle-hit__ref">4</span><span class="ramp-diagram-ic" aria-hidden="true">&#x26A1;</span></button>
+                        <button type="button" class="ramp-circle-hit" style="left:69.8%;top:23.6%" onclick="scrollToRampStep('on',5)" title="Send MINIMA to your Stables wallet address" aria-label="On-ramp step 5: send MINIMA to your Stables wallet address. Jump to details."><span class="ramp-circle-hit__ref">5</span><span class="ramp-diagram-ic" aria-hidden="true">&#x1F4F1;</span></button>
+                        <button type="button" class="ramp-circle-hit" style="left:78.6%;top:35.3%" onclick="goMintWablesMint(event)" title="Mint Stables (open Mint Wables)" aria-label="On-ramp step 6: open Mint app, Mint Wables."><span class="ramp-circle-hit__ref">6</span><span class="ramp-diagram-ic" aria-hidden="true">&#x2728;</span></button>
+                        <button type="button" class="ramp-circle-hit ramp-circle-hit--off" style="left:78.6%;top:64.7%" onclick="goMintWablesBurn(event)" title="Burn to MINIMA (open Burn Wables)" aria-label="Off-ramp step 1: open Mint app, Burn Wables."><span class="ramp-circle-hit__ref">1</span><span class="ramp-diagram-ic" aria-hidden="true">&#x1F525;</span></button>
+                        <button type="button" class="ramp-circle-hit ramp-circle-hit--off" style="left:69.8%;top:76.4%" onclick="scrollToRampStep('off',2)" title="CEX / DEX (deposit or trade from wallet)" aria-label="Off-ramp step 2: CEX or DEX. Jump to details."><span class="ramp-circle-hit__ref">2</span><span class="ramp-diagram-ic" aria-hidden="true">&#x1F4E5;</span></button>
+                        <button type="button" class="ramp-circle-hit ramp-circle-hit--off" style="left:57.1%;top:82.9%" onclick="scrollToRampStep('off',3)" title="Sell MINIMA" aria-label="Off-ramp step 3: sell MINIMA. Jump to details."><span class="ramp-circle-hit__ref">3</span><span class="ramp-diagram-ic" aria-hidden="true">&#x1F4E4;</span></button>
+                        <button type="button" class="ramp-circle-hit ramp-circle-hit--off ramp-circle-hit--opt" style="left:42.9%;top:82.9%" onclick="scrollToRampStep('off',4)" title="Optional bridge (MxUSDT to USDT when needed)" aria-label="Off-ramp step 4, optional: bridge MxUSDT to USDT. Jump to details."><span class="ramp-circle-hit__ref">4</span><span class="ramp-diagram-ic" aria-hidden="true">&#x1F309;</span></button>
+                        <button type="button" class="ramp-circle-hit ramp-circle-hit--off" style="left:30.2%;top:76.4%" onclick="scrollToRampStep('off',5)" title="USDT to fiat" aria-label="Off-ramp step 5: USDT to fiat. Jump to details."><span class="ramp-circle-hit__ref">5</span><span class="ramp-diagram-ic" aria-hidden="true">&#x1F500;</span></button>
+                        <button type="button" class="ramp-circle-hit ramp-circle-hit--off" style="left:21.4%;top:64.7%" onclick="scrollToRampStep('off',6)" title="Withdraw fiat" aria-label="Off-ramp step 6: withdraw fiat. Jump to details."><span class="ramp-circle-hit__ref">6</span><span class="ramp-diagram-ic" aria-hidden="true">&#x1F3E7;</span></button>
+                    </div>
+
+                    <div class="xs mu" id="onoffRampOnSection" style="margin:16px 0 8px;font-weight:800;color:var(--c)">On-ramp (paper money → Stables)</div>
+                    <div class="xs mu" style="margin:0 0 10px;line-height:1.5;color:var(--m)">Goal: bank or card money into Stables you can use in-app.</div>
+                    <div style="display:grid;gap:8px">
+                        <div id="ramp-on-step-1" class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);scroll-margin-top:12px;align-items:flex-start;gap:12px"><span class="xs mu" style="flex:1;min-width:0"><span aria-hidden="true">&#x1F3E6;</span> <strong style="color:var(--t)">1</strong> Deposit fiat in one of the partner exchanges (see list below)</span><span style="font-weight:800;color:var(--t);flex-shrink:0;text-align:right;line-height:var(--lh-caption,1.45);white-space:nowrap">Partner CEX · bank/card</span></div>
+                        <div id="ramp-on-step-2" class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);scroll-margin-top:12px"><span class="xs mu"><span aria-hidden="true">&#x1F4B3;</span> <strong style="color:var(--t)">2</strong> Buy USDT</span><span style="font-weight:800;color:var(--t)">USDT</span></div>
+                        <div id="ramp-on-step-3" class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);scroll-margin-top:12px"><span class="xs mu"><span aria-hidden="true">&#x1F309;</span> <strong style="color:var(--t)">3</strong> Optional bridge</span><span style="font-weight:800;color:var(--t)">USDT → MxUSDT · <a href="https://mxusd.global/" target="_blank" rel="noopener noreferrer" style="color:var(--c);text-decoration:underline">mxusd.global</a></span></div>
+                        <div id="ramp-on-step-4" class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);scroll-margin-top:12px;align-items:center;gap:10px;flex-wrap:wrap"><span class="xs mu" style="flex:1;min-width:0"><span aria-hidden="true">&#x26A1;</span> <strong style="color:var(--t)">4</strong> Buy MINIMA</span><span style="display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0"><span style="font-weight:800;color:var(--t);font-size:13px">CEX or Minima DEX</span><button type="button" class="btn btn-w" onclick="navigate('faucet')"
+                                style="width:auto;padding:6px 12px;font-size:11px;line-height:1.25;min-height:0;height:auto;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.28);color:var(--am);font-weight:800;border-radius:12px;white-space:nowrap">Get Winiwa - No value</button></span></div>
+                        <div id="ramp-on-step-5" class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);scroll-margin-top:12px"><span class="xs mu"><span aria-hidden="true">&#x1F4F1;</span> <strong style="color:var(--t)">5</strong> Send MINIMA to your Stables wallet address</span><span style="font-weight:800;color:var(--t)">On-chain withdrawal</span></div>
+                        <div id="ramp-on-step-6" class="fbet" role="button" tabindex="0" title="Open Mint: Mint Wables" aria-label="Step 6 Mint Stables. Opens Mint, Mint Wables."
+                            onclick="goMintWablesMint(event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goMintWablesMint(event);}"
+                            style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);scroll-margin-top:12px;cursor:pointer"><span class="xs mu"><span aria-hidden="true">&#x2728;</span> <strong style="color:var(--t)">6</strong> Mint Stables</span><span style="font-weight:800;color:var(--c)">Mint · Wables</span></div>
+                    </div>
+
+                    <div class="xs mu" id="onoffRampOffSection" style="margin:18px 0 8px;font-weight:800;color:var(--pu)">Off-ramp (Stables → paper money)</div>
+                    <div class="xs mu" style="margin:0 0 10px;line-height:1.5;color:var(--m)">Goal: back to bank or card. Same six steps as on-ramp, reversed along the bottom arc (step 1 at Stables, step 6 at paper).</div>
+                    <div style="display:grid;gap:8px">
+                        <div id="ramp-off-step-1" class="fbet" role="button" tabindex="0" title="Open Mint: Burn Wables (reclaim Winiwa)" aria-label="Step 1 Burn to MINIMA. Opens Mint, Burn Wables."
+                            onclick="goMintWablesBurn(event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();goMintWablesBurn(event);}"
+                            style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);scroll-margin-top:12px;cursor:pointer"><span class="xs mu"><span aria-hidden="true">&#x1F525;</span> <strong style="color:var(--t)">1</strong> Burn to MINIMA</span><span style="font-weight:800;color:var(--pu)">Burn · Wables</span></div>
+                        <div id="ramp-off-step-2" class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);scroll-margin-top:12px"><span class="xs mu"><span aria-hidden="true">&#x1F4E5;</span> <strong style="color:var(--t)">2</strong> CEX / DEX</span><span style="font-weight:800;color:var(--t)">Deposit to CEX · or DEX from wallet</span></div>
+                        <div id="ramp-off-step-3" class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);scroll-margin-top:12px"><span class="xs mu"><span aria-hidden="true">&#x1F4E4;</span> <strong style="color:var(--t)">3</strong> Sell MINIMA</span><span style="font-weight:800;color:var(--t)">USDT on CEX · or MxUSDT on DEX</span></div>
+                        <div id="ramp-off-step-4" class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);scroll-margin-top:12px"><span class="xs mu"><span aria-hidden="true">&#x1F309;</span> <strong style="color:var(--t)">4</strong> Optional bridge</span><span style="font-weight:800;color:var(--t)">MxUSDT → USDT · <a href="https://mxusd.global/" target="_blank" rel="noopener noreferrer" style="color:var(--c);text-decoration:underline">mxusd.global</a> (skip if USDT on CEX)</span></div>
+                        <div id="ramp-off-step-5" class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);scroll-margin-top:12px"><span class="xs mu"><span aria-hidden="true">&#x1F500;</span> <strong style="color:var(--t)">5</strong> USDT → fiat</span><span style="font-weight:800;color:var(--t)">Bank balance</span></div>
+                        <div id="ramp-off-step-6" class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);scroll-margin-top:12px"><span class="xs mu"><span aria-hidden="true">&#x1F3E7;</span> <strong style="color:var(--t)">6</strong> Withdraw fiat</span><span style="font-weight:800;color:var(--t)">Bank/card</span></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">
             <div class="stitle-row">
-                <div class="stitle">Where MINIMA trades</div>
-                <button type="button" class="agent-mini-btn" onclick="openAgentExplain('On/Off Ramp: exchanges listing MINIMA and practical path between paper money and Stables')" title="StablesAgent">
+                <div class="stitle">Where to buy Minima</div>
+                <button type="button" class="agent-mini-btn" onclick="openAgentExplain('On/Off Ramp: where to buy Minima; CEX and Minima DEX; path between paper money and Stables')" title="StablesAgent">
                     <img src="agent.png" alt="StablesAgent">
                 </button>
             </div>
@@ -4432,52 +4796,6 @@
                         </div>
                         <div class="xs mu">Peer-to-peer non-custodial venue on Minima (MiniMask extension required).</div>
                     </div>
-                </div>
-            </div>
-            </div>
-
-            <div class="app-section app-section--caption-bottom">
-            <div class="stitle-row">
-                <div class="stitle">On-ramp (paper money → Stables)</div>
-                <button type="button" class="agent-mini-btn"
-                    onclick="openAgentExplain('On-ramp: bank or card money via exchange and MINIMA into Stables balances in-app')"
-                    title="StablesAgent">
-                    <img src="agent.png" alt="StablesAgent">
-                </button>
-            </div>
-            <div class="card app-section-card" style="padding:14px">
-                <div class="xs mu" style="margin-bottom:10px;line-height:1.5">Goal: move from bank/card money into Stables balances you can use in-app.</div>
-                <div style="display:grid;gap:8px">
-                    <div class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><span class="xs mu">1) Deposit paper money to exchange</span><span style="font-weight:800;color:var(--t)">Bank/card</span></div>
-                    <div class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><span class="xs mu">2) Buy USDT</span><span style="font-weight:800;color:var(--t)">USDT</span></div>
-                    <div class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><span class="xs mu">3) Optional bridge</span><span style="font-weight:800;color:var(--t)">USDT → MxUSDT via <a href="https://mxusd.global/" target="_blank" rel="noopener noreferrer" style="color:var(--c);text-decoration:underline">mxusd.global</a></span></div>
-                    <div class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><span class="xs mu">4) Buy MINIMA</span><span style="font-weight:800;color:var(--t)">Exchange OR Minima DEX</span></div>
-                    <div class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><span class="xs mu">5) Withdraw MINIMA to your Stables wallet</span><span style="font-weight:800;color:var(--t)">On-chain</span></div>
-                    <div class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><span class="xs mu">6) Mint / swap into Stables balances</span><span style="font-weight:800;color:var(--t)">USDw / EURw / ...</span></div>
-                </div>
-                <button type="button" class="btn btn-w btn-lg" onclick="navigate('faucet')"
-                    style="margin-top:12px;width:100%;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.22);color:var(--am);font-weight:900">
-                    Get Winiwa - No value
-                </button>
-            </div>
-            </div>
-
-            <div class="app-section app-section--caption-bottom">
-            <div class="stitle-row">
-                <div class="stitle">Off-ramp (Stables → paper money)</div>
-                <button type="button" class="agent-mini-btn"
-                    onclick="openAgentExplain('Off-ramp: Stables balances converted to MINIMA, sold for USDT, then paper money to bank or card')"
-                    title="StablesAgent">
-                    <img src="agent.png" alt="StablesAgent">
-                </button>
-            </div>
-            <div class="card app-section-card" style="padding:14px">
-                <div class="xs mu" style="margin-bottom:10px;line-height:1.5">Goal: exit from Stables to paper money in your bank/card ecosystem.</div>
-                <div style="display:grid;gap:8px">
-                    <div class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><span class="xs mu">1) Burn Stables balances to MINIMA</span><span style="font-weight:800;color:var(--t)">USDw → MINIMA</span></div>
-                    <div class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><span class="xs mu">2) Sell MINIMA for USDT</span><span style="font-weight:800;color:var(--t)">Exchange OR Minima DEX → MxUSDT</span></div>
-                    <div class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><span class="xs mu">3) Optional bridge</span><span style="font-weight:800;color:var(--t)">MxUSDT → USDT via <a href="https://mxusd.global/" target="_blank" rel="noopener noreferrer" style="color:var(--c);text-decoration:underline">mxusd.global</a></span></div>
-                    <div class="fbet" style="padding:8px 10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><span class="xs mu">4) Withdraw paper money to bank/card</span><span style="font-weight:800;color:var(--t)">Off-ramp complete</span></div>
                 </div>
             </div>
             </div>
@@ -5122,7 +5440,7 @@
                     </p>
                     <div class="xs mu" style="font-weight:800;margin:0 0 8px;color:var(--t)">Domains &amp; sites</div>
                     <ul style="margin:0 0 14px;padding-left:1.15em;line-height:1.55;font-size:13px;color:var(--m)">
-                        <li><a href="https://stablescouncil.org/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.org</a> — public site · Be your own bank</li>
+                        <li><a href="https://stablescouncil.org/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.org</a> — public site · By Stables on Minima</li>
                         <li><a href="https://stablescouncil.github.io/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.github.io</a> — GitHub Pages presentation &amp; resources</li>
                         <li><a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer" style="color:var(--c)">agent.stablescouncil.org</a> — StablesAgent web chat</li>
                     </ul>
@@ -5185,7 +5503,7 @@
                 </p>
                 <button type="button" id="councilCharterLink" class="btn btn-w"
                     style="display:block;width:100%;text-align:center;box-sizing:border-box"
-                    onclick="showStablesCharterComingNotice()">Read the Charter on GitHub</button>
+                    onclick="openStablesCharterUrl()">Read the Charter on GitHub</button>
             </div>
             </div>
 
@@ -5807,7 +6125,7 @@
             <div class="card app-section-card" style="padding:14px 18px">
 
                 <label class="flabel">Name</label>
-                <input class="finput" id="councilNameInput" placeholder="Display name" style="margin-bottom:12px">
+                <input class="finput" id="councilNameInput" placeholder="Display name" style="margin-bottom:12px" oninput="if(typeof refreshTopbarBrand==='function')refreshTopbarBrand()">
 
                 <label class="flabel">Role</label>
                 <select class="fsel" id="councilExecRoleSel" style="width:100%;margin-bottom:14px">
@@ -5877,7 +6195,7 @@
                     Release notes and new prototype drops will show up here as we ship. For now, use the link below to download the latest Stables MiniDapp package for my Minima node (MDS zip on GitHub).
                 </div>
                 <a id="settingsMdsZipLink" class="btn btn-w" style="flex:1;min-width:220px;font-size:14px;font-weight:900;display:block;text-align:center;width:100%;text-decoration:none;box-sizing:border-box"
-                    href="#" target="_blank" rel="noopener">Download Stables_v00.00.01.mds.zip</a>
+                    href="#" target="_blank" rel="noopener">Download Stables_v00.00.02.mds.zip</a>
                 <div class="xs mu" id="settingsMdsZipUrlLabel" style="margin-top:10px;word-break:break-all;line-height:1.45;opacity:.9"></div>
             </div>
             </div>
@@ -6129,9 +6447,21 @@
                     <div class="app-page-header__sub">Terms, privacy, data, security · Council property</div>
                 </div>
             </header>
+            <div class="card app-section-card" style="padding:12px 16px;margin:0 0 14px 0;border:1px solid rgba(103,232,249,.1)">
+                <p class="sec-body" style="margin:0 0 12px;line-height:1.55;color:var(--m)">
+                    Sections marked <strong style="color:var(--t)">(summary)</strong> are <strong style="color:var(--t)">short in-app reminders</strong> for this preview, not a full legal or policy pack. Binding governance, process, and how the Council publishes updates belong in the <strong style="color:var(--t)">Stables Charter</strong> and other documents on <strong style="color:var(--t)">official Council channels</strong>.
+                </p>
+                <button type="button" class="btn btn-w btn-g" style="width:100%"
+                    onclick="openStablesCharterUrl()">Read the Stables Charter (GitHub)</button>
+            </div>
             <div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">
                 <div class="stitle-row">
                     <div class="stitle">Security (summary)</div>
+                    <button type="button" class="agent-mini-btn"
+                        onclick="openAgentExplain('Legal: security summary; scammers; Vault key storage; malware; unsolicited help; official contacts only')"
+                        title="StablesAgent">
+                        <img src="agent.png" alt="StablesAgent">
+                    </button>
                 </div>
                 <div class="card app-section-card" style="padding:16px 16px;margin-bottom:14px;border:1px solid rgba(103,232,249,.12)">
                     <p class="sec-body" style="margin:0 0 12px;line-height:1.55;color:var(--m)">
@@ -6193,6 +6523,36 @@
                     </p>
                 </div>
             </div>
+            <div class="app-section app-section--caption-bottom" id="legalMinimaIndependenceSection">
+                <div class="stitle-row">
+                    <div class="stitle">Minima dependencies</div>
+                    <button type="button" class="agent-mini-btn"
+                        onclick="openAgentExplain('Legal: Minima as chain foundation; device sovereignty; no corporate affiliation; open rails; app as access layer; non-custodial framing')"
+                        title="StablesAgent">
+                        <img src="agent.png" alt="StablesAgent">
+                    </button>
+                </div>
+                <div class="card app-section-card" style="padding:16px 16px;margin-bottom:14px;border:1px solid rgba(103,232,249,.12)">
+                    <p class="sec-body" style="margin:0 0 12px;line-height:1.55;color:var(--m)">
+                        <strong style="color:var(--t)">Minima as the foundation.</strong> The Minima blockchain is the <strong style="color:var(--t)">basis that holds the whole Stables infrastructure</strong>. Together with the <strong style="color:var(--t)">physical device</strong> on which you run your bank, it is the <strong style="color:var(--t)">only physical layer you need</strong> to pursue <strong style="color:var(--t)">full banking sovereignty</strong>. The Stables software on your device is <strong style="color:var(--t)">visual and interaction access</strong> to your bank: it is how you see balances, sign actions, and move value. <strong style="color:var(--t)">At all times</strong>, the assets that back your position are anchored in the <strong style="color:var(--t)">security model of the Minima network</strong> and in the <strong style="color:var(--t)">tested Stables infrastructure</strong> built on top of it.
+                    </p>
+                    <p class="sec-body" style="margin:0 0 12px;line-height:1.55;color:var(--m)">
+                        <strong style="color:var(--t)">Confidence in the chain.</strong> We are <strong style="color:var(--t)">fully confident</strong> that Minima will function soundly across <strong style="color:var(--t)">all foreseeable scenarios</strong> that matter for this design, <strong style="color:var(--t)">because of its decentralised architecture</strong>. The <strong style="color:var(--t)">only technical impairment</strong> that sits with you directly is <strong style="color:var(--t)">your own personal device</strong> where you open the app: <strong style="color:var(--t)">that device is the crux</strong> (malware, loss, theft, or user error). <strong style="color:var(--t)">On-chain</strong>, your funds are <strong style="color:var(--t)">continuously protected</strong> by Minima&rsquo;s network security and by Stables&rsquo; protocol layer, not by a custodian&rsquo;s ledger entry.
+                    </p>
+                    <p class="sec-body" style="margin:0 0 12px;line-height:1.55;color:var(--m)">
+                        <strong style="color:var(--t)">No corporate affiliation.</strong> Stables has <strong style="color:var(--t)">no affiliation of any kind</strong> with any Minima-related <strong style="color:var(--t)">legal entity</strong> or with people acting in an official capacity for those organisations. Stables is a <strong style="color:var(--t)">separate initiative</strong>. References to Minima here mean the <strong style="color:var(--t)">public chain and tooling</strong> (for example a node or MiniDapp host) and <strong style="color:var(--t)">public data</strong> (for example price endpoints). They are <strong style="color:var(--t)">not</strong> a partnership, endorsement, or joint product with those companies.
+                    </p>
+                    <p class="sec-body" style="margin:0 0 12px;line-height:1.55;color:var(--m)">
+                        <strong style="color:var(--t)">How open networks work.</strong> Public blockchain software is, in large part, <strong style="color:var(--t)">open source</strong>. Minima-related entities, regulators, governments, and other third parties <strong style="color:var(--t)">do not and cannot, by architecture alone,</strong> dictate what independent teams build or what you choose to run on <strong style="color:var(--t)">your own device</strong>. They are not on your device controlling your execution. Control stays with whoever operates the node and the MiniDapp, subject to law and to device security.
+                    </p>
+                    <p class="sec-body" style="margin:0 0 12px;line-height:1.55;color:var(--m)">
+                        <strong style="color:var(--t)">Distribution is not the same as sovereignty.</strong> An IT company, app store, or other platform may try to limit <strong style="color:var(--t)">how you first reach</strong> Stables products (for example listings, websites, or policies). Once you have lawfully obtained the software and run it on a <strong style="color:var(--t)">sovereign device</strong> you control, where no intermediary has technical overreach over <strong style="color:var(--t)">your device and your execution</strong>, <strong style="color:var(--t)">that use does not depend on a central party staying &ldquo;open&rdquo; for you.</strong> That is why we say <strong style="color:var(--t)">unstoppable</strong> in this technical sense: the design does not require a single gatekeeper for your bank on your own machine.
+                    </p>
+                    <p class="sec-body" style="margin:0;line-height:1.55;color:var(--m)">
+                        <strong style="color:var(--t)">Seizure and blocking.</strong> When you self-custody and interact without a custodian holding your funds, there is <strong style="color:var(--t)">no single technical lever</strong> a third party can flip <strong style="color:var(--t)">to freeze your bank</strong> or <strong style="color:var(--t)">to block peer-to-peer interactions with other banks</strong> the way a centralised account provider can suspend access. This describes <strong style="color:var(--t)">what the architecture avoids</strong> compared to custodial finance. It does <strong style="color:var(--t)">not</strong> remove every real-world risk (devices can be lost, stolen, compromised, or subject to lawful process). It is not legal advice.
+                    </p>
+                </div>
+            </div>
             <div class="app-section app-section--caption-bottom" id="legalOraclesSection">
                 <div class="stitle-row">
                     <div class="stitle">Price oracles (Winiwa &amp; Wables)</div>
@@ -6233,7 +6593,7 @@
                 <div class="stitle-row">
                     <div class="stitle">Privacy Policy (summary)</div>
                     <button type="button" class="agent-mini-btn"
-                        onclick="openAgentExplain('Legal: privacy summary; choices on your device; no sale of data from this static preview; use official Council and security contacts only')"
+                        onclick="openAgentExplain('Legal: privacy summary; local device storage; Stables/Minima no visibility here; OS and third-party caveat; no sensitive data; official contacts only')"
                         title="StablesAgent">
                         <img src="agent.png" alt="StablesAgent">
                     </button>
@@ -6241,8 +6601,7 @@
                 <div class="card app-section-card" style="padding:16px 16px;margin-bottom:14px;border:1px solid rgba(103,232,249,.12)">
                     <p class="sec-body" style="margin:0;line-height:1.55;color:var(--m)">
                         This preview stores some choices on <strong style="color:var(--t)">your device</strong> (for example
-                        layout and preferences in browser storage). We do not sell personal data from this static preview.
-                        Do not send secrets or Vault keys through unofficial channels; use only the official Council and
+                        layout and preferences in browser storage). <strong style="color:var(--t)">Neither Stables nor Minima has any visibility into that local data</strong> for this static preview; <strong style="color:var(--t)">we do not receive it</strong> from this copy alone. On the other hand, <strong style="color:var(--t)">we cannot guarantee</strong> that other actors, such as the company that provides your device operating system or other software on your device, <strong style="color:var(--t)">do not have technical means to access device storage or settings</strong>. <strong style="color:var(--t)">Please do not enter sensitive information</strong> where it could be exposed. Do not send secrets or Vault keys through unofficial channels; use only the official Council and
                         security contacts listed on the <a href="#" onclick="event.preventDefault();navigate('help-links');return false" style="color:var(--c);text-decoration:underline">links page</a> and on <strong style="color:var(--t)">Security</strong> in this app.
                     </p>
                 </div>
@@ -6295,6 +6654,11 @@
             <div class="card app-section-card">
                 <div class="cb">
                     <label class="flabel">Amount</label>
+                    <div class="fbet xs mu" style="margin-bottom:6px;align-items:center">
+                        <span id="invAvailLine" style="color:var(--m)">Available: —</span>
+                        <button type="button" class="btn btn-g" style="width:auto;padding:6px 12px;font-size:11px;font-weight:800"
+                            onclick="setInvAmtMax()">MAX</button>
+                    </div>
                     <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:12px">
                         <input class="finput" id="invAmt" type="number" placeholder="0.00" style="margin-bottom:0"
                             oninput="updateInvoice()">
@@ -6625,9 +6989,14 @@
             </div>
             <div id="sendContactChips" style="display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 12px 0"></div>
             <label class="flabel">Amount</label>
+            <div class="fbet xs mu" style="margin-bottom:6px;align-items:center">
+                <span id="sendAvailLine" style="color:var(--m)">Available: —</span>
+                <button type="button" class="btn btn-g" style="width:auto;padding:6px 12px;font-size:11px;font-weight:800"
+                    onclick="setSendAmtMax()">MAX</button>
+            </div>
             <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:12px">
                 <input class="finput" type="number" id="sendAmtInput" placeholder="0.00" inputmode="decimal" style="min-width:0" oninput="updateSendFavEq()">
-                <select class="fsel" id="sendCcy" style="width:130px" onchange="updateSendFavEq()">
+                <select class="fsel fsel--wallet-ccy" id="sendCcy" style="width:130px" onchange="updateSendFavEq()" title="Balance shown for each currency">
                 </select>
             </div>
             <div class="xs mu" id="sendFavEq" style="margin:-6px 0 14px 0;color:var(--m)">—</div>
@@ -6649,10 +7018,15 @@
                 <button class="tab-btn active" style="flex:1">Receive</button>
             </div>
             <div class="msub">Personal receive request (simple address + amount)</div>
+            <div class="fbet xs mu" style="margin-bottom:6px;align-items:center">
+                <span id="recvAvailLine" style="color:var(--m)">Available: —</span>
+                <button type="button" class="btn btn-g" style="width:auto;padding:6px 12px;font-size:11px;font-weight:800"
+                    onclick="setRecvReqAmtMax()">MAX</button>
+            </div>
             <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:10px">
                 <input class="finput" type="number" id="reqAmt" placeholder="Amount (optional)" inputmode="decimal"
                     style="min-width:0" oninput="updateRecvFavEq()">
-                <select class="fsel" id="reqCcy" style="width:130px" onchange="updateRecvFavEq()">
+                <select class="fsel fsel--wallet-ccy" id="reqCcy" style="width:130px" onchange="updateRecvFavEq()" title="Balance shown for each currency">
                 </select>
             </div>
             <div class="xs mu" id="recvFavEq" style="margin:-4px 0 10px 0;color:var(--m)">—</div>
@@ -6780,6 +7154,9 @@
                 </div>
                 <button type="button" class="btn btn-w btn-g" id="welcomeUnderstandBtn" style="width:100%"
                     onclick="goWelcomeFromShowcaseIntro()">I understand</button>
+                <p class="xs" style="text-align:center;margin:10px 0 0;color:var(--m);line-height:1.4">
+                    Click outside the box to skip the whole welcome process.
+                </p>
             </div>
             <!-- Step 1: Welcome (congratulations, language, intro) -->
             <div id="welcomeStepLang" class="welcome-step-lang" style="display:none">
@@ -6898,8 +7275,9 @@
                     style="text-align:center;margin:0 0 12px;padding:0 6px;line-height:1.5;color:var(--am)">
                 </div>
                 <label class="flabel" style="margin-top:4px;margin-bottom:6px">Preferred currencies</label>
-                <div style="display:flex;justify-content:flex-end;margin:0 0 8px">
+                <div style="display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:0 0 8px">
                     <button type="button" class="ccy-pill" style="cursor:pointer" onclick="selectAllWelcomeCurrencies()">Select all</button>
+                    <button type="button" class="ccy-pill" style="cursor:pointer" onclick="unselectAllWelcomeCurrencies()">Unselect all</button>
                 </div>
                 <div id="welcomeCurrencies" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px">
                     <span class="ccy-pill" data-ccy="AUDw" onclick="toggleWelcomeCcy(this)">AUDw</span>
@@ -6922,7 +7300,66 @@
                 </div>
                 <label class="flabel" style="margin-top:2px;margin-bottom:4px">Primary currency</label>
                 <select class="fsel" id="welcomePrimary" style="margin-bottom:14px"></select>
-                <button class="btn btn-w" style="width:100%" onclick="applyWelcomeSetup()">Save and continue</button>
+                <button class="btn btn-w" style="width:100%" onclick="goWelcomeAfterCurrencySave()">Save and continue</button>
+            </div>
+
+            <!-- Optional bank personalisation (after currencies) -->
+            <div id="welcomeStepPersonalizeIntro" style="display:none">
+                <div class="xs" style="text-align:center;margin:0 0 8px;color:var(--c);font-weight:800">Optional</div>
+                <div class="mttl" style="text-align:center;margin-bottom:10px;line-height:1.35">Personalise your bank</div>
+                <div class="welcome-modal-body-copy" style="text-align:center;margin:0 0 18px;padding:0 4px;line-height:1.5;color:var(--t)">
+                    Add a name, a picture, and get oriented with contacts. You can skip any time.
+                </div>
+                <div class="flex gap8" style="flex-direction:column;gap:10px">
+                    <button type="button" class="btn btn-w btn-g" style="width:100%" onclick="goWelcomePersonalizeFromIntro()">Continue personalisation</button>
+                    <button type="button" class="btn" style="width:100%" onclick="finalizeWelcomeSetup()">I'll do that later</button>
+                </div>
+            </div>
+
+            <div id="welcomeStepPersonalize1" style="display:none">
+                <div class="xs" style="text-align:center;margin:0 0 6px;color:var(--m);font-weight:800">Step 1 of 4</div>
+                <div class="mttl" style="text-align:center;margin-bottom:10px;line-height:1.35">Name your bank</div>
+                <p class="xs" style="text-align:center;margin:0 0 14px;color:var(--t);line-height:1.45">This label is for you on this device. You can change it anytime in My profile.</p>
+                <label class="flabel">Bank display name</label>
+                <input class="finput" id="welcomeBankNameInput" placeholder="e.g. The Smith Family Bank" style="margin-bottom:14px" oninput="if(typeof refreshTopbarBrand==='function')refreshTopbarBrand()">
+                <button type="button" class="btn btn-w" style="width:100%;margin-bottom:8px" onclick="goWelcomePersonalizeNext(1)">Next</button>
+                <button type="button" class="btn" style="width:100%" onclick="finalizeWelcomeSetup()">I'll do that later</button>
+            </div>
+
+            <div id="welcomeStepPersonalize2" style="display:none">
+                <div class="xs" style="text-align:center;margin:0 0 6px;color:var(--m);font-weight:800">Step 2 of 4</div>
+                <div class="mttl" style="text-align:center;margin-bottom:10px;line-height:1.35">Profile picture</div>
+                <p class="xs" style="text-align:center;margin:0 0 14px;color:var(--t);line-height:1.45">Optional. Shown with your bank identity in the app.</p>
+                <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:14px">
+                    <div style="width:72px;height:72px;border-radius:14px;background:rgba(103,232,249,.06);border:1px solid rgba(103,232,249,.2);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                        <div id="welcomePersonalAvatarPh" style="font-size:18px;color:var(--m);font-weight:900">?</div>
+                        <img id="welcomePersonalAvatarPreview" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover">
+                    </div>
+                    <div style="flex:1;min-width:0">
+                        <label class="flabel">Image</label>
+                        <input class="finput" type="file" id="welcomePersonalAvatarFile" accept="image/*" onchange="welcomePersonalAvatarOnFile(this)" style="margin-bottom:0">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-w" style="width:100%;margin-bottom:8px" onclick="goWelcomePersonalizeNext(2)">Next</button>
+                <button type="button" class="btn" style="width:100%" onclick="finalizeWelcomeSetup()">I'll do that later</button>
+            </div>
+
+            <div id="welcomeStepPersonalize3" style="display:none">
+                <div class="xs" style="text-align:center;margin:0 0 6px;color:var(--m);font-weight:800">Step 3 of 4</div>
+                <div class="mttl" style="text-align:center;margin-bottom:10px;line-height:1.35">Onboard your contacts</div>
+                <p class="xs" style="text-align:center;margin:0 0 14px;color:var(--t);line-height:1.45">Add people and shops you pay often. Everything stays on this device until you choose to share.</p>
+                <p class="xs" style="text-align:center;margin:0 0 10px;color:var(--m);line-height:1.4">Open Contacts will be added in a later stage; you can continue setup now.</p>
+                <button type="button" class="btn" style="width:100%;margin-bottom:10px" onclick="openWelcomeContactsFromPersonalize()">Open Contacts</button>
+                <button type="button" class="btn btn-w" style="width:100%;margin-bottom:8px" onclick="goWelcomePersonalizeNext(3)">Next</button>
+                <button type="button" class="btn" style="width:100%" onclick="finalizeWelcomeSetup()">I'll do that later</button>
+            </div>
+
+            <div id="welcomeStepPersonalize4" style="display:none">
+                <div class="xs" style="text-align:center;margin:0 0 6px;color:var(--m);font-weight:800">Step 4 of 4</div>
+                <div class="mttl" style="text-align:center;margin-bottom:10px;line-height:1.35">Who is already here</div>
+                <p class="xs" style="text-align:center;margin:0 0 12px;color:var(--t);line-height:1.45">Sample directory in this preview (your list grows as you add contacts).</p>
+                <div id="welcomeDirectoryList" style="max-height:200px;overflow-y:auto;margin-bottom:14px;padding-right:4px"></div>
+                <button type="button" class="btn btn-w btn-g" style="width:100%" onclick="finishWelcomePersonalization()">Finish</button>
             </div>
 
             <!-- Step 4: Use case -->
@@ -7193,7 +7630,7 @@
         function getSavedInvestTab() {
             try {
                 const v = localStorage.getItem(INVEST_TAB_STORAGE_KEY);
-                if (v === 'cf' || v === 'lp' || v === 'mi') return v;
+                if (v === 'cf' || v === 'lp' || v === 'mi' || v === 'mx') return v;
             } catch (_) { /* ignore */ }
             return 'mi';
         }
@@ -7470,10 +7907,25 @@
             if (label) label.textContent = buildVersion ? `App version: ${buildVersion}` : '';
             const hint = document.getElementById('settingsAppVersionHint');
             if (hint) hint.textContent = buildVersion ? `App version: ${buildVersion}` : '';
+            const showcasePill = document.getElementById('topbarShowcasePill');
+            if (showcasePill && buildVersion) {
+                showcasePill.textContent = 'Showcase · v' + String(buildVersion).trim();
+            }
         }
 
         function showStablesCharterComingNotice() {
             if (typeof openModal === 'function') openModal('stablesCharterComingModal');
+        }
+        /** Opens `STABLES_CHARTER_URL` from runtime-config when set; otherwise the “coming soon” modal. */
+        function openStablesCharterUrl() {
+            const raw = window.STABLES_CONFIG && window.STABLES_CONFIG.STABLES_CHARTER_URL;
+            const u = raw != null ? String(raw).trim() : '';
+            if (u && /^https?:\/\//i.test(u)) {
+                const w = window.open(u, '_blank', 'noopener,noreferrer');
+                if (w && typeof showToast === 'function') showToast('Opening Stables Charter in your browser');
+                return;
+            }
+            showStablesCharterComingNotice();
         }
 
         // Exchange page: mount the LP liquidity graph under the conversion inputs.
@@ -7554,6 +8006,16 @@
             if (p === 'treasury' && typeof updateGlobalUI === 'function') updateGlobalUI();
             if (p === 'invest' && typeof setInvestTab === 'function') {
                 setInvestTab(getSavedInvestTab());
+            }
+            if (p === 'mint') {
+                const px = document.getElementById('panelXwm');
+                if (px && px.style.display !== 'none') {
+                    if (window.__xwmChartLastPrices && typeof renderXwmLeverageChartFromPrices === 'function') {
+                        renderXwmLeverageChartFromPrices(window.__xwmChartLastPrices);
+                    } else if (typeof refreshXwmLeverageHistoryChart === 'function') {
+                        refreshXwmLeverageHistoryChart(false);
+                    }
+                }
             }
             if (p === 'feedback') {
                 try {
@@ -7935,27 +8397,29 @@
         }
 
         function setInvestTab(t) {
-            const tab = t === 'cf' ? 'cf' : (t === 'lp' ? 'lp' : 'mi');
+            const tab = t === 'cf' ? 'cf' : (t === 'lp' ? 'lp' : (t === 'mx' ? 'mx' : 'mi'));
             try {
                 localStorage.setItem(INVEST_TAB_STORAGE_KEY, tab);
             } catch (_) { /* ignore */ }
-            ['iTabMI', 'iTabCF', 'iTabLP'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active'); });
-            const tabId = tab === 'cf' ? 'iTabCF' : (tab === 'lp' ? 'iTabLP' : 'iTabMI');
+            ['iTabMI', 'iTabCF', 'iTabLP', 'iTabMX'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active'); });
+            const tabId = tab === 'cf' ? 'iTabCF' : (tab === 'lp' ? 'iTabLP' : (tab === 'mx' ? 'iTabMX' : 'iTabMI'));
             const active = document.getElementById(tabId);
             if (active) active.classList.add('active');
             const panMi = document.getElementById('panelMI');
             const panCf = document.getElementById('panelCF');
             const panLp = document.getElementById('panelLP');
+            const panMx = document.getElementById('panelMX');
             if (panMi) panMi.style.display = tab === 'mi' ? '' : 'none';
             if (panCf) panCf.style.display = tab === 'cf' ? '' : 'none';
             if (panLp) panLp.style.display = tab === 'lp' ? '' : 'none';
+            if (panMx) panMx.style.display = tab === 'mx' ? '' : 'none';
             if (tab === 'lp') {
                 renderLpLiveBins();
                 renderHeatmap();
                 syncLpBaseUI();
             } else if (tab === 'cf') {
                 renderCoverageFundPanel();
-            } else {
+            } else if (tab === 'mi') {
                 renderInvestSummaryTable();
                 syncCfDepositUI();
             }
@@ -8033,6 +8497,7 @@
                 }).join('');
                 sel.value = prev;
             }
+            if (typeof updateCfDepositAvailLabel === 'function') updateCfDepositAvailLabel();
         }
 
         function buildCoverageFundSeries() {
@@ -9112,7 +9577,32 @@
             return [base, ...secondary];
         }
 
-        function populateCurrencySelect(selectId) {
+        /**
+         * Compact balance string for wallet send/receive &lt;select&gt; options (native options are plain text only).
+         */
+        function formatBalanceForWalletDropdown(code) {
+            const vaultCcy = code === 'MINIMA' ? 'Winiwa' : String(code || '');
+            const b = typeof getVaultBalance === 'function' ? getVaultBalance(vaultCcy) : 0;
+            if (vaultCcy === 'xWiniwa') {
+                const t = Math.floor(b * 10000 + 1e-10) / 10000;
+                return t.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 4 });
+            }
+            if (vaultCcy === 'Winiwa') {
+                return typeof fmtAvailVaultQty === 'function' ? fmtAvailVaultQty(b) : String(b);
+            }
+            const dec = (vaultCcy === 'JPYw' || vaultCcy === 'CNYw') ? 0 : 2;
+            const pow = Math.pow(10, dec);
+            const n = Math.floor(b * pow + 1e-10) / pow;
+            return n.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+        }
+
+        /**
+         * @param {string} selectId
+         * @param {{ withBalances?: boolean }} [opts]  If true, each option shows "Code · balance" (send/receive modals).
+         */
+        function populateCurrencySelect(selectId, opts) {
+            const o = opts && typeof opts === 'object' ? opts : {};
+            const withBalances = !!o.withBalances;
             const sel = document.getElementById(selectId);
             if (!sel) return;
             const enabled = getWalletDropdownCurrenciesOrdered();
@@ -9125,9 +9615,30 @@
             sorted.forEach(code => {
                 const opt = document.createElement('option');
                 opt.value = code;
-                opt.textContent = code === 'MINIMA' ? 'Winiwa' : code;
+                const label = code === 'MINIMA' ? 'Winiwa' : code;
+                if (withBalances) {
+                    const bal = formatBalanceForWalletDropdown(code);
+                    opt.textContent = label + ' \u00B7 ' + bal;
+                } else {
+                    opt.textContent = label;
+                }
                 sel.appendChild(opt);
             });
+        }
+
+        /** Refresh send/receive currency dropdowns with up-to-date balances (call after wallet sync). */
+        function refreshWalletModalCurrencySelects() {
+            ['sendCcy', 'reqCcy'].forEach((id) => {
+                const sel = document.getElementById(id);
+                if (!sel) return;
+                const prev = String(sel.value || '');
+                populateCurrencySelect(id, { withBalances: true });
+                if (prev && Array.from(sel.options).some((o) => o.value === prev)) sel.value = prev;
+            });
+            try { if (typeof updateSendFavEq === 'function') updateSendFavEq(); } catch (_) { }
+            try { if (typeof updateRecvFavEq === 'function') updateRecvFavEq(); } catch (_) { }
+            try { if (typeof updateSendAvailLine === 'function') updateSendAvailLine(); } catch (_) { }
+            try { if (typeof updateRecvAvailLine === 'function') updateRecvAvailLine(); } catch (_) { }
         }
 
         function initCcyReorder() {
@@ -9595,7 +10106,7 @@
             el.classList.add('open');
             const defaultCcy = pendingModalCurrency || BASE_CCY || '';
             if (id === 'sendModal') {
-                populateCurrencySelect('sendCcy');
+                populateCurrencySelect('sendCcy', { withBalances: true });
                 const sel = document.getElementById('sendCcy');
                 if (sel && defaultCcy && Array.from(sel.options).some(o => o.value === defaultCcy)) sel.value = defaultCcy;
                 if (pendingModalDraft) {
@@ -9606,9 +10117,10 @@
                 }
                 if (typeof renderSendContactChips === 'function') renderSendContactChips();
                 updateSendFavEq();
+                if (typeof updateSendAvailLine === 'function') updateSendAvailLine();
             }
             if (id === 'recvModal') {
-                populateCurrencySelect('reqCcy');
+                populateCurrencySelect('reqCcy', { withBalances: true });
                 const sel = document.getElementById('reqCcy');
                 if (sel && defaultCcy && Array.from(sel.options).some(o => o.value === defaultCcy)) sel.value = defaultCcy;
                 if (pendingModalDraft) {
@@ -9618,6 +10130,7 @@
                     if (amt && pendingModalDraft.amount) amt.value = pendingModalDraft.amount;
                 }
                 updateRecvFavEq();
+                if (typeof updateRecvAvailLine === 'function') updateRecvAvailLine();
             }
             pendingModalCurrency = '';
             pendingModalDraft = null;
@@ -9671,6 +10184,7 @@
             if (!Number.isFinite(eq)) { outEl.textContent = '—'; return; }
             const dec = decimalsForCcyForUI(baseKey);
             outEl.textContent = `≈ ${eq.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec })} ${displayCcyCodeForUI(baseKey)}`;
+            if (typeof updateSendAvailLine === 'function') updateSendAvailLine();
         }
 
         function updateRecvFavEq() {
@@ -9686,6 +10200,7 @@
             if (!Number.isFinite(eq)) { outEl.textContent = '—'; return; }
             const dec = decimalsForCcyForUI(baseKey);
             outEl.textContent = `≈ ${eq.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec })} ${displayCcyCodeForUI(baseKey)}`;
+            if (typeof updateRecvAvailLine === 'function') updateRecvAvailLine();
         }
 
         function openShopStickerAndPrint() {
@@ -9934,6 +10449,317 @@
             }
         }
 
+        // Mint: xWiniwa chart — Winiwa USD, xWiniwa USD (Winiwa×leverage), Leverage (right axis, CR-derived); CoinGecko minima ~365d as Winiwa spot
+        const XWM_LEVERAGE_CHART_URL = 'https://api.coingecko.com/api/v3/coins/minima/market_chart?vs_currency=usd&days=365';
+        let _xwmLeverageChartDone = false;
+        let _xwmLeverageChartPromise = null;
+
+        function fetchJsonForApp(url) {
+            if (typeof MDS !== 'undefined' && MDS.net && typeof MDS.net.GET === 'function') {
+                return new Promise((resolve, reject) => {
+                    MDS.net.GET(url, function (response) {
+                        try {
+                            if (response && response.status) {
+                                resolve(JSON.parse(response.response));
+                            } else {
+                                reject(new Error((response && response.error) || 'MDS GET failed'));
+                            }
+                        } catch (e) { reject(e); }
+                    });
+                });
+            }
+            return fetch(url).then((r) => {
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                return r.json();
+            });
+        }
+
+        function xwmThinPriceRows(raw, maxN) {
+            const rows = (Array.isArray(raw) ? raw : []).map((row) => {
+                const t = Array.isArray(row) && row.length >= 2 ? Number(row[0]) : NaN;
+                const p = Array.isArray(row) && row.length >= 2 ? Number(row[1]) : NaN;
+                return (t > 0 && Number.isFinite(p) && p > 0) ? { t: t, p: p } : null;
+            }).filter(Boolean);
+            if (rows.length < 8) return [];
+            const step = rows.length > maxN ? Math.ceil(rows.length / maxN) : 1;
+            const out = [];
+            for (let i = 0; i < rows.length; i += step) out.push(rows[i]);
+            const last = rows[rows.length - 1];
+            if (out[out.length - 1] !== last) out.push(last);
+            return out;
+        }
+
+        /** Interpolate illustrative CR% (`CR_HIST_DATA`) across chart length; last point = live Treasury CR headline. */
+        function xwmCrPercentSeriesInterpolated(n) {
+            const hist = (typeof CR_HIST_DATA !== 'undefined' && CR_HIST_DATA && CR_HIST_DATA.length)
+                ? CR_HIST_DATA : [130];
+            const len = hist.length;
+            if (n < 1) return [];
+            const live = typeof parseProtocolCrPercent === 'function' ? parseProtocolCrPercent() : 130;
+            const out = new Array(n);
+            for (let i = 0; i < n; i++) {
+                const u = n === 1 ? 1 : i / (n - 1);
+                if (i === n - 1) {
+                    out[i] = live;
+                    continue;
+                }
+                const x = u * (len - 1);
+                const j0 = Math.floor(x);
+                const j1 = Math.min(len - 1, j0 + 1);
+                const f = x - j0;
+                out[i] = hist[j0] * (1 - f) + hist[j1] * f;
+            }
+            return out;
+        }
+
+        /** EMA smooth for leverage line (reduces spikes); last index unchanged by caller after this. */
+        function xwmSmoothLeverageSeries(arr, alpha) {
+            const a = typeof alpha === 'number' ? alpha : 0.2;
+            const n = arr.length;
+            if (n < 2) return arr.slice();
+            const out = new Array(n);
+            out[0] = arr[0];
+            let e = arr[0];
+            for (let i = 1; i < n; i++) {
+                e = a * arr[i] + (1 - a) * e;
+                out[i] = e;
+            }
+            return out;
+        }
+
+        /** Equity leverage from coverage ratio: CR% / (CR% − 100%) e.g. 130% → 130/30. */
+        function xwmLeverageSeriesFromCrHistory(n) {
+            const crArr = xwmCrPercentSeriesInterpolated(n);
+            return crArr.map(function (cr) {
+                return typeof leverageFromCoverageRatioPct === 'function'
+                    ? leverageFromCoverageRatioPct(cr)
+                    : SIM_LEVERAGE;
+            });
+        }
+
+        function hideXwmChartHover() {
+            const cross = document.getElementById('xwmLeverageChartCross');
+            const tip = document.getElementById('xwmLeverageChartTip');
+            if (cross) cross.style.display = 'none';
+            if (tip) tip.style.display = 'none';
+        }
+
+        function wireXwmChartPointer(meta) {
+            window.__xwmChartMeta = meta;
+            const hit = document.getElementById('xwmLeverageChartHitLayer');
+            const svg = document.getElementById('xwmLeverageChartSvg');
+            const host = document.getElementById('xwmLeverageChartHost');
+            if (!hit || !svg || !host) return;
+            hit.style.display = 'block';
+            function onMove(e) {
+                const m = window.__xwmChartMeta;
+                if (!m) return;
+                const p = e.touches && e.touches[0] ? e.touches[0] : e;
+                const r = svg.getBoundingClientRect();
+                if (r.width <= 0) return;
+                const x = (p.clientX - r.left) / r.width * m.W;
+                if (x < m.plotL || x > m.plotR) {
+                    hideXwmChartHover();
+                    return;
+                }
+                const u = (x - m.plotL) / m.plotW;
+                let idx = Math.round(u * (m.n - 1));
+                idx = Math.max(0, Math.min(m.n - 1, idx));
+                const ts = m.times[idx];
+                const d = new Date(ts);
+                const dateStr = Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+                const fmtU = (v) => (v < 0.01 ? v.toExponential(2) : v.toFixed(v < 1 ? 4 : 3));
+                const tip = document.getElementById('xwmLeverageChartTip');
+                const cross = document.getElementById('xwmLeverageChartCross');
+                if (!tip || !cross) return;
+                tip.innerHTML = '<div style="font-weight:800;margin-bottom:4px;color:#67e8f9">' + dateStr + '</div>' +
+                    '<div style="color:#9fb0c0"><span style="color:#67e8f9">Winiwa</span> $' + fmtU(m.winiwaUsd[idx]) + '</div>' +
+                    '<div style="color:#9fb0c0"><span style="color:#c4b5fd">xWiniwa</span> $' + fmtU(m.xwUsd[idx]) + '</div>' +
+                    '<div style="color:#9fb0c0"><span style="color:#6ee7b7">Leverage</span> ' + m.leverage[idx].toFixed(2) + '×</div>';
+                const xi = m.plotL + m.plotW * (m.n <= 1 ? 0 : idx / (m.n - 1));
+                cross.style.display = 'block';
+                cross.style.left = ((xi / m.W) * 100) + '%';
+                cross.style.top = ((m.plotT / m.H) * 100) + '%';
+                cross.style.height = ((m.plotH / m.H) * 100) + '%';
+                tip.style.display = 'block';
+                const hr = host.getBoundingClientRect();
+                let tipX = p.clientX - hr.left + 12;
+                let tipY = p.clientY - hr.top + 12;
+                tip.style.left = tipX + 'px';
+                tip.style.top = tipY + 'px';
+                requestAnimationFrame(() => {
+                    const tw = tip.offsetWidth;
+                    const th = tip.offsetHeight;
+                    if (tipX + tw > hr.width - 8) tipX = p.clientX - hr.left - tw - 12;
+                    if (tipY + th > hr.height - 8) tipY = p.clientY - hr.top - th - 12;
+                    tipX = Math.max(8, Math.min(tipX, hr.width - tw - 8));
+                    tipY = Math.max(8, Math.min(tipY, hr.height - th - 8));
+                    tip.style.left = tipX + 'px';
+                    tip.style.top = tipY + 'px';
+                });
+            }
+            function onLeave() { hideXwmChartHover(); }
+            hit.onmousemove = onMove;
+            hit.onmouseleave = onLeave;
+            hit.ontouchstart = function (ev) {
+                ev.preventDefault();
+                if (ev.touches.length) onMove(ev.touches[0]);
+            };
+            hit.ontouchmove = function (ev) {
+                ev.preventDefault();
+                if (ev.touches.length) onMove(ev.touches[0]);
+            };
+            hit.ontouchend = function () { hideXwmChartHover(); };
+            hit.ontouchcancel = function () { hideXwmChartHover(); };
+        }
+
+        function detachXwmChartPointer() {
+            window.__xwmChartMeta = null;
+            hideXwmChartHover();
+            const hit = document.getElementById('xwmLeverageChartHitLayer');
+            if (hit) {
+                hit.style.display = 'none';
+                hit.onmousemove = null;
+                hit.onmouseleave = null;
+                hit.ontouchstart = null;
+                hit.ontouchmove = null;
+                hit.ontouchend = null;
+                hit.ontouchcancel = null;
+            }
+        }
+
+        function renderXwmLeverageChartFromPrices(prices) {
+            const svg = document.getElementById('xwmLeverageChartSvg');
+            const status = document.getElementById('xwmLeverageChartStatus');
+            if (!svg || !status) return;
+            const W = 520;
+            const H = 232;
+            const padL = 30;
+            const padR = 30;
+            const padT = 18;
+            const padB = 30;
+            const plotL = padL;
+            const plotR = W - padR;
+            const plotT = padT;
+            const plotB = H - padB;
+            const plotW = plotR - plotL;
+            const plotH = plotB - plotT;
+            const rows = xwmThinPriceRows(prices, 220);
+            if (rows.length < 8) {
+                detachXwmChartPointer();
+                status.textContent = 'Chart unavailable.';
+                status.style.display = 'flex';
+                return;
+            }
+            const n = rows.length;
+            const winiwaUsd = rows.map((r) => r.p);
+            const times = rows.map((r) => r.t);
+            let leverage = xwmLeverageSeriesFromCrHistory(n);
+            if (typeof getEffectiveXwmLeverage === 'function') {
+                leverage[n - 1] = getEffectiveXwmLeverage();
+            }
+            leverage = xwmSmoothLeverageSeries(leverage, 0.18);
+            if (typeof getEffectiveXwmLeverage === 'function') {
+                leverage[n - 1] = getEffectiveXwmLeverage();
+            }
+            const xwUsd = winiwaUsd.map((p, i) => p * leverage[i]);
+            let yUsdMin = Math.min(...winiwaUsd, ...xwUsd);
+            let yUsdMax = Math.max(...winiwaUsd, ...xwUsd);
+            if (yUsdMax <= yUsdMin) yUsdMax = yUsdMin * 1.01;
+            const padY = (yUsdMax - yUsdMin) * 0.08;
+            yUsdMin -= padY;
+            yUsdMax += padY;
+            if (yUsdMin < 0) yUsdMin = 0;
+            let levMin = Math.min(...leverage);
+            let levMax = Math.max(...leverage);
+            if (levMax <= levMin) levMax = levMin + 0.01;
+            const levPad = (levMax - levMin) * 0.1;
+            levMin -= levPad;
+            levMax += levPad;
+            if (levMin < 1.001) levMin = 1.001;
+            const xOf = (i) => plotL + plotW * (n <= 1 ? 0 : i / (n - 1));
+            const yUsdOf = (v) => plotT + plotH * (1 - (v - yUsdMin) / (yUsdMax - yUsdMin));
+            const yLevOf = (v) => plotT + plotH * (1 - (v - levMin) / (levMax - levMin));
+            let winiwaD = '';
+            let xwD = '';
+            let levD = '';
+            for (let i = 0; i < n; i++) {
+                const x = xOf(i);
+                const yw = yUsdOf(winiwaUsd[i]);
+                const yx = yUsdOf(xwUsd[i]);
+                const yl = yLevOf(leverage[i]);
+                winiwaD += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + yw.toFixed(2) + ' ';
+                xwD += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + yx.toFixed(2) + ' ';
+                levD += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + yl.toFixed(2) + ' ';
+            }
+            const fmtUsd = (v) => (v < 0.01 ? v.toExponential(1) : v.toFixed(v < 1 ? 4 : 3));
+            const fmtLev = (v) => v.toFixed(2);
+            const tickUsd = [yUsdMin, (yUsdMin + yUsdMax) / 2, yUsdMax];
+            const tickLev = [levMin, (levMin + levMax) / 2, levMax];
+            let g = '';
+            tickUsd.forEach((v) => {
+                const y = yUsdOf(v);
+                g += '<line x1="' + plotL + '" y1="' + y.toFixed(1) + '" x2="' + plotR + '" y2="' + y.toFixed(1) + '" stroke="rgba(159,176,192,0.12)" stroke-width="0.5"/>';
+                g += '<text x="' + (plotL - 6) + '" y="' + (y + 3) + '" fill="#9fb0c0" font-size="8" text-anchor="end" font-family="Inter,system-ui,sans-serif">' + fmtUsd(v) + '</text>';
+            });
+            tickLev.forEach((v) => {
+                const y = yLevOf(v);
+                g += '<text x="' + (plotR + 6) + '" y="' + (y + 3) + '" fill="#6ee7b7" font-size="8" text-anchor="start" font-family="Inter,system-ui,sans-serif">' + fmtLev(v) + '×</text>';
+            });
+            const t0 = new Date(times[0]);
+            const t1 = new Date(times[times.length - 1]);
+            const fmtM = (d) => (Number.isNaN(d.getTime()) ? '' : String(d.getMonth() + 1).padStart(2, '0') + '/' + String(d.getFullYear()).slice(-2));
+            g += '<text x="' + plotL + '" y="' + (H - 8) + '" fill="#9fb0c0" font-size="8" font-family="Inter,system-ui,sans-serif">' + fmtM(t0) + '</text>';
+            g += '<text x="' + plotR + '" y="' + (H - 8) + '" fill="#9fb0c0" font-size="8" text-anchor="end" font-family="Inter,system-ui,sans-serif">' + fmtM(t1) + '</text>';
+            g += '<text x="' + plotL + '" y="' + (plotT - 3) + '" fill="#67e8f9" font-size="9" font-weight="700" font-family="Inter,system-ui,sans-serif">USD</text>';
+            g += '<text x="' + (W - 6) + '" y="' + (plotT - 3) + '" fill="#6ee7b7" font-size="9" font-weight="700" text-anchor="end" font-family="Inter,system-ui,sans-serif">Leverage</text>';
+            svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+            svg.innerHTML =
+                '<defs><clipPath id="xwmChartClip"><rect x="' + plotL + '" y="' + plotT + '" width="' + plotW + '" height="' + plotH + '"/></clipPath></defs>' +
+                g +
+                '<rect x="' + plotL + '" y="' + plotT + '" width="' + plotW + '" height="' + plotH + '" fill="none" stroke="rgba(103,232,249,0.15)" stroke-width="0.75"/>' +
+                '<g clip-path="url(#xwmChartClip)">' +
+                '<path fill="none" stroke="rgba(52,211,153,0.92)" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" d="' + levD + '"/>' +
+                '<path fill="none" stroke="rgba(103,232,249,0.95)" stroke-width="1.35" stroke-linejoin="round" stroke-linecap="round" d="' + winiwaD + '"/>' +
+                '<path fill="none" stroke="rgba(167,139,250,0.95)" stroke-width="1.35" stroke-linejoin="round" stroke-linecap="round" d="' + xwD + '"/>' +
+                '</g>';
+            status.style.display = 'none';
+            wireXwmChartPointer({
+                W: W, H: H, plotL: plotL, plotR: plotR, plotT: plotT, plotB: plotB, plotW: plotW, plotH: plotH,
+                n: n, times: times, winiwaUsd: winiwaUsd, xwUsd: xwUsd, leverage: leverage
+            });
+            if (typeof syncMintLeverageDisplay === 'function') syncMintLeverageDisplay();
+        }
+
+        function refreshXwmLeverageHistoryChart(force) {
+            const status = document.getElementById('xwmLeverageChartStatus');
+            const svg = document.getElementById('xwmLeverageChartSvg');
+            if (!status || !svg) return;
+            if (_xwmLeverageChartDone && !force) {
+                status.style.display = 'none';
+                return;
+            }
+            if (_xwmLeverageChartPromise && !force) return _xwmLeverageChartPromise;
+            detachXwmChartPointer();
+            status.textContent = 'Loading…';
+            status.style.display = 'flex';
+            _xwmLeverageChartPromise = fetchJsonForApp(XWM_LEVERAGE_CHART_URL)
+                .then((data) => {
+                    const prices = data && data.prices;
+                    if (!Array.isArray(prices) || !prices.length) throw new Error('No prices');
+                    window.__xwmChartLastPrices = prices;
+                    renderXwmLeverageChartFromPrices(prices);
+                    _xwmLeverageChartDone = true;
+                })
+                .catch(() => {
+                    detachXwmChartPointer();
+                    status.textContent = 'Unavailable.';
+                    status.style.display = 'flex';
+                })
+                .finally(() => { _xwmLeverageChartPromise = null; });
+            return _xwmLeverageChartPromise;
+        }
+
         // Mint tabs (2 tabs: xwm, issue)
         function setVTab(t) {
             ['vXwm', 'vIssue'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active'); });
@@ -9942,13 +10768,20 @@
             document.getElementById('panelXwm').style.display = t === 'xwm' ? '' : 'none';
             document.getElementById('panelIssue').style.display = t === 'issue' ? '' : 'none';
             if (t === 'issue' && typeof calcIssue === 'function') calcIssue();
+            if (t === 'xwm') {
+                if (window.__xwmChartLastPrices && typeof renderXwmLeverageChartFromPrices === 'function') {
+                    renderXwmLeverageChartFromPrices(window.__xwmChartLastPrices);
+                } else if (typeof refreshXwmLeverageHistoryChart === 'function') {
+                    refreshXwmLeverageHistoryChart(false);
+                }
+            }
         }
 
         // xWiniwa calc
         function calcXwm() {
             const wn = readVaultAmountFromInput(document.getElementById('xwmAmt'));
             const canCalc = (wn > 0 && SIM_Winiwa_PRICE > 0 && SIM_XWM_PRICE > 0);
-            const xwm = canCalc ? (wn * SIM_Winiwa_PRICE * SIM_LEVERAGE / SIM_XWM_PRICE) : null;
+            const xwm = canCalc ? (wn * SIM_Winiwa_PRICE * getEffectiveXwmLeverage() / SIM_XWM_PRICE) : null;
             document.getElementById('xwmCalcR').textContent = xwm != null ? xwm.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' xWiniwa' : '\u2014';
             renderCouncilLiabilityStructure();
             calcSlider();
@@ -9994,6 +10827,7 @@
             updateWablesAvailMintBurn();
             calcSlider();
             if (typeof refreshWablesFxOracleUI === 'function') refreshWablesFxOracleUI();
+            if (typeof updateReclaimSelectedAvail === 'function') updateReclaimSelectedAvail();
         }
 
         // Burn xWiniwa calc
@@ -10161,6 +10995,7 @@
             const exTo = document.getElementById('exTo');
             if (exTo) exTo.value = amt > 0 ? (amt * rate).toFixed(4) : '';
             document.getElementById('ratePill').textContent = '1 ' + from + ' = ' + rate.toFixed(4) + ' ' + to + ' \u00b7 No fees';
+            if (typeof updateExchangeAvailDisplay === 'function') updateExchangeAvailDisplay();
         }
 
         /**
@@ -10784,6 +11619,153 @@
             return Number(WALLET_STABLE_AMTS[c]) || 0;
         }
 
+        /** Map wallet/send dropdown value (e.g. MINIMA) to vault balance key (Winiwa). */
+        function vaultCcyFromSelectValue(selVal) {
+            const v = String(selVal || '');
+            if (v === 'MINIMA') return 'Winiwa';
+            return v;
+        }
+
+        /** String safe to put in amount inputs for MAX (never rounds up past balance). */
+        function vaultBalanceToMaxInputString(ccy, bal) {
+            const b = Math.max(0, vaultNumericBalance(bal));
+            const c = String(ccy || '');
+            if (c === 'Winiwa') return String(Math.round(b * 1e6) / 1e6);
+            if (c === 'xWiniwa') return String(Math.round(b * 1e8) / 1e8);
+            const t = Math.floor(b * 1e8 + 1e-10) / 1e8;
+            return String(t);
+        }
+
+        function formatAvailableLineForVaultCcy(ccy) {
+            const c = String(ccy || '').trim();
+            if (!c) return 'Available: —';
+            const b = getVaultBalance(c);
+            if (c === 'Winiwa') return 'Available: ' + fmtAvailVaultQty(b) + ' Winiwa';
+            if (c === 'xWiniwa') return 'Available: ' + fmtAvailVaultQty(b) + ' xWiniwa';
+            return 'Available: ' + fmtAvailVaultQty(b) + ' ' + c;
+        }
+
+        function formatBalanceAmountForVaultCcy(ccy) {
+            const c = String(ccy || '').trim();
+            if (!c) return '—';
+            const b = getVaultBalance(c);
+            if (c === 'Winiwa') return fmtAvailVaultQty(b) + ' Winiwa';
+            if (c === 'xWiniwa') return fmtAvailVaultQty(b) + ' xWiniwa';
+            return fmtAvailVaultQty(b) + ' ' + c;
+        }
+
+        function updateExchangeAvailDisplay() {
+            const fromEl = document.getElementById('exFromCcy');
+            const toEl = document.getElementById('exToCcy');
+            const sendLine = document.getElementById('exSendAvailLine');
+            const recvLine = document.getElementById('exRecvAvailLine');
+            if (!fromEl || !sendLine) return;
+            const fromC = String(fromEl.value || '').trim();
+            sendLine.textContent = formatAvailableLineForVaultCcy(fromC);
+            if (toEl && recvLine) {
+                const toC = String(toEl.value || '').trim();
+                recvLine.textContent = 'Balance: ' + formatBalanceAmountForVaultCcy(toC);
+            }
+        }
+
+        function setExchangeSendMax() {
+            const fromEl = document.getElementById('exFromCcy');
+            const inp = document.getElementById('exFrom');
+            if (!fromEl || !inp) return;
+            const ccy = String(fromEl.value || '').trim();
+            inp.value = vaultBalanceToMaxInputString(ccy, getVaultBalance(ccy));
+            if (typeof calcRate === 'function') calcRate();
+        }
+
+        function setReclaimMax() {
+            const ccy = walletParseCcySel('reclaimCcy');
+            const inp = document.getElementById('reclaimAmt');
+            if (!inp) return;
+            inp.value = vaultBalanceToMaxInputString(ccy, getVaultBalance(ccy));
+            if (typeof calcReclaim === 'function') calcReclaim();
+        }
+
+        function setSendAmtMax() {
+            const sel = document.getElementById('sendCcy');
+            const inp = document.getElementById('sendAmtInput');
+            if (!sel || !inp) return;
+            const ccy = vaultCcyFromSelectValue(sel.value);
+            inp.value = vaultBalanceToMaxInputString(ccy, getVaultBalance(ccy));
+            if (typeof updateSendFavEq === 'function') updateSendFavEq();
+        }
+
+        function setRecvReqAmtMax() {
+            const sel = document.getElementById('reqCcy');
+            const inp = document.getElementById('reqAmt');
+            if (!sel || !inp) return;
+            const ccy = vaultCcyFromSelectValue(sel.value);
+            inp.value = vaultBalanceToMaxInputString(ccy, getVaultBalance(ccy));
+            if (typeof updateRecvFavEq === 'function') updateRecvFavEq();
+        }
+
+        function setInvAmtMax() {
+            const sel = document.getElementById('invCcy');
+            const inp = document.getElementById('invAmt');
+            if (!sel || !inp) return;
+            const ccy = String(sel.value || '').trim();
+            inp.value = vaultBalanceToMaxInputString(ccy, getVaultBalance(ccy));
+            if (typeof updateInvoice === 'function') updateInvoice();
+        }
+
+        function setCfAmountMax() {
+            const sel = document.getElementById('cfAssetCcy');
+            const inp = document.getElementById('cfAmount');
+            if (!sel || !inp) return;
+            const asset = String(sel.value || 'USDw').split(/\s+/)[0].trim();
+            const b = typeof getCfAssetBalance === 'function' ? getCfAssetBalance(asset) : 0;
+            inp.value = vaultBalanceToMaxInputString(asset, b);
+            if (typeof updateCfDepositAvailLabel === 'function') updateCfDepositAvailLabel();
+        }
+
+        function updateCfDepositAvailLabel() {
+            const sel = document.getElementById('cfAssetCcy');
+            const el = document.getElementById('cfDepositAvail');
+            if (!el) return;
+            if (!sel || !sel.value) {
+                el.textContent = 'Available: —';
+                return;
+            }
+            const asset = String(sel.value || '').split(/\s+/)[0].trim();
+            const b = typeof getCfAssetBalance === 'function' ? getCfAssetBalance(asset) : 0;
+            el.textContent = 'Available: ' + fmtCfWalletQty(b, asset) + ' ' + asset;
+        }
+
+        function updateSendAvailLine() {
+            const el = document.getElementById('sendAvailLine');
+            const sel = document.getElementById('sendCcy');
+            if (!el || !sel) return;
+            if (!sel.value) { el.textContent = 'Available: —'; return; }
+            el.textContent = formatAvailableLineForVaultCcy(vaultCcyFromSelectValue(sel.value));
+        }
+
+        function updateRecvAvailLine() {
+            const el = document.getElementById('recvAvailLine');
+            const sel = document.getElementById('reqCcy');
+            if (!el || !sel) return;
+            if (!sel.value) { el.textContent = 'Available: —'; return; }
+            el.textContent = formatAvailableLineForVaultCcy(vaultCcyFromSelectValue(sel.value));
+        }
+
+        function updateInvoiceAvailLine() {
+            const el = document.getElementById('invAvailLine');
+            const sel = document.getElementById('invCcy');
+            if (!el || !sel) return;
+            if (!sel.value) { el.textContent = 'Available: —'; return; }
+            el.textContent = formatAvailableLineForVaultCcy(String(sel.value || '').trim());
+        }
+
+        function updateReclaimSelectedAvail() {
+            const el = document.getElementById('reclaimSelAvail');
+            if (!el) return;
+            const ccy = typeof walletParseCcySel === 'function' ? walletParseCcySel('reclaimCcy') : 'USDw';
+            el.textContent = formatAvailableLineForVaultCcy(ccy);
+        }
+
         function vaultExecutionAllowed() {
             const cfg = window.STABLES_CONFIG || {};
             if (cfg.DEMO_VAULT_UNLOCK !== false) return true;
@@ -10856,8 +11838,59 @@
         }
 
         let SIM_Winiwa_PRICE = 0.00846;
+        /** Stress / fallback multiplier when CR logic does not apply (Treasury sim). */
         const SIM_LEVERAGE = 4.2;
-        let SIM_XWM_PRICE = SIM_Winiwa_PRICE / (SIM_LEVERAGE * 10);
+
+        function parseProtocolCrPercent() {
+            const el = document.getElementById('protocolCRBig');
+            const raw = el && el.textContent ? String(el.textContent) : '';
+            const m = raw.match(/([\d.]+)/);
+            const x = m ? parseFloat(m[1]) : NaN;
+            if (!Number.isFinite(x) || x <= 100) return 130;
+            return x;
+        }
+
+        /** Implied xWiniwa leverage from headline coverage ratio: CR% / (CR% − 100%). */
+        function leverageFromCoverageRatioPct(crPct) {
+            const c = Number(crPct);
+            if (!Number.isFinite(c) || c <= 100.0001) return SIM_LEVERAGE;
+            return c / (c - 100);
+        }
+
+        function getEffectiveXwmLeverage() {
+            return leverageFromCoverageRatioPct(parseProtocolCrPercent());
+        }
+
+        function syncMintLeverageDisplay() {
+            const el = document.getElementById('xwmCurrentLeverageDisplay');
+            if (!el) return;
+            const L = getEffectiveXwmLeverage();
+            el.textContent = 'x' + L.toFixed(1);
+        }
+
+        /** Refresh Mint xWiniwa calc rows when CR / SIM_XWM change without re-entering `calcSlider` from `calcXwm`. */
+        function recalcMintXwmPanelsOnly() {
+            try {
+                const amtEl = document.getElementById('xwmAmt');
+                const outEl = document.getElementById('xwmCalcR');
+                if (amtEl && outEl && typeof readVaultAmountFromInput === 'function') {
+                    const wn = readVaultAmountFromInput(amtEl);
+                    const canCalc = (wn > 0 && SIM_Winiwa_PRICE > 0 && SIM_XWM_PRICE > 0);
+                    const xwm = canCalc ? (wn * SIM_Winiwa_PRICE * getEffectiveXwmLeverage() / SIM_XWM_PRICE) : null;
+                    outEl.textContent = xwm != null ? xwm.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' xWiniwa' : '\u2014';
+                }
+                const bEl = document.getElementById('xwmBurnAmt');
+                const bOut = document.getElementById('xwmBurnCalc');
+                if (bEl && bOut && typeof readVaultAmountFromInput === 'function') {
+                    const ba = readVaultAmountFromInput(bEl);
+                    const wn = (ba > 0 && SIM_Winiwa_PRICE > 0 && SIM_XWM_PRICE > 0) ? (ba * SIM_XWM_PRICE / SIM_Winiwa_PRICE) : '\u2014';
+                    bOut.textContent = wn !== '\u2014' ? wn.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' Winiwa' : '\u2014';
+                }
+                if (typeof renderCouncilLiabilityStructure === 'function') renderCouncilLiabilityStructure();
+            } catch (_) { /* ignore */ }
+        }
+
+        let SIM_XWM_PRICE = SIM_Winiwa_PRICE / (getEffectiveXwmLeverage() * 10);
 
         // Price display currency preference for xWiniwa price lines.
         // "auto" means: use Wallet primary currency (BASE_CCY).
@@ -10916,6 +11949,45 @@
             }, 120);
         }
 
+        /** On/Off Ramp: jump to numbered step under On-ramp or Off-ramp (from At a glance diagram). */
+        function scrollToRampStep(direction, step) {
+            const d = String(direction || '').toLowerCase();
+            const n = parseInt(String(step), 10);
+            if ((d !== 'on' && d !== 'off') || !Number.isFinite(n) || n < 1 || n > 6) return;
+            if (typeof navigate === 'function') navigate('onoff-ramp');
+            const id = d === 'on' ? 'ramp-on-step-' + n : 'ramp-off-step-' + n;
+            setTimeout(function () {
+                const el = document.getElementById(id);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 120);
+        }
+
+        /** Mint tab Mint Wables: used from On/Off Ramp step 6 (and diagram). */
+        function goMintWablesMint(ev) {
+            if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+            if (typeof navigate === 'function') navigate('mint');
+            setTimeout(function () {
+                if (typeof setVTab === 'function') setVTab('issue');
+                setTimeout(function () {
+                    const el = document.getElementById('mintWablesMintBlock');
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 80);
+            }, 120);
+        }
+
+        /** Mint tab Burn Wables (reclaim Winiwa): used from Off-ramp step 1 (and diagram). */
+        function goMintWablesBurn(ev) {
+            if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+            if (typeof navigate === 'function') navigate('mint');
+            setTimeout(function () {
+                if (typeof setVTab === 'function') setVTab('issue');
+                setTimeout(function () {
+                    const el = document.getElementById('mintWablesBurnBlock');
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 80);
+            }, 120);
+        }
+
         function refreshWablesFxOracleUI() {
             const mintEl = document.getElementById('wablesMintFxOracleSource');
             if (mintEl) {
@@ -10968,7 +12040,7 @@
                 if (!Number.isFinite(n) || n <= 0 || n > 1e7) return false;
                 SIM_Winiwa_PRICE = n;
                 // xWiniwa is demo-leveraged equity; make it meaningfully smaller than base Winiwa.
-                SIM_XWM_PRICE = SIM_Winiwa_PRICE / (SIM_LEVERAGE * 10);
+                SIM_XWM_PRICE = SIM_Winiwa_PRICE / (getEffectiveXwmLeverage() * 10);
                 try {
                     if (typeof refreshXwmPriceDisplays === 'function') refreshXwmPriceDisplays();
                 } catch (_) { /* ignore */ }
@@ -11147,11 +12219,17 @@
 
         function updateGlobalUI() {
             if (typeof syncVaultWalletUI === 'function') syncVaultWalletUI();
+            try { if (typeof refreshWalletModalCurrencySelects === 'function') refreshWalletModalCurrencySelects(); } catch (_) { }
 
             document.getElementById('availWiniwaXwm').textContent = `Available: ${fmtAvailVaultQty(WALLET_WINIWA)}`;
             document.getElementById('availWiniwaIss').textContent = `Available: ${fmtAvailVaultQty(WALLET_WINIWA)} Winiwa`;
             try { if (typeof updateSendFavEq === 'function') updateSendFavEq(); } catch (_) { }
             try { if (typeof updateRecvFavEq === 'function') updateRecvFavEq(); } catch (_) { }
+            try { if (typeof updateExchangeAvailDisplay === 'function') updateExchangeAvailDisplay(); } catch (_) { }
+            try { if (typeof updateSendAvailLine === 'function') updateSendAvailLine(); } catch (_) { }
+            try { if (typeof updateRecvAvailLine === 'function') updateRecvAvailLine(); } catch (_) { }
+            try { if (typeof updateInvoiceAvailLine === 'function') updateInvoiceAvailLine(); } catch (_) { }
+            try { if (typeof updateReclaimSelectedAvail === 'function') updateReclaimSelectedAvail(); } catch (_) { }
             const burnAvailEl = document.getElementById('availXwmBurn');
             if (burnAvailEl) {
                 burnAvailEl.textContent = `Available: ${fmtAvailVaultQty(WALLET_XWM)}`;
@@ -11590,7 +12668,7 @@
             const tol = 1e-5;
             if (mintRaw <= 0 || mintRaw > bal + tol) return showToast('Invalid amount or insufficient balance');
             const mintAmt = Math.min(mintRaw, bal);
-            const earnedXwm = (mintAmt * SIM_Winiwa_PRICE * SIM_LEVERAGE / SIM_XWM_PRICE);
+            const earnedXwm = (mintAmt * SIM_Winiwa_PRICE * getEffectiveXwmLeverage() / SIM_XWM_PRICE);
 
             WALLET_WINIWA -= mintAmt;
             WALLET_XWM += earnedXwm;
@@ -12048,6 +13126,16 @@
             if (curPage === 'treasury' && typeof renderTreasuryConcentrationReview === 'function') {
                 renderTreasuryConcentrationReview();
             }
+            try {
+                SIM_XWM_PRICE = SIM_Winiwa_PRICE / (getEffectiveXwmLeverage() * 10);
+                if (typeof syncWiniwaRatesFromSpot === 'function') syncWiniwaRatesFromSpot();
+                if (typeof refreshXwmPriceDisplays === 'function') refreshXwmPriceDisplays();
+            } catch (_) { /* ignore */ }
+            if (curPage === 'mint' && typeof recalcMintXwmPanelsOnly === 'function') recalcMintXwmPanelsOnly();
+            if (curPage === 'mint' && window.__xwmChartLastPrices && typeof renderXwmLeverageChartFromPrices === 'function') {
+                renderXwmLeverageChartFromPrices(window.__xwmChartLastPrices);
+            }
+            if (typeof syncMintLeverageDisplay === 'function') syncMintLeverageDisplay();
         }
 
         // Init on load
@@ -12065,7 +13153,7 @@
             const xWiniwaHeld = SIM_XWM_HELD;
             const resultEl = document.getElementById('simResult');
             if (!customPrice || customPrice <= 0) { resultEl.textContent = ''; return; }
-            const newVal = (xWiniwaHeld * customPrice * SIM_LEVERAGE / currentPrice).toFixed(2);
+            const newVal = (xWiniwaHeld * customPrice * getEffectiveXwmLeverage() / currentPrice).toFixed(2);
             resultEl.innerHTML = 'At <strong>$' + customPrice + '</strong> \u2014 xWiniwa value: <strong style="color:var(--pu)">$' + newVal + '</strong>';
         }
 
@@ -12107,6 +13195,7 @@
             const dn = document.getElementById('invNoteDisplay');
             if (da) da.textContent = amt ? amt + ' ' + ccy : '';
             if (dn) dn.textContent = note || (amt ? 'Scan to pay' : 'Enter an amount to generate QR');
+            if (typeof updateInvoiceAvailLine === 'function') updateInvoiceAvailLine();
         }
         function recordMerchantSale() {
             if (!merchantMode) return showToast('Turn Merchant on in Settings → Appearance to use My shop.');
@@ -12241,6 +13330,109 @@
             }
         }
 
+        function initTopbarBrandOutsideClose() {
+            if (window.__topbarBrandDismissBound) return;
+            window.__topbarBrandDismissBound = true;
+            document.addEventListener('click', function (e) {
+                const b = document.querySelector('.topbar .brand');
+                if (!b || !b.classList.contains('brand--tip-open')) return;
+                if (b.contains(e.target)) return;
+                b.classList.remove('brand--tip-open');
+            }, true);
+        }
+
+        function handleTopbarBrandClick(ev) {
+            const brandEl = ev.currentTarget;
+            const touchUi = window.matchMedia('(hover: none)').matches;
+            const tip = document.getElementById('topbarBrandTooltip');
+            initTopbarBrandOutsideClose();
+
+            if (touchUi && tip && ev.target && typeof ev.target.closest === 'function' && ev.target.closest('#topbarBrandTooltip')) {
+                ev.stopPropagation();
+                brandEl.classList.remove('brand--tip-open');
+                return;
+            }
+
+            if (touchUi) {
+                const sub = document.getElementById('topbarBrandSub');
+                if (sub && ev.target && typeof ev.target.closest === 'function' && ev.target.closest('#topbarBrandSub')) {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    brandEl.classList.toggle('brand--tip-open');
+                    return;
+                }
+            }
+
+            if (touchUi) brandEl.classList.remove('brand--tip-open');
+            navigate('wallet');
+        }
+
+        function onTopbarBrandKeydown(ev) {
+            const brandEl = ev.currentTarget;
+            if (ev.key === 'Escape') {
+                brandEl.classList.remove('brand--tip-open');
+                return;
+            }
+            if (ev.key === 'Enter' || ev.key === ' ') {
+                ev.preventDefault();
+                brandEl.classList.remove('brand--tip-open');
+                navigate('wallet');
+            }
+        }
+
+        const TOPBAR_BRAND_SUB_DEFAULT = 'By Stables on Minima';
+        const TOPBAR_BRAND_SUB_PERSONAL = 'by Stables/Minima';
+
+        function refreshTopbarBrand() {
+            const img = document.getElementById('topbarBrandImg');
+            const nameEl = document.getElementById('topbarBrandName');
+            const subEl = document.getElementById('topbarBrandSub');
+
+            const liveName = String(document.getElementById('councilNameInput')?.value || '').trim();
+            const prof = loadCouncilProfileFromStorage();
+            const storedName = String(prof?.name || '').trim();
+            const combinedName = liveName || storedName;
+            let bankName = '';
+            try {
+                bankName = String(localStorage.getItem('stables_bank_display_name_v1') || '').trim();
+            } catch (_) {}
+
+            const welcomeBankDraft = String(document.getElementById('welcomeBankNameInput')?.value || '').trim();
+            let displayTitle = 'Stables';
+            if (combinedName && combinedName !== 'Council Member') {
+                displayTitle = combinedName;
+            } else if (welcomeBankDraft) {
+                displayTitle = welcomeBankDraft;
+            } else if (bankName) {
+                displayTitle = bankName;
+            }
+            if (subEl) {
+                subEl.textContent = displayTitle !== 'Stables' ? TOPBAR_BRAND_SUB_PERSONAL : TOPBAR_BRAND_SUB_DEFAULT;
+            }
+            if (nameEl) {
+                nameEl.textContent = displayTitle;
+                nameEl.style.overflow = 'hidden';
+                nameEl.style.textOverflow = 'ellipsis';
+                nameEl.style.whiteSpace = 'nowrap';
+                nameEl.style.maxWidth = 'min(42vw, 180px)';
+            }
+
+            const av = String(councilAvatarDataUrl || councilAvatarUrl || '').trim()
+                || String(prof?.avatarDataUrl || prof?.avatarUrl || '').trim();
+            if (img) {
+                if (av) {
+                    img.src = av;
+                    img.alt = displayTitle;
+                    img.style.objectFit = 'cover';
+                } else {
+                    img.src = 'stables_icon.png';
+                    img.alt = 'Stables';
+                    img.style.objectFit = 'contain';
+                }
+            }
+        }
+        window.refreshTopbarBrand = refreshTopbarBrand;
+
         function applyCouncilProfileToUI(profile) {
             const role = profile?.role || 'Executor';
             councilExecutionRoleCache = role;
@@ -12282,6 +13474,8 @@
                 btn.disabled = disable;
                 if (disable) btn.title = 'Multisig execution requires Executive (Multisig) in Settings.';
             });
+
+            refreshTopbarBrand();
         }
 
         function initCouncilMemberProfile() {
@@ -12304,10 +13498,57 @@
                     settingsImg.style.display = 'block';
                     settingsPh.style.display = 'none';
                 }
+                refreshTopbarBrand();
                 showToast('Avatar loaded (not saved yet)');
             };
             reader.readAsDataURL(file);
         }
+
+        function welcomePersonalAvatarOnFile(input) {
+            const file = input?.files?.[0];
+            if (!file) return;
+            if (!file.type || !file.type.startsWith('image/')) return showToast('Please select an image file');
+            const reader = new FileReader();
+            reader.onload = () => {
+                councilAvatarDataUrl = String(reader.result || '');
+                councilAvatarUrl = '';
+                const wImg = document.getElementById('welcomePersonalAvatarPreview');
+                const wPh = document.getElementById('welcomePersonalAvatarPh');
+                if (wImg && wPh) {
+                    wImg.src = councilAvatarDataUrl;
+                    wImg.style.display = 'block';
+                    wPh.style.display = 'none';
+                }
+                const settingsImg = document.getElementById('councilAvatarPreviewImg');
+                const settingsPh = document.getElementById('councilAvatarPh');
+                if (settingsImg && settingsPh) {
+                    settingsImg.src = councilAvatarDataUrl;
+                    settingsImg.style.display = 'block';
+                    settingsPh.style.display = 'none';
+                }
+                refreshTopbarBrand();
+                showToast('Picture loaded (saved when you finish)');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function syncWelcomeAvatarPreviewFromCouncil() {
+            const wImg = document.getElementById('welcomePersonalAvatarPreview');
+            const wPh = document.getElementById('welcomePersonalAvatarPh');
+            const src = councilAvatarDataUrl || councilAvatarUrl;
+            if (!wImg || !wPh) return;
+            if (src) {
+                wImg.src = src;
+                wImg.style.display = 'block';
+                wPh.style.display = 'none';
+            } else {
+                wImg.src = '';
+                wImg.style.display = 'none';
+                wPh.style.display = 'block';
+            }
+        }
+
+        window.syncWelcomeAvatarPreviewFromCouncil = syncWelcomeAvatarPreviewFromCouncil;
 
         function loadCouncilAvatarFromUrl() {
             const input = document.getElementById('councilAvatarUrlInput');
@@ -12323,6 +13564,7 @@
                 settingsImg.style.display = 'block';
                 settingsPh.style.display = 'none';
             }
+            refreshTopbarBrand();
             showToast('Avatar URL loaded (not saved yet)');
         }
 
@@ -12346,6 +13588,7 @@
             applyCouncilProfileToUI(profile);
             showToast('Council profile saved');
         }
+        window.saveCouncilMemberProfile = saveCouncilMemberProfile;
 
         function resetCouncilMemberProfile() {
             const ok = typeof window.confirm === 'function'

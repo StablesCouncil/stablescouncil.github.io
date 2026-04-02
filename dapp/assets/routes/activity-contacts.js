@@ -1504,6 +1504,13 @@
     });
   };
 
+  window.unselectAllWelcomeCurrencies = function () {
+    const pills = Array.from(document.querySelectorAll('#welcomeCurrencies .ccy-pill'));
+    pills.forEach((p) => {
+      if (p.classList.contains('on')) window.toggleWelcomeCcy(p);
+    });
+  };
+
   window.updateWelcomePrimaryOptions = function () {
     const sel = document.getElementById('welcomePrimary');
     if (!sel) return;
@@ -1563,6 +1570,11 @@
     const stepNerdTrack = document.getElementById('welcomeStepNerdTrack');
     const stepShowcaseMsg = document.getElementById('welcomeStepShowcaseMsg');
     const stepTourUseCase = document.getElementById('welcomeStepTourUseCase');
+    const stepPIntro = document.getElementById('welcomeStepPersonalizeIntro');
+    const stepP1 = document.getElementById('welcomeStepPersonalize1');
+    const stepP2 = document.getElementById('welcomeStepPersonalize2');
+    const stepP3 = document.getElementById('welcomeStepPersonalize3');
+    const stepP4 = document.getElementById('welcomeStepPersonalize4');
     if (stepShowcaseIntro) stepShowcaseIntro.style.display = '';
     if (stepLang) stepLang.style.display = 'none';
     if (stepCurrencies) stepCurrencies.style.display = 'none';
@@ -1570,6 +1582,11 @@
     if (stepNerdTrack) stepNerdTrack.style.display = 'none';
     if (stepShowcaseMsg) stepShowcaseMsg.style.display = 'none';
     if (stepTourUseCase) stepTourUseCase.style.display = 'none';
+    if (stepPIntro) stepPIntro.style.display = 'none';
+    if (stepP1) stepP1.style.display = 'none';
+    if (stepP2) stepP2.style.display = 'none';
+    if (stepP3) stepP3.style.display = 'none';
+    if (stepP4) stepP4.style.display = 'none';
     try {
       sessionStorage.removeItem('stables_guided_tour_from_menu_v1');
     } catch (_) {}
@@ -1583,6 +1600,11 @@
     const stepNerdTrack = document.getElementById('welcomeStepNerdTrack');
     const stepShowcaseMsg = document.getElementById('welcomeStepShowcaseMsg');
     const stepTourUseCase = document.getElementById('welcomeStepTourUseCase');
+    const stepPIntro = document.getElementById('welcomeStepPersonalizeIntro');
+    const stepP1 = document.getElementById('welcomeStepPersonalize1');
+    const stepP2 = document.getElementById('welcomeStepPersonalize2');
+    const stepP3 = document.getElementById('welcomeStepPersonalize3');
+    const stepP4 = document.getElementById('welcomeStepPersonalize4');
     if (stepShowcaseIntro) stepShowcaseIntro.style.display = step === 'showcaseIntro' ? '' : 'none';
     if (stepLang) stepLang.style.display = step === 'lang' ? '' : 'none';
     if (stepCurrencies) stepCurrencies.style.display = step === 'currencies' ? '' : 'none';
@@ -1590,6 +1612,11 @@
     if (stepNerdTrack) stepNerdTrack.style.display = step === 'nerdTrack' ? '' : 'none';
     if (stepShowcaseMsg) stepShowcaseMsg.style.display = step === 'showcaseMsg' ? '' : 'none';
     if (stepTourUseCase) stepTourUseCase.style.display = step === 'tourUseCase' ? '' : 'none';
+    if (stepPIntro) stepPIntro.style.display = step === 'personalizeIntro' ? '' : 'none';
+    if (stepP1) stepP1.style.display = step === 'personalize1' ? '' : 'none';
+    if (stepP2) stepP2.style.display = step === 'personalize2' ? '' : 'none';
+    if (stepP3) stepP3.style.display = step === 'personalize3' ? '' : 'none';
+    if (stepP4) stepP4.style.display = step === 'personalize4' ? '' : 'none';
   }
 
   window.goWelcomeFromShowcaseIntro = function () {
@@ -1600,30 +1627,35 @@
     showWelcomeStep('tourChoice');
   };
 
-  window.applyWelcomeSetup = function (opts) {
-    const skipCurrency = opts && opts.skipCurrency === true;
+  const WELCOME_BANK_NAME_KEY = 'stables_bank_display_name_v1';
+
+  window.persistWelcomeCurrencyChoices = function () {
+    const selected = Array.from(document.querySelectorAll('#welcomeCurrencies .ccy-pill.on'))
+      .map(x => x.dataset?.ccy).filter(Boolean);
+    const primary = document.getElementById('welcomePrimary')?.value || (selected.includes('EURw') ? 'EURw' : (selected[0] || 'EURw'));
+
+    const pills = Array.from(document.querySelectorAll('#ccyDisplayPills .ccy-pill'));
+    pills.forEach(p => {
+      const code = p.dataset?.ccy;
+      const shouldOn = selected.includes(code);
+      if (!code) return;
+      if (shouldOn && !p.classList.contains('on') && typeof window.toggleCcyPill === 'function') window.toggleCcyPill(p);
+      if (!shouldOn && p.classList.contains('on') && typeof window.toggleCcyPill === 'function') window.toggleCcyPill(p);
+    });
+
+    if (typeof window.setPrimary === 'function') window.setPrimary(primary, true);
+  };
+
+  window.finalizeWelcomeSetup = function () {
     const lang = document.getElementById('welcomeLang')?.value || 'en';
+
+    const bankDraft = String(document.getElementById('welcomeBankNameInput')?.value || '').trim();
+    try {
+      if (bankDraft) localStorage.setItem(WELCOME_BANK_NAME_KEY, bankDraft);
+    } catch (_) {}
 
     localStorage.setItem('stables_welcome_done_v1', '1');
     localStorage.setItem('stables_lang_pref', lang);
-
-    if (!skipCurrency) {
-      const selected = Array.from(document.querySelectorAll('#welcomeCurrencies .ccy-pill.on'))
-        .map(x => x.dataset?.ccy).filter(Boolean);
-      const primary = document.getElementById('welcomePrimary')?.value || (selected.includes('EURw') ? 'EURw' : (selected[0] || 'EURw'));
-
-      // Apply selected currencies to the Settings pills.
-      const pills = Array.from(document.querySelectorAll('#ccyDisplayPills .ccy-pill'));
-      pills.forEach(p => {
-        const code = p.dataset?.ccy;
-        const shouldOn = selected.includes(code);
-        if (!code) return;
-        if (shouldOn && !p.classList.contains('on') && typeof window.toggleCcyPill === 'function') window.toggleCcyPill(p);
-        if (!shouldOn && p.classList.contains('on') && typeof window.toggleCcyPill === 'function') window.toggleCcyPill(p);
-      });
-
-      if (typeof window.setPrimary === 'function') window.setPrimary(primary, true);
-    }
 
     let showcaseRoute = null;
     try {
@@ -1637,8 +1669,119 @@
       } catch (_) {}
     }
 
+    if (typeof window.refreshTopbarBrand === 'function') window.refreshTopbarBrand();
     if (typeof window.closeWelcomeSetup === 'function') window.closeWelcomeSetup();
+  };
 
+  window.goWelcomeAfterCurrencySave = function () {
+    const selected = Array.from(document.querySelectorAll('#welcomeCurrencies .ccy-pill.on'))
+      .map(x => x.dataset?.ccy).filter(Boolean);
+    if (!selected.length) {
+      if (typeof window.showToast === 'function') {
+        window.showToast('Pick at least one currency.', { tone: 'amber', durationMs: 3800 });
+      }
+      return;
+    }
+    window.persistWelcomeCurrencyChoices();
+    showWelcomeStep('personalizeIntro');
+  };
+
+  window.goWelcomePersonalizeFromIntro = function () {
+    const input = document.getElementById('welcomeBankNameInput');
+    if (input) {
+      try {
+        const saved = String(localStorage.getItem(WELCOME_BANK_NAME_KEY) || '').trim();
+        if (saved) input.value = saved;
+      } catch (_) {}
+    }
+    showWelcomeStep('personalize1');
+  };
+
+  window.goWelcomePersonalizeNext = function (fromStep) {
+    if (fromStep === 1) {
+      const name = String(document.getElementById('welcomeBankNameInput')?.value || '').trim();
+      try {
+        if (name) localStorage.setItem(WELCOME_BANK_NAME_KEY, name);
+        else localStorage.removeItem(WELCOME_BANK_NAME_KEY);
+      } catch (_) {}
+      if (typeof window.refreshTopbarBrand === 'function') window.refreshTopbarBrand();
+      showWelcomeStep('personalize2');
+      if (typeof window.syncWelcomeAvatarPreviewFromCouncil === 'function') {
+        window.syncWelcomeAvatarPreviewFromCouncil();
+      }
+      return;
+    }
+    if (fromStep === 2) {
+      showWelcomeStep('personalize3');
+      return;
+    }
+    if (fromStep === 3) {
+      showWelcomeStep('personalize4');
+      if (typeof window.renderWelcomeDirectoryPreview === 'function') {
+        window.renderWelcomeDirectoryPreview();
+      }
+    }
+  };
+
+  /** Welcome personalize step 3: show "later stage" notice, then continue to step 4. */
+  window.openWelcomeContactsFromPersonalize = function () {
+    const modal = document.getElementById('agentActionModal');
+    const title = document.getElementById('agentActionTitle');
+    const titleRight = document.getElementById('agentActionTitleRight');
+    const content = document.getElementById('agentActionContent');
+    if (!modal || !title || !content) {
+      // Fallback: preserve onboarding continuity even if notice UI is unavailable.
+      if (typeof window.goWelcomePersonalizeNext === 'function') window.goWelcomePersonalizeNext(3);
+      return;
+    }
+    title.textContent = 'Contacts';
+    if (titleRight) titleRight.innerHTML = '';
+    modal.classList.add('agent-action-notice');
+    content.innerHTML = `
+      <p class="sec-body" style="margin:0 0 12px;line-height:1.55;color:#fbbf24">
+        Opening <strong style="color:#fbbf24">Contacts</strong> from this onboarding step will be added in a <strong style="color:#fbbf24">later stage</strong>.
+      </p>
+      <button class="btn btn-w" style="width:100%" onclick="closeWelcomeContactsComingSoonModal(event)">OK</button>
+    `;
+    modal.classList.add('open');
+  };
+
+  window.closeWelcomeContactsComingSoonModal = function (ev) {
+    if (ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+    }
+    const topModal = document.getElementById('agentActionModal');
+    if (topModal) topModal.classList.remove('open', 'agent-action-notice');
+    if (typeof window.goWelcomePersonalizeNext === 'function') window.goWelcomePersonalizeNext(3);
+  };
+
+  window.finishWelcomePersonalization = function () {
+    const bank = String(document.getElementById('welcomeBankNameInput')?.value || '').trim()
+      || String(localStorage.getItem(WELCOME_BANK_NAME_KEY) || '').trim();
+    try {
+      if (bank) localStorage.setItem(WELCOME_BANK_NAME_KEY, bank);
+    } catch (_) {}
+
+    const nameEl = document.getElementById('councilNameInput');
+    if (nameEl && bank) {
+      const cur = String(nameEl.value || '').trim();
+      if (!cur || cur === 'Council Member') nameEl.value = bank;
+    }
+
+    if (typeof window.saveCouncilMemberProfile === 'function') {
+      try {
+        window.saveCouncilMemberProfile();
+      } catch (_) {}
+    }
+
+    window.finalizeWelcomeSetup();
+  };
+
+  window.applyWelcomeSetup = function (opts) {
+    const skipCurrency = opts && opts.skipCurrency === true;
+    if (!skipCurrency) window.persistWelcomeCurrencyChoices();
+    window.finalizeWelcomeSetup();
   };
 
   /** After showcase web/node choice: remember route and open currency step (unless guided tour was opened from More → Help). */
@@ -1861,6 +2004,29 @@
     localStorage.setItem('stables_welcome_use_case_v1', u);
     window.closeWelcomeSetup();
     if (typeof window.showToast === 'function') window.showToast('Setup saved');
+  };
+
+  window.renderWelcomeDirectoryPreview = function () {
+    const el = document.getElementById('welcomeDirectoryList');
+    if (!el) return;
+    el.innerHTML = '';
+    let n = 0;
+    for (const c of CONTACTS_BOOK.values()) {
+      if (n++ >= 14) break;
+      const row = document.createElement('div');
+      row.style.cssText = 'padding:8px 10px;border-radius:10px;background:rgba(103,232,249,.06);border:1px solid rgba(103,232,249,.12);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px';
+      const name = document.createElement('span');
+      name.style.fontWeight = '700';
+      name.style.color = 'var(--t)';
+      name.textContent = c.name;
+      const cat = document.createElement('span');
+      cat.style.color = 'var(--m)';
+      cat.style.fontSize = '12px';
+      cat.textContent = c.category || '';
+      row.appendChild(name);
+      row.appendChild(cat);
+      el.appendChild(row);
+    }
   };
 
   /** More → Help → Guided tours: open welcome on the StablesAgent role picker (path choice). */
