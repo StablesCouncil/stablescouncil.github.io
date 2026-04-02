@@ -4,7 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stables — By Stables on Minima</title>
+    <title>Stables - BYOB</title>
+    <link rel="canonical" href="https://stablescouncil.org/dapp/">
+    <!-- Link preview: Open Graph + X (Twitter) Card (absolute URLs required for crawlers) -->
+    <meta name="description" content="Stables MiniDapp showcase on Minima. Preview wallet, mint, merchants, and StablesAgent. Be your own bank.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Stables">
+    <meta property="og:url" content="https://stablescouncil.org/dapp/">
+    <meta property="og:title" content="Stables MiniDapp Showcase">
+    <meta property="og:description" content="Interactive preview of the Stables banking MiniDapp on Minima. Explore the showcase, then install the package on your node when you are ready.">
+    <meta property="og:image" content="https://stablescouncil.org/dapp/agent.png">
+    <meta property="og:image:width" content="640">
+    <meta property="og:image:height" content="640">
+    <meta property="og:image:alt" content="StablesAgent, Stables MiniDapp showcase">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@StablesCouncil">
+    <meta name="twitter:title" content="Stables MiniDapp Showcase">
+    <meta name="twitter:description" content="Interactive preview of the Stables banking MiniDapp on Minima. Be your own bank.">
+    <meta name="twitter:image" content="https://stablescouncil.org/dapp/agent.png">
+    <meta name="twitter:image:alt" content="StablesAgent, Stables MiniDapp showcase">
     <!-- Official Favicon -->
     <link rel="icon" type="image/png" href="stables_icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3731,7 +3749,7 @@
             <img id="topbarBrandImg" src="stables_icon.png" alt="Stables" style="width:34px;height:34px;flex-shrink:0">
             <div style="display:flex;flex-direction:column;justify-content:center;min-width:0">
                 <span id="topbarBrandName" class="brand-name">Stables</span>
-                <span id="topbarBrandSub" class="brand-sub">By Stables on Minima</span>
+                <span id="topbarBrandSub" class="brand-sub">Be your own bank</span>
             </div>
             <div id="topbarBrandTooltip" class="brand-hover-tip" role="tooltip">
                 <span class="brand-hover-tip__text">My bank made possible by Stables on Minima</span>
@@ -5413,6 +5431,142 @@
             <div id="feedbackApp"></div>
         </div>
 
+        <!-- HELP: STABLES ACADEMY (More → Help) -->
+        <div class="page" id="page-help-academy">
+            <header class="app-page-header">
+                <div class="dic" aria-hidden="true">&#x1F393;</div>
+                <div class="app-page-header__text">
+                    <div class="app-page-header__title">The Stables Academy</div>
+                    <div class="app-page-header__sub">Questionnaires, score tracking, certificate</div>
+                </div>
+            </header>
+            <div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">
+                <div class="stitle-row">
+                    <div class="stitle">Academy topics</div>
+                    <button type="button" class="agent-mini-btn"
+                        onclick="openAgentExplain('Stables Academy: questionnaire model, anonymized learning analytics, and topic progression')"
+                        title="StablesAgent">
+                        <img src="agent.png" alt="StablesAgent">
+                    </button>
+                </div>
+                <div class="card app-section-card" style="padding:14px 16px;margin-bottom:12px">
+                    <p class="sec-body" style="margin:0 0 8px;line-height:1.5">
+                        Complete topic questionnaires to build practical banking confidence. Retakes use a short cool-down, and your
+                        <strong style="color:var(--t)">highest score</strong> is kept.
+                    </p>
+                    <p class="xs mu" style="margin:0 0 12px;line-height:1.45">
+                        Prerequisite path for Ambassador status: all Academy topics completed (policy drafted, full enforcement comes with all topics live).
+                    </p>
+                    <div class="xs mu" style="margin:0 0 10px;line-height:1.45">
+                        What happens if:<br>
+                        You fail, we are the responsible. Is that we need to explain our banking system better.<br>
+                        If you succeed:<br>
+                        You are a damn genious, and are ready to manage your bank as any other banker out there!
+                    </div>
+                    <div class="buttons">
+                        <a class="btn btn-secondary" href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer">Open Academy Telegram topic</a>
+                    </div>
+                </div>
+                <div class="card app-section-card" style="padding:10px 12px;margin-bottom:12px">
+                    <button type="button" class="btn" style="width:100%;margin-bottom:8px;text-align:left"
+                        onclick="openAcademyTopic('security')"><span id="academyTopicBadge-security">☆</span> Security</button>
+                    <button type="button" class="btn" style="width:100%;margin-bottom:8px;text-align:left"
+                        onclick="openAcademyTopic('day')"><span id="academyTopicBadge-day">☆</span> Day-to-day management (coming soon)</button>
+                    <button type="button" class="btn" style="width:100%;margin-bottom:8px;text-align:left"
+                        onclick="openAcademyTopic('blockchain')"><span id="academyTopicBadge-blockchain">☆</span> Blockchain / crypto (coming soon)</button>
+                    <button type="button" class="btn" style="width:100%;margin-bottom:8px;text-align:left"
+                        onclick="openAcademyTopic('shop')"><span id="academyTopicBadge-shop">☆</span> My shop (coming soon)</button>
+                    <button type="button" class="btn" style="width:100%;margin-bottom:8px;text-align:left"
+                        onclick="openAcademyTopic('council')"><span id="academyTopicBadge-council">☆</span> The Council (coming soon)</button>
+                    <button type="button" class="btn" style="width:100%;text-align:left"
+                        onclick="openAcademyTopic('general')"><span id="academyTopicBadge-general">☆</span> Stables general (coming soon)</button>
+                </div>
+                <div class="card app-section-card" id="academySecurityPanel" style="padding:14px 16px;display:none">
+                    <div class="stitle-row stitle-row--in-card">
+                        <div class="stitle-inline">Security questionnaire</div>
+                    </div>
+                    <p class="xs mu" style="margin:0 0 10px;line-height:1.45">
+                        10 randomized questions, <strong style="color:var(--t)">one at a time</strong>, 3 options each. Minimum pass: <strong style="color:var(--t)">6/10</strong> and all mandatory questions correct. Optional personal questions come <strong style="color:var(--t)">after</strong> the quiz.
+                    </p>
+                    <div class="xs mu" id="academyRetakeHint" style="margin:0 0 10px;line-height:1.45"></div>
+                    <div id="academyQuizIntro">
+                        <div class="xs mu" style="margin:0 0 8px;font-weight:800;color:var(--t)">When should you see if each answer is correct?</div>
+                        <label class="xs mu" style="display:flex;gap:8px;align-items:flex-start;margin:6px 0">
+                            <input type="radio" name="academyFeedbackMode" value="each" style="margin-top:2px">
+                            <span>After each answer (see correct or not before the next question)</span>
+                        </label>
+                        <label class="xs mu" style="display:flex;gap:8px;align-items:flex-start;margin:6px 0 12px">
+                            <input type="radio" name="academyFeedbackMode" value="end" checked style="margin-top:2px">
+                            <span>At the end only (full score after you finish all 10)</span>
+                        </label>
+                        <div class="buttons" style="margin-bottom:10px">
+                            <button type="button" class="btn btn-primary" id="academyStartBtn" onclick="startAcademySecurityQuiz()">Start security quiz</button>
+                        </div>
+                    </div>
+                    <div id="academySecurityStepWrap" style="display:none">
+                        <div class="xs mu" id="academySecurityProgress" style="margin:0 0 8px;font-weight:800;color:var(--c)"></div>
+                        <div id="academySecurityQuestions"></div>
+                        <div class="xs mu" id="academyPerQuestionFeedback" style="display:none;margin-top:10px;padding:8px 10px;border-radius:10px;border:1px solid rgba(103,232,249,.2)"></div>
+                        <div class="buttons" style="margin-top:12px">
+                            <button type="button" class="btn btn-primary" id="academyStepPrimaryBtn" onclick="academyStepPrimaryAction()">Next</button>
+                        </div>
+                    </div>
+                    <div id="academyDemographicsBlock" style="display:none">
+                        <div class="xs mu" style="margin:0 0 10px;font-weight:800;color:var(--t)">Optional (after the quiz)</div>
+                        <p class="xs mu" style="margin:0 0 10px;line-height:1.45">Help us understand our community. You can choose &ldquo;prefer not say&rdquo; for any item.</p>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+                            <select class="fsel" id="academyDemographicGender">
+                                <option value="prefer_not_to_say">Gender: Prefer not say</option>
+                                <option value="man">Man</option>
+                                <option value="woman">Woman</option>
+                                <option value="other">Other</option>
+                                <option value="bot">Bot</option>
+                            </select>
+                            <select class="fsel" id="academyDemographicAge">
+                                <option value="prefer_not_to_say">Age: Prefer not say</option>
+                                <option value="under_18">Under 18</option>
+                                <option value="18_24">18-24</option>
+                                <option value="25_34">25-34</option>
+                                <option value="35_44">35-44</option>
+                                <option value="45_54">45-54</option>
+                                <option value="55_64">55-64</option>
+                                <option value="65_plus">65+</option>
+                            </select>
+                        </div>
+                        <select class="fsel" id="academyDemographicContinent" style="margin-bottom:8px">
+                            <option value="prefer_not_to_say">Geographic location: Prefer not say</option>
+                            <option value="north_america">North America</option>
+                            <option value="central_america">Central America</option>
+                            <option value="south_america">South America</option>
+                            <option value="europe">Europe</option>
+                            <option value="middle_east">Middle East</option>
+                            <option value="africa">Africa</option>
+                            <option value="asia">Asia</option>
+                            <option value="oceania">Oceania</option>
+                        </select>
+                        <label style="display:flex;gap:8px;align-items:flex-start;margin:8px 0 12px">
+                            <input type="checkbox" id="academyPublicDbConsent" style="margin-top:2px">
+                            <span class="xs mu" style="line-height:1.45">I authorize adding this anonymized result to the public DB. This helps the team improve communication and content quality as the community grows.</span>
+                        </label>
+                        <div class="buttons">
+                            <button type="button" class="btn btn-primary" id="academyFinishBtn" onclick="academyFinishSecurityQuiz()">Finish and see results</button>
+                        </div>
+                    </div>
+                    <div id="academySecurityResult" class="xs mu" style="display:none;margin-top:10px;padding:10px;border:1px solid rgba(103,232,249,.2);border-radius:10px"></div>
+                    <div id="academyCertificateBox" style="display:none;margin-top:10px;padding:12px;border:1px solid rgba(103,232,249,.25);border-radius:12px;background:rgba(103,232,249,.06)">
+                        <div style="font-weight:900;color:var(--t);margin-bottom:4px">Stables Academy Certificate</div>
+                        <div class="xs mu" id="academyCertificateText" style="margin-bottom:8px"></div>
+                        <div class="buttons">
+                            <button type="button" class="btn btn-secondary" onclick="shareAcademyCertificate()">Share</button>
+                        </div>
+                    </div>
+                    <div class="xs mu" style="margin-top:10px;line-height:1.45">
+                        Planned next: topic-specific Telegram diploma thread and NFT credential path (design phase).
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- HELP: ALL LINKS (More → Help) -->
         <div class="page" id="page-help-links">
             <header class="app-page-header">
@@ -6164,6 +6318,13 @@
                     </div>
                 </div>
 
+                <label class="flabel">Top bar identity mode</label>
+                <div class="flex gap8" style="flex-wrap:wrap;justify-content:center;margin-bottom:8px">
+                    <button id="profileUseMySettingsBtn" class="btn btn-w btn-g" style="flex:1;min-width:220px" onclick="useCouncilProfileSettings()">Use my settings</button>
+                    <button id="profileUseDefaultSettingsBtn" class="btn" style="flex:1;min-width:220px" onclick="useDefaultProfileSettings()">Use default settings</button>
+                </div>
+                <p class="hint" id="profileModeHint" style="margin:0 14px 10px;text-align:center">Mode: Use my settings</p>
+
                 <div class="flex gap8" style="flex-wrap:wrap;justify-content:center;margin-top:10px">
                     <button class="btn btn-w btn-g" style="flex:1;min-width:220px" onclick="saveCouncilMemberProfile()">Save profile</button>
                     <button class="btn" style="flex:1;min-width:220px" onclick="resetCouncilMemberProfile()">Reset</button>
@@ -6195,7 +6356,7 @@
                     Release notes and new prototype drops will show up here as we ship. For now, use the link below to download the latest Stables MiniDapp package for my Minima node (MDS zip on GitHub).
                 </div>
                 <a id="settingsMdsZipLink" class="btn btn-w" style="flex:1;min-width:220px;font-size:14px;font-weight:900;display:block;text-align:center;width:100%;text-decoration:none;box-sizing:border-box"
-                    href="#" target="_blank" rel="noopener">Download Stables_v00.00.02.mds.zip</a>
+                    href="#" target="_blank" rel="noopener">Download Stables_v0.01.01.mds.zip</a>
                 <div class="xs mu" id="settingsMdsZipUrlLabel" style="margin-top:10px;word-break:break-all;line-height:1.45;opacity:.9"></div>
             </div>
             </div>
@@ -6890,6 +7051,13 @@
             <div class="ddiv"></div>
             <div class="dsect">
                 <div class="dsect-t">Help</div>
+                <div class="ditem" onclick="navigate('help-academy');closeMoreNow()">
+                    <div class="dic">🎓</div>
+                    <div class="dinfo">
+                        <div class="dname">The Stables Academy</div>
+                        <div class="ddesc">Questionnaires and certificate</div>
+                    </div><span style="color:var(--m)">›</span>
+                </div>
                 <div class="ditem" onclick="openWelcomeGuidedToursFromMenu();closeMoreNow()">
                     <div class="dic">🧭</div>
                     <div class="dinfo">
@@ -7622,7 +7790,7 @@
 
     <script src="assets/config/runtime-config.js"></script>
     <script>
-        const PAGES = ['wallet', 'invest', 'exchange', 'onoff-ramp', 'mint', 'spend', 'ambassador', 'my-shop', 'chat', 'council-comms', 'council', 'treasury', 'faucet', 'settings-profile', 'settings-updates', 'settings-security', 'settings-legal', 'invoice', 'activity', 'contacts', 'feedback', 'help-links'];
+        const PAGES = ['wallet', 'invest', 'exchange', 'onoff-ramp', 'mint', 'spend', 'ambassador', 'my-shop', 'chat', 'council-comms', 'council', 'treasury', 'faucet', 'settings-profile', 'settings-updates', 'settings-security', 'settings-legal', 'invoice', 'activity', 'contacts', 'feedback', 'help-academy', 'help-links'];
         const TABS = ['invest', 'spend', 'wallet', 'mint'];
         const INVEST_TAB_STORAGE_KEY = 'stables_invest_tab_v1';
         function getSavedInvestTab() {
@@ -7642,6 +7810,269 @@
         let merchantMode = localStorage.getItem(MERCHANT_MODE_KEY) === '1';
         let privacyMode = false;
         let lede = false;
+        const ACADEMY_STATE_KEY = 'stables_academy_v1';
+        const ACADEMY_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+        const ACADEMY_PASS_MIN = 6;
+        const ACADEMY_SECURITY_BANK = [
+            { id: 'sec_q1', q: 'What is the safest rule for your Vault key?', c: ['Share it only with support if they ask politely', 'Never share it with anyone', 'Store it in a public screenshot folder'], a: 1, m: true },
+            { id: 'sec_q2', q: 'If someone DMs you first offering urgent support, what should you do?', c: ['Ignore and use official channels only', 'Send wallet details first to verify identity', 'Join a call and share screen immediately'], a: 0, m: true },
+            { id: 'sec_q3', q: 'What is the best place to save your Vault key?', c: ['On paper or secure offline storage you control', 'In random social media drafts', 'In public cloud notes without protection'], a: 0, m: true },
+            { id: 'sec_q4', q: 'Which statement is true about Stables support?', c: ['Official support will ask for your full seed phrase', 'Official support can help without your seed phrase', 'Any Telegram account with logo is automatically trusted'], a: 1, m: false },
+            { id: 'sec_q5', q: 'What is a good phishing warning sign?', c: ['Pressure and urgency to act now', 'Calm educational text with no links', 'A known official URL you typed manually'], a: 0, m: false },
+            { id: 'sec_q6', q: 'What should you verify before trusting a link?', c: ['The exact official domain from All links', 'Only the logo color', 'Only follower count'], a: 0, m: false },
+            { id: 'sec_q7', q: 'If your device may be compromised, first step?', c: ['Move slowly and verify from a clean device', 'Keep using it and ignore warnings', 'Share your key to recover faster'], a: 0, m: false },
+            { id: 'sec_q8', q: 'Why should addresses be handled carefully?', c: ['A wrong address can permanently lose funds', 'Any wrong address auto-corrects on chain', 'Address mistakes are always reversible'], a: 0, m: false },
+            { id: 'sec_q9', q: 'Best behavior in public channels?', c: ['Post your balance to get faster support', 'Keep sensitive details private', 'Publish your recovery words for backup'], a: 1, m: false },
+            { id: 'sec_q10', q: 'How should software updates be handled?', c: ['From trusted official sources only', 'From any forwarded zip in chat', 'Only from anonymous mirrors'], a: 0, m: false },
+            { id: 'sec_q11', q: 'What does pseudonymous safety still require?', c: ['Strong personal operational discipline', 'No personal responsibility', 'Sharing private data freely'], a: 0, m: false },
+            { id: 'sec_q12', q: 'If a deal sounds too good to be true?', c: ['Treat as high-risk and verify independently', 'Send funds first to reserve access', 'Skip verification to avoid delay'], a: 0, m: false },
+            { id: 'sec_q13', q: 'What is the correct response to a fake recovery website?', c: ['Close it and use official links page', 'Enter your seed phrase quickly', 'Bookmark and test later with real key'], a: 0, m: false },
+            { id: 'sec_q14', q: 'Why keep learning security basics?', c: ['Individual security raises collective strength', 'Security knowledge is optional for finance', 'Security only matters for developers'], a: 0, m: false }
+        ];
+        let academyCurrentQuiz = null;
+        let academyQuizIndex = 0;
+        let academyUserAnswers = [];
+        let academyFeedbackEach = false;
+        let academyCurrentRevealed = false;
+        function academyLoadState() {
+            try { return JSON.parse(localStorage.getItem(ACADEMY_STATE_KEY) || '{}'); } catch (_) { return {}; }
+        }
+        function academySaveState(state) {
+            try { localStorage.setItem(ACADEMY_STATE_KEY, JSON.stringify(state || {})); } catch (_) { }
+        }
+        function academyGetTopicState(topicId) {
+            const st = academyLoadState();
+            if (!st.topics) st.topics = {};
+            if (!st.topics[topicId]) st.topics[topicId] = {};
+            return st.topics[topicId];
+        }
+        function academySetTopicState(topicId, patch) {
+            const st = academyLoadState();
+            if (!st.topics) st.topics = {};
+            const cur = st.topics[topicId] || {};
+            st.topics[topicId] = Object.assign({}, cur, patch || {});
+            academySaveState(st);
+            academyRefreshTopicBadges();
+        }
+        function academyRefreshTopicBadges() {
+            const ids = ['security', 'day', 'blockchain', 'shop', 'council', 'general'];
+            ids.forEach((id) => {
+                const el = document.getElementById('academyTopicBadge-' + id);
+                if (!el) return;
+                const st = academyGetTopicState(id);
+                if (st.completed && Number.isFinite(st.bestScore)) el.textContent = '★ ' + st.bestScore + '/10';
+                else el.textContent = '☆';
+            });
+            academyRefreshRetakeHint();
+        }
+        function academyRefreshRetakeHint() {
+            const el = document.getElementById('academyRetakeHint');
+            if (!el) return;
+            const st = academyGetTopicState('security');
+            if (!st.lastAttemptAt) { el.textContent = 'Retake after a cool-down. Highest score stays recorded.'; return; }
+            const wait = (Number(st.lastAttemptAt) + ACADEMY_WEEK_MS) - Date.now();
+            if (wait <= 0) el.textContent = 'You can retake now.';
+            else el.textContent = 'Next retake window in about ' + Math.ceil(wait / (24 * 60 * 60 * 1000)) + ' day(s).';
+        }
+        function academyShuffle(arr) {
+            const a = arr.slice();
+            for (let i = a.length - 1; i > 0; i -= 1) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const t = a[i]; a[i] = a[j]; a[j] = t;
+            }
+            return a;
+        }
+        function openAcademyTopic(topicId) {
+            const panel = document.getElementById('academySecurityPanel');
+            if (panel) panel.style.display = topicId === 'security' ? 'block' : 'none';
+            if (topicId !== 'security') showToast('Questionnaire for this topic is coming soon.');
+            if (topicId === 'security') academyRefreshRetakeHint();
+        }
+        window.openAcademyTopic = openAcademyTopic;
+        function academyGetCurrentQuestionSelection() {
+            const el = document.querySelector('input[name="academy_cur_q"]:checked');
+            return el ? Number(el.value) : null;
+        }
+        function academyRenderSecurityQuestion() {
+            const host = document.getElementById('academySecurityQuestions');
+            const prog = document.getElementById('academySecurityProgress');
+            const fb = document.getElementById('academyPerQuestionFeedback');
+            const primary = document.getElementById('academyStepPrimaryBtn');
+            if (!host || !academyCurrentQuiz || !academyCurrentQuiz.length) return;
+            const i = academyQuizIndex;
+            const q = academyCurrentQuiz[i];
+            if (prog) prog.textContent = 'Question ' + (i + 1) + ' of 10';
+            const locked = academyFeedbackEach && academyCurrentRevealed;
+            const opts = q.c.map((txt, j) => {
+                let box = 'border:1px solid rgba(103,232,249,.12);border-radius:8px;padding:8px;margin:6px 0';
+                if (locked) {
+                    if (j === q.a) box += ';background:rgba(52,211,153,.12)';
+                    else if (academyUserAnswers[i] === j && j !== q.a) box += ';background:rgba(248,113,113,.12)';
+                }
+                const checked = academyUserAnswers[i] === j ? ' checked' : '';
+                const dis = locked ? ' disabled' : '';
+                return '<label style="display:flex;gap:8px;align-items:flex-start;' + box + '"><input type="radio" name="academy_cur_q" value="' + j + '"' + checked + dis + '><span class="xs mu" style="line-height:1.45;color:var(--t)">' + txt + '</span></label>';
+            }).join('');
+            host.innerHTML = '<div style="padding:10px;border:1px solid rgba(103,232,249,.15);border-radius:10px"><div class="xs" style="font-weight:800;color:var(--t);margin-bottom:8px">' + (i + 1) + '. ' + q.q + (q.m ? ' <span style="color:#fbbf24">(mandatory)</span>' : '') + '</div>' + opts + '</div>';
+            if (fb) {
+                if (academyFeedbackEach && academyCurrentRevealed) {
+                    const ok = academyUserAnswers[i] === q.a;
+                    fb.style.display = 'block';
+                    fb.style.borderColor = ok ? 'rgba(52,211,153,.35)' : 'rgba(248,113,113,.35)';
+                    fb.textContent = ok ? 'Correct.' : 'Not quite. The recommended answer is highlighted in green.';
+                } else {
+                    fb.style.display = 'none';
+                    fb.textContent = '';
+                }
+            }
+            if (primary) {
+                if (academyFeedbackEach && !academyCurrentRevealed) primary.textContent = 'Check answer';
+                else if (i < 9) primary.textContent = 'Next question';
+                else primary.textContent = 'Continue to optional questions';
+            }
+        }
+        function academyGoToDemographics() {
+            const wrap = document.getElementById('academySecurityStepWrap');
+            const demo = document.getElementById('academyDemographicsBlock');
+            if (wrap) wrap.style.display = 'none';
+            if (demo) demo.style.display = 'block';
+        }
+        function academyStepPrimaryAction() {
+            if (!academyCurrentQuiz || !academyCurrentQuiz.length) return;
+            const i = academyQuizIndex;
+            const q = academyCurrentQuiz[i];
+            const sel = academyGetCurrentQuestionSelection();
+            if (sel === null) return showToast('Choose an answer to continue.');
+            if (academyFeedbackEach && !academyCurrentRevealed) {
+                academyUserAnswers[i] = sel;
+                academyCurrentRevealed = true;
+                academyRenderSecurityQuestion();
+                return;
+            }
+            if (!academyFeedbackEach) academyUserAnswers[i] = sel;
+            academyQuizIndex += 1;
+            academyCurrentRevealed = false;
+            if (academyQuizIndex < academyCurrentQuiz.length) academyRenderSecurityQuestion();
+            else academyGoToDemographics();
+        }
+        window.academyStepPrimaryAction = academyStepPrimaryAction;
+        function startAcademySecurityQuiz() {
+            const st = academyGetTopicState('security');
+            const wait = (Number(st.lastAttemptAt || 0) + ACADEMY_WEEK_MS) - Date.now();
+            if (st.lastAttemptAt && wait > 0) {
+                showToast('Retake opens in about ' + Math.ceil(wait / (24 * 60 * 60 * 1000)) + ' day(s).');
+                academyRefreshRetakeHint();
+                return;
+            }
+            const modeEl = document.querySelector('input[name="academyFeedbackMode"]:checked');
+            academyFeedbackEach = modeEl && modeEl.value === 'each';
+            academyCurrentQuiz = academyShuffle(ACADEMY_SECURITY_BANK).slice(0, 10);
+            academyQuizIndex = 0;
+            academyUserAnswers = new Array(10).fill(null);
+            academyCurrentRevealed = false;
+            const intro = document.getElementById('academyQuizIntro');
+            const wrap = document.getElementById('academySecurityStepWrap');
+            const demo = document.getElementById('academyDemographicsBlock');
+            const result = document.getElementById('academySecurityResult');
+            const cert = document.getElementById('academyCertificateBox');
+            if (intro) intro.style.display = 'none';
+            if (wrap) wrap.style.display = 'block';
+            if (demo) demo.style.display = 'none';
+            if (result) result.style.display = 'none';
+            if (cert) cert.style.display = 'none';
+            academyRenderSecurityQuestion();
+        }
+        window.startAcademySecurityQuiz = startAcademySecurityQuiz;
+        async function academySubmitAnonymousResult(payload) {
+            const url = String((window.STABLES_CONFIG || {}).FEEDBACK_SUBMIT_URL || '').trim();
+            if (!url) return false;
+            try {
+                const body = JSON.stringify({ type: 'academy_result_v1', payload: payload });
+                const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body });
+                return !!(res && res.ok);
+            } catch (_) { return false; }
+        }
+        async function academyFinishSecurityQuiz() {
+            if (!academyCurrentQuiz || academyCurrentQuiz.length !== 10) return showToast('Start the quiz first.');
+            let correct = 0;
+            let mandatoryOk = true;
+            academyCurrentQuiz.forEach((q, idx) => {
+                const ans = academyUserAnswers[idx];
+                const good = ans === q.a;
+                if (good) correct += 1;
+                if (q.m && !good) mandatoryOk = false;
+            });
+            const pass = correct >= ACADEMY_PASS_MIN && mandatoryOk;
+            const now = Date.now();
+            const st = academyGetTopicState('security');
+            const best = Math.max(Number(st.bestScore || 0), correct);
+            academySetTopicState('security', {
+                lastAttemptAt: now,
+                lastScore: correct,
+                bestScore: best,
+                completed: pass || !!st.completed,
+                completedAt: pass ? now : (st.completedAt || null)
+            });
+            const demo = document.getElementById('academyDemographicsBlock');
+            const intro = document.getElementById('academyQuizIntro');
+            const wrap = document.getElementById('academySecurityStepWrap');
+            if (demo) demo.style.display = 'none';
+            if (intro) intro.style.display = 'block';
+            if (wrap) wrap.style.display = 'none';
+            const result = document.getElementById('academySecurityResult');
+            if (result) {
+                const msg = pass
+                    ? 'You are a damn genious, and are ready to manage your bank as any other banker out there!'
+                    : 'You fail, we are the responsible. Is that we need to explain our banking system better.';
+                result.style.display = 'block';
+                result.innerHTML = '<div style="font-weight:900;color:var(--t);margin-bottom:6px">Result: ' + correct + '/10</div>'
+                    + '<div style="line-height:1.45;margin-bottom:6px">' + msg + '</div>'
+                    + '<div style="line-height:1.45">Mandatory questions: ' + (mandatoryOk ? 'passed' : 'not passed') + '. Retake cool-down applied.</div>';
+            }
+            const cert = document.getElementById('academyCertificateBox');
+            const certText = document.getElementById('academyCertificateText');
+            if (pass && cert && certText) {
+                cert.style.display = 'block';
+                certText.textContent = 'Completed Security topic with best score ' + best + '/10 on ' + new Date(now).toLocaleDateString() + '.';
+            } else if (cert) cert.style.display = 'none';
+            academyRefreshRetakeHint();
+            academyCurrentQuiz = null;
+            academyUserAnswers = [];
+            academyQuizIndex = 0;
+            academyCurrentRevealed = false;
+            const consent = !!document.getElementById('academyPublicDbConsent')?.checked;
+            if (consent) {
+                const payload = {
+                    topic: 'security',
+                    score: correct,
+                    bestScore: best,
+                    pass: pass,
+                    timestamp: now,
+                    demographics: {
+                        gender: String(document.getElementById('academyDemographicGender')?.value || 'prefer_not_to_say'),
+                        ageGroup: String(document.getElementById('academyDemographicAge')?.value || 'prefer_not_to_say'),
+                        continent: String(document.getElementById('academyDemographicContinent')?.value || 'prefer_not_to_say')
+                    }
+                };
+                const ok = await academySubmitAnonymousResult(payload);
+                showToast(ok ? 'Anonymized result shared. Thank you.' : 'Could not submit now. You can retry next retake.');
+            }
+        }
+        window.academyFinishSecurityQuiz = academyFinishSecurityQuiz;
+        async function shareAcademyCertificate() {
+            const st = academyGetTopicState('security');
+            const txt = 'I have passed with success the "Security" topic of The Stables Academy. Best score: ' + (Number(st.bestScore || 0)) + '/10.';
+            if (navigator.share) {
+                try { await navigator.share({ title: 'Stables Academy', text: txt, url: 'https://t.me/stablescommunity' }); return; } catch (_) { }
+            }
+            try {
+                await navigator.clipboard.writeText(txt + ' Telegram: https://t.me/stablescommunity');
+                showToast('Share text copied to clipboard');
+            } catch (_) {
+                showToast('Share text: ' + txt);
+            }
+        }
+        window.shareAcademyCertificate = shareAcademyCertificate;
 
         function getMerchantSelfId() {
             const current = String(localStorage.getItem(MERCHANT_SELF_ID_KEY) || '').trim();
@@ -13378,13 +13809,61 @@
             }
         }
 
-        const TOPBAR_BRAND_SUB_DEFAULT = 'By Stables on Minima';
-        const TOPBAR_BRAND_SUB_PERSONAL = 'by Stables/Minima';
+        const APP_TAB_TITLE = 'Stables - BYOB';
+        const TOPBAR_BRAND_SUB_DEFAULT = 'Be your own bank';
+        const TOPBAR_BRAND_SUB_PERSONAL = 'By Stables/Minima';
+        const COUNCIL_PROFILE_MODE_KEY = 'stables_profile_mode_v1';
+
+        function getCouncilProfileMode() {
+            try {
+                const mode = String(localStorage.getItem(COUNCIL_PROFILE_MODE_KEY) || '').trim().toLowerCase();
+                return mode === 'default' ? 'default' : 'custom';
+            } catch (_) {
+                return 'custom';
+            }
+        }
+
+        function isUsingCustomProfileSettings() {
+            return getCouncilProfileMode() === 'custom';
+        }
+
+        function setCouncilProfileMode(mode) {
+            const next = String(mode || '').trim().toLowerCase() === 'default' ? 'default' : 'custom';
+            try {
+                localStorage.setItem(COUNCIL_PROFILE_MODE_KEY, next);
+            } catch (_) {}
+            refreshProfileModeUI();
+            refreshTopbarBrand();
+        }
+
+        function refreshProfileModeUI() {
+            const useMineBtn = document.getElementById('profileUseMySettingsBtn');
+            const useDefaultBtn = document.getElementById('profileUseDefaultSettingsBtn');
+            const hint = document.getElementById('profileModeHint');
+            const customMode = isUsingCustomProfileSettings();
+            if (useMineBtn) useMineBtn.className = customMode ? 'btn btn-w btn-g' : 'btn';
+            if (useDefaultBtn) useDefaultBtn.className = customMode ? 'btn' : 'btn btn-w btn-g';
+            if (hint) hint.textContent = customMode ? 'Mode: Use my settings' : 'Mode: Use default settings';
+        }
+
+        function useCouncilProfileSettings() {
+            setCouncilProfileMode('custom');
+            showToast('Using your saved profile settings');
+        }
+        window.useCouncilProfileSettings = useCouncilProfileSettings;
+
+        function useDefaultProfileSettings() {
+            setCouncilProfileMode('default');
+            showToast('Using default app settings');
+        }
+        window.useDefaultProfileSettings = useDefaultProfileSettings;
 
         function refreshTopbarBrand() {
+            document.title = APP_TAB_TITLE;
             const img = document.getElementById('topbarBrandImg');
             const nameEl = document.getElementById('topbarBrandName');
             const subEl = document.getElementById('topbarBrandSub');
+            const customMode = isUsingCustomProfileSettings();
 
             const liveName = String(document.getElementById('councilNameInput')?.value || '').trim();
             const prof = loadCouncilProfileFromStorage();
@@ -13404,9 +13883,8 @@
             } else if (bankName) {
                 displayTitle = bankName;
             }
-            if (subEl) {
-                subEl.textContent = displayTitle !== 'Stables' ? TOPBAR_BRAND_SUB_PERSONAL : TOPBAR_BRAND_SUB_DEFAULT;
-            }
+            if (!customMode) displayTitle = 'Stables';
+            if (subEl) subEl.textContent = (customMode && displayTitle !== 'Stables') ? TOPBAR_BRAND_SUB_PERSONAL : TOPBAR_BRAND_SUB_DEFAULT;
             if (nameEl) {
                 nameEl.textContent = displayTitle;
                 nameEl.style.overflow = 'hidden';
@@ -13418,7 +13896,7 @@
             const av = String(councilAvatarDataUrl || councilAvatarUrl || '').trim()
                 || String(prof?.avatarDataUrl || prof?.avatarUrl || '').trim();
             if (img) {
-                if (av) {
+                if (customMode && av) {
                     img.src = av;
                     img.alt = displayTitle;
                     img.style.objectFit = 'cover';
@@ -13479,6 +13957,7 @@
         function initCouncilMemberProfile() {
             const profile = loadCouncilProfileFromStorage();
             applyCouncilProfileToUI(profile);
+            refreshProfileModeUI();
         }
 
         function onCouncilAvatarFile(input) {
@@ -13840,6 +14319,7 @@
         });
         runBootStep('applyCurrencyVisualMode', applyCurrencyVisualMode);
         runBootStep('initCouncilMemberProfile', initCouncilMemberProfile);
+        runBootStep('initAcademyState', academyRefreshTopicBadges);
         runBootStep('syncAppUpdatesSection', syncAppUpdatesSection);
         runBootStep('refreshWiniwaSpotFromMexc', refreshWiniwaSpotFromMexc);
         (function scheduleWiniwaPricePoll() {
