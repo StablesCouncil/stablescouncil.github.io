@@ -1616,6 +1616,142 @@
             min-width: 90px
         }
 
+        .ex-ccy-dd {
+            position: relative;
+            min-width: 118px;
+            max-width: 148px
+        }
+
+        .ex-ccy-dd__btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            padding: 10px 10px 10px 12px;
+            background: rgba(16, 24, 38, .9);
+            color: var(--t);
+            border: 1px solid rgba(103, 232, 249, .22);
+            border-radius: var(--rs);
+            font-size: 12px;
+            font-weight: 800;
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+            text-align: left
+        }
+
+        .ex-ccy-dd__btn:hover {
+            border-color: rgba(103, 232, 249, .4)
+        }
+
+        .ex-ccy-dd__btn:focus-visible {
+            border-color: rgba(103, 232, 249, .55);
+            box-shadow: 0 0 0 2px rgba(103, 232, 249, .12)
+        }
+
+        .ex-ccy-dd__btn-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+            min-width: 0
+        }
+
+        .ex-ccy-dd__code {
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: .02em;
+            line-height: 1.1
+        }
+
+        .ex-ccy-dd__bal {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--m);
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap
+        }
+
+        .ex-ccy-dd__chev {
+            flex-shrink: 0;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid var(--m);
+            margin-top: 2px;
+            opacity: .85
+        }
+
+        .ex-ccy-dd__panel {
+            position: absolute;
+            z-index: 80;
+            top: calc(100% + 6px);
+            right: 0;
+            min-width: calc(100% + 28px);
+            width: max-content;
+            max-width: min(300px, 90vw);
+            max-height: min(320px, 55vh);
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: 6px;
+            background: rgba(11, 15, 20, .97);
+            border: 1px solid rgba(103, 232, 249, .2);
+            border-radius: 14px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .45), 0 0 0 1px rgba(103, 232, 249, .06);
+            -webkit-overflow-scrolling: touch
+        }
+
+        .ex-ccy-dd__row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            width: 100%;
+            padding: 10px 12px;
+            margin: 0;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--t);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            text-align: left;
+            transition: background .15s, color .15s
+        }
+
+        .ex-ccy-dd__row:hover {
+            background: rgba(103, 232, 249, .1)
+        }
+
+        .ex-ccy-dd__row--active {
+            background: rgba(103, 232, 249, .16);
+            box-shadow: inset 0 0 0 1px rgba(103, 232, 249, .22)
+        }
+
+        .ex-ccy-dd__row-code {
+            flex-shrink: 0;
+            letter-spacing: .02em
+        }
+
+        .ex-ccy-dd__row-amt {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--m);
+            font-variant-numeric: tabular-nums;
+            text-align: right
+        }
+
+        .ex-ccy-dd__row--active .ex-ccy-dd__row-amt {
+            color: var(--t)
+        }
+
         .flip-btn {
             width: 34px;
             height: 34px;
@@ -4638,20 +4774,17 @@
                         inputmode="decimal" style="min-width:0">
                     <button type="button" class="btn btn-g" style="width:auto;padding:8px 12px;font-size:11px;font-weight:800"
                         onclick="setExchangeSendMax()">MAX</button>
-                    <select class="ex-sel" id="exFromCcy" onchange="calcRate();updateExchangeAvailDisplay()" style="width:90px">
-                        <option>USDw</option>
-                        <option>EURw</option>
-                        <option>GBPw</option>
-                        <option>JPYw</option>
-                        <option>CADw</option>
-                        <option>AUDw</option>
-                        <option>CHFw</option>
-                        <option>CNYw</option>
-                        <option>ILSw</option>
-                        <option>IRRw</option>
-                        <option>Winiwa</option>
-                        <option>xWiniwa</option>
-                    </select>
+                    <input type="hidden" id="exFromCcy" value="USDw" autocomplete="off">
+                    <div class="ex-ccy-dd" id="exFromCcyDd">
+                        <button type="button" class="ex-ccy-dd__btn" id="exFromCcyBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="exFromCcyPanel">
+                            <span class="ex-ccy-dd__btn-inner">
+                                <span class="ex-ccy-dd__code" id="exFromCcyLabel">USDw</span>
+                                <span class="ex-ccy-dd__bal" id="exFromCcyBalHint"></span>
+                            </span>
+                            <span class="ex-ccy-dd__chev" aria-hidden="true"></span>
+                        </button>
+                        <div class="ex-ccy-dd__panel" id="exFromCcyPanel" role="listbox" aria-labelledby="exFromCcyBtn" hidden></div>
+                    </div>
                 </div>
                 <div class="flip-btn" onclick="flipEx()">
                     ⇅
@@ -4666,20 +4799,17 @@
                 <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
                     <input class="ex-input" type="number" id="exTo" value="" readonly placeholder="0"
                         style="opacity:.7;min-width:0">
-                    <select class="ex-sel" id="exToCcy" onchange="calcRate();updateExchangeAvailDisplay()" style="width:90px">
-                        <option>EURw</option>
-                        <option>USDw</option>
-                        <option>GBPw</option>
-                        <option>JPYw</option>
-                        <option>CADw</option>
-                        <option>AUDw</option>
-                        <option>CHFw</option>
-                        <option>CNYw</option>
-                        <option>ILSw</option>
-                        <option>IRRw</option>
-                        <option>Winiwa</option>
-                        <option>xWiniwa</option>
-                    </select>
+                    <input type="hidden" id="exToCcy" value="EURw" autocomplete="off">
+                    <div class="ex-ccy-dd" id="exToCcyDd">
+                        <button type="button" class="ex-ccy-dd__btn" id="exToCcyBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="exToCcyPanel">
+                            <span class="ex-ccy-dd__btn-inner">
+                                <span class="ex-ccy-dd__code" id="exToCcyLabel">EURw</span>
+                                <span class="ex-ccy-dd__bal" id="exToCcyBalHint"></span>
+                            </span>
+                            <span class="ex-ccy-dd__chev" aria-hidden="true"></span>
+                        </button>
+                        <div class="ex-ccy-dd__panel" id="exToCcyPanel" role="listbox" aria-labelledby="exToCcyBtn" hidden></div>
+                    </div>
                 </div>
                 <div class="rate-pill" id="ratePill">1 USDw = 0.918 EURw &middot; No fees</div>
                 <button class="btn btn-w btn-lg" type="button" onclick="executeExchangeNow()">Exchange
@@ -12095,6 +12225,120 @@
                 const toC = String(toEl.value || '').trim();
                 recvLine.textContent = 'Balance: ' + formatBalanceAmountForVaultCcy(toC);
             }
+            try { if (typeof refreshExchangeCcyDropdownBalances === 'function') refreshExchangeCcyDropdownBalances(); } catch (_) { /* ignore */ }
+        }
+
+        const EXCHANGE_CCY_LIST = ['USDw', 'EURw', 'GBPw', 'JPYw', 'CADw', 'AUDw', 'CHFw', 'CNYw', 'ILSw', 'IRRw', 'Winiwa', 'xWiniwa'];
+
+        function formatExDropdownBalanceQty(ccy) {
+            const c = String(ccy || '');
+            if (!c || typeof getVaultBalance !== 'function') return '\u2014';
+            const b = getVaultBalance(c);
+            if (c === 'xWiniwa') {
+                const t = Math.floor(b * 1e8 + 1e-10) / 1e8;
+                return t.toLocaleString('en-US', { maximumFractionDigits: 8, minimumFractionDigits: 0 });
+            }
+            if (c === 'Winiwa') {
+                const t = Math.floor(b * 1e6 + 1e-10) / 1e6;
+                return t.toLocaleString('en-US', { maximumFractionDigits: 6, minimumFractionDigits: 0 });
+            }
+            return fmtAvailVaultQty(b);
+        }
+
+        function exchangeCcyDdCloseAll() {
+            document.querySelectorAll('.ex-ccy-dd__panel').forEach(function (pan) {
+                pan.hidden = true;
+                const btn = document.getElementById(pan.id === 'exFromCcyPanel' ? 'exFromCcyBtn' : 'exToCcyBtn');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
+            });
+        }
+
+        function syncExchangeCcyPickerUI(which) {
+            const hidden = document.getElementById(which === 'from' ? 'exFromCcy' : 'exToCcy');
+            const label = document.getElementById(which === 'from' ? 'exFromCcyLabel' : 'exToCcyLabel');
+            const hint = document.getElementById(which === 'from' ? 'exFromCcyBalHint' : 'exToCcyBalHint');
+            const panel = document.getElementById(which === 'from' ? 'exFromCcyPanel' : 'exToCcyPanel');
+            if (!hidden || !label) return;
+            const v = String(hidden.value || '').trim();
+            label.textContent = v || '\u2014';
+            if (hint) {
+                hint.textContent = v ? (formatExDropdownBalanceQty(v) + ' ' + v) : '';
+            }
+            if (panel) {
+                const rows = panel.querySelectorAll('.ex-ccy-dd__row');
+                rows.forEach(function (row) {
+                    const code = row.getAttribute('data-ccy');
+                    const on = code === v;
+                    row.setAttribute('aria-selected', on ? 'true' : 'false');
+                    row.classList.toggle('ex-ccy-dd__row--active', on);
+                });
+            }
+        }
+
+        function refreshExchangeCcyDropdownBalances() {
+            document.querySelectorAll('.ex-ccy-dd__row').forEach(function (row) {
+                const code = row.getAttribute('data-ccy');
+                const amtEl = row.querySelector('.ex-ccy-dd__row-amt');
+                if (code && amtEl) amtEl.textContent = formatExDropdownBalanceQty(code);
+            });
+            syncExchangeCcyPickerUI('from');
+            syncExchangeCcyPickerUI('to');
+        }
+
+        function pickExchangeCcy(which, ccy) {
+            const hidden = document.getElementById(which === 'from' ? 'exFromCcy' : 'exToCcy');
+            if (!hidden) return;
+            hidden.value = String(ccy || '').trim();
+            exchangeCcyDdCloseAll();
+            syncExchangeCcyPickerUI(which);
+            if (typeof calcRate === 'function') calcRate();
+        }
+
+        function initExchangeCurrencyDropdowns() {
+            if (!window.__exCcyDdOutsideBound) {
+                window.__exCcyDdOutsideBound = true;
+                document.addEventListener('click', function (ev) {
+                    if (!ev.target.closest('.ex-ccy-dd')) exchangeCcyDdCloseAll();
+                });
+            }
+            [['from', 'exFromCcyPanel'], ['to', 'exToCcyPanel']].forEach(function (pair) {
+                const panel = document.getElementById(pair[1]);
+                if (!panel || panel.dataset.built === '1') return;
+                panel.dataset.built = '1';
+                panel.innerHTML = EXCHANGE_CCY_LIST.map(function (ccy) {
+                    return '<button type="button" class="ex-ccy-dd__row" role="option" data-ccy="' + ccy + '" tabindex="-1">' +
+                        '<span class="ex-ccy-dd__row-code">' + ccy + '</span>' +
+                        '<span class="ex-ccy-dd__row-amt">' + formatExDropdownBalanceQty(ccy) + '</span></button>';
+                }).join('');
+                const which = pair[0];
+                panel.querySelectorAll('.ex-ccy-dd__row').forEach(function (row) {
+                    row.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        pickExchangeCcy(which, row.getAttribute('data-ccy'));
+                    });
+                });
+            });
+            const bindOpen = function (which) {
+                const btn = document.getElementById(which === 'from' ? 'exFromCcyBtn' : 'exToCcyBtn');
+                const panel = document.getElementById(which === 'from' ? 'exFromCcyPanel' : 'exToCcyPanel');
+                if (!btn || !panel || btn.dataset.exOpenBound === '1') return;
+                btn.dataset.exOpenBound = '1';
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const wasHidden = panel.hidden;
+                    exchangeCcyDdCloseAll();
+                    if (wasHidden) {
+                        panel.hidden = false;
+                        btn.setAttribute('aria-expanded', 'true');
+                        refreshExchangeCcyDropdownBalances();
+                    }
+                });
+            };
+            bindOpen('from');
+            bindOpen('to');
+            refreshExchangeCcyDropdownBalances();
         }
 
         function setExchangeSendMax() {
@@ -13588,10 +13832,15 @@
 
         function flipEx() {
             const fEl = document.getElementById('exFromCcy'), tEl = document.getElementById('exToCcy');
+            if (!fEl || !tEl) return;
             const tmp = fEl.value;
-            Array.from(fEl.options).forEach(o => { if (o.value === tEl.value) o.selected = true; });
-            Array.from(tEl.options).forEach(o => { if (o.value === tmp) o.selected = true; });
-            calcRate();
+            fEl.value = tEl.value;
+            tEl.value = tmp;
+            if (typeof syncExchangeCcyPickerUI === 'function') {
+                syncExchangeCcyPickerUI('from');
+                syncExchangeCcyPickerUI('to');
+            }
+            if (typeof calcRate === 'function') calcRate();
         }
 
         // Address management
@@ -14293,6 +14542,9 @@
         });
         runBootStep('loadWalletVaultState', function () {
             if (typeof loadWalletVaultState === 'function') loadWalletVaultState();
+        });
+        runBootStep('initExchangeCurrencyDropdowns', function () {
+            if (typeof initExchangeCurrencyDropdowns === 'function') initExchangeCurrencyDropdowns();
         });
         runBootStep('calcRate:initial', calcRate);
         runBootStep('renderExchangeRecentList:initial', function () {
