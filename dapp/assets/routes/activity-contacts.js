@@ -822,10 +822,21 @@
       .replace(/"/g, '&quot;');
   }
 
+  /** Normalize labels for compare: legacy short `a.b.c` (showcase) → five-segment `a.b.0.0.c` per minidapp_version.md. */
+  function normalizeMiniDappVersionParts(v) {
+    const parts = String(v || '0')
+      .trim()
+      .split('.')
+      .map((n) => parseInt(n, 10) || 0);
+    if (parts.length === 3) return [parts[0], parts[1], 0, 0, parts[2]];
+    while (parts.length < 5) parts.push(0);
+    return parts.slice(0, 5);
+  }
+
   function compareSemverLike(a, b) {
-    const pa = String(a || '0').split('.').map((n) => parseInt(n, 10) || 0);
-    const pb = String(b || '0').split('.').map((n) => parseInt(n, 10) || 0);
-    const len = Math.max(pa.length, pb.length, 3);
+    const pa = normalizeMiniDappVersionParts(a);
+    const pb = normalizeMiniDappVersionParts(b);
+    const len = Math.max(pa.length, pb.length);
     for (let i = 0; i < len; i++) {
       const da = pa[i] || 0;
       const db = pb[i] || 0;
@@ -1853,7 +1864,7 @@
 
     const copy = {
       en: {
-        congrats: 'Congratulations on becoming your own bank.',
+        congrats: 'Congratulations on becoming your bank.',
         /** Step 0 only: showcase preview + Telegram (HTML safe, static). */
         welcomeShowcaseIntroHtml:
           '<p>This is a first Showcase preview of the Stables dapp currently in development (<strong style="color:var(--t)">version __APP_VERSION__</strong>).</p>' +
@@ -1864,7 +1875,7 @@
         showcaseIntroUnderstandBtn: 'I understand',
         title: '',
         introParas: [
-          'Being your own bank brings great possibilities, and real responsibilities too.',
+          'Your bank opens up great possibilities, and real responsibilities too.',
           'Don’t worry: we are a community that supports each other. You will be able to find all the information you need in order to set your bank securely.'
         ],
         showcase:
@@ -1877,7 +1888,7 @@
         tourMerchantBtn: 'I\'m a merchant. I want to know how this will streamline my business process.',
         tourShopAmbassadorBtn:
           'I want to become a shop ambassador and explore what the earning opportunities are.',
-        tourPersonBtn: 'I\'m a person. I want to understand what I\'ll be able to do with my own bank.',
+        tourPersonBtn: 'I\'m a person. I want to understand what I\'ll be able to do with my bank.',
         tourNerdBtn: 'I\'m a nerd. I want to understand how this holds together.',
         nerdTrackTitle: 'Pick your nerd deep dive',
         nerdTrackBody: 'Choose what you want to inspect first in this demo.',

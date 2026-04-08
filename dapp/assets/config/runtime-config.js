@@ -1,20 +1,22 @@
 // Runtime configuration for UI behavior and local persistence.
 window.STABLES_CONFIG = {
-  /** Shipped build (keep in sync with dapp.conf "version" when you release). */
-  APP_BUILD_VERSION: '00.00.02',
+  /** Council channel for this package: drives top bar pill (Showcase / Demo / Test / Prod). */
+  APP_STAGE: 'showcase',
+  /** Shipped build: canonical five-segment body `PM.Pn.TT.DD.SS` (no `v`); showcase line matches `0_handshake/minidapp_version.md`. */
+  APP_BUILD_VERSION: '00.00.00.00.03',
   /**
    * Council-side view of the newest MiniDapp. If latestPublishedVersion sorts above APP_BUILD_VERSION,
    * the Council communications page shows criticality + what changed + zip link.
    * To preview the update banner locally, temporarily set APP_BUILD_VERSION lower than latestPublishedVersion.
    */
   APP_UPDATE_POLICY: {
-    latestPublishedVersion: '00.00.02',
+    latestPublishedVersion: '00.00.00.00.03',
     whenUpdateNeeded: {
       criticality: 'high',
       whatChanged:
         'Example when an update ships: security fixes, mandatory protocol UI changes, or critical Minima MDS fixes.',
       details:
-        'Install the current package Stables_v00.00.02.mds.zip from the link below, or use Settings and updates.'
+        'Install the current package from dapp/latest-version (zip name matches the published five-segment label), or use Settings and updates.'
     }
   },
   ACTIVITY_PAGE_SIZE: 25,
@@ -59,13 +61,15 @@ window.STABLES_CONFIG = {
    */
   FEEDBACK_SUBMIT_URL: 'https://agent.stablescouncil.org/api/feedback',
   /**
-   * If `window.MDS` exists: feedback uses `MDS.net.POST` (no CORS); StablesAgent can open in the system browser
-   * (see STABLES_AGENT_OPEN_EXTERNAL_WHEN_MDS) instead of a blocked iframe.
+   * If true and `window.MDS` exists: StablesAgent FAB / menu / explain buttons use `window.open` to the agent URL.
+   * Default false: use the in-app side drawer only (avoids an extra browser tab on top of the drawer).
+   * Set true only if the agent iframe is blocked on your Minima / WebView host.
    */
-  STABLES_AGENT_OPEN_EXTERNAL_WHEN_MDS: true,
+  STABLES_AGENT_OPEN_EXTERNAL_WHEN_MDS: false,
   /**
    * MEXC ticker for MINIMA/USDT. Prefer the 24h endpoint: same last price as spot plus quote volume (USDT)
-   * for Treasury liquidity readouts. In MiniDapp, `MDS.net.GET` is used (no CORS issue).
+   * for Treasury liquidity readouts. With MDS, `MDS.net.GET` hits this URL; in a normal browser the app uses
+   * CoinGecko simple price first (CORS), then this URL if the host allows it.
    */
   MEXC_TICKER_URL: 'https://api.mexc.com/api/v3/ticker/24hr?symbol=MINIMAUSDT',
   /**
