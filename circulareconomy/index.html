@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Stables circular economy</title>
+    <meta name="description" content="How external capital, Stables, xMinima, funds, and actors interact in the Stables circular economy.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://stablescouncil.github.io/brand/assets/logo-symbol.png">
+    <style>
+        :root {
+            --bg: #0b0f14;
+            --accent: #67e8f9;
+            --purple: #a78bfa;
+            --text-main: #ffffff;
+            --muted: #9fb0c0;
+            --panel: rgba(16, 24, 38, 0.95);
+            --card-radius: 12px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 48px 24px 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 50%;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at top, rgba(103,232,249,0.08), transparent 70%);
+            transform: translateX(-50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .header {
+            max-width: 960px; width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .brand { display: flex; align-items: center; gap: 16px; }
+        .brand img { height: 48px; width: 48px; }
+        .brand-text { display: flex; flex-direction: column; }
+        .brand-name { font-size: 28px; font-weight: 900; letter-spacing: 0.04em; }
+        .brand-slogan { font-size: 14px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+
+        .badge-pill {
+            display: inline-block;
+            background: rgba(15,23,42,0.6);
+            border: 1px solid rgba(103,232,249,0.5);
+            color: #67e8f9;
+            padding: 8px 18px; border-radius: 999px;
+            font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            text-decoration: none;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 20px rgba(103,232,249,0.2);
+            transition: all 0.3s ease;
+        }
+        .badge-pill:hover {
+            transform: translateY(-2px);
+            border-color: rgba(103,232,249,0.8);
+            box-shadow: 0 0 30px rgba(103,232,249,0.4);
+        }
+
+        .title-block { text-align: center; margin-bottom: 28px; max-width: 800px; }
+
+        h1 {
+            font-size: 42px; font-weight: 900;
+            margin: 0 0 12px;
+            letter-spacing: -0.03em; line-height: 1.15;
+            background: linear-gradient(135deg, #ffffff 0%, #67e8f9 50%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle { font-size: 17px; color: var(--muted); line-height: 1.5; margin: 0; }
+
+        .diagram-scroll {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            padding: 8px 0 4px;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            justify-content: center;
+        }
+
+        .diagram-scroll::-webkit-scrollbar { height: 8px; }
+        .diagram-scroll::-webkit-scrollbar-thumb {
+            background: rgba(103,232,249,0.35);
+            border-radius: 4px;
+        }
+
+        .diagram-canvas {
+            position: relative;
+            width: 1520px;
+            height: 610px;
+            margin: 0 auto;
+            flex-shrink: 0;
+        }
+
+        .diagram-legend {
+            max-width: 720px;
+            margin: 0 auto 16px;
+            padding: 0 16px;
+            font-size: 12px;
+            color: var(--muted);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 24px;
+            justify-content: center;
+        }
+        .diagram-legend span { display: inline-flex; align-items: center; gap: 8px; }
+        .diagram-legend .ce-leg-dash {
+            display: inline-block;
+            width: 28px;
+            height: 0;
+            border-top: 2px dashed;
+            vertical-align: middle;
+        }
+        .diagram-legend .lg-cap { border-color: rgba(103,232,249,0.65); }
+        .diagram-legend .lg-proto { border-color: rgba(167,139,250,0.65); }
+        .diagram-legend .lg-council { border-color: rgba(251,191,36,0.65); }
+
+        .diagram-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .ce-node {
+            position: absolute;
+            z-index: 1;
+            background: rgba(16,24,38,0.58);
+            border: 1px solid rgba(230,237,243,0.18);
+            border-radius: 12px;
+            padding: 10px 12px;
+            max-width: 320px;
+            cursor: help;
+            backdrop-filter: blur(6px);
+            text-align: center;
+        }
+
+        .ce-node.treasury {
+            background: rgba(251,191,36,0.09);
+            border: 1px solid rgba(251,191,36,0.5);
+            box-shadow: 0 0 0 1px rgba(251,191,36,0.15) inset;
+        }
+        .ce-node.treasury .ce-title {
+            color: #ffd579;
+        }
+        .ce-node.treasury .ce-sub {
+            color: #f1d8a1;
+        }
+
+        .ce-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #f4f8fb;
+            line-height: 1.04;
+            letter-spacing: 0.005em;
+            text-shadow: 0 1px 0 rgba(0,0,0,0.35);
+        }
+        .ce-sub {
+            font-size: 12px;
+            color: #dce6ef;
+            margin-top: 2px;
+            line-height: 1.08;
+            letter-spacing: 0.01em;
+        }
+
+        .ce-tf {
+            max-width: 100px;
+            text-align: center;
+            padding: 0;
+        }
+        .ce-tf .ce-title { font-size: 20px; color: #f4f8fb; }
+
+        .prose {
+            max-width: 720px;
+            color: #e6edf3;
+            font-size: 15px;
+            line-height: 1.65;
+            margin-top: 8px;
+        }
+        .prose p { margin: 0 0 1.1em; }
+        .prose .footnote { font-size: 13px; color: var(--muted); margin-top: 0.5em; }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 28px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(103, 232, 249, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(103, 232, 249, 0.15);
+            backdrop-filter: blur(12px);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            border-color: rgba(103, 232, 249, 0.5);
+        }
+        .btn-secondary {
+            background: rgba(15, 23, 42, 0.6);
+            color: #e6edf3;
+        }
+
+        footer {
+            margin-top: 32px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.6;
+            max-width: 720px;
+        }
+
+        @media (max-width: 720px) {
+            h1 { font-size: 28px; }
+            .header { flex-direction: column; gap: 14px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="brand">
+            <img src="https://stablescouncil.github.io/brand/assets/logo-symbol.png" alt="Stables">
+            <div class="brand-text">
+                <span class="brand-name">STABLES</span>
+                <span class="brand-slogan">Be Your Bank</span>
+            </div>
+        </div>
+        <a href="https://minima.global" target="_blank" rel="noopener noreferrer" class="badge-pill">Built on MINIMA</a>
+    </header>
+
+    <div class="title-block">
+        <h1>Stables circular economy</h1>
+        <p class="subtitle">How capital, Minima, Stables, xMinima, and protocol funds interact</p>
+    </div>
+    <div class="diagram-scroll" role="region" aria-label="Circular economy diagram">
+        <div class="diagram-canvas">
+            <svg class="diagram-svg" viewBox="0 0 1520 610" aria-hidden="true">
+                <defs>
+                    <marker id="ce-arr-c" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+                        <polygon points="0 0, 7 3.5, 0 7" fill="rgba(236,243,250,0.78)"/>
+                    </marker>
+                    <marker id="ce-arr-c-r" markerWidth="7" markerHeight="7" refX="1" refY="3.5" orient="auto-start-reverse">
+                        <polygon points="0 0, 7 3.5, 0 7" fill="rgba(236,243,250,0.78)"/>
+                    </marker>
+                    <marker id="ce-arr-bi" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+                        <polygon points="0 0, 7 3.5, 0 7" fill="rgba(103,232,249,0.95)"/>
+                    </marker>
+                    <marker id="ce-arr-bi-r" markerWidth="7" markerHeight="7" refX="1" refY="3.5" orient="auto-start-reverse">
+                        <polygon points="0 0, 7 3.5, 0 7" fill="rgba(103,232,249,0.95)"/>
+                    </marker>
+                </defs>
+
+                <!-- top level link -->
+                <!-- external <-> economic -->
+                <line x1="320" y1="134" x2="1140" y2="134" stroke="rgba(236,243,250,0.72)" stroke-width="1.6" marker-end="url(#ce-arr-c)" marker-start="url(#ce-arr-c-r)"/>
+
+                <!-- community treasury <-> stables / xminima -->
+                <path d="M 540 236 L 330 276" fill="none" stroke="rgba(103,232,249,0.9)" stroke-width="1.65" marker-end="url(#ce-arr-bi)" marker-start="url(#ce-arr-bi-r)"/>
+                <path d="M 600 236 L 760 276" fill="none" stroke="rgba(103,232,249,0.9)" stroke-width="1.65" marker-end="url(#ce-arr-bi)" marker-start="url(#ce-arr-bi-r)"/>
+
+                <!-- community treasury <-> external -->
+                <path d="M 470 186 L 320 150" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)" marker-start="url(#ce-arr-c-r)"/>
+
+                <!-- Economic Activity -> Merchants listing (one-way as requested) -->
+                <path d="M 1270 150 L 1250 176" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)"/>
+                <!-- Merchants listing -> Council treasury -->
+                <path d="M 1250 236 L 1250 276" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)"/>
+
+                <!-- stables -> means -->
+                <path d="M 248 336 L 170 410" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)"/>
+                <!-- stables <-> coverage -->
+                <path d="M 330 336 L 500 410" fill="none" stroke="rgba(103,232,249,0.9)" stroke-width="1.65" marker-end="url(#ce-arr-bi)" marker-start="url(#ce-arr-bi-r)"/>
+
+                <!-- means -> TF* -> coverage (one continuous one-way arrow) -->
+                <path d="M 320 442 L 430 442" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)"/>
+
+                <!-- xMinima <-> coverage -->
+                <path d="M 760 336 L 700 410" fill="none" stroke="rgba(103,232,249,0.9)" stroke-width="1.65" marker-end="url(#ce-arr-bi)" marker-start="url(#ce-arr-bi-r)"/>
+                <!-- xMinima <-> arbitrage -->
+                <path d="M 840 336 L 1040 410" fill="none" stroke="rgba(103,232,249,0.9)" stroke-width="1.65" marker-end="url(#ce-arr-bi)" marker-start="url(#ce-arr-bi-r)"/>
+
+                <!-- council treasury -> arbitrage and structure -->
+                <path d="M 1220 336 L 1160 410" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)"/>
+                <path d="M 1280 336 L 1320 410" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)"/>
+
+                <!-- arbitrage <-> structure (bidirectional, non-mint/burn) -->
+                <path d="M 1260 442 L 1280 442" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)" marker-start="url(#ce-arr-c-r)"/>
+
+                <!-- structure dev -> economic -->
+                <path d="M 1360 410 L 1390 150" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)"/>
+
+                <!-- outer contour -->
+                <path d="M 146 456 C 300 560, 900 560, 1240 152"
+                    fill="none" stroke="rgba(236,243,250,0.75)" stroke-width="1.6" stroke-linecap="round" marker-end="url(#ce-arr-c)"/>
+            </svg>
+
+            <!-- exact layout from user sketch -->
+            <div class="ce-node" style="left:40px;top:92px;width:280px;" title="External capital.">
+                <div class="ce-title">External capital</div>
+                <div class="ce-sub">From CEX/DEX (bridges)</div>
+            </div>
+            <div class="ce-node" style="left:1140px;top:92px;width:340px;" title="Economic activity.">
+                <div class="ce-title">Economic Activity</div>
+                <div class="ce-sub">Goods and services</div>
+            </div>
+            <div class="ce-node treasury" style="left:430px;top:176px;width:300px;" title="Community treasury.">
+                <div class="ce-title">Community Treasury (Asset)</div>
+                <div class="ce-sub">Minima</div>
+            </div>
+            <div class="ce-node" style="left:1080px;top:176px;width:340px;" title="Listings and promo.">
+                <div class="ce-title">Merchants listing + Promo</div>
+                <div class="ce-sub">Minima</div>
+            </div>
+
+            <div class="ce-node" style="left:110px;top:276px;width:300px;" title="Stables debt.">
+                <div class="ce-title">Stables (Debt)</div>
+                <div class="ce-sub">USDs, EURs, JPYs, +</div>
+            </div>
+            <div class="ce-node protocol" style="left:700px;top:276px;width:290px;" title="xMinima leveraged equity.">
+                <div class="ce-title">xMinima (Equity)</div>
+                <div class="ce-sub">Minima price risk takers</div>
+            </div>
+            <div class="ce-node treasury" style="left:1150px;top:276px;width:260px;" title="Council treasury.">
+                <div class="ce-title">Council Treasury</div>
+                <div class="ce-sub">Minima</div>
+            </div>
+
+            <div class="ce-node" style="left:20px;top:410px;width:300px;" title="Means of exchange.">
+                <div class="ce-title">Means of Exchange</div>
+                <div class="ce-sub">Accepted by Merchants</div>
+            </div>
+            <div class="ce-node ce-tf" style="left:350px;top:420px;" title="Transaction fees.">
+                <div class="ce-title">TF*</div>
+            </div>
+            <div class="ce-node protocol" style="left:430px;top:410px;width:290px;" title="Coverage fund.">
+                <div class="ce-title">Coverage Fund</div>
+                <div class="ce-sub">Stables &lt;-&gt; xMinima</div>
+                <div class="ce-sub">USDscf, EURscf, JPYscf, +</div>
+            </div>
+            <div class="ce-node protocol" style="left:980px;top:410px;width:280px;" title="Arbitrage fund.">
+                <div class="ce-title">Arbitrage Fund</div>
+                <div class="ce-sub">Minima &lt;-&gt; xMinima</div>
+            </div>
+            <div class="ce-node" style="left:1280px;top:410px;width:210px;" title="Structure development.">
+                <div class="ce-title">Structure Dev</div>
+                <div class="ce-sub">Audit, partners, etc</div>
+            </div>
+        </div>
+    </div>
+    <p class="subtitle" style="font-size:12px;margin:6px 0 10px;color:#9fb0c0;">
+        <span style="color:#67e8f9;font-weight:700;">Bidirectional cyan arrows</span> represent minting and burning mechanism flows.
+    </p>
+    <p class="subtitle" style="font-size:12px;margin:-4px 0 10px;color:#9fb0c0;">
+        * TF: transaction fees.
+    </p>
+    <script>
+        (function () {
+            var designW = 1520;
+            var designH = 610;
+            var scroll = document.querySelector('.diagram-scroll');
+            var canvas = document.querySelector('.diagram-canvas');
+            if (!scroll || !canvas) return;
+
+            function fitDiagram() {
+                var vw = window.innerWidth || document.documentElement.clientWidth;
+                var available = Math.max(320, vw - 32);
+                var scale = Math.min(1, available / designW);
+                canvas.style.transform = 'scale(' + scale + ')';
+                canvas.style.transformOrigin = 'top center';
+                scroll.style.height = Math.ceil(designH * scale) + 'px';
+            }
+
+            window.addEventListener('resize', fitDiagram);
+            fitDiagram();
+        }());
+    </script>
+
+    <div class="prose">
+        <p>The Coverage Fund and the Arbitrage Fund each pursue a self-interested goal: to maximize profit within its own risk capacity. Taken together, that behaviour tends to move the structure toward equilibrium, maintenance of the peg.</p>
+        <p>The peg is not guaranteed by the Coverage Fund or the Arbitrage function. They are solely opportunistic participants, ready to take advantage of market opportunities during a depeg, just as external capital does. The strength of the structure lies in its ability to offer a level playing field where different actors can achieve their own financial objectives. The structure must be designed so that the interaction among these actors supports maintenance of the peg (Community Treasury &gt; Debt &gt; leveraged equity &gt; 0). For that to hold, the structure must be fully transparent; provide all the tools each actor needs to manage their exposures and assess their risks; make the global positioning of the structure and its risks visible; and allow each actor to execute their strategy with minimal friction: no unnecessary barriers and no or minimal fees.</p>
+        <p class="footnote">* TF: transaction fees.</p>
+    </div>
+
+    <footer>
+        <strong>&quot;Money that is truly yours. Secure, Pseudonymous and Unstoppable.&quot;</strong><br><br>
+        Stables is governed entirely by token holders via the Council. All operations run
+        on-chain via the Minima blockchain, eliminating the need for trusted intermediaries.
+        <div class="btn-group">
+            <a href="https://stablescouncil.github.io/bankingsystem/" class="btn btn-secondary">Banking system map</a>
+            <a href="https://stablescouncil.github.io/" class="btn btn-secondary">Presentation</a>
+        </div>
+    </footer>
+
+    <style>
+        .agent-fab { position: fixed; bottom: 32px; right: 32px; z-index: 9000; display: flex; align-items: center; gap: 12px; cursor: pointer; border: none; background: none; padding: 0; }
+        .agent-fab-tip { background: rgba(10,14,20,0.92); border: 1px solid rgba(103,232,249,0.3); color: #e6edf3; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; padding: 8px 14px; border-radius: 10px; white-space: nowrap; opacity: 0; transform: translateX(8px); transition: all 0.25s ease; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+        .agent-fab:hover .agent-fab-tip { opacity: 1; transform: translateX(0); }
+        .agent-fab-btn { width: 58px; height: 58px; border-radius: 50%; background: linear-gradient(135deg, rgba(103,232,249,0.25), rgba(167,139,250,0.25)); border: 1px solid rgba(103,232,249,0.45); box-shadow: 0 0 24px rgba(103,232,249,0.2); display: flex; align-items: center; justify-content: center; transition: transform 0.25s ease, box-shadow 0.25s ease; flex-shrink: 0; position: relative; }
+        .agent-fab:hover .agent-fab-btn { transform: scale(1.1); box-shadow: 0 0 40px rgba(103,232,249,0.4); }
+        .agent-fab-btn img { width: 32px; height: 32px; object-fit: contain; }
+        .agent-fab-dot { position: absolute; top: 3px; right: 3px; width: 11px; height: 11px; border-radius: 50%; background: #6b7280; border: 2px solid #0b0f14; transition: background 0.4s ease; }
+        .agent-fab-pulse { position: absolute; width: 58px; height: 58px; border-radius: 50%; border: 1px solid rgba(103,232,249,0.5); animation: agent-radar 2.4s ease-out infinite; pointer-events: none; }
+        .agent-fab-pulse:nth-child(2) { animation-delay: 0.8s; }
+        .agent-fab-pulse:nth-child(3) { animation-delay: 1.6s; }
+        @keyframes agent-radar { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(2.2); opacity: 0; } }
+        .agent-backdrop { display: none; position: fixed; inset: 0; z-index: 9050; background: transparent; }
+        .agent-backdrop.open { display: block; }
+        .agent-popup { position: fixed; bottom: 104px; right: 32px; z-index: 9100; width: 390px; height: min(680px, calc(100vh - 130px)); background: #101826; border: 1px solid rgba(103,232,249,0.3); border-radius: 20px; box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 40px rgba(103,232,249,0.12); display: flex; flex-direction: column; overflow: hidden; opacity: 0; transform: translateY(20px) scale(0.97); transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none; }
+        .agent-popup.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+        .agent-popup-header { display: flex; align-items: center; gap: 11px; padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; }
+        .agent-popup-logo { width: 34px; height: 34px; border-radius: 8px; background: rgba(103,232,249,0.08); border: 1px solid rgba(103,232,249,0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .agent-popup-logo img { width: 22px; height: 22px; object-fit: contain; }
+        .agent-popup-title { flex: 1; }
+        .agent-popup-title-main { font-size: 13px; font-weight: 700; color: #e6edf3; font-family: 'Inter', sans-serif; letter-spacing: 0.03em; }
+        .agent-popup-title-sub { font-size: 11px; color: #9fb0c0; font-family: 'Inter', sans-serif; margin-top: 1px; }
+        .agent-popup-status { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #9fb0c0; font-family: 'Inter', sans-serif; cursor: pointer; padding: 5px 10px; border-radius: 999px; transition: background 0.2s; }
+        .agent-popup-status:hover { background: rgba(255,255,255,0.07); }
+        .agent-popup-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.2); }
+        .agent-popup-disclaimer { padding: 7px 16px; background: rgba(251, 191, 36, 0.08); border-bottom: 1px solid rgba(251, 191, 36, 0.25); font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: #fbbf24; text-align: center; flex-shrink: 0; }
+        .agent-popup-body { flex: 1; position: relative; overflow: hidden; }
+        .agent-popup-body iframe { width: 100%; height: 100%; border: none; background: #101826; }
+        .agent-popup-fallback { display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 32px; text-align: center; background: #101826; }
+        .agent-popup-fallback.visible { display: flex; }
+        .agent-popup-fallback p { font-family: 'Inter', sans-serif; font-size: 14px; color: #9fb0c0; line-height: 1.6; }
+        .agent-popup-fallback a { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 12px; background: linear-gradient(135deg, rgba(103,232,249,0.25), rgba(167,139,250,0.25)); border: 1px solid rgba(103,232,249,0.4); color: #e6edf3; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+        .agent-popup-fallback a:hover { box-shadow: 0 0 20px rgba(103,232,249,0.3); }
+        @media (max-width: 640px) { .agent-fab { bottom: 20px; right: 20px; } .agent-fab-tip { display: none; } .agent-popup { bottom: 0; right: 0; left: 0; width: 100%; height: 75vh; border-radius: 20px 20px 0 0; border-bottom: none; } }
+    </style>
+    <div class="agent-backdrop" id="agentBackdrop" onclick="closeAgent()"></div>
+    <div class="agent-popup" id="agentPopup">
+        <div class="agent-popup-header">
+            <div class="agent-popup-logo"><img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" /></div>
+            <div class="agent-popup-title">
+                <div class="agent-popup-title-main">StablesAgent</div>
+                <div class="agent-popup-title-sub">Ask anything about Stables</div>
+            </div>
+            <div class="agent-popup-status" onclick="closeAgent()" title="Close"><span class="agent-popup-status-dot"></span><span>Online</span></div>
+        </div>
+        <div class="agent-popup-disclaimer">DO NOT SHARE PRIVATE OR SENSITIVE INFORMATION</div>
+        <div class="agent-popup-body">
+            <iframe id="agentFrame" title="StablesAgent Chat"></iframe>
+            <div class="agent-popup-fallback" id="agentFallback">
+                <img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;" />
+                <p>The chat will load here directly once the secure connection is active.<br>For now, open it in a new tab:</p>
+                <a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer">Open StablesAgent ↗</a>
+            </div>
+        </div>
+    </div>
+    <button class="agent-fab" id="agentFab" onclick="toggleAgent()" aria-label="Chat with StablesAgent">
+        <span class="agent-fab-tip">Chat with StablesAgent</span>
+        <div class="agent-fab-btn">
+            <span class="agent-fab-pulse"></span>
+            <span class="agent-fab-pulse"></span>
+            <span class="agent-fab-pulse"></span>
+            <img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" />
+            <span class="agent-fab-dot"></span>
+        </div>
+    </button>
+    <script>
+        (function(){
+            const AGENT_URL='https://agent.stablescouncil.org/chat?embed=1',HEALTH_URL='https://agent.stablescouncil.org/health';
+            let agentOpen=false;
+            function setStatus(online){const dot=document.querySelector('.agent-popup-status-dot'),label=document.querySelector('.agent-popup-status span:last-child'),fabDot=document.querySelector('.agent-fab-dot');const c=online?'#22c55e':'#6b7280',g=online?'rgba(34,197,94,0.2)':'none';dot.style.background=c;dot.style.boxShadow=`0 0 0 3px ${g}`;fabDot.style.background=c;label.textContent=online?'Online':'Offline';}
+            async function pingAgent(){try{const r=await fetch(HEALTH_URL,{method:'GET',signal:AbortSignal.timeout(4000)});setStatus(r.ok);}catch{setStatus(false);}}
+            pingAgent();setInterval(pingAgent,30000);
+            function openAgent(){const popup=document.getElementById('agentPopup'),backdrop=document.getElementById('agentBackdrop'),frame=document.getElementById('agentFrame'),fb=document.getElementById('agentFallback');const lang=(function(){try{return localStorage.getItem('stables_lang');}catch(e){return null;}})()||'en';const agentSrc=AGENT_URL+'&lang='+encodeURIComponent(lang);if(!frame.src||frame.src!==agentSrc){frame.src=agentSrc;const t=setTimeout(()=>fb.classList.add('visible'),3000);frame.onload=()=>clearTimeout(t);}popup.classList.add('open');backdrop.classList.add('open');agentOpen=true;}
+            function closeAgent(){document.getElementById('agentPopup').classList.remove('open');document.getElementById('agentBackdrop').classList.remove('open');agentOpen=false;}
+            window.toggleAgent=function(){agentOpen?closeAgent():openAgent();};
+            window.closeAgent=closeAgent;
+            document.addEventListener('keydown',e=>{if(e.key==='Escape'&&agentOpen)closeAgent();});
+        })();
+    </script>
+</body>
+</html>
