@@ -57,7 +57,7 @@ But the infrastructure is real. The self-custody is real. The vision is real.
 April 1st. Stay tuned.
 
 🔗 stables.community
-#Stables #Minima #BeYourOwnBank #stablecoin
+#Stables #Minima #BeYourBank #stablecoin
 ```
 
 ---
