@@ -1,0 +1,165 @@
+/*
+ * stables.css — Shared Design System
+ * Source of truth: live site https://stablescouncil.github.io/ (fetched 2026-03-11)
+ * All tokens and component styles are extracted verbatim from the live site CSS.
+ * Never override these values locally. Never duplicate these rules.
+ *
+ * Usage: <link rel="stylesheet" href="stables.css" />
+ */
+
+/* ─────────────────────────────────────────
+   1. GOOGLE FONTS (same as live site)
+───────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+
+/* ─────────────────────────────────────────
+   2. DESIGN TOKENS  (exact from live site :root)
+───────────────────────────────────────── */
+:root {
+  --bg:              #0b0f14;
+  --panel:           #101826;
+  --text-primary:    #e6edf3;
+  --text-secondary:  #9fb0c0;
+  --accent-cyan:     #67e8f9;
+  --accent-purple:   #a78bfa;
+  --accent-pink:     #f472b6;
+  --accent-amber:    #fbbf24;
+
+  /* Aliases (for compatibility) */
+  --text:            #e6edf3;
+  --muted:           #9fb0c0;
+  --accent:          #67e8f9;
+  --glow:            rgba(103, 232, 249, 0.15);
+
+  --container-pad: clamp(1rem, 5vw, 2.5rem);
+  --section-gap:   clamp(2rem, 10vw, 6.25rem);
+}
+
+/* ─────────────────────────────────────────
+   3. RESET
+───────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─────────────────────────────────────────
+   4. BASE  (exact from live site body)
+───────────────────────────────────────── */
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+  background-color: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ─────────────────────────────────────────
+   5. BUTTONS  ← exact from live site
+   Source: stablescouncil.github.io CSS lines 297–340
+───────────────────────────────────────── */
+/* .buttons is the HTML alias; .btn-group is the canonical class — both work */
+.btn-group,
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+}
+
+.btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 220px;
+  height: 64px;
+  border-radius: 16px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(103, 232, 249, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(103, 232, 249, 0.15);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), 0 0 50px rgba(103, 232, 249, 0.25);
+  border-color: rgba(103, 232, 249, 0.5);
+}
+
+/* Primary: cyan-purple gradient, light text */
+.btn-primary {
+  background: linear-gradient(135deg, rgba(103, 232, 249, 0.3), rgba(167, 139, 250, 0.3)) !important;
+  color: #e6edf3 !important;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, rgba(103, 232, 249, 0.4), rgba(167, 139, 250, 0.4)) !important;
+}
+
+/* Secondary: dark semi-transparent, cyan border, light text */
+.btn-secondary {
+  background: rgba(15, 23, 42, 0.6) !important;
+  color: #e6edf3 !important;
+  border: 1px solid rgba(103, 232, 249, 0.3) !important;
+}
+.btn-secondary:hover {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border-color: rgba(103, 232, 249, 0.5) !important;
+}
+
+.btn-label {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .btn-group { flex-direction: column; }
+  .btn { width: 100%; justify-content: center; }
+}
+
+/* ─────────────────────────────────────────
+   6. BADGE  (from live site)
+───────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.badge-growth   { color: var(--accent-purple); }
+.badge-business { color: var(--accent-amber); }
+
+/* ─────────────────────────────────────────
+   7. LAYOUT
+───────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--container-pad);
+}
+
+/* ─────────────────────────────────────────
+   8. PANEL / CARD  (from live site mockup-frame)
+───────────────────────────────────────── */
+.panel {
+  background: var(--panel);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+}

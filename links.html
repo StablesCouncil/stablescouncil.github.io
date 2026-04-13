@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://stablescouncil.github.io/brand/assets/logo-symbol.png">
+    <link rel="icon" type="image/png" href="https://stablescouncil.org/brand/assets/logo-symbol.png">
     
     <!-- Social Previews -->
     <meta property="og:title" content="Stables | Links">
     <meta property="og:description" content="Connect with Stables. Money that is truly yours.">
-    <meta property="og:image" content="https://stablescouncil.github.io/brand/assets/twitter-header.png">
-    <meta property="og:url" content="https://stablescouncil.github.io/links.html">
+    <meta property="og:image" content="https://stablescouncil.org/brand/assets/twitter-header.png">
+    <meta property="og:url" content="https://stablescouncil.org/links.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Stables">
     
@@ -20,13 +20,14 @@
     <meta name="twitter:site" content="@StablesCouncil">
     <meta name="twitter:title" content="Stables | Links">
     <meta name="twitter:description" content="Connect with Stables. Money that is truly yours.">
-    <meta name="twitter:image" content="https://stablescouncil.github.io/brand/assets/twitter-header.png">
+    <meta name="twitter:image" content="https://stablescouncil.org/brand/assets/twitter-header.png">
     
-    <!-- Google Fonts - Inter -->
+    <!-- Inter + tokens: stables.css (do not duplicate in page styles) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="stables.css" />
+    <link rel="stylesheet" href="assets/site-chrome.css" />
+
     <title>Stables | Links</title>
     <style>
         :root {
@@ -49,10 +50,6 @@
             color: var(--text-primary);
             font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 5rem 1rem;
             position: relative;
             overflow-x: hidden;
         }
@@ -89,29 +86,22 @@
             50% { transform: scale(1.15); opacity: 1; }
         }
 
-        .container {
+        .links-page-stack {
             max-width: 680px;
             width: 100%;
+            margin: 0 auto;
             position: relative;
             z-index: 1;
+            padding-top: 1.25rem;
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 3rem;
+        .links-section {
+            scroll-margin-top: calc(var(--site-header-h, 52px) + 16px);
+            margin-bottom: 2.5rem;
         }
 
-        .logo-wordmark {
-            max-width: 380px;
-            height: auto;
-            margin-bottom: 0;
-        }
-
-        /* Share Button */
+        /* Share Button (positioned inside side rail; static co-ordinates) */
         .share-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(103, 232, 249, 0.5);
             color: #67e8f9;
@@ -127,7 +117,7 @@
             box-shadow: 0 0 20px rgba(103, 232, 249, 0.2);
             width: 44px;
             height: 44px;
-            z-index: 1000;
+            z-index: 1;
         }
 
         .share-btn:hover {
@@ -138,9 +128,6 @@
         }
 
         .share-menu {
-            position: fixed;
-            top: 74px;
-            right: 20px;
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -255,6 +242,31 @@
             margin-bottom: 0.25rem;
         }
 
+        .link-title-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 0.4rem 0.65rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .link-title-row .link-title {
+            margin-bottom: 0;
+        }
+
+        .link-title-version {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: var(--accent-cyan);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .link-item.drafting .link-title-version {
+            color: rgba(251, 191, 36, 0.82);
+        }
+
         .link-description {
             font-size: 0.875rem;
             color: var(--text-secondary);
@@ -276,7 +288,7 @@
             margin-top: 0;
         }
 
-        /* Council variant — gold accent */
+        /* Council variant � gold accent */
         .link-item.council {
             background: linear-gradient(135deg, rgba(251,191,36,0.07), rgba(15,23,42,0.8));
             border-color: rgba(251,191,36,0.25);
@@ -297,7 +309,7 @@
             fill: #fbbf24;
         }
 
-        /* Coming soon — dimmed, not clickable */
+        /* Coming soon � dimmed, not clickable */
         .link-item.coming-soon {
             opacity: 0.38;
             cursor: default;
@@ -328,7 +340,7 @@
             white-space: nowrap;
         }
 
-        /* Drafting state — visible but not yet linked */
+        /* Drafting state � visible but not yet linked */
         .link-item.drafting {
             opacity: 0.65;
             cursor: default;
@@ -342,8 +354,12 @@
             border-color: rgba(251,191,36,0.15);
         }
 
+        .link-item.drafting .link-icon {
+            color: #fbbf24;
+        }
+
         .link-item.drafting .link-icon svg {
-            fill: #fbbf24;
+            fill: currentColor;
         }
 
         .drafting-badge {
@@ -357,6 +373,26 @@
             border-radius: 4px;
             padding: 2px 7px;
             white-space: nowrap;
+        }
+
+        .drafting-badge--phrase {
+            text-transform: none;
+            letter-spacing: 0.04em;
+            font-size: 0.58rem;
+        }
+
+        .link-badge-active {
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-cyan);
+            background: rgba(103, 232, 249, 0.12);
+            border: 1px solid rgba(103, 232, 249, 0.45);
+            border-radius: 4px;
+            padding: 2px 7px;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .footer {
@@ -439,53 +475,124 @@
                 height: 20px;
             }
         }
+
+        /* site-chrome template: column shell, legacy centre layout lives in main */
+        body.site-chrome-body.links-page-body {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+            padding: 0;
+        }
+
+        /* Language rail menu: no visible scrollbar (wheel / trackpad still scrolls). */
+        body.links-page-body .lang-menu {
+            max-height: min(78vh, calc(100dvh - var(--site-header-h, 52px) - 100px));
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        body.links-page-body .lang-menu::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+
     </style>
 </head>
-<body>
-    <div class="container">
-        <!-- Share Button -->
-        <button class="share-btn" onclick="toggleShareMenu()" aria-label="Share">
-            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
-                stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="18" cy="5" r="3"></circle>
-                <circle cx="6" cy="12" r="3"></circle>
-                <circle cx="18" cy="19" r="3"></circle>
-                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-            </svg>
-        </button>
-        <div id="shareMenu" class="share-menu">
-            <button onclick="shareToTwitter()">
+<body class="site-chrome-body links-page-body">
+    <header class="site-chrome-header" role="banner">
+        <a class="site-chrome-header__brand" href="https://stablescouncil.org/">
+            <img class="site-chrome-header__mark" src="https://stablescouncil.org/brand/assets/logo-symbol.png" width="34" height="34" alt="Stables">
+            <span class="site-chrome-header__titles">
+                <span class="site-chrome-header__name">Stables</span>
+                <span class="site-chrome-header__slogan">Be your bank</span>
+            </span>
+        </a>
+        <a class="site-chrome-header__pill" href="https://minima.global" target="_blank" rel="noopener noreferrer">Built on MINIMA</a>
+    </header>
+
+    <aside class="site-chrome-side-rail" aria-label="Quick navigation">
+        <div class="site-chrome-side-rail__stack">
+            <div class="lang-switcher">
+                <button type="button" class="globe-btn" onclick="toggleLangMenu()" aria-label="Select language">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                </button>
+                <div id="langMenu" class="lang-menu" role="menu">
+                    <button type="button" role="menuitem" onclick="goPresentationLang('eu')">Euskara</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('bg')">Български</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('ca')">Català</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('cs')">Čeština</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('en')">English</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('en-edgy')">English (Edgy)</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('zh')">中文</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('fr')">Français</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('fr-qc-edgy')">Québécois</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('de')">Deutsch</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('it')">Italiano</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('gn')">Guaraní</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('lv')">Latviešu</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('lt')">Lietuvių</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('lb')">Lëtzebuergesch</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('ar')">العربية</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('fa')">فارسی</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('he')">עברית</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('yi')">ייִדיש</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('ru')">Русский</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('sk')">Slovenčina</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('es')">Español</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('fi')">Suomi</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('sv')">Svenska</button>
+                    <button type="button" role="menuitem" onclick="goPresentationLang('tr')">Türkçe</button>
+                </div>
+            </div>
+            <div class="share-switcher">
+                <button type="button" class="share-btn" onclick="handleShareMenu()" aria-label="Share">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="18" cy="5" r="3"></circle>
+                        <circle cx="6" cy="12" r="3"></circle>
+                        <circle cx="18" cy="19" r="3"></circle>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    </svg>
+                </button>
+                <div id="shareMenu" class="share-menu">
+            <button type="button" onclick="shareToTwitter()">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                 </svg>
-                X (Twitter)
+                X
             </button>
-            <button onclick="shareToFacebook()">
+            <button type="button" onclick="shareToFacebook()">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                 </svg>
                 Facebook
             </button>
-            <button onclick="shareToLinkedIn()">
+            <button type="button" onclick="shareToLinkedIn()">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                 </svg>
                 LinkedIn
             </button>
-            <button onclick="shareToWhatsApp()">
+            <button type="button" onclick="shareToWhatsApp()">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
                 </svg>
                 WhatsApp
             </button>
-            <button onclick="shareToTelegram()">
+            <button type="button" onclick="shareToTelegram()">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
                 </svg>
                 Telegram
             </button>
-            <button onclick="copyLink()">
+            <button type="button" onclick="copyLink()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
                     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
@@ -493,28 +600,17 @@
                 Copy Link
             </button>
         </div>
-
-        <div class="header">
-            <img src="https://stablescouncil.github.io/brand/assets/logo-wordmark.png" alt="Stables" class="logo-wordmark">
+            </div>
         </div>
+        <nav class="site-chrome-side-rail__dots" id="navDotsRail" aria-label="Page sections"></nav>
+    </aside>
 
-        <!-- ── COMMUNITY ─────────────────────────────── -->
-        <!-- ── WEBSITE (Maturity Roadmap) ────────────────── -->
-        <p class="section-label">Website & Roadmap</p>
+    <main class="site-chrome-main site-chrome-main--links" id="main-content">
+    <div class="links-page-stack">
+
+        <section class="links-section" id="sec-dapp" data-links-section>
+        <p class="section-label">MiniDapp release path</p>
         <div class="links">
-
-            <!-- Home Page -->
-            <a href="https://stablescouncil.github.io" class="link-item">
-                <div class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                    </svg>
-                </div>
-                <div class="link-content">
-                    <div class="link-title">Home Page</div>
-                    <div class="link-description">Be your bank</div>
-                </div>
-            </a>
 
             <!-- Showcase -->
             <a href="https://stablescouncil.org/dapp/" class="link-item">
@@ -524,65 +620,138 @@
                     </svg>
                 </div>
                 <div class="link-content">
-                    <div class="link-title">Showcase (Active)</div>
+                    <div class="link-title-row">
+                        <span class="link-title">Showcase</span>
+                        <span class="link-title-version" title="Showcase track">v0.0.0.0.3</span>
+                    </div>
                     <div class="link-description">Live UI simulation & feature preview</div>
                 </div>
+                <span class="link-badge-active">Active</span>
             </a>
 
             <!-- Demo -->
             <div class="link-item drafting">
                 <div class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="#fbbf24">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/>
                     </svg>
                 </div>
                 <div class="link-content">
-                    <div class="link-title">Demo Channel</div>
-                    <div class="link-description">Direct logic with digital units</div>
+                    <div class="link-title-row">
+                        <span class="link-title">Demo Channel</span>
+                        <span class="link-title-version" title="Demo track">v0.0.0.1</span>
+                    </div>
+                    <div class="link-description">Minima functionality with showcase interaction</div>
                 </div>
                 <span class="drafting-badge">In Build</span>
             </div>
 
             <!-- Testing -->
-            <div class="link-item coming-soon">
+            <div class="link-item drafting">
                 <div class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="#fbbf24">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                     </svg>
                 </div>
                 <div class="link-content">
-                    <div class="link-title">Public Testing</div>
-                    <div class="link-description">Real-world value stress tests</div>
+                    <div class="link-title-row">
+                        <span class="link-title">Public Testing</span>
+                        <span class="link-title-version" title="Test track">v0.0.1</span>
+                    </div>
+                    <div class="link-description">Test tokens with full functionality</div>
                 </div>
-                <span class="coming-soon-badge">Soon</span>
+                <span class="drafting-badge">Soon</span>
             </div>
 
-            <div style="margin: 1rem 0 0.5rem 1.5rem; border-left: 2px solid rgba(103, 232, 249, 0.2); padding-left: 1.5rem;">
-                <p class="section-label" style="margin-top: 0; font-size: 0.6rem; color: var(--accent-cyan); opacity: 0.6;">Architectural Papers</p>
-                <div class="links">
-                    <a href="playing_field.html" class="link-item" style="padding: 0.75rem 1rem;">
-                        <div class="link-content">
-                            <div class="link-title" style="font-size: 1rem;">The Playing Field</div>
-                            <div class="link-description">System structural balance</div>
-                        </div>
-                    </a>
-                    <a href="bankingsystem/" class="link-item" style="padding: 0.75rem 1rem;">
-                        <div class="link-content">
-                            <div class="link-title" style="font-size: 1rem;">Our Banking System</div>
-                            <div class="link-description">Visualizing sovereignty</div>
-                        </div>
-                    </a>
-                    <a href="https://stablescouncil.org/circulareconomy/" class="link-item" style="padding: 0.75rem 1rem;">
-                        <div class="link-content">
-                            <div class="link-title" style="font-size: 1rem;">Circular Economy</div>
-                            <div class="link-description">Cash flows and treasuries</div>
-                        </div>
-                    </a>
+            <!-- Live channel: final prod path (last in path); clearer than generic “Production” -->
+            <div class="link-item drafting">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 16l8-4-8-4-8 4 8 4zm0 2l-8-4v2l8 4 8-4v-2l-8 4zm0 2l-8-4v2l8 4 8-4v-2l-8 4z"/>
+                    </svg>
                 </div>
+                <div class="link-content">
+                    <div class="link-title-row">
+                        <span class="link-title">Live channel</span>
+                        <span class="link-title-version" title="Prod track (PM.Pn when live)">v0.1</span>
+                    </div>
+                    <div class="link-description">Final live MiniDapp on the Minima network</div>
+                </div>
+                <span class="drafting-badge drafting-badge--phrase">To be announced</span>
             </div>
+
         </div>
 
-        <!-- ── COMMUNITY (Social Ecosystem) ─────────── -->
+        </section>
+
+        <section class="links-section" id="sec-map" data-links-section>
+        <p class="section-label">Website map</p>
+        <div class="links">
+
+            <a href="https://stablescouncil.org/" class="link-item">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Home Page</div>
+                    <div class="link-description">Be Your Bank</div>
+                </div>
+            </a>
+
+            <a href="https://stablescouncil.org/playing_field.html" class="link-item">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">The Playing Field</div>
+                    <div class="link-description">System structural balance</div>
+                </div>
+            </a>
+
+            <a href="https://stablescouncil.org/circulareconomy/" class="link-item">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Stables circular economy</div>
+                    <div class="link-description">Structural map: funds, treasuries, and flows</div>
+                </div>
+            </a>
+
+            <a href="https://stablescouncil.org/bankingsystem/" class="link-item">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Our Banking System</div>
+                    <div class="link-description">An infographic presentation</div>
+                </div>
+            </a>
+
+            <a href="https://stablescouncil.org/ambassadorsprogramdesc.html" class="link-item">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Ambassador Program</div>
+                    <div class="link-description">The 16 Big Mac® Economy (V0.0.01)</div>
+                </div>
+            </a>
+
+        </div>
+        </section>
+
+        <section class="links-section" id="sec-community" data-links-section>
         <p class="section-label">Community</p>
         <div class="links">
 
@@ -599,7 +768,7 @@
                 </div>
             </a>
 
-            <!-- X (Twitter) -->
+            <!-- X -->
             <a href="https://x.com/StablesCouncil" class="link-item">
                 <div class="link-icon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -607,81 +776,12 @@
                     </svg>
                 </div>
                 <div class="link-content">
-                    <div class="link-title">X (Twitter)</div>
+                    <div class="link-title">X</div>
                     <div class="link-description">Follow us @StablesCouncil</div>
                 </div>
             </a>
 
-            <!-- Other socials grouped -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                <a href="https://www.youtube.com/@StablesCouncil" class="link-item" style="padding: 0.75rem 1rem;">
-                    <div class="link-title" style="font-size: 0.9rem;">YouTube</div>
-                </a>
-                <a href="https://rumble.com/user/stablescouncil" class="link-item" style="padding: 0.75rem 1rem;">
-                    <div class="link-title" style="font-size: 0.9rem;">Rumble</div>
-                </a>
-                <a href="https://www.instagram.com/stablescouncil" class="link-item" style="padding: 0.75rem 1rem;">
-                    <div class="link-title" style="font-size: 0.9rem;">Instagram</div>
-                </a>
-                <a href="https://www.facebook.com/groups/stablescommunity" class="link-item" style="padding: 0.75rem 1rem;">
-                    <div class="link-title" style="font-size: 0.9rem;">Facebook</div>
-                </a>
-            </div>
-
-        </div>
-
-        <!-- ── COUNCIL (Governance) ────────────────── -->
-        <p class="section-label">Council</p>
-        <div class="links">
-
-            <!-- Telegram Council -->
-            <a href="https://t.me/StablesCouncilOfficial" class="link-item council">
-                <div class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                    </svg>
-                </div>
-                <div class="link-content">
-            <a href="https://stablescouncil.org/ambassadorsprogramdesc.html" class="link-item council">
-                <div class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
-                    </svg>
-                </div>
-                <div class="link-content">
-                    <div class="link-title">Ambassador Program</div>
-                    <div class="link-description">The 16 Big Mac® Economy (V0.0.01)</div>
-                </div>
-            </a>
-
-            <!-- Our Banking System -->
-            <a href="https://stablescouncil.github.io/bankingsystem/" class="link-item council">
-                <div class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-                    </svg>
-                </div>
-                <div class="link-content">
-                    <div class="link-title">Our Banking System</div>
-                    <div class="link-description">An infographic presentation</div>
-                </div>
-            </a>
-
-            <!-- Stables circular economy -->
-            <a href="https://stablescouncil.org/circulareconomy/" class="link-item council">
-                <div class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
-                    </svg>
-                </div>
-                <div class="link-content">
-                    <div class="link-title">Stables circular economy</div>
-                    <div class="link-description">Structural map: funds, treasuries, and flows</div>
-                </div>
-            </a>
-
-            <!-- Moltbook — StablesAgent -->
-            <a href="https://www.moltbook.com/u/stablesagent" class="link-item council">
+            <a href="https://www.moltbook.com/u/stablesagent" class="link-item">
                 <div class="link-icon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2zM7.5 14A1.5 1.5 0 0 0 6 15.5 1.5 1.5 0 0 0 7.5 17 1.5 1.5 0 0 0 9 15.5 1.5 1.5 0 0 0 7.5 14zm9 0a1.5 1.5 0 0 0-1.5 1.5 1.5 1.5 0 0 0 1.5 1.5 1.5 1.5 0 0 0 1.5-1.5 1.5 1.5 0 0 0-1.5-1.5z"/>
@@ -693,7 +793,87 @@
                 </div>
             </a>
 
-            <!-- Constitutional Charter — internal draft -->
+            <a href="https://www.youtube.com/@StablesCouncil" class="link-item">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">YouTube</div>
+                    <div class="link-description">@StablesCouncil</div>
+                </div>
+            </a>
+
+            <a href="https://rumble.com/user/stablescouncil" class="link-item">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l7 4.5-7 4.5z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Rumble</div>
+                    <div class="link-description">Video updates on Rumble</div>
+                </div>
+            </a>
+
+            <a href="https://www.instagram.com/stablescouncil" class="link-item">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Instagram</div>
+                    <div class="link-description">@stablescouncil</div>
+                </div>
+            </a>
+
+            <a href="https://www.facebook.com/groups/stablescommunity" class="link-item">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Facebook</div>
+                    <div class="link-description">Stables community group</div>
+                </div>
+            </a>
+
+        </div>
+        </section>
+
+        <section class="links-section" id="sec-council" data-links-section>
+        <p class="section-label">Council</p>
+        <div class="links">
+
+            <!-- Telegram Council -->
+            <a href="https://t.me/StablesCouncilOfficial" class="link-item council">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Telegram Council Official</div>
+                    <div class="link-description">Official Council communications</div>
+                </div>
+            </a>
+
+            <a href="https://discord.gg/stablescouncil" class="link-item council" target="_blank" rel="noopener noreferrer">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Discord</div>
+                    <div class="link-description">Council community server</div>
+                </div>
+            </a>
+
+            <!-- Constitutional Charter (internal draft) -->
             <div class="link-item council drafting">
                 <div class="link-icon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -707,7 +887,7 @@
                 <span class="drafting-badge">Drafting</span>
             </div>
 
-            <!-- Roadmap — coming soon -->
+            <!-- Roadmap (coming soon) -->
             <div class="link-item council coming-soon">
                 <div class="link-icon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -735,55 +915,29 @@
             </a>
 
         </div>
+        </section>
 
-        <div class="footer">
-            <div class="btn-group">
-                <a href="https://stablescouncil.github.io/" class="btn btn-secondary">Home Page</a>
-            </div>
-        </div>
     </div>
+    </main>
 
-    <script>
-        function toggleShareMenu() {
-            const menu = document.getElementById('shareMenu');
-            menu.classList.toggle('active');
-        }
+    <footer class="site-chrome-footer site-chrome-footer--minimal" role="contentinfo">
+        <div class="site-chrome-footerSocial">
+            <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" aria-label="Telegram community">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+            </a>
+            <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer" aria-label="Stables on X">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+            </a>
+        </div>
+        <p class="site-chrome-footerMeta">Stables | Built on Minima</p>
+    </footer>
 
-        function shareToTwitter() {
-            window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href) + '&text=' + encodeURIComponent('Check out Stables - Be your bank'), '_blank');
-        }
-
-        function shareToFacebook() {
-            window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank');
-        }
-
-        function shareToLinkedIn() {
-            window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(window.location.href), '_blank');
-        }
-
-        function shareToWhatsApp() {
-            window.open('https://wa.me/?text=' + encodeURIComponent('Check out Stables - Be your bank ' + window.location.href), '_blank');
-        }
-
-        function shareToTelegram() {
-            window.open('https://t.me/share/url?url=' + encodeURIComponent(window.location.href) + '&text=' + encodeURIComponent('Check out Stables - Be your bank'), '_blank');
-        }
-
-        function copyLink() {
-            navigator.clipboard.writeText(window.location.href).then(() => {
-                alert('Link copied to clipboard!');
-            });
-        }
-
-        // Close share menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const shareBtn = document.querySelector('.share-btn');
-            const shareMenu = document.getElementById('shareMenu');
-            if (!shareBtn.contains(event.target) && !shareMenu.contains(event.target)) {
-                shareMenu.classList.remove('active');
-            }
-        });
-    </script>
+    <script src="assets/site-rail-controls.js" defer></script>
+    <script src="assets/site-rail.js" defer></script>
 
     <!-- StablesAgent floating widget + popup -->
     <style>
@@ -824,7 +978,7 @@
     <div class="agent-backdrop" id="agentBackdrop" onclick="closeAgent()"></div>
     <div class="agent-popup" id="agentPopup">
         <div class="agent-popup-header">
-            <div class="agent-popup-logo"><img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" /></div>
+            <div class="agent-popup-logo"><img src="https://stablescouncil.org/stables_agent_avatar.png" alt="StablesAgent" /></div>
             <div class="agent-popup-title">
                 <div class="agent-popup-title-main">StablesAgent</div>
                 <div class="agent-popup-title-sub">Ask anything about Stables</div>
@@ -835,9 +989,9 @@
         <div class="agent-popup-body">
             <iframe id="agentFrame" title="StablesAgent Chat"></iframe>
             <div class="agent-popup-fallback" id="agentFallback">
-                <img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;" />
+                <img src="https://stablescouncil.org/stables_agent_avatar.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;" />
                 <p>The chat will load here directly once the secure connection is active.<br>For now, open it in a new tab:</p>
-                <a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer">Open StablesAgent �-</a>
+                <a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer">Open StablesAgent in a new tab</a>
             </div>
         </div>
     </div>
@@ -847,7 +1001,7 @@
             <span class="agent-fab-pulse"></span>
             <span class="agent-fab-pulse"></span>
             <span class="agent-fab-pulse"></span>
-            <img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" />
+            <img src="https://stablescouncil.org/stables_agent_avatar.png" alt="StablesAgent" />
             <span class="agent-fab-dot"></span>
         </div>
     </button>

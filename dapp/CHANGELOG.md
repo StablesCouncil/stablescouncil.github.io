@@ -18,7 +18,7 @@ Post–**v00.00.03** work in the active dev folder. **Do not** describe these it
 
 ### Changed
 
-- **Dev folder rename (showcase):** **`prod_stables_app_v00.00.02`** → **`prod_stables_app_v00.00.00.00.03`** so the path matches the canonical five-segment label. Handshake, **`minidapp_version.md`**, UI inventory, and Cursor rules point at the new folder. **GitHub Pages** working copy: **`1_development/stream_2_community/prod_stablescouncil_github_io/dapp/`** was refreshed from this tree (excluding **`build/`** and **`latest version/`**); **`MINIDAPP_VERSIONING.md`** and **`latest-version/VERSION_HISTORY.md`** note the alignment.
+- **Dev folder rename (showcase):** **`prod_stables_app_v00.00.02`** → **`prod_stables_app_v00.00.00.00.03`** so the path matches the canonical five-segment label. Handshake, **`minidapp_version.md`**, UI inventory, and Cursor rules point at the new folder. **GitHub Pages** working copy: **`1_development/stream_1_app/task_stablescouncil_github_io/dapp/`** was refreshed from this tree (excluding **`build/`** and **`latest version/`**); **`MINIDAPP_VERSIONING.md`** and **`latest-version/VERSION_HISTORY.md`** note the alignment.
 
 - **Version label (showcase):** **`APP_BUILD_VERSION`**, **`dapp.conf` `version`**, and top bar default use the canonical **five-segment** body **`00.00.00.00.03`** (`vPM.Pn.TT.DD.SS`, see **`0_handshake/minidapp_version.md`**). **`APP_UPDATE_POLICY.latestPublishedVersion`** matches this label; Council comms compares legacy **three-segment** labels as **`a.b.c` → `a.b.0.0.c`** in **`activity-contacts.js`**.
 

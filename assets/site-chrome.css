@@ -1,0 +1,358 @@
+/*
+ * site-chrome.css — Shared global header/footer for Stables static pages.
+ * Depends on stables.css (design tokens, Inter, buttons) loaded first.
+ */
+@import url("site-rail.css");
+
+:root {
+  --site-header-h: 52px;
+}
+
+/* --- Global shell -------------------------------------------------------- */
+
+.site-chrome-body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg);
+  color: var(--text-primary);
+}
+
+.site-chrome-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--site-header-h);
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(14px, 4vw, 32px);
+  background: var(--bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(103, 232, 249, 0.22);
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.45);
+}
+
+.site-chrome-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.site-chrome-header__mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(103, 232, 249, 0.22));
+}
+
+.site-chrome-header__titles {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.05;
+  min-width: 0;
+}
+
+.site-chrome-header__name {
+  font-size: 0.9375rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.site-chrome-header__slogan {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  margin-top: 3px;
+}
+
+.site-chrome-header__pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--accent-cyan);
+  border: 1px solid rgba(103, 232, 249, 0.5);
+  background: rgba(15, 23, 42, 0.65);
+  box-shadow:
+    0 0 0 1px rgba(103, 232, 249, 0.06),
+    0 0 16px rgba(103, 232, 249, 0.18);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.site-chrome-header__pill:hover {
+  border-color: rgba(103, 232, 249, 0.85);
+  color: var(--text-primary);
+  box-shadow:
+    0 0 0 1px rgba(103, 232, 249, 0.1),
+    0 0 22px rgba(103, 232, 249, 0.28);
+}
+
+/*
+ * Links page: brand centered on the main column (pl + inner_w/2), same axis as the
+ * centered .links-page-stack below — not the midpoint of pl→stack_right (that sits
+ * left when inner_w > 680px). MINIMA pill absolute to the stack’s right edge.
+ */
+body.links-page-body {
+  --links-h-pad-l: clamp(12px, 4vw, 28px);
+  --links-h-pad-r: clamp(12px, 4vw, 28px);
+  --links-inner-w: calc(100vw - var(--links-h-pad-l) - var(--links-h-pad-r));
+  --links-stack-max: 680px;
+  --links-stack-w: min(var(--links-stack-max), var(--links-inner-w));
+  --links-stack-right: calc(var(--links-h-pad-l) + (var(--links-inner-w) + var(--links-stack-w)) / 2);
+}
+
+@media (min-width: 768px) {
+  body.links-page-body {
+    --links-h-pad-r: calc(clamp(12px, 4vw, 28px) + 56px);
+  }
+}
+
+body.links-page-body .site-chrome-header {
+  display: block;
+  padding-left: var(--links-h-pad-l);
+  padding-right: calc(100vw - var(--links-stack-right));
+}
+
+body.links-page-body .site-chrome-header__brand {
+  position: absolute;
+  left: calc(var(--links-h-pad-l) + var(--links-inner-w) / 2);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+body.links-page-body .site-chrome-header__pill {
+  position: absolute;
+  right: calc(100vw - var(--links-stack-right));
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.site-chrome-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Links (and similar) template: scrollable column, room for right rail */
+.site-chrome-main--links {
+  padding-top: var(--site-header-h);
+  align-items: stretch;
+  justify-content: flex-start;
+  padding-left: clamp(12px, 4vw, 28px);
+  padding-right: clamp(12px, 4vw, 28px);
+  padding-bottom: 2.5rem;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .site-chrome-main--links {
+    padding-right: calc(clamp(12px, 4vw, 28px) + 56px);
+  }
+}
+
+/* Static pages with the right rail but without the links main shell */
+@media (min-width: 768px) {
+  body.has-site-rail {
+    padding-right: calc(clamp(12px, 4vw, 28px) + 56px);
+  }
+}
+
+@media (min-width: 768px) {
+  /*
+   * Rail column is 44px (.site-chrome-side-rail width). Inset FAB so its right edge
+   * meets the rail’s left edge (same vertical strip as globe / share), not +52px past.
+   */
+  body.has-site-rail .agent-fab {
+    right: calc(clamp(0.75rem, 2.5vw, 1.5rem) + 44px);
+  }
+
+  body.links-page-body .agent-fab {
+    right: calc(clamp(0.75rem, 2.5vw, 1.5rem) + 44px);
+  }
+}
+
+/* Share control below header when it lives in main (not links rail) */
+.site-chrome-body:not(.links-page-body) .share-btn {
+  top: calc(var(--site-header-h) + 12px);
+}
+
+.site-chrome-body:not(.links-page-body) .share-menu {
+  top: calc(var(--site-header-h) + 56px);
+}
+
+.site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerGrid {
+  display: none;
+}
+
+/* Links page footer: compact bar, same glass + cyan edge tone as .site-chrome-header */
+.site-chrome-footer.site-chrome-footer--minimal {
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: 0.55rem clamp(12px, 4vw, 28px) 0.65rem;
+  border-top: 1px solid rgba(103, 232, 249, 0.22);
+  background: rgba(11, 15, 20, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
+}
+
+.site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial {
+  margin-bottom: 0.25rem;
+  gap: 1rem;
+}
+
+.site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial__link:not(.site-chrome-footerSocial__link--icon) {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial__link--icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(103, 232, 249, 0.28);
+  background: rgba(15, 23, 42, 0.55);
+  color: var(--accent-cyan);
+  text-decoration: none;
+  transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial__link--icon:hover {
+  border-color: rgba(103, 232, 249, 0.55);
+  color: var(--text-primary);
+  text-decoration: none;
+  box-shadow: 0 0 18px rgba(103, 232, 249, 0.14);
+}
+
+.site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial__link--icon svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerMeta {
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  margin-top: 0;
+}
+
+.site-chrome-footerSocial {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.site-chrome-footerSocial__link {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  text-decoration: none;
+}
+
+.site-chrome-footerSocial__link:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+/* --- Footer grid (four destinations) ------------------------------------ */
+
+.site-chrome-footer {
+  margin-top: auto;
+  padding: 2.75rem clamp(16px, 5vw, 40px) 2.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(to bottom, transparent, rgba(16, 24, 38, 0.55));
+}
+
+.site-chrome-footerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  max-width: 960px;
+  margin: 0 auto 1.5rem;
+}
+
+.site-chrome-footerCard {
+  display: block;
+  padding: 1.25rem 1.35rem;
+  border-radius: 16px;
+  text-decoration: none;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(103, 232, 249, 0.22);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.site-chrome-footerCard:hover {
+  border-color: rgba(103, 232, 249, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(103, 232, 249, 0.12);
+}
+
+.site-chrome-footerCard__title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.site-chrome-footerCard__desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.site-chrome-footerMeta {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+@media (max-width: 700px) {
+  .site-chrome-header__pill {
+    font-size: 7px;
+    padding: 4px 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .site-chrome-header__name {
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+  }
+
+  .site-chrome-header__mark {
+    width: 30px;
+    height: 30px;
+  }
+}
