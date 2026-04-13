@@ -1,6 +1,6 @@
 /**
- * Previous / Next navigation — same order as Website map on links.html:
- * Home → Playing Field → Circular economy → Banking system → Ambassador Program → Website map (this hub).
+ * Previous / Next navigation — same order as All links (links.html):
+ * Home → Playing Field → Circular economy → Banking system → Ambassador Program → All links (this hub).
  */
 (function () {
   var ORDER = [
@@ -9,7 +9,7 @@
     { href: "https://stablescouncil.org/circulareconomy/", label: "Stables circular economy" },
     { href: "https://stablescouncil.org/bankingsystem/", label: "Our Banking System" },
     { href: "https://stablescouncil.org/ambassadorsprogramdesc.html", label: "Ambassador Program" },
-    { href: "https://stablescouncil.org/links.html", label: "Website map" },
+    { href: "https://stablescouncil.org/links.html", label: "All links" },
   ];
 
   function el(tag, cls, attrs) {
