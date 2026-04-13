@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% include "partials/head-base.njk" %}
+</head>
+<body class="site-chrome-body has-site-rail">
+  {% include "partials/site-header.njk" %}
+  {% include "partials/side-rail.njk" %}
+  <main class="site-chrome-main site-chrome-main--document" id="main-content">
+    {{ content | safe }}
+  </main>
+  {% include "partials/site-footer-minimal.njk" %}
+  <script src="/assets/site-rail-controls.js" defer></script>
+  <script src="/assets/site-rail.js" defer></script>
+  {% include "partials/stables-agent.njk" %}
+</body>
+</html>

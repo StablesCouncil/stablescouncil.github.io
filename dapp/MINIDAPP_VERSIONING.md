@@ -39,6 +39,18 @@ Read **left to right**. **Showcase** line keeps **`PM.Pn.TT.DD`** at **`00`** an
 We recommend: **`Stables_vPM.Pn.TT.DD.SS_<stage>.mds.zip`**  
 Examples: **`Stables_v00.00.00.00.03.mds.zip`** (current **`latest-version`**), **`Stables_v00.00.02.mds.zip`** (second showcase, in **`previous-versions`**), legacy **`Stables_v0.01.01.mds.zip`** where still listed.
 
+### Zip contents (same as GitHub Pages `dapp/`)
+
+Installable **`.mds.zip`** files must match the **static site** tree under **`dapp/`** so one folder can ship to both **Pages** and **Minima**:
+
+- **`dapp.conf`** at the zip root with **`"web": "showcase/index.html"`** and **`"icon": "stables_icon.png"`**.
+- **`showcase/index.html`** — full app (resource URLs use **`../assets/`**, **`../agent.png`**, …).
+- **`assets/`** — scripts, styles, routes, **`lib/mds.js`**, QR libraries, **`config/runtime-config.js`**, …
+- Root art files next to **`showcase/`** and **`assets/`** (for example **`agent.png`**, **`stables_icon.png`**, sticker PNG, **`treasure-chest.svg`**).
+- Optional root **`index.html`** — tiny redirect to **`showcase/`** for people who open **`/dapp/`** in a normal browser; the **hub** ignores it and uses **`dapp.conf`**.
+
+When you build from **`prod_stables_app_v00.00.00.00.03/`**, zip **that folder’s contents** (excluding **`build/`**). See **`prod_stables_app_v00.00.00.00.03/build/README.md`**.
+
 ---
 
 ## Where to get the MiniDapp
@@ -48,4 +60,4 @@ Examples: **`Stables_v00.00.00.00.03.mds.zip`** (current **`latest-version`**), 
 
 ---
 
-*Last updated: 2026-04-09 (Council).*
+*Last updated: 2026-04-13 (Council).*

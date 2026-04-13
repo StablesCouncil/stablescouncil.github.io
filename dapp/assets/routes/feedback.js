@@ -90,7 +90,7 @@
       '<div class="stitle-row">' +
       '<div class="stitle">Public feedback (GitHub)</div>' +
       '<button type="button" class="agent-mini-btn" onclick="openAgentExplain(\'Feedback: public ledger on GitHub; Send posts JSON when the Council wires the endpoint; no secrets\')" title="StablesAgent">' +
-      '<img src="agent.png" alt="StablesAgent">' +
+      '<img src="../agent.png" alt="StablesAgent">' +
       '</button></div>' +
       '<div class="card app-section-card" style="padding:14px 16px;margin-bottom:14px;border:1px solid rgba(251,191,36,0.35);background:rgba(251,191,36,0.08)">' +
       '<div style="font-size:12px;font-weight:900;color:#fbbf24;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Public ledger</div>' +
@@ -172,7 +172,7 @@
     '<div class="stitle-row">' +
     '<div class="stitle">Telegram</div>' +
     '<button type="button" class="agent-mini-btn" onclick="openAgentExplain(\'Feedback: reach Stables on Telegram (community and core team)\')" title="StablesAgent">' +
-    '<img src="agent.png" alt="StablesAgent">' +
+    '<img src="../agent.png" alt="StablesAgent">' +
     '</button></div>' +
     '<div class="card app-section-card" style="padding:14px 14px;border-radius:14px;background:rgba(0,0,0,.22);border:1px solid rgba(103,232,249,.12)">' +
     '<div style="font-size:14px;font-weight:900;color:var(--accent);margin-bottom:12px">Community &amp; team</div>' +

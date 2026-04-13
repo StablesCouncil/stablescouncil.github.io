@@ -4,6 +4,8 @@ This folder contains the current Stables MiniDapp release for node installs. **C
 
 **How version numbers and stages work (showcase / demo / test / prod):** see **[MINIDAPP_VERSIONING.md](../MINIDAPP_VERSIONING.md)** in this repo.
 
+**Zip layout (hub = Pages):** The installable archive matches **`dapp/`** on the site: **`dapp.conf`** with **`web`** = **`showcase/index.html`**, folder **`showcase/`** (main HTML), sibling **`assets/`**, and root images (**`agent.png`**, **`stables_icon.png`**, …). See **`../MINIDAPP_VERSIONING.md`** (section *Zip contents*) and **`../../../prod_stables_app_v00.00.00.00.03/build/README.md`** (from this folder: up to `stream_1_app/`, then into the showcase prod tree).
+
 ## Version policy
 
 - `dapp/latest-version/` always contains the newest published build.

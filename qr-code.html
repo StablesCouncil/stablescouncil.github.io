@@ -3,38 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stables - QR Code</title>
+    <title>Stables | QR code</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="stables.css" />
     <link rel="stylesheet" href="assets/site-chrome.css" />
+    <link rel="stylesheet" href="assets/site-map-nav.css" />
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        body.site-chrome-body {
+            background: radial-gradient(circle at 50% 0%, rgba(103, 232, 249, 0.12), transparent 55%) var(--bg);
+            color: var(--text-primary);
             min-height: 100vh;
-            padding: 20px;
         }
         .container {
             text-align: center;
             max-width: 500px;
             width: 100%;
-        }
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            margin: 0 auto;
+            padding: 0 1rem 2rem;
         }
         .qr-container {
             background: #ffffff;
@@ -50,20 +41,23 @@
         .url {
             margin-top: 20px;
             font-size: 0.9rem;
-            color: #aaaaaa;
+            color: var(--text-secondary);
             word-break: break-all;
         }
         .instructions {
             margin-top: 30px;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
+            background: rgba(103, 232, 249, 0.06);
+            border: 1px solid rgba(103, 232, 249, 0.15);
+            border-radius: 16px;
             font-size: 0.9rem;
             line-height: 1.6;
+            color: var(--text-secondary);
         }
         .instructions h2 {
             font-size: 1.2rem;
             margin-bottom: 10px;
+            color: var(--text-primary);
         }
         .instructions ul {
             text-align: left;
@@ -74,7 +68,18 @@
         }
     </style>
 </head>
-<body class="has-site-rail">
+<body class="site-chrome-body links-page-body has-site-rail deck-chrome-page qr-code-page">
+    <header class="site-chrome-header" role="banner">
+        <a class="site-chrome-header__brand" href="https://stablescouncil.org/">
+            <img class="site-chrome-header__mark" src="https://stablescouncil.org/brand/assets/logo-symbol.png" width="48" height="48" alt="Stables">
+            <span class="site-chrome-header__titles">
+                <span class="site-chrome-header__name">Stables</span>
+                <span class="site-chrome-header__slogan">Be your bank</span>
+            </span>
+        </a>
+        <a class="site-chrome-header__pill" href="https://minima.global" target="_blank" rel="noopener noreferrer">Built on MINIMA</a>
+    </header>
+
     <aside class="site-chrome-side-rail" aria-label="Quick navigation">
         <div class="site-chrome-side-rail__stack">
             <div class="lang-switcher">
@@ -86,8 +91,8 @@
                     </svg>
                 </button>
                 <div id="langMenu" class="lang-menu" role="menu">
-                    <a href="https://stablescouncil.github.io/" role="menuitem">Full presentation</a>
-                    <a href="https://stablescouncil.github.io/links.html" role="menuitem">Website map</a>
+                    <a href="https://stablescouncil.org/" role="menuitem">Full presentation</a>
+                    <a href="https://stablescouncil.org/links.html" role="menuitem">Website map</a>
                 </div>
             </div>
             <div class="share-switcher">
@@ -144,12 +149,16 @@
         </div>
         <nav class="site-chrome-side-rail__dots" id="navDotsRail" aria-label="Page sections"></nav>
     </aside>
+
+    <main class="site-chrome-main site-chrome-main--document" id="main-content">
     <div class="container">
-        <h1>Stables Presentation</h1>
+        <div class="title-block">
+            <h1>Stables Presentation</h1>
+        </div>
         <div class="qr-container">
             <div id="qrcode"></div>
         </div>
-        <div class="url">https://stablescouncil.github.io</div>
+        <div class="url">https://stablescouncil.org</div>
         <div class="instructions">
             <h2>How to Use:</h2>
             <ul>
@@ -160,13 +169,34 @@
             </ul>
         </div>
     </div>
+    </main>
+
+    <nav id="siteMapNav" class="site-map-nav" data-site-map-role="qr" aria-label="Previous and next in site map order"></nav>
+
+    <footer class="site-chrome-footer site-chrome-footer--minimal" role="contentinfo">
+        <div class="site-chrome-footerSocial">
+            <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" aria-label="Telegram community">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+            </a>
+            <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer" aria-label="Stables on X">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+            </a>
+            <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--all-links" href="https://stablescouncil.org/links.html">Website map</a>
+        </div>
+        <p class="site-chrome-footerMeta">Stables | Built on Minima</p>
+    </footer>
 
     <script src="assets/site-rail-controls.js" defer></script>
     <script src="assets/site-rail.js" defer></script>
+    <script src="assets/site-map-nav.js" defer></script>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script>
-        const url = 'https://stablescouncil.github.io';
+        const url = 'https://stablescouncil.org';
         
         QRCode.toCanvas(document.getElementById('qrcode'), url, {
             width: 300,
@@ -219,7 +249,7 @@
     <div class="agent-backdrop" id="agentBackdrop" onclick="closeAgent()"></div>
     <div class="agent-popup" id="agentPopup">
         <div class="agent-popup-header">
-            <div class="agent-popup-logo"><img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" /></div>
+            <div class="agent-popup-logo"><img src="https://stablescouncil.org/stables_agent_avatar.png" alt="StablesAgent" /></div>
             <div class="agent-popup-title">
                 <div class="agent-popup-title-main">StablesAgent</div>
                 <div class="agent-popup-title-sub">Ask anything about Stables</div>
@@ -230,7 +260,7 @@
         <div class="agent-popup-body">
             <iframe id="agentFrame" title="StablesAgent Chat"></iframe>
             <div class="agent-popup-fallback" id="agentFallback">
-                <img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;" />
+                <img src="https://stablescouncil.org/stables_agent_avatar.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;" />
                 <p>The chat will load here directly once the secure connection is active.<br>For now, open it in a new tab:</p>
                 <a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer">Open StablesAgent ↗</a>
             </div>
@@ -242,7 +272,7 @@
             <span class="agent-fab-pulse"></span>
             <span class="agent-fab-pulse"></span>
             <span class="agent-fab-pulse"></span>
-            <img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" />
+            <img src="https://stablescouncil.org/stables_agent_avatar.png" alt="StablesAgent" />
             <span class="agent-fab-dot"></span>
         </div>
     </button>

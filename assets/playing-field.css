@@ -1,0 +1,144 @@
+/*
+ * playing-field.css — The Playing Field long-form page only.
+ * Load after stables.css, site-chrome.css, site-rail.css.
+ */
+
+body.site-chrome-body.has-site-rail {
+  background: radial-gradient(circle at 50% 0%, rgba(103, 232, 249, 0.12), transparent 55%) var(--bg);
+}
+
+body.has-site-rail .lang-menu {
+  max-height: min(78vh, calc(100dvh - var(--site-header-h, 52px) - 100px));
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body.has-site-rail .lang-menu::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.playing-field-inner {
+  width: 100%;
+  padding-top: 0;
+  padding-bottom: 1.5rem;
+}
+
+/* Nested title stack: center the block (inner is not a flex parent of main). */
+.playing-field-inner > .title-block:first-child {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.playing-field-inner .section-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 4rem 0 1.5rem;
+  color: var(--accent-cyan);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.playing-field-inner .section-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.playing-field-inner .matrix-container {
+  width: 100%;
+  overflow-x: auto;
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  margin: 2rem 0 1.25rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.playing-field-inner .matrix-afternote {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin: 0 0 2.5rem;
+  max-width: 52rem;
+}
+
+.playing-field-inner table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  min-width: 700px;
+}
+
+.playing-field-inner th {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 1.25rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.playing-field-inner td {
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  vertical-align: top;
+  font-size: 0.95rem;
+}
+
+.playing-field-inner .actor-cell {
+  font-weight: 800;
+  color: var(--accent-purple);
+}
+
+.playing-field-inner .contribution-cell {
+  font-weight: 600;
+  color: var(--accent-cyan);
+}
+
+.playing-field-inner .proof-box {
+  background: linear-gradient(135deg, rgba(103, 232, 249, 0.05) 0%, transparent 100%);
+  border: 1px solid rgba(103, 232, 249, 0.2);
+  border-radius: 20px;
+  padding: 2.5rem;
+  margin: 4rem 0;
+}
+
+.playing-field-inner .proof-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.playing-field-inner .proof-item h4 {
+  color: var(--accent-amber);
+  margin-bottom: 0.5rem;
+  font-weight: 800;
+}
+
+.playing-field-inner .proof-item p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.playing-field-inner .proof-playing-field-capital {
+  color: var(--text-secondary);
+  font-size: 0.98rem;
+  line-height: 1.55;
+  margin: 0 0 2rem;
+}
+
+.playing-field-inner .proof-peg-result {
+  margin: 2rem auto 0;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  text-align: center;
+  text-wrap: balance;
+  max-width: 42rem;
+}

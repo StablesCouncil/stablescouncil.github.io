@@ -1,0 +1,12 @@
+{
+  "name": "stablescouncil-github-io",
+  "private": true,
+  "description": "Static site sources for StablesCouncil/stablescouncil.github.io (Eleventy)",
+  "scripts": {
+    "build": "eleventy",
+    "start": "eleventy --serve"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  }
+}

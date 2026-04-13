@@ -27,6 +27,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="stables.css" />
     <link rel="stylesheet" href="assets/site-chrome.css" />
+    <link rel="stylesheet" href="assets/site-map-nav.css" />
 
     <title>Stables | Links</title>
     <style>
@@ -395,6 +396,56 @@
             flex-shrink: 0;
         }
 
+        .link-item.link-item--current {
+            cursor: default;
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.12), rgba(15, 23, 42, 0.92));
+            border-color: rgba(167, 139, 250, 0.45);
+            box-shadow:
+                0 0 0 1px rgba(167, 139, 250, 0.12) inset,
+                0 4px 28px rgba(0, 0, 0, 0.35);
+        }
+
+        .link-item.link-item--current:hover {
+            transform: none;
+            border-color: rgba(167, 139, 250, 0.5);
+            box-shadow:
+                0 0 0 1px rgba(167, 139, 250, 0.15) inset,
+                0 4px 28px rgba(0, 0, 0, 0.35);
+        }
+
+        .link-item.link-item--current .link-icon {
+            background: rgba(167, 139, 250, 0.12);
+            border-color: rgba(167, 139, 250, 0.35);
+        }
+
+        .link-item.link-item--current .link-icon svg {
+            fill: var(--accent-purple);
+        }
+
+        .link-item.link-item--current .link-title {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .link-item.link-item--current .link-description {
+            color: rgba(159, 176, 192, 0.92);
+            font-style: italic;
+        }
+
+        .link-item--current-badge {
+            font-size: 0.62rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent-purple);
+            background: rgba(167, 139, 250, 0.14);
+            border: 1px solid rgba(167, 139, 250, 0.4);
+            border-radius: 999px;
+            padding: 3px 9px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
         .footer {
             text-align: center;
             margin-top: 3rem;
@@ -476,34 +527,12 @@
             }
         }
 
-        /* site-chrome template: column shell, legacy centre layout lives in main */
-        body.site-chrome-body.links-page-body {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            justify-content: flex-start;
-            padding: 0;
-        }
-
-        /* Language rail menu: no visible scrollbar (wheel / trackpad still scrolls). */
-        body.links-page-body .lang-menu {
-            max-height: min(78vh, calc(100dvh - var(--site-header-h, 52px) - 100px));
-            overflow-y: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-
-        body.links-page-body .lang-menu::-webkit-scrollbar {
-            width: 0;
-            height: 0;
-        }
-
     </style>
 </head>
-<body class="site-chrome-body links-page-body">
+<body class="site-chrome-body links-page-body deck-chrome-page">
     <header class="site-chrome-header" role="banner">
         <a class="site-chrome-header__brand" href="https://stablescouncil.org/">
-            <img class="site-chrome-header__mark" src="https://stablescouncil.org/brand/assets/logo-symbol.png" width="34" height="34" alt="Stables">
+            <img class="site-chrome-header__mark" src="https://stablescouncil.org/brand/assets/logo-symbol.png" width="48" height="48" alt="Stables">
             <span class="site-chrome-header__titles">
                 <span class="site-chrome-header__name">Stables</span>
                 <span class="site-chrome-header__slogan">Be your bank</span>
@@ -613,7 +642,7 @@
         <div class="links">
 
             <!-- Showcase -->
-            <a href="https://stablescouncil.org/dapp/" class="link-item">
+            <a href="https://stablescouncil.org/dapp/showcase/" class="link-item">
                 <div class="link-icon" style="background: rgba(103, 232, 249, 0.1); border-color: var(--accent-cyan);">
                     <svg viewBox="0 0 24 24" fill="var(--accent-cyan)">
                         <path d="M21 3L3 10.53v.98l6.84 2.65L12.48 21h.98L21 3z"/>
@@ -624,7 +653,7 @@
                         <span class="link-title">Showcase</span>
                         <span class="link-title-version" title="Showcase track">v0.0.0.0.3</span>
                     </div>
-                    <div class="link-description">Live UI simulation & feature preview</div>
+                    <div class="link-description">Preview build aimed at gathering community feedback on general direction.</div>
                 </div>
                 <span class="link-badge-active">Active</span>
             </a>
@@ -641,7 +670,7 @@
                         <span class="link-title">Demo Channel</span>
                         <span class="link-title-version" title="Demo track">v0.0.0.1</span>
                     </div>
-                    <div class="link-description">Minima functionality with showcase interaction</div>
+                    <div class="link-description">Minima functionality with showcase interaction.</div>
                 </div>
                 <span class="drafting-badge">In Build</span>
             </div>
@@ -658,7 +687,7 @@
                         <span class="link-title">Public Testing</span>
                         <span class="link-title-version" title="Test track">v0.0.1</span>
                     </div>
-                    <div class="link-description">Test tokens with full functionality</div>
+                    <div class="link-description">Minima functionality and test tokens with full functionality.</div>
                 </div>
                 <span class="drafting-badge">Soon</span>
             </div>
@@ -684,7 +713,7 @@
 
         </section>
 
-        <section class="links-section" id="sec-map" data-links-section>
+        <section class="links-section" id="sec-all-links" data-links-section>
         <p class="section-label">Website map</p>
         <div class="links">
 
@@ -746,6 +775,19 @@
                     <div class="link-title">Ambassador Program</div>
                     <div class="link-description">The 16 Big Mac® Economy (V0.0.01)</div>
                 </div>
+            </a>
+
+            <a href="https://stablescouncil.org/links.html" class="link-item link-item--current" aria-current="page">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M4 8h4v4H4V8zm6 0h10v4H10V8zM4 14h4v4H4v-4zm6 0h10v4H10v-4z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">All links</div>
+                    <div class="link-description">You are here.</div>
+                </div>
+                <span class="link-item--current-badge">This page</span>
             </a>
 
         </div>
@@ -920,6 +962,8 @@
     </div>
     </main>
 
+    <nav id="siteMapNav" class="site-map-nav" data-site-map-index="5" aria-label="Previous and next in site map order"></nav>
+
     <footer class="site-chrome-footer site-chrome-footer--minimal" role="contentinfo">
         <div class="site-chrome-footerSocial">
             <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" aria-label="Telegram community">
@@ -932,12 +976,14 @@
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                 </svg>
             </a>
+            <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--all-links" href="https://stablescouncil.org/links.html">Website map</a>
         </div>
         <p class="site-chrome-footerMeta">Stables | Built on Minima</p>
     </footer>
 
     <script src="assets/site-rail-controls.js" defer></script>
     <script src="assets/site-rail.js" defer></script>
+    <script src="assets/site-map-nav.js" defer></script>
 
     <!-- StablesAgent floating widget + popup -->
     <style>

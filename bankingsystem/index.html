@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Our Banking System</title>
+    <title>Stables | Our banking system</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="https://stablescouncil.github.io/brand/assets/logo-symbol.png">
+    <link rel="icon" type="image/png" href="https://stablescouncil.org/brand/assets/logo-symbol.png">
     <link rel="stylesheet" href="../stables.css" />
     <link rel="stylesheet" href="../assets/site-chrome.css" />
+    <link rel="stylesheet" href="../assets/site-map-nav.css" />
     <style>
         :root {
             --bg: #0b0f14;
@@ -21,17 +22,26 @@
 
         *, *::before, *::after { box-sizing: border-box; }
 
-        body {
+        body.site-chrome-body {
             background-color: var(--bg);
             color: var(--text-main);
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             margin: 0;
-            padding: 60px 40px 80px;
+            /* Do not use padding shorthand: it would override body.has-site-rail right gutter from site-chrome.css */
+            padding-top: 0;
+            padding-bottom: 80px;
+            min-height: 100vh;
+            overflow-x: auto;
+        }
+
+        .bankingsystem-main {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            overflow-x: auto;
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
         }
 
         body::before {
@@ -45,98 +55,11 @@
             pointer-events: none;
         }
 
-        /* ── Header ── */
-        .header {
-            max-width: 960px; width: 100%;
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 56px;
-        }
-
-        .brand { display: flex; align-items: center; gap: 16px; }
-        .brand img { height: 48px; width: 48px; }
-        .brand-text { display: flex; flex-direction: column; }
-        .brand-name { font-size: 28px; font-weight: 900; letter-spacing: 0.04em; }
-        .brand-slogan { font-size: 14px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
-
-        .header-links { display: flex; align-items: center; gap: 20px; }
-
-        .badge-pill {
-            display: inline-block;
-            background: rgba(15,23,42,0.6);
-            border: 1px solid rgba(103,232,249,0.5);
-            color: #67e8f9;
-            padding: 8px 18px; border-radius: 999px;
-            font-size: 11px; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 0.05em;
-            text-decoration: none;
-            backdrop-filter: blur(12px);
-            box-shadow: 0 0 20px rgba(103,232,249,0.2);
-            transition: all 0.3s ease;
-        }
-        .badge-pill:hover {
-            transform: translateY(-2px);
-            border-color: rgba(103,232,249,0.8);
-            box-shadow: 0 0 30px rgba(103,232,249,0.4);
-        }
-
-        /* ── Button (matches presentation Start Testing / All Links) ── */
-        .btn-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 14px 28px;
-            border-radius: 16px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(103, 232, 249, 0.3);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(103, 232, 249, 0.15);
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), 0 0 50px rgba(103, 232, 249, 0.25);
-            border-color: rgba(103, 232, 249, 0.5);
-        }
-        .btn-secondary {
-            background: rgba(15, 23, 42, 0.6);
-            color: #e6edf3;
-        }
-        .btn-secondary:hover {
-            background: rgba(15, 23, 42, 0.8);
-            border-color: rgba(103, 232, 249, 0.5);
-        }
-
-        /* ── Title block ── */
-        .title-block { text-align: center; margin-bottom: 56px; }
-
-        h1 {
-            font-size: 48px; font-weight: 900;
-            margin: 0 0 16px;
-            letter-spacing: -0.03em; line-height: 1.1;
-            background: linear-gradient(135deg, #ffffff 0%, #67e8f9 50%, #a78bfa 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            font-size: 20px; color: #9fb0c0;
-            max-width: 720px; margin: 0 auto 20px;
-            line-height: 1.6; font-weight: 400;
-        }
-
         /* Full custody – title block badge */
+        .bankingsystem-main .title-block .custody-badge-title {
+            margin-top: 1rem;
+        }
+
         .custody-badge-title {
             display: inline-flex; align-items: center; gap: 7px;
             background: rgba(103,232,249,0.06);
@@ -335,39 +258,54 @@
             margin-top: 6px; font-weight: 500;
         }
 
-        /* ── Footer ── */
-        footer {
-            margin-top: 16px; text-align: center;
-            color: var(--text-mut); font-size: 16px;
-            line-height: 1.6; max-width: 800px;
+        /* ── Closing copy (above site chrome footer) ── */
+        .banking-outro {
+            margin-top: clamp(1.25rem, 3vw, 2rem);
+            text-align: center;
+            color: var(--text-mut);
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 800px;
+            width: 100%;
+            align-self: center;
+        }
+
+        .banking-outro__quote {
+            color: var(--text-main);
+            font-weight: 700;
+            margin: 0 0 1rem;
+        }
+
+        .banking-outro__text {
+            margin: 0;
         }
 
         /* ── Responsive: JS handles scaling for all widths < 1080px ── */
         @media (max-width: 1079px) {
-            body {
-                padding: 24px 20px 50px;
+            body.site-chrome-body {
+                padding-bottom: 50px;
                 overflow-x: hidden;
             }
-
-            .header {
-                flex-direction: column;
-                align-items: center;
-                gap: 12px;
-                margin-bottom: 24px;
-            }
-
-            h1        { font-size: 26px; text-align: center; }
-            .subtitle { font-size: 15px; text-align: center; }
 
             /* transform + marginBottom set precisely by JS */
             .radial-container { transform-origin: top center; }
 
-            footer { font-size: 14px; text-align: center; }
+            .banking-outro { font-size: 14px; }
         }
     </style>
 </head>
 
-<body class="has-site-rail">
+<body class="site-chrome-body links-page-body has-site-rail deck-chrome-page bankingsystem-page">
+    <header class="site-chrome-header" role="banner">
+        <a class="site-chrome-header__brand" href="https://stablescouncil.org/">
+            <img class="site-chrome-header__mark" src="https://stablescouncil.org/brand/assets/logo-symbol.png" width="48" height="48" alt="Stables">
+            <span class="site-chrome-header__titles">
+                <span class="site-chrome-header__name">Stables</span>
+                <span class="site-chrome-header__slogan">Be your bank</span>
+            </span>
+        </a>
+        <a class="site-chrome-header__pill" href="https://minima.global" target="_blank" rel="noopener noreferrer">Built on MINIMA</a>
+    </header>
     <aside class="site-chrome-side-rail" aria-label="Quick navigation">
         <div class="site-chrome-side-rail__stack">
             <div class="lang-switcher">
@@ -379,8 +317,8 @@
                     </svg>
                 </button>
                 <div id="langMenu" class="lang-menu" role="menu">
-                    <a href="https://stablescouncil.github.io/" role="menuitem">Full presentation</a>
-                    <a href="https://stablescouncil.github.io/links.html" role="menuitem">Website map</a>
+                    <a href="https://stablescouncil.org/" role="menuitem">Full presentation</a>
+                    <a href="https://stablescouncil.org/links.html" role="menuitem">Website map</a>
                 </div>
             </div>
             <div class="share-switcher">
@@ -438,19 +376,7 @@
         <nav class="site-chrome-side-rail__dots" id="navDotsRail" aria-label="Page sections"></nav>
     </aside>
 
-    <header class="header">
-        <div class="brand">
-            <img src="data:image/png;base64,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" alt="Stables">
-            <div class="brand-text">
-                <span class="brand-name">STABLES</span>
-                <span class="brand-slogan">Be Your Bank</span>
-            </div>
-        </div>
-        <div class="header-links">
-            <a href="https://minima.global" target="_blank" class="badge-pill">Built on MINIMA</a>
-        </div>
-    </header>
-
+    <main class="site-chrome-main site-chrome-main--document bankingsystem-main" id="main-content">
     <div class="title-block">
         <h1>Let's be our banking system.</h1>
         <p class="subtitle">The Network of Everybody's Bank</p>
@@ -636,7 +562,7 @@
         <!-- ③ Coverage Fund – lower-right (639, 618) -->
         <div class="satellite protocol sat-coverage">
             <div class="sat-tag">Protocol</div>
-            <div class="sat-title">Coverage Fund</div>
+            <div class="sat-title">Coverage Fund (Convertible debt)</div>
             <div class="sat-sub">Yield &amp; Stability · earns all transaction fees</div>
         </div>
 
@@ -678,13 +604,30 @@
 
     </div>
 
-    <footer>
-        <strong>"Money that is truly yours. Secure, Pseudonymous and Unstoppable."</strong><br><br>
-        Stables is governed entirely by token holders via the Council. All operations run
-        on-chain via the Minima blockchain, eliminating the need for trusted intermediaries.<br><br>
-        <div class="btn-group">
-            <a href="https://stablescouncil.github.io/" class="btn btn-secondary">Presentation</a>
+    <div class="banking-outro">
+        <p class="banking-outro__quote">&quot;Money that is truly yours. Secure, Pseudonymous and Unstoppable.&quot;</p>
+        <p class="banking-outro__text">Stables is governed entirely by token holders via the Council. All operations run on-chain via the Minima blockchain, eliminating the need for trusted intermediaries.</p>
+    </div>
+
+    </main>
+
+    <nav id="siteMapNav" class="site-map-nav" data-site-map-index="3" aria-label="Previous and next in site map order"></nav>
+
+    <footer class="site-chrome-footer site-chrome-footer--minimal" role="contentinfo">
+        <div class="site-chrome-footerSocial">
+            <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" aria-label="Telegram community">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+            </a>
+            <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer" aria-label="Stables on X">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+            </a>
+            <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--all-links" href="https://stablescouncil.org/links.html">Website map</a>
         </div>
+        <p class="site-chrome-footerMeta">Stables | Built on Minima</p>
     </footer>
 
     <script>
@@ -710,6 +653,7 @@
 
     <script src="../assets/site-rail-controls.js" defer></script>
     <script src="../assets/site-rail.js" defer></script>
+    <script src="../assets/site-map-nav.js" defer></script>
 
     <!-- StablesAgent floating widget + popup -->
     <style>
@@ -750,7 +694,7 @@
     <div class="agent-backdrop" id="agentBackdrop" onclick="closeAgent()"></div>
     <div class="agent-popup" id="agentPopup">
         <div class="agent-popup-header">
-            <div class="agent-popup-logo"><img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" /></div>
+            <div class="agent-popup-logo"><img src="https://stablescouncil.org/stables_agent_avatar.png" alt="StablesAgent" /></div>
             <div class="agent-popup-title">
                 <div class="agent-popup-title-main">StablesAgent</div>
                 <div class="agent-popup-title-sub">Ask anything about Stables</div>
@@ -761,7 +705,7 @@
         <div class="agent-popup-body">
             <iframe id="agentFrame" title="StablesAgent Chat"></iframe>
             <div class="agent-popup-fallback" id="agentFallback">
-                <img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;" />
+                <img src="https://stablescouncil.org/stables_agent_avatar.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;" />
                 <p>The chat will load here directly once the secure connection is active.<br>For now, open it in a new tab:</p>
                 <a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer">Open StablesAgent ↗</a>
             </div>
@@ -773,7 +717,7 @@
             <span class="agent-fab-pulse"></span>
             <span class="agent-fab-pulse"></span>
             <span class="agent-fab-pulse"></span>
-            <img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" />
+            <img src="https://stablescouncil.org/stables_agent_avatar.png" alt="StablesAgent" />
             <span class="agent-fab-dot"></span>
         </div>
     </button>

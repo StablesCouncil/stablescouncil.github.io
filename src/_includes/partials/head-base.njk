@@ -1,0 +1,25 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="{{ site.org }}/brand/assets/logo-symbol.png">
+<meta property="og:title" content="{{ title }}">
+{% if description %}
+<meta property="og:description" content="{{ description }}">
+{% endif %}
+<meta property="og:image" content="{{ site.org }}/brand/assets/twitter-header.png">
+<meta property="og:url" content="{{ canonicalUrl | default(site.url + page.url) }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Stables">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@StablesCouncil">
+<meta name="twitter:title" content="{{ title }}">
+{% if description %}
+<meta name="twitter:description" content="{{ description }}">
+{% endif %}
+<meta name="twitter:image" content="{{ site.org }}/brand/assets/twitter-header.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/stables.css">
+<link rel="stylesheet" href="/assets/site-chrome.css">
+<link rel="stylesheet" href="/assets/site-rail.css">
+{% if pageCss %}<link rel="stylesheet" href="{{ pageCss }}">{% endif %}
+<title>{{ title }}</title>

@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="apple-touch-icon" href="/favicon.png">
+    <!-- Favicon: local favicon.png in this folder is empty; use hosted symbol so tab icon works from file:// and .org -->
+    <link rel="icon" type="image/png" href="https://stablescouncil.org/brand/assets/logo-symbol.png">
+    <link rel="apple-touch-icon" href="https://stablescouncil.org/brand/assets/logo-symbol.png">
 
     <!-- Social Previews (Open Graph) -->
     <meta property="og:title" content="Stables | Be your bank">
@@ -53,8 +53,8 @@
             --button-sec: #1f2937;
             --glow: rgba(103, 232, 249, 0.15);
             
-            /* Fluid Spacing */
-            --container-pad: clamp(1rem, 5vw, 2.5rem);
+            /* Fluid Spacing (extra gutter for file:// and small viewports) */
+            --container-pad: clamp(1.35rem, 6.5vw, 3.5rem);
             --section-gap: clamp(2rem, 10vw, 6.25rem);
         }
 
@@ -73,6 +73,158 @@
             font-weight: 400;
         }
 
+        /* Deck lead-in above Next (playing field) */
+        section#deck-more.deck-more {
+            min-height: auto;
+            padding: clamp(2.5rem, 6vw, 3.5rem) clamp(1rem, 4vw, 2rem) 0;
+            justify-content: flex-end;
+        }
+
+        .deck-more-inner {
+            text-align: center;
+            max-width: 42rem;
+            margin: 0 auto;
+            padding: 0 clamp(0.75rem, 3vw, 1.5rem);
+        }
+
+        .deck-more-title {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.85rem;
+            line-height: 1.2;
+        }
+
+        .deck-more-lead {
+            color: var(--text-secondary);
+            font-size: clamp(1rem, 2.2vw, 1.15rem);
+            line-height: 1.55;
+        }
+
+        /* Next step (Playing Field), same strip rhythm as site-map nav */
+        section#deck-next.deck-next {
+            min-height: auto;
+            padding: clamp(1.25rem, 4vw, 2rem) clamp(1rem, 4vw, 2rem) clamp(2rem, 5vw, 3rem);
+            justify-content: center;
+        }
+
+        section#deck-next.deck-next .container {
+            padding-left: clamp(1.25rem, 5vw, 3rem);
+            padding-right: clamp(1.25rem, 5vw, 3rem);
+        }
+
+        section#deck-next.deck-next .btn-group {
+            max-width: 26rem;
+            margin: 0 auto;
+        }
+
+        /* Minimal footer: parity with links.html (site-chrome-footer--minimal) */
+        .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerGrid {
+            display: none;
+        }
+
+        .site-chrome-footer.site-chrome-footer--minimal {
+            flex-shrink: 0;
+            margin-top: 0;
+            padding: 0.55rem clamp(12px, 4vw, 28px) 0.65rem;
+            border-top: none;
+            background: rgba(11, 15, 20, 0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial {
+            margin-bottom: 0.25rem;
+            gap: 1rem;
+        }
+
+        .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial__link:not(.site-chrome-footerSocial__link--icon) {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial__link--icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid rgba(103, 232, 249, 0.28);
+            background: rgba(15, 23, 42, 0.55);
+            color: var(--accent-cyan);
+            text-decoration: none;
+            transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial__link--icon:hover {
+            border-color: rgba(103, 232, 249, 0.55);
+            color: var(--text-primary);
+            text-decoration: none;
+            box-shadow: 0 0 18px rgba(103, 232, 249, 0.14);
+        }
+
+        .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial__link--icon svg {
+            display: block;
+            flex-shrink: 0;
+        }
+
+        .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial__link--all-links {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40px;
+            padding: 0 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(103, 232, 249, 0.28);
+            background: rgba(15, 23, 42, 0.55);
+            color: var(--accent-cyan);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial__link--all-links:hover {
+            border-color: rgba(103, 232, 249, 0.55);
+            color: var(--text-primary);
+            text-decoration: none;
+            box-shadow: 0 0 18px rgba(103, 232, 249, 0.14);
+        }
+
+        .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerMeta {
+            font-size: 0.65rem;
+            letter-spacing: 0.04em;
+            margin-top: 0;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .site-chrome-footerSocial {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .site-chrome-footerSocial__link {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .site-chrome-footerSocial__link:hover {
+            color: var(--text-primary);
+            text-decoration: underline;
+        }
+
         .container {
             width: 100%;
             max-width: 1400px;
@@ -89,7 +241,7 @@
             transform: translateY(30px);
             transition: all 1s ease-out;
             position: relative;
-            padding: 4rem 0;
+            padding: 4rem var(--container-pad);
             background: radial-gradient(circle at top, rgba(103, 232, 249, 0.18), transparent 55%) #0b0f14;
         }
 
@@ -105,6 +257,41 @@
                 min-height: 100vh;
                 display: flex;
                 align-items: center;
+            }
+        }
+
+        /* Hero: pull headline + tagline up toward wordmark; add space before CTAs */
+        section#hero .brand-container .minima-badge {
+            margin-bottom: 8px;
+        }
+
+        section#hero .brand-container .logo-wordmark {
+            margin: 6px auto 4px;
+        }
+
+        section#hero .brand-container .hero-tagline {
+            margin-bottom: clamp(28px, 4.5vw, 44px);
+        }
+
+        section#hero .brand-container .btn-group {
+            margin-top: clamp(10px, 2vw, 20px);
+        }
+
+        @media (max-width: 768px) {
+            section#hero .brand-container .minima-badge {
+                margin-bottom: 6px;
+            }
+
+            section#hero .brand-container .logo-wordmark {
+                margin: 4px auto 3px;
+            }
+
+            section#hero .brand-container .hero-tagline {
+                margin-bottom: clamp(22px, 5vw, 36px);
+            }
+
+            section#hero .brand-container .btn-group {
+                margin-top: clamp(8px, 2.5vw, 16px);
             }
         }
 
@@ -138,6 +325,12 @@
         }
 
         .badge-business {
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.5);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
+        }
+
+        .badge-merchants {
             color: #fbbf24;
             border-color: rgba(251, 191, 36, 0.5);
             box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
@@ -346,15 +539,36 @@
             font-family: 'Inter', sans-serif;
         }
 
-        .footer-note {
-            margin-top: 80px;
-            font-size: 11px;
-            font-weight: 400;
-            color: var(--text-secondary);
-            opacity: 0.6;
-            letter-spacing: 0.05em;
-            font-family: 'Inter', sans-serif;
-            text-transform: uppercase;
+        /* Nav Dots - HIDDEN ON MOBILE */
+        .nav-dots {
+            position: fixed;
+            right: clamp(1rem, 3vw, 2.5rem);
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+            z-index: 100;
+        }
+
+        @media (min-width: 768px) {
+            .nav-dots {
+                display: flex;
+            }
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .dot.active {
+            background: var(--accent);
+            transform: scale(1.4);
         }
 
         /* Hero Specific Overrides */
@@ -394,21 +608,6 @@
             .hero-tagline {
                 margin-bottom: 12px;
                 font-size: clamp(1rem, 3vw, 1.25rem);
-            }
-        }
-
-        .hero-cta-text {
-            font-size: clamp(1.25rem, 2.5vw, 1.375rem);
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-            margin-top: 0;
-        }
-
-        @media (max-width: 768px) {
-            .hero-cta-text {
-                margin-bottom: 10px;
-                font-size: clamp(1rem, 3vw, 1.125rem);
             }
         }
 
@@ -578,8 +777,8 @@
         /* Language Switcher & Share Button Container */
         .lang-switcher {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: clamp(12px, 3vw, 20px);
+            right: clamp(1rem, 4vw, 2.25rem);
             z-index: 1000;
             display: flex;
             flex-direction: column;
@@ -840,15 +1039,11 @@
             text-align: right;
         }
     </style>
-    <link rel="stylesheet" href="assets/site-rail.css">
 </head>
 
-<body data-rail-sections=".container > section" data-rail-add-visible="1">
-
-    <aside class="site-chrome-side-rail site-chrome-side-rail--presentation" aria-label="Quick navigation">
-        <div class="site-chrome-side-rail__stack">
+<body>
     <div class="lang-switcher">
-        <button type="button" class="globe-btn" onclick="toggleLangMenu()" aria-label="Select Language">
+        <button class="globe-btn" onclick="toggleLangMenu()" aria-label="Select Language">
             <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
                 stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -858,35 +1053,35 @@
             </svg>
         </button>
         <div id="langMenu" class="lang-menu">
-            <button type="button" onclick="updateLanguage('eu')">Euskara</button>
-            <button type="button" onclick="updateLanguage('bg')">Български</button>
-            <button type="button" onclick="updateLanguage('ca')">Català</button>
-            <button type="button" onclick="updateLanguage('cs')">Čeština</button>
-            <button type="button" onclick="updateLanguage('en')">English</button>
-            <button type="button" onclick="updateLanguage('en-edgy')">English (Edgy)</button>
-            <button type="button" onclick="updateLanguage('zh')">中文</button>
-            <button type="button" onclick="updateLanguage('fr')">Français</button>
-            <button type="button" onclick="updateLanguage('fr-qc-edgy')">Québécois</button>
-            <button type="button" onclick="updateLanguage('de')">Deutsch</button>
-            <button type="button" onclick="updateLanguage('it')">Italiano</button>
-            <button type="button" onclick="updateLanguage('gn')">Guaraní</button>
-            <button type="button" onclick="updateLanguage('lv')">Latviešu</button>
-            <button type="button" onclick="updateLanguage('lt')">Lietuvių</button>
-            <button type="button" onclick="updateLanguage('lb')">Lëtzebuergesch</button>
-            <button type="button" onclick="updateLanguage('ar')">العربية</button>
-            <button type="button" onclick="updateLanguage('fa')">فارسی</button>
-            <button type="button" onclick="updateLanguage('he')">עברית</button>
-            <button type="button" onclick="updateLanguage('yi')">ייִדיש</button>
-            <button type="button" onclick="updateLanguage('ru')">Русский</button>
-            <button type="button" onclick="updateLanguage('sk')">Slovenčina</button>
-            <button type="button" onclick="updateLanguage('es')">Español</button>
-            <button type="button" onclick="updateLanguage('fi')">Suomi</button>
-            <button type="button" onclick="updateLanguage('sv')">Svenska</button>
-            <button type="button" onclick="updateLanguage('tr')">Türkçe</button>
+            <button onclick="updateLanguage('eu')">Euskara</button>
+            <button onclick="updateLanguage('bg')">Български</button>
+            <button onclick="updateLanguage('ca')">Català</button>
+            <button onclick="updateLanguage('cs')">Čeština</button>
+            <button onclick="updateLanguage('en')">English</button>
+            <button onclick="updateLanguage('en-edgy')">English (Edgy)</button>
+            <button onclick="updateLanguage('zh')">中文</button>
+            <button onclick="updateLanguage('fr')">Français</button>
+            <button onclick="updateLanguage('fr-qc-edgy')">Québécois</button>
+            <button onclick="updateLanguage('de')">Deutsch</button>
+            <button onclick="updateLanguage('it')">Italiano</button>
+            <button onclick="updateLanguage('gn')">Guaraní</button>
+            <button onclick="updateLanguage('lv')">Latviešu</button>
+            <button onclick="updateLanguage('lt')">Lietuvių</button>
+            <button onclick="updateLanguage('lb')">Lëtzebuergesch</button>
+            <button onclick="updateLanguage('ar')">العربية</button>
+            <button onclick="updateLanguage('fa')">فارسی</button>
+            <button onclick="updateLanguage('he')">עברית</button>
+            <button onclick="updateLanguage('yi')">ייִדיש</button>
+            <button onclick="updateLanguage('ru')">Русский</button>
+            <button onclick="updateLanguage('sk')">Slovenčina</button>
+            <button onclick="updateLanguage('es')">Español</button>
+            <button onclick="updateLanguage('fi')">Suomi</button>
+            <button onclick="updateLanguage('sv')">Svenska</button>
+            <button onclick="updateLanguage('tr')">Türkçe</button>
         </div>
         
         <div class="share-switcher">
-            <button type="button" class="share-btn" onclick="handleShareMenu()" aria-label="Share">
+            <button class="share-btn" onclick="handleShare()" aria-label="Share">
                 <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
                     stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="18" cy="5" r="3"></circle>
@@ -897,37 +1092,37 @@
                 </svg>
             </button>
             <div id="shareMenu" class="share-menu">
-                <button type="button" onclick="shareToTwitter()">
+                <button onclick="shareToTwitter()">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                     </svg>
-                    X
+                    X (Twitter)
                 </button>
-                <button type="button" onclick="shareToFacebook()">
+                <button onclick="shareToFacebook()">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                     </svg>
                     Facebook
                 </button>
-                <button type="button" onclick="shareToLinkedIn()">
+                <button onclick="shareToLinkedIn()">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                     </svg>
                     LinkedIn
                 </button>
-                <button type="button" onclick="shareToWhatsApp()">
+                <button onclick="shareToWhatsApp()">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
                     </svg>
                     WhatsApp
                 </button>
-                <button type="button" onclick="shareToTelegram()">
+                <button onclick="shareToTelegram()">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
                     </svg>
                     Telegram
                 </button>
-                <button type="button" onclick="copyLink()">
+                <button onclick="copyLink()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
                         <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
@@ -937,9 +1132,8 @@
             </div>
         </div>
     </div>
-        </div>
-        <nav class="site-chrome-side-rail__dots" id="navDotsRail" aria-label="Page sections"></nav>
-    </aside>
+
+    <div class="nav-dots" id="navDots"></div>
 
     <div class="container">
         <!-- Slide 1: Hero -->
@@ -948,13 +1142,13 @@
                 <div class="brand-container">
                     <a href="https://minima.global" target="_blank" class="minima-badge">Built on
                         <strong>MINIMA</strong></a>
-                    <img src="brand/assets/logo-wordmark.png" alt="Stables" class="logo-wordmark">
+                    <img src="https://stablescouncil.github.io/brand/assets/logo-wordmark.png" alt="Stables" class="logo-wordmark">
                     <h1 class="hero-title" data-key="hero-title">Be your bank</h1>
                     <p class="hero-tagline" data-key="hero-tagline">Money that is truly yours. Secure, Pseudonymous and
                         Unstoppable</p>
-                    <p class="hero-cta-text" data-key="hero-cta-text">Want to know more?</p>
                     <div class="btn-group">
-                        <a href="https://stablescouncil.org/dapp/" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><span data-key="btn-testing">Test the showcase</span></a>
+                        <a href="https://stablescouncil.org/dapp/showcase/" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><span data-key="btn-testing">Test the showcase</span></a>
+                        <span class="btn btn-secondary" style="pointer-events: none; opacity: 0.78; cursor: default;" title="Demo MiniDapp at stablescouncil.org/dapp/demo is coming soon." role="status"><span data-key="btn-demo-label">Demo</span><span class="btn-label" data-key="btn-demo">Coming soon</span></span>
                     </div>
                     <div class="scroll-indicator">
                         <span class="scroll-indicator-text" data-key="scroll-indicator">Scroll to explore</span>
@@ -964,7 +1158,33 @@
             </div>
         </section>
 
-        <!-- Slide 2: Wallet -->
+        <!-- Slide 2: Merchants (merchant-first infrastructure) -->
+        <section id="merchants">
+            <div class="split-layout reversed">
+                <div class="mockup-frame" style="border-color: rgba(251, 191, 36, 0.2);">
+                    <div
+                        style="font-size: clamp(1.1rem, 1.5vw, 1.25rem); font-weight: 700; margin-bottom: 30px; display: flex; justify-content: space-between;">
+                        <span data-key="mock-merchant">Merchant View</span>
+                        <span style="font-size: 11px; opacity: 0.5;" data-key="mock-status">Status: Online</span>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: clamp(3rem, 6vw, 4rem); font-weight: 900; color: #34d399; margin-bottom: 10px;"
+                            data-key="mock-paid">PAID</div>
+                        <div style="opacity: 0.5; margin-bottom: 30px;" data-key="mock-order">Order #8291</div>
+                        <div style="background: #fff; color: #000; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 14px;"
+                            data-key="mock-receipt">Print Receipt</div>
+                    </div>
+                </div>
+                <div class="content-block">
+                    <div class="badge badge-merchants" data-key="badge-business">FOR MERCHANTS</div>
+                    <h2 data-key="biz-title">Permissionless payments. Live in minutes.</h2>
+                    <p data-key="biz-p1">Stables is merchant-first infrastructure: a permissionless payment solution you can set up in minutes, use anonymously when you choose, and access settled income in seconds, with settlement that stays direct between you and your customers.</p>
+                    <p style="font-size: 16px; opacity: 0.7;" data-key="biz-p2">Self-custody rails, instant settlement, and a checkout you control end to end.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3: Wallet -->
         <section id="wallet">
             <div class="split-layout">
                 <div class="mockup-frame">
@@ -983,11 +1203,9 @@
                     </div>
                 </div>
                 <div class="content-block">
-                    <div class="badge" data-key="badge-you">FOR YOU</div>
+                    <div class="badge" data-key="badge-you">FOR SHOPPERS</div>
                     <h2 data-key="wallet-title">Pay instantly. Own completely.</h2>
-                    <p data-key="wallet-p">Experience money that moves as fast as a message. No banks to freeze your
-                        account. No hidden fees. Just a simple, powerful wallet that gives you 100% control over your
-                        assets.</p>
+                    <p data-key="wallet-p">Money that moves as fast as a message through a wallet built for self-custody, transparent fees, and full control of your assets.</p>
                     <ul class="check-list">
                         <li data-key="wallet-li1"><strong>100% Self-Custody:</strong> Only you have the keys.</li>
                         <li data-key="wallet-li2"><strong>Day-to-day ready:</strong> Fast, cheap, and simple.</li>
@@ -997,83 +1215,94 @@
             </div>
         </section>
 
-        <!-- Slide 3: Business -->
-        <section id="business">
-            <div class="split-layout reversed">
-                <div class="mockup-frame" style="border-color: rgba(251, 191, 36, 0.2);">
+        <!-- Slide 4: Invest (risk-aligned rails) -->
+        <section id="growth">
+            <div class="split-layout">
+                <div class="mockup-frame" style="border-color: rgba(167, 139, 250, 0.2);">
+                    <div style="font-size: clamp(1.1rem, 1.5vw, 1.35rem); font-weight: 700; margin-bottom: 14px;"
+                        data-key="mock-investment">Ways to deploy</div>
                     <div
-                        style="font-size: clamp(1.1rem, 1.5vw, 1.25rem); font-weight: 700; margin-bottom: 30px; display: flex; justify-content: space-between;">
-                        <span data-key="mock-merchant">Merchant View</span>
-                        <span style="font-size: 11px; opacity: 0.5;" data-key="mock-status">Status: Online</span>
+                        style="background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: clamp(0.85rem, 1.8vw, 0.95rem);">
+                        <span data-key="mock-inv-row-equity">Equity & governance</span>
+                        <span style="font-size: 10px; opacity: 0.55; white-space: nowrap;" data-key="mock-inv-hint-equity">Long horizon</span>
                     </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: clamp(3rem, 6vw, 4rem); font-weight: 900; color: #34d399; margin-bottom: 10px;"
-                            data-key="mock-paid">PAID</div>
-                        <div style="opacity: 0.5; margin-bottom: 30px;" data-key="mock-order">Order #8291</div>
-                        <div style="background: #fff; color: #000; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 14px;"
-                            data-key="mock-receipt">Print Receipt</div>
+                    <div
+                        style="background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: clamp(0.85rem, 1.8vw, 0.95rem);">
+                        <span data-key="mock-inv-row-leverage">Leveraged positioning</span>
+                        <span style="font-size: 10px; opacity: 0.55; color: var(--accent-growth); font-weight: 700;" data-key="mock-inv-hint-leverage">Sized risk</span>
+                    </div>
+                    <div
+                        style="background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: clamp(0.85rem, 1.8vw, 0.95rem);">
+                        <span data-key="mock-inv-row-income">Income-oriented exposure</span>
+                        <span style="font-size: 10px; opacity: 0.55; white-space: nowrap;" data-key="mock-inv-hint-income">Coverage-side</span>
+                    </div>
+                    <div
+                        style="background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: clamp(0.85rem, 1.8vw, 0.95rem);">
+                        <span data-key="mock-inv-row-arb">Arbitrage-style plays</span>
+                        <span style="font-size: 10px; opacity: 0.55; white-space: nowrap;" data-key="mock-inv-hint-arb">Liquidity depth</span>
                     </div>
                 </div>
                 <div class="content-block">
-                    <div class="badge badge-business" data-key="badge-business">FOR BUSINESS</div>
-                    <h2 data-key="biz-title">Settled in seconds. Connect directly.</h2>
-                    <p data-key="biz-p1">Stop waiting days for your money. With Stables, payments are confirmed and
-                        settled in seconds. Build a direct relationship with your customers without intermediaries
-                        taking a cut.</p>
-                    <p style="font-size: 16px; opacity: 0.7;" data-key="biz-p2">Perfect for modern commerce, from local
-                        shops to global services.</p>
+                    <div class="badge badge-growth" data-key="badge-growth">FOR INVESTORS</div>
+                    <h2 data-key="growth-title">Risk-aware capital, your way.</h2>
+                    <p data-key="growth-p1">Equity, leveraged tools, income-biased coverage exposure, and arbitrage-shaped liquidity paths: pick the lane that matches your risk tolerance and your objective.</p>
+                    <p style="font-size: 16px; opacity: 0.7;" data-key="growth-p2">One protocol stack, one disclosure rhythm, so sizing a position stays legible end to end.</p>
                 </div>
             </div>
         </section>
 
-        <!-- Slide 4: Growth -->
-        <section id="growth">
-            <div class="split-layout">
-                <div class="mockup-frame" style="border-color: rgba(167, 139, 250, 0.2);">
-                    <div style="font-size: clamp(1.25rem, 2vw, 1.5rem); font-weight: 700; margin-bottom: 24px;"
-                        data-key="mock-investment">
-                        Investment</div>
-                    <div
-                        style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 12px; display: flex; justify-content: space-between; margin-bottom: 12px;">
-                        <div><span data-key="mock-multi">Multiplicator</span><br><span
-                                style="font-size: 11px; opacity: 0.5;" data-key="mock-pos">Active Position</span></div>
-                        <div style="color: var(--accent-growth); font-weight: 800; font-size: clamp(2rem, 4vw, 3rem);">
-                            1.16x</div>
-                    </div>
-                    <div
-                        style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; display: flex; justify-content: space-between;">
-                        <div><span data-key="mock-yield">Yield</span><br><span style="font-size: 11px; opacity: 0.5;"
-                                data-key="mock-apy">Current APY</span></div>
-                        <div style="font-weight: 800; font-size: clamp(2rem, 4vw, 3rem);">3.28%</div>
-                    </div>
-                </div>
-                <div class="content-block">
-                    <div class="badge badge-growth" data-key="badge-growth">FOR GROWTH</div>
-                    <h2 data-key="growth-title">The Multiplicator.</h2>
-                    <p data-key="growth-p1">A new way to participate in the stability of the ecosystem. Use the
-                        Multiplicator to amplify your exposure and support the network's resilience.</p>
-                    <p style="font-size: 16px; opacity: 0.7;" data-key="growth-p2">Advanced tools for those who want to
-                        do more than just pay.</p>
-                </div>
-            </div>
-        </section>
 
         <!-- Slide 5: Final CTA -->
         <section id="cta">
             <div class="content-block">
                 <h2 data-key="cta-title">Ready to shape the future?</h2>
-                <p data-key="cta-p">Join the public test. Try to break the system. Help us build the most reliable money
-                    platform in the world.</p>
+                <p data-key="cta-p">Join the public test. Stress real usage paths. Help us ship the most reliable money platform we can build together.</p>
                 <div class="btn-group">
-                    <a href="https://stablescouncil.org/dapp/" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><span data-key="btn-testing">Test the showcase</span></a>
-                    <a href="https://stablescouncil.github.io/links.html" class="btn btn-secondary"
-                        data-key="btn-links">All Links</a>
+                    <a href="https://stablescouncil.org/dapp/showcase/" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><span data-key="btn-testing">Test the showcase</span></a>
+                    <span class="btn btn-secondary" style="pointer-events: none; opacity: 0.78; cursor: default;" title="Demo MiniDapp at stablescouncil.org/dapp/demo is coming soon." role="status"><span data-key="btn-demo-label">Demo</span><span class="btn-label" data-key="btn-demo">Coming soon</span></span>
                 </div>
-                <div class="footer-note" data-key="footer">Stables - Informational Overview v1.0</div>
             </div>
         </section>
+
+        <section id="deck-more" class="deck-more">
+            <div class="container">
+                <div class="deck-more-inner">
+                    <h2 class="deck-more-title" data-key="deck-more-title">Want to know more?</h2>
+                    <p class="deck-more-lead" data-key="deck-more-lead">Walk the structural view next: how each role lines up incentives with the peg.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="deck-next" class="deck-next">
+            <div class="container">
+                <div class="btn-group" style="justify-content: center;">
+                    <a href="https://stablescouncil.org/playing_field.html" class="btn btn-primary">
+                        <span class="btn-label" data-key="deck-next-label">Next</span>
+                        <span data-key="deck-next-title">The Playing Field</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <footer class="site-chrome-footer site-chrome-footer--minimal" role="contentinfo">
+            <div class="site-chrome-footerSocial">
+                <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" aria-label="Telegram community">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                </a>
+                <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer" aria-label="Stables on X">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                    </svg>
+                </a>
+                <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--all-links" href="https://stablescouncil.org/links.html">All links</a>
+            </div>
+            <p class="site-chrome-footerMeta">Stables | Built on Minima</p>
+        </footer>
     </div>
 
+    <script src="assets/presentation-main-i18n-patch.js"></script>
     <script>
         const translations = {
             eu: {
@@ -1121,26 +1350,28 @@
             en: {
                 "hero-title": "Be your bank",
                 "hero-tagline": "Money that is truly yours. Secure, Pseudonymous and Unstoppable",
-                "hero-cta-text": "Want to know more?",
+                "deck-more-title": "Want to know more?",
+                "deck-more-lead": "Walk the structural view next: how each role lines up incentives with the peg.",
                 "scroll-indicator": "Scroll to explore",
                 "btn-testing": "Test the showcase",
-                "btn-links": "All Links",
-                "badge-you": "FOR YOU",
+                "btn-demo-label": "Demo",
+                "btn-demo": "Coming soon",
+                "badge-you": "FOR SHOPPERS",
                 "wallet-title": "Pay instantly. Own completely.",
-                "wallet-p": "Experience money that moves as fast as a message. No banks to freeze your account. No hidden fees. Just a simple, powerful wallet that gives you 100% control over your assets.",
+                "wallet-p": "Money that moves as fast as a message through a wallet built for self-custody, transparent fees, and full control of your assets.",
                 "wallet-li1": "<strong>100% Self-Custody:</strong> Only you have the keys.",
                 "wallet-li2": "<strong>Day-to-day ready:</strong> Fast, cheap, and simple.",
                 "wallet-li3": "<strong>Stables:</strong> Designed to hold its value.",
-                "badge-business": "FOR BUSINESS",
-                "biz-title": "Settled in seconds. Connect directly.",
-                "biz-p1": "Stop waiting days for your money. With Stables, payments are confirmed and settled in seconds. Build a direct relationship with your customers without intermediaries taking a cut.",
-                "biz-p2": "Perfect for modern commerce, from local shops to global services.",
-                "badge-growth": "FOR GROWTH",
-                "growth-title": "The Multiplicator.",
-                "growth-p1": "A new way to participate in the stability of the ecosystem. Use the Multiplicator to amplify your exposure and support the network's resilience.",
-                "growth-p2": "Advanced tools for those who want to do more than just pay.",
+                "badge-business": "FOR MERCHANTS",
+                "biz-title": "Permissionless payments. Live in minutes.",
+                "biz-p1": "Stables is merchant-first infrastructure: a permissionless payment solution you can set up in minutes, use anonymously when you choose, and access settled income in seconds, with settlement that stays direct between you and your customers.",
+                "biz-p2": "Self-custody rails, instant settlement, and a checkout you control end to end.",
+                "badge-growth": "FOR INVESTORS",
+                "growth-title": "Risk-aware capital, your way.",
+                "growth-p1": "Equity, leveraged tools, income-biased coverage exposure, and arbitrage-shaped liquidity paths: pick the lane that matches your risk tolerance and your objective.",
+                "growth-p2": "One protocol stack, one disclosure rhythm, so sizing a position stays legible end to end.",
                 "cta-title": "Ready to shape the future?",
-                "cta-p": "Join the public test. Try to break the system. Help us build the most reliable money platform in the world.",
+                "cta-p": "Join the public test. Stress real usage paths. Help us ship the most reliable money platform we can build together.",
                 "footer": "Stables - Informational Overview v1.0",
                 "mock-wallet": "Wallet",
                 "mock-coffee": "Coffee Shop",
@@ -1152,8 +1383,16 @@
                 "mock-paid": "PAID",
                 "mock-order": "Order #8291",
                 "mock-receipt": "Print Receipt",
-                "mock-investment": "Investment",
-                "mock-multi": "Multiplicator",
+                "mock-investment": "Ways to deploy",
+                "mock-inv-row-equity": "Equity & governance",
+                "mock-inv-hint-equity": "Long horizon",
+                "mock-inv-row-leverage": "Leveraged positioning",
+                "mock-inv-hint-leverage": "Sized risk",
+                "mock-inv-row-income": "Income-oriented exposure",
+                "mock-inv-hint-income": "Coverage-side",
+                "mock-inv-row-arb": "Arbitrage-style plays",
+                "mock-inv-hint-arb": "Liquidity depth",
+                "mock-multi": "Leveraged tools",
                 "mock-pos": "Active Position",
                 "mock-yield": "Yield",
                 "mock-apy": "Current APY",
@@ -1163,33 +1402,38 @@
                 "agent-online": "Online",
                 "agent-offline": "Offline",
                 "agent-fallback-p": "The chat will load here directly once the secure connection is active.<br>For now, open it in a new tab:",
-                "agent-fallback-link": "Open StablesAgent ↗"
+                "agent-fallback-link": "Open StablesAgent \u2192",
+                "deck-next-label": "Next",
+                "deck-next-title": "The Playing Field"
             },
             "en-edgy": {
                 "hero-title": "Be your damn bank",
-                "hero-tagline": "No permission. No intermediaries. No bullshit.",
-                "hero-cta-text": "Want to know more?",
+                "hero-tagline": "Permissionless rails. Direct settlement. Money you can reason about.",
+                "deck-more-title": "Want to know more?",
+                "deck-more-lead": "Next: the playing field. Same incentive story, one clean map of who does what for the peg.",
                 "scroll-indicator": "Scroll to explore",
                 "btn-testing": "Test the showcase",
+                "btn-demo-label": "Demo",
+                "btn-demo": "Coming soon",
                 "btn-follow": "Follow on X",
                 "btn-instagram": "Follow on Instagram",
                 "btn-telegram": "Join on Telegram",
-                "badge-you": "YOUR WALLET",
+                "badge-you": "FOR SHOPPERS",
                 "wallet-title": "Pay instantly. Own completely.",
-                "wallet-p": "Money that moves as fast as a message. No banks to freeze your shit. No hidden fees. Just a simple wallet that gives you 100% control. Period.",
+                "wallet-p": "Money that moves as fast as a message through a wallet built for self-custody, transparent fees, and full control of your assets.",
                 "wallet-li1": "<strong>100% Self-Custody:</strong> Only you have the keys. End of story.",
-                "wallet-li2": "<strong>Day-to-day ready:</strong> Fast, cheap, and simple. No BS.",
+                "wallet-li2": "<strong>Day-to-day ready:</strong> Fast, cheap, simple, and straight about what things cost.",
                 "wallet-li3": "<strong>Stables:</strong> Designed to hold its value. Real talk.",
                 "badge-business": "FOR SHOPS",
                 "biz-title": "Settled in seconds. Connect directly.",
-                "biz-p1": "Stop waiting days for your money. With Stables, payments are confirmed and settled in seconds. Build a direct relationship with your customers. No middlemen taking a cut.",
+                "biz-p1": "Payments confirm and settle in seconds so your cash flow matches the day. You run checkout, pricing, and the customer relationship on rails you control, front to back.",
                 "biz-p2": "Perfect for modern commerce. From local shops to global services.",
-                "badge-growth": "MAKE IT GROW",
-                "growth-title": "The Multiplicator.",
-                "growth-p1": "A new way to participate in the stability of the ecosystem. Use the Multiplicator to amplify your exposure and support the network's resilience.",
-                "growth-p2": "Advanced tools for those who want to do more than just pay. Real shit.",
+                "badge-growth": "IF YOU DEPLOY",
+                "growth-title": "Deploy capital like you mean it.",
+                "growth-p1": "Equity, leverage when you mean it, income through coverage mechanics, liquidity-and-arbitrage angles when the book offers them: pick what fits your risk budget.",
+                "growth-p2": "Same stack, same receipts: you see the trade-offs before you lean in.",
                 "cta-title": "Ready to shape the future?",
-                "cta-p": "Join the public test. Try to break the system. Help us build the most reliable money platform in the world. Let's do this.",
+                "cta-p": "Join the public test. Stress real usage paths. Help us ship the most reliable money platform we can build together. Let's do this.",
                 "footer": "Stables - Informational Overview v1.0",
                 "mock-wallet": "Wallet",
                 "mock-coffee": "Coffee Shop",
@@ -1201,8 +1445,16 @@
                 "mock-paid": "PAID",
                 "mock-order": "Order #8291",
                 "mock-receipt": "Print Receipt",
-                "mock-investment": "Investment",
-                "mock-multi": "Multiplicator",
+                "mock-investment": "Ways to deploy",
+                "mock-inv-row-equity": "Equity & governance",
+                "mock-inv-hint-equity": "Long horizon",
+                "mock-inv-row-leverage": "Leveraged positioning",
+                "mock-inv-hint-leverage": "Sized risk",
+                "mock-inv-row-income": "Income-oriented exposure",
+                "mock-inv-hint-income": "Coverage-side",
+                "mock-inv-row-arb": "Arbitrage-style plays",
+                "mock-inv-hint-arb": "Liquidity depth",
+                "mock-multi": "Leveraged tools",
                 "mock-pos": "Active Position",
                 "mock-yield": "Yield",
                 "mock-apy": "Current APY"
@@ -1247,12 +1499,12 @@
                 "mock-yield": "Rendement",
                 "mock-apy": "APY Actuel",
                 "agent-title-sub": "Posez vos questions sur Stables",
-                "agent-disclaimer": "NE PARTAGEZ PAS D'INFORMATIONS PRIV\u00c9ES OU SENSIBLES",
+                "agent-disclaimer": "NE PARTAGEZ PAS D'INFORMATIONS PRIVÉES OU SENSIBLES",
                 "agent-fab-tip": "Discuter avec StablesAgent",
                 "agent-online": "En ligne",
                 "agent-offline": "Hors ligne",
                 "agent-fallback-p": "Le chat se chargera ici une fois la connexion sécurisée active.<br>En attendant, ouvrez-le dans un nouvel onglet :",
-                "agent-fallback-link": "Ouvrir StablesAgent ↗"
+                "agent-fallback-link": "Ouvrir StablesAgent →"
             },
             "fr-qc-edgy": {
                 "hero-title": "Sois ta banque batince",
@@ -1294,92 +1546,92 @@
                 "mock-yield": "Rendement",
                 "mock-apy": "APY Actuel",
                 "agent-title-sub": "Pose tes questions sur Stables",
-                "agent-disclaimer": "PARTAGE PAS D'INFO PRIV\u00c9E OU SENSIBLE",
+                "agent-disclaimer": "PARTAGE PAS D'INFO PRIVÉE OU SENSIBLE",
                 "agent-fab-tip": "Jase avec StablesAgent",
                 "agent-online": "En ligne",
                 "agent-offline": "Hors ligne",
                 "agent-fallback-p": "Le chat va se charger ici une fois la connexion sécurisée active.<br>En attendant, ouvre-le dans un nouvel onglet :",
-                "agent-fallback-link": "Ouvrir StablesAgent ↗"
+                "agent-fallback-link": "Ouvrir StablesAgent →"
             },
             es: {
-                "hero-title": "Sé tu banco",
-                "hero-tagline": "Dinero que es realmente tuyo. Seguro, seudónimo e imparable",
-                "hero-cta-text": "¿Quieres saber más?",
-                "scroll-indicator": "Desplázate para explorar",
+                "hero-title": "SÃ© tu banco",
+                "hero-tagline": "Dinero que es realmente tuyo. Seguro, seudÃ³nimo e imparable",
+                "hero-cta-text": "Â¿Quieres saber mÃ¡s?",
+                "scroll-indicator": "DesplÃ¡zate para explorar",
                 "btn-testing": "Probar la vitrina",
                 "btn-links": "Todos los enlaces",
                 "badge-you": "PARA TI",
-                "wallet-title": "Paga al instante. Sé dueño total.",
-                "wallet-p": "Experimenta dinero que se mueve tan rápido como un message. Sin bancos que congelen tu cuenta. Sin tarifas ocultas. Solo una billetera simple y potente que te da el 100% del control.",
-                "wallet-li1": "<strong>100% Autocustodia:</strong> Solo tú tienes las llaves.",
-                "wallet-li2": "<strong>Listo para el día a día:</strong> Rápido, barato y simple.",
-                "wallet-li3": "<strong>Stables:</strong> Diseñado para mantener su valor.",
+                "wallet-title": "Paga al instante. SÃ© dueÃ±o total.",
+                "wallet-p": "Experimenta dinero que se mueve tan rÃ¡pido como un message. Sin bancos que congelen tu cuenta. Sin tarifas ocultas. Solo una billetera simple y potente que te da el 100% del control.",
+                "wallet-li1": "<strong>100% Autocustodia:</strong> Solo tÃº tienes las llaves.",
+                "wallet-li2": "<strong>Listo para el dÃ­a a dÃ­a:</strong> RÃ¡pido, barato y simple.",
+                "wallet-li3": "<strong>Stables:</strong> DiseÃ±ado para mantener su valor.",
                 "badge-business": "PARA NEGOCIOS",
                 "biz-title": "Liquidado en segundos. Conecta directo.",
-                "biz-p1": "Deja de esperar días por tu dinero. Con Stables, los pagos se confirman y liquidan en segundos. Construye una relación directa sin intermediarios.",
+                "biz-p1": "Deja de esperar dÃ­as por tu dinero. Con Stables, los pagos se confirman y liquidan en segundos. Construye una relaciÃ³n directa sin intermediarios.",
                 "biz-p2": "Perfecto para el comercio moderno, desde tiendas locales hasta servicios globales.",
                 "badge-growth": "PARA CRECIMIENTO",
                 "growth-title": "El Multiplicador.",
-                "growth-p1": "Una nueva forma de participar en la estabilidad del ecosistema. Usa el Multiplicador para ampliar tu exposición.",
-                "growth-p2": "Herramientas avanzadas para quienes quieren hacer más que solo pagar.",
-                "cta-title": "¿Listo para dar forma al futuro?",
-                "cta-p": "Únete a la prueba pública. Intenta romper el sistema. Ayúdanos a construir la plataforma más confiable.",
+                "growth-p1": "Una nueva forma de participar en la estabilidad del ecosistema. Usa el Multiplicador para ampliar tu exposiciÃ³n.",
+                "growth-p2": "Herramientas avanzadas para quienes quieren hacer mÃ¡s que solo pagar.",
+                "cta-title": "Â¿Listo para dar forma al futuro?",
+                "cta-p": "Ãšnete a la prueba pÃºblica. Intenta romper el sistema. AyÃºdanos a construir la plataforma mÃ¡s confiable.",
                 "footer": "Stables - Resumen Informativo v1.0",
                 "mock-wallet": "Billetera",
-                "mock-coffee": "Cafetería",
+                "mock-coffee": "CafeterÃ­a",
                 "mock-salary": "Salario",
                 "mock-val-coffee": "- 6.98 EURs",
                 "mock-val-salary": "+ 3.500 EURs",
                 "mock-merchant": "Vista Mercante",
-                "mock-status": "Estado: En línea",
+                "mock-status": "Estado: En lÃ­nea",
                 "mock-paid": "PAGADO",
                 "mock-order": "Pedido #8291",
                 "mock-receipt": "Imprimir Recibo",
-                "mock-investment": "Inversión",
+                "mock-investment": "InversiÃ³n",
                 "mock-multi": "Multiplicador",
-                "mock-pos": "Posición Activa",
+                "mock-pos": "PosiciÃ³n Activa",
                 "mock-yield": "Rendimiento",
                 "mock-apy": "APY Actual",
                 "agent-title-sub": "Pregunta lo que quieras sobre Stables",
-                "agent-disclaimer": "NO COMPARTAS INFORMACIÓN PRIVADA O SENSIBLE",
+                "agent-disclaimer": "NO COMPARTAS INFORMACIÃ“N PRIVADA O SENSIBLE",
                 "agent-fab-tip": "Chatear con StablesAgent",
-                "agent-online": "En línea",
+                "agent-online": "En lÃ­nea",
                 "agent-offline": "Desconectado",
-                "agent-fallback-p": "El chat se cargará aquí cuando la conexión segura esté activa.<br>Mientras tanto, ábrelo en una nueva pestaña:",
-                "agent-fallback-link": "Abrir StablesAgent ↗"
+                "agent-fallback-p": "El chat se cargarÃ¡ aquÃ­ cuando la conexiÃ³n segura estÃ© activa.<br>Mientras tanto, Ã¡brelo en una nueva pestaÃ±a:",
+                "agent-fallback-link": "Abrir StablesAgent â†-"
             },
             de: {
                 "hero-title": "Sei deine Bank",
-                "hero-tagline": "Geld, das wirklich Ihnen gehört. Sicher, pseudonym und unaufhaltsam",
-                "hero-cta-text": "Möchten Sie mehr erfahren?",
+                "hero-tagline": "Geld, das wirklich Ihnen gehÃ¶rt. Sicher, pseudonym und unaufhaltsam",
+                "hero-cta-text": "MÃ¶chten Sie mehr erfahren?",
                 "scroll-indicator": "Scrollen zum Erkunden",
                 "btn-testing": "Showcase testen",
                 "btn-follow": "Auf X folgen",
                 "btn-instagram": "Auf Instagram folgen",
                 "btn-telegram": "Telegram beitreten",
-                "badge-you": "FÜR DICH",
-                "wallet-title": "Sofort zahlen. Vollständig besitzen.",
-                "wallet-p": "Erleben Sie Geld, das sich so schnell wie eine Nachricht bewegt. Keine Banken, die Ihr Konto sperren. Keine versteckten Gebühren. Nur eine einfache Wallet, die Ihnen 100% Kontrolle gibt.",
-                "wallet-li1": "<strong>100% Selbstverwahrung:</strong> Nur Sie haben die Schlüssel.",
-                "wallet-li2": "<strong>Alltagstauglich:</strong> Schnell, günstig und einfach.",
-                "wallet-li3": "<strong>Stables:</strong> Wertbeständig konzipiert.",
-                "badge-business": "FÜR UNTERNEHMEN",
+                "badge-you": "FÃœR DICH",
+                "wallet-title": "Sofort zahlen. VollstÃ¤ndig besitzen.",
+                "wallet-p": "Erleben Sie Geld, das sich so schnell wie eine Nachricht bewegt. Keine Banken, die Ihr Konto sperren. Keine versteckten GebÃ¼hren. Nur eine einfache Wallet, die Ihnen 100% Kontrolle gibt.",
+                "wallet-li1": "<strong>100% Selbstverwahrung:</strong> Nur Sie haben die SchlÃ¼ssel.",
+                "wallet-li2": "<strong>Alltagstauglich:</strong> Schnell, gÃ¼nstig und einfach.",
+                "wallet-li3": "<strong>Stables:</strong> WertbestÃ¤ndig konzipiert.",
+                "badge-business": "FÃœR UNTERNEHMEN",
                 "biz-title": "In Sekunden abgerechnet. Direkt verbinden.",
-                "biz-p1": "Warten Sie nicht tagelang auf Ihr Geld. Mit Stables werden Zahlungen in Sekunden bestätigt und abgerechnet. Bauen Sie direkte Kundenbeziehungen ohne Vermittler auf.",
-                "biz-p2": "Perfekt für den modernen Handel, vom lokalen Geschäft bis zum globalen Service.",
-                "badge-growth": "FÜR WACHSTUM",
+                "biz-p1": "Warten Sie nicht tagelang auf Ihr Geld. Mit Stables werden Zahlungen in Sekunden bestÃ¤tigt und abgerechnet. Bauen Sie direkte Kundenbeziehungen ohne Vermittler auf.",
+                "biz-p2": "Perfekt fÃ¼r den modernen Handel, vom lokalen GeschÃ¤ft bis zum globalen Service.",
+                "badge-growth": "FÃœR WACHSTUM",
                 "growth-title": "Der Multiplikator.",
-                "growth-p1": "Eine neue Art, an der Stabilität des Ökosystems teilzuhaben. Nutzen Sie den Multiplikator, um Ihr Engagement zu verstärken.",
-                "growth-p2": "Fortgeschrittene Tools für alle, die mehr als nur bezahlen wollen.",
+                "growth-p1": "Eine neue Art, an der StabilitÃ¤t des Ã–kosystems teilzuhaben. Nutzen Sie den Multiplikator, um Ihr Engagement zu verstÃ¤rken.",
+                "growth-p2": "Fortgeschrittene Tools fÃ¼r alle, die mehr als nur bezahlen wollen.",
                 "cta-title": "Bereit, die Zukunft zu gestalten?",
-                "cta-p": "Nehmen Sie am öffentlichen Test teil. Helfen Sie uns, die zuverlässigste Geldplattform der Welt zu bauen.",
-                "footer": "Stables - Informationsübersicht v1.0",
+                "cta-p": "Nehmen Sie am Ã¶ffentlichen Test teil. Helfen Sie uns, die zuverlÃ¤ssigste Geldplattform der Welt zu bauen.",
+                "footer": "Stables - InformationsÃ¼bersicht v1.0",
                 "mock-wallet": "Wallet",
-                "mock-coffee": "Café",
+                "mock-coffee": "CafÃ©",
                 "mock-salary": "Gehalt",
                 "mock-val-coffee": "- 6.98 EURs",
                 "mock-val-salary": "+ 3.500 EURs",
-                "mock-merchant": "Händleransicht",
+                "mock-merchant": "HÃ¤ndleransicht",
                 "mock-status": "Status: Online",
                 "mock-paid": "BEZAHLT",
                 "mock-order": "Bestellung #8291",
@@ -1389,24 +1641,24 @@
                 "mock-pos": "Aktive Position",
                 "mock-yield": "Rendite",
                 "mock-apy": "Aktueller APY",
-                "agent-title-sub": "Fragen Sie alles über Stables",
+                "agent-title-sub": "Fragen Sie alles Ã¼ber Stables",
                 "agent-disclaimer": "TEILEN SIE KEINE PRIVATEN ODER SENSIBLEN INFORMATIONEN",
                 "agent-fab-tip": "Mit StablesAgent chatten",
                 "agent-online": "Online",
                 "agent-offline": "Offline",
-                "agent-fallback-p": "Der Chat lädt hier, sobald die sichere Verbindung aktiv ist.<br>Öffnen Sie ihn vorerst in einem neuen Tab:",
-                "agent-fallback-link": "StablesAgent öffnen ↗"
+                "agent-fallback-p": "Der Chat lÃ¤dt hier, sobald die sichere Verbindung aktiv ist.<br>Ã–ffnen Sie ihn vorerst in einem neuen Tab:",
+                "agent-fallback-link": "StablesAgent Ã¶ffnen â†-"
             },
             it: {
                 "hero-title": "Sii la tua banca",
-                "hero-tagline": "Denaro che è veramente tuo. Sicuro, pseudonimo e inarrestabile",
-                "hero-cta-text": "Vuoi saperne di più?",
+                "hero-tagline": "Denaro che Ã¨ veramente tuo. Sicuro, pseudonimo e inarrestabile",
+                "hero-cta-text": "Vuoi saperne di piÃ¹?",
                 "scroll-indicator": "Scorri per esplorare",
                 "btn-testing": "Prova la vetrina",
                 "btn-links": "Tutti i link",
                 "badge-you": "PER TE",
                 "wallet-title": "Paga all'istante. Possiedi completamente.",
-                "wallet-p": "Sperimenta denaro che si muove veloce come un messaggio. Nessuna banca che blocchi il tuo conto. Nessuna commissione nascosta. Solo un portafoglio semplice e potente che ti dà il 100% di controllo sui tuoi asset.",
+                "wallet-p": "Sperimenta denaro che si muove veloce come un messaggio. Nessuna banca che blocchi il tuo conto. Nessuna commissione nascosta. Solo un portafoglio semplice e potente che ti dÃ  il 100% di controllo sui tuoi asset.",
                 "wallet-li1": "<strong>100% Autocustodia:</strong> Solo tu hai le chiavi.",
                 "wallet-li2": "<strong>Pronto per l'uso quotidiano:</strong> Veloce, economico e semplice.",
                 "wallet-li3": "<strong>Stables:</strong> Progettato per mantenere il suo valore.",
@@ -1416,10 +1668,10 @@
                 "biz-p2": "Perfetto per il commercio moderno, dai negozi locali ai servizi globali.",
                 "badge-growth": "PER LA CRESCITA",
                 "growth-title": "Il Moltiplicatore.",
-                "growth-p1": "Un nuovo modo di partecipare alla stabilità dell'ecosistema. Usa il Moltiplicatore per amplificare la tua esposizione e supportare la resilienza della rete.",
-                "growth-p2": "Strumenti avanzati per chi vuole fare più che semplicemente pagare.",
+                "growth-p1": "Un nuovo modo di partecipare alla stabilitÃ  dell'ecosistema. Usa il Moltiplicatore per amplificare la tua esposizione e supportare la resilienza della rete.",
+                "growth-p2": "Strumenti avanzati per chi vuole fare piÃ¹ che semplicemente pagare.",
                 "cta-title": "Pronto a plasmare il futuro?",
-                "cta-p": "Unisciti al test pubblico. Prova a rompere il sistema. Aiutaci a costruire la piattaforma monetaria più affidabile al mondo.",
+                "cta-p": "Unisciti al test pubblico. Prova a rompere il sistema. Aiutaci a costruire la piattaforma monetaria piÃ¹ affidabile al mondo.",
                 "footer": "Stables - Panoramica Informativa v1.0",
                 "mock-wallet": "Portafoglio",
                 "mock-coffee": "Caffetteria",
@@ -1441,487 +1693,487 @@
                 "agent-fab-tip": "Chatta con StablesAgent",
                 "agent-online": "Online",
                 "agent-offline": "Offline",
-                "agent-fallback-p": "La chat si caricherà qui quando la connessione sicura sarà attiva.<br>Nel frattempo, aprilo in una nuova scheda:",
-                "agent-fallback-link": "Apri StablesAgent ↗"
+                "agent-fallback-p": "La chat si caricherÃ  qui quando la connessione sicura sarÃ  attiva.<br>Nel frattempo, aprilo in una nuova scheda:",
+                "agent-fallback-link": "Apri StablesAgent â†-"
             },
             ar: {
-                "hero-title": "كن بنكك",
-                "hero-tagline": "المال الذي هو حقاً ملكك. آمن، مجهول الهوية ولا يمكن إيقافه",
-                "hero-cta-text": "تريد معرفة المزيد؟",
-                "scroll-indicator": "انتقل للاستكشاف",
-                "btn-testing": "اختبر العرض",
-                "badge-you": "لك",
-                "wallet-title": "ادفع على الفور. امتلك بالكامل.",
-                "wallet-p": "جرب المال الذي يتحرك بسرعة الرسالة. لا توجد بنوك لتجميد حسابك. لا توجد رسوم مخفية. مجرد محفظة بسيطة وقوية تمنحك 100% من السيطرة على أصولك.",
-                "wallet-li1": "<strong>100% حفظ ذاتي:</strong> أنت فقط من لديه المفاتيح.",
-                "wallet-li2": "<strong>جاهز للاستخدام اليومي:</strong> سريع، رخيص وبسيط.",
-                "wallet-li3": "<strong>Stables:</strong> مصمم للاحتفاظ بقيمته.",
-                "badge-business": "للأعمال",
-                "biz-title": "التسوية في ثوانٍ. اتصل مباشرة.",
-                "biz-p1": "توقف عن انتظار المال لأيام. مع Stables، يتم تأكيد وتسوية المدفوعات في ثوانٍ. ابني علاقة مباشرة مع عملائك دون وسطاء يأخذون جزءاً.",
-                "biz-p2": "مثالي للتجارة الحديثة، من المتاجر المحلية إلى الخدمات العالمية.",
-                "badge-growth": "للنمو",
-                "growth-title": "المضاعف.",
-                "growth-p1": "طريقة جديدة للمشاركة في استقرار النظام البيئي. استخدم المضاعف لتضخيم تعرضك ودعم مرونة الشبكة.",
-                "growth-p2": "أدوات متقدمة لأولئك الذين يريدون القيام بأكثر من مجرد الدفع.",
-                "cta-title": "جاهز لتشكيل المستقبل؟",
-                "cta-p": "انضم إلى الاختبار العام. حاول كسر النظام. ساعدنا في بناء منصة المال الأكثر موثوقية في العالم.",
-                "footer": "Stables - نظرة معلوماتية الإصدار 1.0",
-                "mock-wallet": "محفظة",
-                "mock-coffee": "مقهى",
-                "mock-salary": "راتب",
+                "hero-title": "ÙƒÙ† Ø¨Ù†ÙƒÙƒ",
+                "hero-tagline": "Ø§Ù„Ù…Ø§Ù„ Ø§Ù„Ø°ÙŠ Ù‡Ùˆ Ø­Ù‚Ø§Ù‹ Ù…Ù„ÙƒÙƒ. Ø¢Ù…Ù†ØŒ Ù…Ø¬Ù‡ÙˆÙ„ Ø§Ù„Ù‡ÙˆÙŠØ© ÙˆÙ„Ø§ ÙŠÙ…ÙƒÙ† Ø¥ÙŠÙ‚Ø§ÙÙ‡",
+                "hero-cta-text": "ØªØ±ÙŠØ¯ Ù…Ø¹Ø±ÙØ© Ø§Ù„Ù…Ø²ÙŠØ¯ØŸ",
+                "scroll-indicator": "Ø§Ù†ØªÙ‚Ù„ Ù„Ù„Ø§Ø³ØªÙƒØ´Ø§Ù",
+                "btn-testing": "Ø§Ø®ØªØ¨Ø± Ø§Ù„Ø¹Ø±Ø¶",
+                "badge-you": "Ù„Ùƒ",
+                "wallet-title": "Ø§Ø¯ÙØ¹ Ø¹Ù„Ù‰ Ø§Ù„ÙÙˆØ±. Ø§Ù…ØªÙ„Ùƒ Ø¨Ø§Ù„ÙƒØ§Ù…Ù„.",
+                "wallet-p": "Ø¬Ø±Ø¨ Ø§Ù„Ù…Ø§Ù„ Ø§Ù„Ø°ÙŠ ÙŠØªØ­Ø±Ùƒ Ø¨Ø³Ø±Ø¹Ø© Ø§Ù„Ø±Ø³Ø§Ù„Ø©. Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¨Ù†ÙˆÙƒ Ù„ØªØ¬Ù…ÙŠØ¯ Ø­Ø³Ø§Ø¨Ùƒ. Ù„Ø§ ØªÙˆØ¬Ø¯ Ø±Ø³ÙˆÙ… Ù…Ø®ÙÙŠØ©. Ù…Ø¬Ø±Ø¯ Ù…Ø­ÙØ¸Ø© Ø¨Ø³ÙŠØ·Ø© ÙˆÙ‚ÙˆÙŠØ© ØªÙ…Ù†Ø­Ùƒ 100% Ù…Ù† Ø§Ù„Ø³ÙŠØ·Ø±Ø© Ø¹Ù„Ù‰ Ø£ØµÙˆÙ„Ùƒ.",
+                "wallet-li1": "<strong>100% Ø­ÙØ¸ Ø°Ø§ØªÙŠ:</strong> Ø£Ù†Øª ÙÙ‚Ø· Ù…Ù† Ù„Ø¯ÙŠÙ‡ Ø§Ù„Ù…ÙØ§ØªÙŠØ­.",
+                "wallet-li2": "<strong>Ø¬Ø§Ù‡Ø² Ù„Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø§Ù„ÙŠÙˆÙ…ÙŠ:</strong> Ø³Ø±ÙŠØ¹ØŒ Ø±Ø®ÙŠØµ ÙˆØ¨Ø³ÙŠØ·.",
+                "wallet-li3": "<strong>Stables:</strong> Ù…ØµÙ…Ù… Ù„Ù„Ø§Ø­ØªÙØ§Ø¸ Ø¨Ù‚ÙŠÙ…ØªÙ‡.",
+                "badge-business": "Ù„Ù„Ø£Ø¹Ù…Ø§Ù„",
+                "biz-title": "Ø§Ù„ØªØ³ÙˆÙŠØ© ÙÙŠ Ø«ÙˆØ§Ù†Ù. Ø§ØªØµÙ„ Ù…Ø¨Ø§Ø´Ø±Ø©.",
+                "biz-p1": "ØªÙˆÙ‚Ù Ø¹Ù† Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ù…Ø§Ù„ Ù„Ø£ÙŠØ§Ù…. Ù…Ø¹ StablesØŒ ÙŠØªÙ… ØªØ£ÙƒÙŠØ¯ ÙˆØªØ³ÙˆÙŠØ© Ø§Ù„Ù…Ø¯ÙÙˆØ¹Ø§Øª ÙÙŠ Ø«ÙˆØ§Ù†Ù. Ø§Ø¨Ù†ÙŠ Ø¹Ù„Ø§Ù‚Ø© Ù…Ø¨Ø§Ø´Ø±Ø© Ù…Ø¹ Ø¹Ù…Ù„Ø§Ø¦Ùƒ Ø¯ÙˆÙ† ÙˆØ³Ø·Ø§Ø¡ ÙŠØ£Ø®Ø°ÙˆÙ† Ø¬Ø²Ø¡Ø§Ù‹.",
+                "biz-p2": "Ù…Ø«Ø§Ù„ÙŠ Ù„Ù„ØªØ¬Ø§Ø±Ø© Ø§Ù„Ø­Ø¯ÙŠØ«Ø©ØŒ Ù…Ù† Ø§Ù„Ù…ØªØ§Ø¬Ø± Ø§Ù„Ù…Ø­Ù„ÙŠØ© Ø¥Ù„Ù‰ Ø§Ù„Ø®Ø¯Ù…Ø§Øª Ø§Ù„Ø¹Ø§Ù„Ù…ÙŠØ©.",
+                "badge-growth": "Ù„Ù„Ù†Ù…Ùˆ",
+                "growth-title": "Ø§Ù„Ù…Ø¶Ø§Ø¹Ù.",
+                "growth-p1": "Ø·Ø±ÙŠÙ‚Ø© Ø¬Ø¯ÙŠØ¯Ø© Ù„Ù„Ù…Ø´Ø§Ø±ÙƒØ© ÙÙŠ Ø§Ø³ØªÙ‚Ø±Ø§Ø± Ø§Ù„Ù†Ø¸Ø§Ù… Ø§Ù„Ø¨ÙŠØ¦ÙŠ. Ø§Ø³ØªØ®Ø¯Ù… Ø§Ù„Ù…Ø¶Ø§Ø¹Ù Ù„ØªØ¶Ø®ÙŠÙ… ØªØ¹Ø±Ø¶Ùƒ ÙˆØ¯Ø¹Ù… Ù…Ø±ÙˆÙ†Ø© Ø§Ù„Ø´Ø¨ÙƒØ©.",
+                "growth-p2": "Ø£Ø¯ÙˆØ§Øª Ù…ØªÙ‚Ø¯Ù…Ø© Ù„Ø£ÙˆÙ„Ø¦Ùƒ Ø§Ù„Ø°ÙŠÙ† ÙŠØ±ÙŠØ¯ÙˆÙ† Ø§Ù„Ù‚ÙŠØ§Ù… Ø¨Ø£ÙƒØ«Ø± Ù…Ù† Ù…Ø¬Ø±Ø¯ Ø§Ù„Ø¯ÙØ¹.",
+                "cta-title": "Ø¬Ø§Ù‡Ø² Ù„ØªØ´ÙƒÙŠÙ„ Ø§Ù„Ù…Ø³ØªÙ‚Ø¨Ù„ØŸ",
+                "cta-p": "Ø§Ù†Ø¶Ù… Ø¥Ù„Ù‰ Ø§Ù„Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ø¹Ø§Ù…. Ø­Ø§ÙˆÙ„ ÙƒØ³Ø± Ø§Ù„Ù†Ø¸Ø§Ù…. Ø³Ø§Ø¹Ø¯Ù†Ø§ ÙÙŠ Ø¨Ù†Ø§Ø¡ Ù…Ù†ØµØ© Ø§Ù„Ù…Ø§Ù„ Ø§Ù„Ø£ÙƒØ«Ø± Ù…ÙˆØ«ÙˆÙ‚ÙŠØ© ÙÙŠ Ø§Ù„Ø¹Ø§Ù„Ù….",
+                "footer": "Stables - Ù†Ø¸Ø±Ø© Ù…Ø¹Ù„ÙˆÙ…Ø§ØªÙŠØ© Ø§Ù„Ø¥ØµØ¯Ø§Ø± 1.0",
+                "mock-wallet": "Ù…Ø­ÙØ¸Ø©",
+                "mock-coffee": "Ù…Ù‚Ù‡Ù‰",
+                "mock-salary": "Ø±Ø§ØªØ¨",
                 "mock-val-coffee": "- 6.98 USDs",
                 "mock-val-salary": "+ 3,500 USDs",
-                "mock-merchant": "عرض التاجر",
-                "mock-status": "الحالة: متصل",
-                "mock-paid": "مدفوع",
-                "mock-order": "طلب #8291",
-                "mock-receipt": "طباعة الإيصال",
-                "mock-investment": "استثمار",
-                "mock-multi": "المضاعف",
-                "mock-pos": "موضع نشط",
-                "mock-yield": "عائد",
-                "mock-apy": "APY الحالي"
+                "mock-merchant": "Ø¹Ø±Ø¶ Ø§Ù„ØªØ§Ø¬Ø±",
+                "mock-status": "Ø§Ù„Ø­Ø§Ù„Ø©: Ù…ØªØµÙ„",
+                "mock-paid": "Ù…Ø¯ÙÙˆØ¹",
+                "mock-order": "Ø·Ù„Ø¨ #8291",
+                "mock-receipt": "Ø·Ø¨Ø§Ø¹Ø© Ø§Ù„Ø¥ÙŠØµØ§Ù„",
+                "mock-investment": "Ø§Ø³ØªØ«Ù…Ø§Ø±",
+                "mock-multi": "Ø§Ù„Ù…Ø¶Ø§Ø¹Ù",
+                "mock-pos": "Ù…ÙˆØ¶Ø¹ Ù†Ø´Ø·",
+                "mock-yield": "Ø¹Ø§Ø¦Ø¯",
+                "mock-apy": "APY Ø§Ù„Ø­Ø§Ù„ÙŠ"
             },
             fa: {
-                "hero-title": "بانک خود باشید",
-                "hero-tagline": "پولی که واقعاً مال شماست. امن، مستعار و غیرقابل توقیف",
-                "hero-cta-text": "می‌خواهید بیشتر بدانید؟",
-                "scroll-indicator": "برای کاوش اسکرول کنید",
-                "btn-testing": "تست نمایش",
-                "badge-you": "برای شما",
-                "wallet-title": "پرداخت فوری. مالکیت کامل.",
-                "wallet-p": "پولی را تجربه کنید که به سرعت یک پیام جابجا می‌شود. بدون بانک برای مسدود کردن حساب شما. بدون هزینه‌های پنهان. فقط یک کیف پول ساده و قدرتمند که کنترل ۱۰۰٪ دارایی‌هایتان را به شما می‌دهد.",
-                "wallet-li1": "<strong>۱۰۰٪ خود-حضانتی:</strong> کلیدها فقط نزد شماست.",
-                "wallet-li2": "<strong>آماده برای کارهای روزمره:</strong> سریع، ارزان و ساده.",
-                "wallet-li3": "<strong>Stables:</strong> برای حفظ ارزش طراحی شده",
-                "badge-business": "برای کسب و کار",
-                "biz-title": "تسویه در چند ثانیه. اتصال مستقیم.",
-                "biz-p1": "دیگه روزها منتظر پول خود نمانید. با Stables، پرداخت‌ها در چند ثانیه تأیید و تسویه می‌شوند. بدون واسطه با مشتریان خود رابطه مستقیم برقرار کنید.",
-                "biz-p2": "ایده‌آل برای تجارت مدرن، از فروشگاه‌های محلی تا خدمات جهانی.",
-                "badge-growth": "برای رشد",
-                "growth-title": "ضرب‌کننده (Multiplicator).",
-                "growth-p1": "راهی جدید برای مشارکت در پایداری اکوسیستم. از ضرب‌کننده برای افزایش مواجهه و حمایت از شبکه‌ استفاده کنید.",
-                "growth-p2": "ابزارهای پیشرفته برای کسانی که می‌خواهند فراتر از پرداخت عمل کنند.",
-                "cta-title": "آماده برای ساختن آینده؟",
-                "cta-p": "به تست عمومی بپیوندید. برای بهبود سیستم تلاش کنید. به ما در ساخت معتبرترین پلتفرم پولی جهان کمک کنید.",
-                "footer": "Stables - بررسی اطلاعاتی نسخه ۱.۰",
-                "mock-wallet": "کیف پول",
-                "mock-coffee": "کافی شاپ",
-                "mock-salary": "حقوق",
+                "hero-title": "Ø¨Ø§Ù†Ú© Ø®ÙˆØ¯ Ø¨Ø§Ø´ÛŒØ¯",
+                "hero-tagline": "Ù¾ÙˆÙ„ÛŒ Ú©Ù‡ ÙˆØ§Ù‚Ø¹Ø§Ù‹ Ù…Ø§Ù„ Ø´Ù…Ø§Ø³Øª. Ø§Ù…Ù†ØŒ Ù…Ø³ØªØ¹Ø§Ø± Ùˆ ØºÛŒØ±Ù‚Ø§Ø¨Ù„ ØªÙˆÙ‚ÛŒÙ",
+                "hero-cta-text": "Ù…ÛŒâ€ŒØ®ÙˆØ§Ù‡ÛŒØ¯ Ø¨ÛŒØ´ØªØ± Ø¨Ø¯Ø§Ù†ÛŒØ¯ØŸ",
+                "scroll-indicator": "Ø¨Ø±Ø§ÛŒ Ú©Ø§ÙˆØ´ Ø§Ø³Ú©Ø±ÙˆÙ„ Ú©Ù†ÛŒØ¯",
+                "btn-testing": "ØªØ³Øª Ù†Ù…Ø§ÛŒØ´",
+                "badge-you": "Ø¨Ø±Ø§ÛŒ Ø´Ù…Ø§",
+                "wallet-title": "Ù¾Ø±Ø¯Ø§Ø®Øª ÙÙˆØ±ÛŒ. Ù…Ø§Ù„Ú©ÛŒØª Ú©Ø§Ù…Ù„.",
+                "wallet-p": "Ù¾ÙˆÙ„ÛŒ Ø±Ø§ ØªØ¬Ø±Ø¨Ù‡ Ú©Ù†ÛŒØ¯ Ú©Ù‡ Ø¨Ù‡ Ø³Ø±Ø¹Øª ÛŒÚ© Ù¾ÛŒØ§Ù… Ø¬Ø§Ø¨Ø¬Ø§ Ù…ÛŒâ€ŒØ´ÙˆØ¯. Ø¨Ø¯ÙˆÙ† Ø¨Ø§Ù†Ú© Ø¨Ø±Ø§ÛŒ Ù…Ø³Ø¯ÙˆØ¯ Ú©Ø±Ø¯Ù† Ø­Ø³Ø§Ø¨ Ø´Ù…Ø§. Ø¨Ø¯ÙˆÙ† Ù‡Ø²ÛŒÙ†Ù‡â€ŒÙ‡Ø§ÛŒ Ù¾Ù†Ù‡Ø§Ù†. ÙÙ‚Ø· ÛŒÚ© Ú©ÛŒÙ Ù¾ÙˆÙ„ Ø³Ø§Ø¯Ù‡ Ùˆ Ù‚Ø¯Ø±ØªÙ…Ù†Ø¯ Ú©Ù‡ Ú©Ù†ØªØ±Ù„ Û±Û°Û°Ùª Ø¯Ø§Ø±Ø§ÛŒÛŒâ€ŒÙ‡Ø§ÛŒØªØ§Ù† Ø±Ø§ Ø¨Ù‡ Ø´Ù…Ø§ Ù…ÛŒâ€ŒØ¯Ù‡Ø¯.",
+                "wallet-li1": "<strong>Û±Û°Û°Ùª Ø®ÙˆØ¯-Ø­Ø¶Ø§Ù†ØªÛŒ:</strong> Ú©Ù„ÛŒØ¯Ù‡Ø§ ÙÙ‚Ø· Ù†Ø²Ø¯ Ø´Ù…Ø§Ø³Øª.",
+                "wallet-li2": "<strong>Ø¢Ù…Ø§Ø¯Ù‡ Ø¨Ø±Ø§ÛŒ Ú©Ø§Ø±Ù‡Ø§ÛŒ Ø±ÙˆØ²Ù…Ø±Ù‡:</strong> Ø³Ø±ÛŒØ¹ØŒ Ø§Ø±Ø²Ø§Ù† Ùˆ Ø³Ø§Ø¯Ù‡.",
+                "wallet-li3": "<strong>Stables:</strong> Ø¨Ø±Ø§ÛŒ Ø­ÙØ¸ Ø§Ø±Ø²Ø´ Ø·Ø±Ø§Ø­ÛŒ Ø´Ø¯Ù‡",
+                "badge-business": "Ø¨Ø±Ø§ÛŒ Ú©Ø³Ø¨ Ùˆ Ú©Ø§Ø±",
+                "biz-title": "ØªØ³ÙˆÛŒÙ‡ Ø¯Ø± Ú†Ù†Ø¯ Ø«Ø§Ù†ÛŒÙ‡. Ø§ØªØµØ§Ù„ Ù…Ø³ØªÙ‚ÛŒÙ….",
+                "biz-p1": "Ø¯ÛŒÚ¯Ù‡ Ø±ÙˆØ²Ù‡Ø§ Ù…Ù†ØªØ¸Ø± Ù¾ÙˆÙ„ Ø®ÙˆØ¯ Ù†Ù…Ø§Ù†ÛŒØ¯. Ø¨Ø§ StablesØŒ Ù¾Ø±Ø¯Ø§Ø®Øªâ€ŒÙ‡Ø§ Ø¯Ø± Ú†Ù†Ø¯ Ø«Ø§Ù†ÛŒÙ‡ ØªØ£ÛŒÛŒØ¯ Ùˆ ØªØ³ÙˆÛŒÙ‡ Ù…ÛŒâ€ŒØ´ÙˆÙ†Ø¯. Ø¨Ø¯ÙˆÙ† ÙˆØ§Ø³Ø·Ù‡ Ø¨Ø§ Ù…Ø´ØªØ±ÛŒØ§Ù† Ø®ÙˆØ¯ Ø±Ø§Ø¨Ø·Ù‡ Ù…Ø³ØªÙ‚ÛŒÙ… Ø¨Ø±Ù‚Ø±Ø§Ø± Ú©Ù†ÛŒØ¯.",
+                "biz-p2": "Ø§ÛŒØ¯Ù‡â€ŒØ¢Ù„ Ø¨Ø±Ø§ÛŒ ØªØ¬Ø§Ø±Øª Ù…Ø¯Ø±Ù†ØŒ Ø§Ø² ÙØ±ÙˆØ´Ú¯Ø§Ù‡â€ŒÙ‡Ø§ÛŒ Ù…Ø­Ù„ÛŒ ØªØ§ Ø®Ø¯Ù…Ø§Øª Ø¬Ù‡Ø§Ù†ÛŒ.",
+                "badge-growth": "Ø¨Ø±Ø§ÛŒ Ø±Ø´Ø¯",
+                "growth-title": "Ø¶Ø±Ø¨â€ŒÚ©Ù†Ù†Ø¯Ù‡.",
+                "growth-p1": "Ø±Ø§Ù‡ÛŒ Ø¬Ø¯ÛŒØ¯ Ø¨Ø±Ø§ÛŒ Ù…Ø´Ø§Ø±Ú©Øª Ø¯Ø± Ù¾Ø§ÛŒØ¯Ø§Ø±ÛŒ Ø§Ú©ÙˆØ³ÛŒØ³ØªÙ…. Ø§Ø² Ø¶Ø±Ø¨â€ŒÚ©Ù†Ù†Ø¯Ù‡ Ø¨Ø±Ø§ÛŒ Ø§ÙØ²Ø§ÛŒØ´ Ù…ÙˆØ§Ø¬Ù‡Ù‡ Ùˆ Ø­Ù…Ø§ÛŒØª Ø§Ø² Ø´Ø¨Ú©Ù‡â€Œ Ø§Ø³ØªÙØ§Ø¯Ù‡ Ú©Ù†ÛŒØ¯.",
+                "growth-p2": "Ø§Ø¨Ø²Ø§Ø±Ù‡Ø§ÛŒ Ù¾ÛŒØ´Ø±ÙØªÙ‡ Ø¨Ø±Ø§ÛŒ Ú©Ø³Ø§Ù†ÛŒ Ú©Ù‡ Ù…ÛŒâ€ŒØ®ÙˆØ§Ù‡Ù†Ø¯ ÙØ±Ø§ØªØ± Ø§Ø² Ù¾Ø±Ø¯Ø§Ø®Øª Ø¹Ù…Ù„ Ú©Ù†Ù†Ø¯.",
+                "cta-title": "Ø¢Ù…Ø§Ø¯Ù‡ Ø¨Ø±Ø§ÛŒ Ø³Ø§Ø®ØªÙ† Ø¢ÛŒÙ†Ø¯Ù‡ØŸ",
+                "cta-p": "Ø¨Ù‡ ØªØ³Øª Ø¹Ù…ÙˆÙ…ÛŒ Ø¨Ù¾ÛŒÙˆÙ†Ø¯ÛŒØ¯. Ø¨Ø±Ø§ÛŒ Ø¨Ù‡Ø¨ÙˆØ¯ Ø³ÛŒØ³ØªÙ… ØªÙ„Ø§Ø´ Ú©Ù†ÛŒØ¯. Ø¨Ù‡ Ù…Ø§ Ø¯Ø± Ø³Ø§Ø®Øª Ù…Ø¹ØªØ¨Ø±ØªØ±ÛŒÙ† Ù¾Ù„ØªÙØ±Ù… Ù¾ÙˆÙ„ÛŒ Ø¬Ù‡Ø§Ù† Ú©Ù…Ú© Ú©Ù†ÛŒØ¯.",
+                "footer": "Stables - Ø¨Ø±Ø±Ø³ÛŒ Ø§Ø·Ù„Ø§Ø¹Ø§ØªÛŒ Ù†Ø³Ø®Ù‡ Û±.Û°",
+                "mock-wallet": "Ú©ÛŒÙ Ù¾ÙˆÙ„",
+                "mock-coffee": "Ú©Ø§ÙÛŒ Ø´Ø§Ù¾",
+                "mock-salary": "Ø­Ù‚ÙˆÙ‚",
                 "mock-val-coffee": "- 6.98 IRTs",
                 "mock-val-salary": "+ 3,500 IRTs",
-                "mock-merchant": "نمای فروشنده",
-                "mock-status": "وضعیت: آنلاین",
-                "mock-paid": "پرداخت شد",
-                "mock-order": "سفارش #8291",
-                "mock-receipt": "چاپ رسید",
-                "mock-investment": "سرمایه‌گذاری",
-                "mock-multi": "ضرب‌کننده",
-                "mock-pos": "موقعیت فعال",
-                "mock-yield": "بازدهی",
-                "mock-apy": "APY فعلی"
+                "mock-merchant": "Ù†Ù…Ø§ÛŒ ÙØ±ÙˆØ´Ù†Ø¯Ù‡",
+                "mock-status": "ÙˆØ¶Ø¹ÛŒØª: Ø¢Ù†Ù„Ø§ÛŒÙ†",
+                "mock-paid": "Ù¾Ø±Ø¯Ø§Ø®Øª Ø´Ø¯",
+                "mock-order": "Ø³ÙØ§Ø±Ø´ #8291",
+                "mock-receipt": "Ú†Ø§Ù¾ Ø±Ø³ÛŒØ¯",
+                "mock-investment": "Ø³Ø±Ù…Ø§ÛŒÙ‡â€ŒÚ¯Ø°Ø§Ø±ÛŒ",
+                "mock-multi": "Ø¶Ø±Ø¨â€ŒÚ©Ù†Ù†Ø¯Ù‡",
+                "mock-pos": "Ù…ÙˆÙ‚Ø¹ÛŒØª ÙØ¹Ø§Ù„",
+                "mock-yield": "Ø¨Ø§Ø²Ø¯Ù‡ÛŒ",
+                "mock-apy": "APY ÙØ¹Ù„ÛŒ"
             },
             he: {
-                "hero-title": "היה הבנק שלך",
-                "hero-tagline": "כסף שבאמת שלך. מאובטח, אנונימי ובלתי ניתן לעצירה",
-                "hero-cta-text": "רוצה לדעת עוד?",
-                "scroll-indicator": "גלול לחקור",
-                "btn-testing": "בדוק את הוויטרינה",
-                "btn-follow": "עקוב ב-X",
-                "btn-instagram": "עקוב באינסטגרם",
-                "btn-telegram": "הצטרף לטלגרם",
-                "badge-you": "בשבילך",
-                "wallet-title": "שלם מיד. בעל לחלוטין.",
-                "wallet-p": "חווה כסף שנע במהירות של הודעה. אין בנקים שיקפיאו את החשבון שלך. אין עמלות נסתרות. רק ארנק פשוט וחזק שנותן לך 100% שליטה על הנכסים שלך.",
-                "wallet-li1": "<strong>100% אחסון עצמי:</strong> רק לך יש את המפתחות.",
-                "wallet-li2": "<strong>מוכן לשימוש יומיומי:</strong> מהיר, זול ופשוט.",
-                "wallet-li3": "<strong>Stables:</strong> מתוכנן לשמור על ערכו.",
-                "badge-business": "לעסקים",
-                "biz-title": "הוסדר בשניות. התחבר ישירות.",
-                "biz-p1": "הפסק לחכות ימים לכסף שלך. עם Stables, תשלומים מאושרים ומוסדרים בשניות. בנה קשר ישיר עם הלקוחות שלך ללא מתווכים שלוקחים חלק.",
-                "biz-p2": "מושלם למסחר מודרני, מחנויות מקומיות לשירותים גלובליים.",
-                "badge-growth": "לצמיחה",
-                "growth-title": "המכפיל.",
-                "growth-p1": "דרך חדשה להשתתף ביציבות המערכת האקולוגית. השתמש במכפיל כדי להגדיל את החשיפה שלך ולתמוך בחוסן הרשת.",
-                "growth-p2": "כלים מתקדמים למי שרוצה לעשות יותר מאשר רק לשלם.",
-                "cta-title": "מוכן לעצב את העתיד?",
-                "cta-p": "הצטרף לבדיקה הציבורית. נסה לשבור את המערכת. עזור לנו לבנות את פלטפורמת הכסף האמינה ביותר בעולם.",
-                "footer": "Stables - סקירה אינפורמטיבית גרסה 1.0",
-                "mock-wallet": "ארנק",
-                "mock-coffee": "בית קפה",
-                "mock-salary": "משכורת",
+                "hero-title": "×”×™×” ×”×‘× ×§ ×©×œ×š",
+                "hero-tagline": "×›×¡×£ ×©×‘××ž×ª ×©×œ×š. ×ž××•×‘×˜×-, ×× ×•× ×™×ž×™ ×•×‘×œ×ª×™ × ×™×ª×Ÿ ×œ×¢×¦×™×¨×”",
+                "hero-cta-text": "×¨×•×¦×” ×œ×“×¢×ª ×¢×•×“?",
+                "scroll-indicator": "×’×œ×•×œ ×œ×-×§×•×¨",
+                "btn-testing": "×‘×“×•×§ ××ª ×”×•×•×™×˜×¨×™× ×”",
+                "btn-follow": "×¢×§×•×‘ ×‘-X",
+                "btn-instagram": "×¢×§×•×‘ ×‘××™× ×¡×˜×’×¨×",
+                "btn-telegram": "×”×¦×˜×¨×£ ×œ×˜×œ×’×¨×",
+                "badge-you": "×‘×©×‘×™×œ×š",
+                "wallet-title": "×©×œ× ×ž×™×“. ×‘×¢×œ ×œ×-×œ×•×˜×™×Ÿ.",
+                "wallet-p": "×-×•×•×” ×›×¡×£ ×©× ×¢ ×‘×ž×”×™×¨×•×ª ×©×œ ×”×•×“×¢×”. ××™×Ÿ ×‘× ×§×™× ×©×™×§×¤×™××• ××ª ×”×-×©×‘×•×Ÿ ×©×œ×š. ××™×Ÿ ×¢×ž×œ×•×ª × ×¡×ª×¨×•×ª. ×¨×§ ××¨× ×§ ×¤×©×•×˜ ×•×-×–×§ ×©× ×•×ª×Ÿ ×œ×š 100% ×©×œ×™×˜×” ×¢×œ ×”× ×›×¡×™× ×©×œ×š.",
+                "wallet-li1": "<strong>100% ××-×¡×•×Ÿ ×¢×¦×ž×™:</strong> ×¨×§ ×œ×š ×™×© ××ª ×”×ž×¤×ª×-×•×ª.",
+                "wallet-li2": "<strong>×ž×•×›×Ÿ ×œ×©×™×ž×•×© ×™×•×ž×™×•×ž×™:</strong> ×ž×”×™×¨, ×–×•×œ ×•×¤×©×•×˜.",
+                "wallet-li3": "<strong>Stables:</strong> ×ž×ª×•×›× ×Ÿ ×œ×©×ž×•×¨ ×¢×œ ×¢×¨×›×•.",
+                "badge-business": "×œ×¢×¡×§×™×",
+                "biz-title": "×”×•×¡×“×¨ ×‘×©× ×™×•×ª. ×”×ª×-×‘×¨ ×™×©×™×¨×•×ª.",
+                "biz-p1": "×”×¤×¡×§ ×œ×-×›×•×ª ×™×ž×™× ×œ×›×¡×£ ×©×œ×š. ×¢× Stables, ×ª×©×œ×•×ž×™× ×ž××•×©×¨×™× ×•×ž×•×¡×“×¨×™× ×‘×©× ×™×•×ª. ×‘× ×” ×§×©×¨ ×™×©×™×¨ ×¢× ×”×œ×§×•×-×•×ª ×©×œ×š ×œ×œ× ×ž×ª×•×•×›×™× ×©×œ×•×§×-×™× ×-×œ×§.",
+                "biz-p2": "×ž×•×©×œ× ×œ×ž×¡×-×¨ ×ž×•×“×¨× ×™, ×ž×-× ×•×™×•×ª ×ž×§×•×ž×™×•×ª ×œ×©×™×¨×•×ª×™× ×’×œ×•×‘×œ×™×™×.",
+                "badge-growth": "×œ×¦×ž×™×-×”",
+                "growth-title": "×”×ž×›×¤×™×œ.",
+                "growth-p1": "×“×¨×š ×-×“×©×” ×œ×”×©×ª×ª×£ ×‘×™×¦×™×‘×•×ª ×”×ž×¢×¨×›×ª ×”××§×•×œ×•×’×™×ª. ×”×©×ª×ž×© ×‘×ž×›×¤×™×œ ×›×“×™ ×œ×”×’×“×™×œ ××ª ×”×-×©×™×¤×” ×©×œ×š ×•×œ×ª×ž×•×š ×‘×-×•×¡×Ÿ ×”×¨×©×ª.",
+                "growth-p2": "×›×œ×™× ×ž×ª×§×“×ž×™× ×œ×ž×™ ×©×¨×•×¦×” ×œ×¢×©×•×ª ×™×•×ª×¨ ×ž××©×¨ ×¨×§ ×œ×©×œ×.",
+                "cta-title": "×ž×•×›×Ÿ ×œ×¢×¦×‘ ××ª ×”×¢×ª×™×“?",
+                "cta-p": "×”×¦×˜×¨×£ ×œ×‘×“×™×§×” ×”×¦×™×‘×•×¨×™×ª. × ×¡×” ×œ×©×‘×•×¨ ××ª ×”×ž×¢×¨×›×ª. ×¢×–×•×¨ ×œ× ×• ×œ×‘× ×•×ª ××ª ×¤×œ×˜×¤×•×¨×ž×ª ×”×›×¡×£ ×”××ž×™× ×” ×‘×™×•×ª×¨ ×‘×¢×•×œ×.",
+                "footer": "Stables - ×¡×§×™×¨×” ××™× ×¤×•×¨×ž×˜×™×‘×™×ª ×’×¨×¡×” 1.0",
+                "mock-wallet": "××¨× ×§",
+                "mock-coffee": "×‘×™×ª ×§×¤×”",
+                "mock-salary": "×ž×©×›×•×¨×ª",
                 "mock-val-coffee": "- 6.98 ILSs",
                 "mock-val-salary": "+ 3,500 ILSs",
-                "mock-merchant": "תצוגת סוחר",
-                "mock-status": "סטטוס: מקוון",
-                "mock-paid": "שולם",
-                "mock-order": "הזמנה #8291",
-                "mock-receipt": "הדפס קבלה",
-                "mock-investment": "השקעה",
-                "mock-multi": "מכפיל",
-                "mock-pos": "עמדה פעילה",
-                "mock-yield": "תשואה",
-                "mock-apy": "APY נוכחי"
+                "mock-merchant": "×ª×¦×•×’×ª ×¡×•×-×¨",
+                "mock-status": "×¡×˜×˜×•×¡: ×ž×§×•×•×Ÿ",
+                "mock-paid": "×©×•×œ×",
+                "mock-order": "×”×–×ž× ×” #8291",
+                "mock-receipt": "×”×“×¤×¡ ×§×‘×œ×”",
+                "mock-investment": "×”×©×§×¢×”",
+                "mock-multi": "×ž×›×¤×™×œ",
+                "mock-pos": "×¢×ž×“×” ×¤×¢×™×œ×”",
+                "mock-yield": "×ª×©×•××”",
+                "mock-apy": "APY × ×•×›×-×™"
             },
             yi: {
-                "hero-title": "זייט אייער באנק",
-                "hero-tagline": "געלט וואס איז טאַקע אייערס. זיכער, פּסעודאָנים און אומאָפהאַלטלעך",
-                "hero-cta-text": "וואָלט איר וועלן צו וויסן מער?",
-                "scroll-indicator": "סקראָל צו ויספאָרשן",
-                "btn-testing": "טעסט דעם שאָוקייס",
-                "badge-you": "פֿאַר אייך",
-                "wallet-title": "באַצאָלן מיד. אייגן גאָר.",
-                "wallet-p": "עקספּערימענטירן מיט געלט וואס באוועגט זיך אַזוי שנעל ווי אַ אָנזאָג. קיין באַנקען צו פרירן אייער חשבון. קיין פאַרבאָרגענע פֿיס. נאָר אַ פּשוטע און שטאַרקע וואַללעט וואס גיט אייך 100% קאָנטראָל איבער אייערע אַסעץ.",
-                "wallet-li1": "<strong>100% זעלבסט-האַלטונג:</strong> נאָר איר האָט די שליסלען.",
-                "wallet-li2": "<strong>גרייט פֿאַר טעגלעך נוצן:</strong> שנעל, ביליק און פּשוט.",
-                "wallet-li3": "<strong>Stables:</strong> דיזיינד צו האַלטן זייַן ווערט.",
-                "badge-business": "פֿאַר געשעפטן",
-                "biz-title": "גערעדט אין סעקונדעס. פאַרבינדן דירעקט.",
-                "biz-p1": "האַלט אויף צו וואַרטן טעג פֿאַר אייער געלט. מיט Stables, צאָלונגען זענען באַשטעטיקט און גערעדט אין סעקונדעס. בויען אַ דירעקטע שייכות מיט אייערע קלייאַנטן אָן מיטלמען וואס נעמען אַ חלק.",
-                "biz-p2": "פֿולקאָמען פֿאַר מאָדערן קאָמערץ, פון לאקאלע קראָם ביז גלאבאלע סערוויסעס.",
-                "badge-growth": "פֿאַר וואַקס",
-                "growth-title": "דער מאַלטיפּליקאַטאָר.",
-                "growth-p1": "אַ נייע וועג צו טיילנעמען אין דער סטאַביליטעט פון דעם עקאָסיסטעם. נוצן דעם מאַלטיפּליקאַטאָר צו פאַרגרעסערן אייער עקספּאָזשור און שטיצן די נעץ'ס ווידערשטאנד.",
-                "growth-p2": "פֿאָרגעשריטענע מכשירים פֿאַר די וואס וועלן טאָן מער ווי נאָר צאָלן.",
-                "cta-title": "גרייט צו פאָרעם דער צוקונפט?",
-                "cta-p": "טרעטן אריין אין דעם עפנטלעכן טעסט. פּרוּווט צו צעברעכן די סיסטעם. העלפט אונז בויען די מערסט פאַרלאָזלעכע געלט פּלאַטפאָרמע אין דער וועלט.",
-                "footer": "Stables - אינפֿאָרמאַציע איבערבליק v1.0",
-                "mock-wallet": "וואַללעט",
-                "mock-coffee": "קאַווע שופּ",
-                "mock-salary": "געהאַלט",
+                "hero-title": "×–×™×™×˜ ××™×™×¢×¨ ×‘×× ×§",
+                "hero-tagline": "×’×¢×œ×˜ ×•×•××¡ ××™×– ×˜×Ö·×§×¢ ××™×™×¢×¨×¡. ×–×™×›×¢×¨, ×¤Ö¼×¡×¢×•×“×Ö¸× ×™× ××•×Ÿ ××•×ž×Ö¸×¤×”×Ö·×œ×˜×œ×¢×š",
+                "hero-cta-text": "×•×•×Ö¸×œ×˜ ××™×¨ ×•×•×¢×œ×Ÿ ×¦×• ×•×•×™×¡×Ÿ ×ž×¢×¨?",
+                "scroll-indicator": "×¡×§×¨×Ö¸×œ ×¦×• ×•×™×¡×¤×Ö¸×¨×©×Ÿ",
+                "btn-testing": "×˜×¢×¡×˜ ×“×¢× ×©×Ö¸×•×§×™×™×¡",
+                "badge-you": "×¤Ö¿×Ö·×¨ ××™×™×š",
+                "wallet-title": "×‘×Ö·×¦×Ö¸×œ×Ÿ ×ž×™×“. ××™×™×’×Ÿ ×’×Ö¸×¨.",
+                "wallet-p": "×¢×§×¡×¤Ö¼×¢×¨×™×ž×¢× ×˜×™×¨×Ÿ ×ž×™×˜ ×’×¢×œ×˜ ×•×•××¡ ×‘××•×•×¢×’×˜ ×–×™×š ×Ö·×–×•×™ ×©× ×¢×œ ×•×•×™ ×Ö· ×Ö¸× ×–×Ö¸×’. ×§×™×™×Ÿ ×‘×Ö·× ×§×¢×Ÿ ×¦×• ×¤×¨×™×¨×Ÿ ××™×™×¢×¨ ×-×©×‘×•×Ÿ. ×§×™×™×Ÿ ×¤×Ö·×¨×‘×Ö¸×¨×’×¢× ×¢ ×¤Ö¿×™×¡. × ×Ö¸×¨ ×Ö· ×¤Ö¼×©×•×˜×¢ ××•×Ÿ ×©×˜×Ö·×¨×§×¢ ×•×•×Ö·×œ×œ×¢×˜ ×•×•××¡ ×’×™×˜ ××™×™×š 100% ×§×Ö¸× ×˜×¨×Ö¸×œ ××™×‘×¢×¨ ××™×™×¢×¨×¢ ×Ö·×¡×¢×¥.",
+                "wallet-li1": "<strong>100% ×–×¢×œ×‘×¡×˜-×”×Ö·×œ×˜×•× ×’:</strong> × ×Ö¸×¨ ××™×¨ ×”×Ö¸×˜ ×“×™ ×©×œ×™×¡×œ×¢×Ÿ.",
+                "wallet-li2": "<strong>×’×¨×™×™×˜ ×¤Ö¿×Ö·×¨ ×˜×¢×’×œ×¢×š × ×•×¦×Ÿ:</strong> ×©× ×¢×œ, ×‘×™×œ×™×§ ××•×Ÿ ×¤Ö¼×©×•×˜.",
+                "wallet-li3": "<strong>Stables:</strong> ×“×™×–×™×™× ×“ ×¦×• ×”×Ö·×œ×˜×Ÿ ×–×™×™Ö·×Ÿ ×•×•×¢×¨×˜.",
+                "badge-business": "×¤Ö¿×Ö·×¨ ×’×¢×©×¢×¤×˜×Ÿ",
+                "biz-title": "×’×¢×¨×¢×“×˜ ××™×Ÿ ×¡×¢×§×•× ×“×¢×¡. ×¤×Ö·×¨×‘×™× ×“×Ÿ ×“×™×¨×¢×§×˜.",
+                "biz-p1": "×”×Ö·×œ×˜ ××•×™×£ ×¦×• ×•×•×Ö·×¨×˜×Ÿ ×˜×¢×’ ×¤Ö¿×Ö·×¨ ××™×™×¢×¨ ×’×¢×œ×˜. ×ž×™×˜ Stables, ×¦×Ö¸×œ×•× ×’×¢×Ÿ ×–×¢× ×¢×Ÿ ×‘×Ö·×©×˜×¢×˜×™×§×˜ ××•×Ÿ ×’×¢×¨×¢×“×˜ ××™×Ÿ ×¡×¢×§×•× ×“×¢×¡. ×‘×•×™×¢×Ÿ ×Ö· ×“×™×¨×¢×§×˜×¢ ×©×™×™×›×•×ª ×ž×™×˜ ××™×™×¢×¨×¢ ×§×œ×™×™×Ö·× ×˜×Ÿ ×Ö¸×Ÿ ×ž×™×˜×œ×ž×¢×Ÿ ×•×•××¡ × ×¢×ž×¢×Ÿ ×Ö· ×-×œ×§.",
+                "biz-p2": "×¤Ö¿×•×œ×§×Ö¸×ž×¢×Ÿ ×¤Ö¿×Ö·×¨ ×ž×Ö¸×“×¢×¨×Ÿ ×§×Ö¸×ž×¢×¨×¥, ×¤×•×Ÿ ×œ××§××œ×¢ ×§×¨×Ö¸× ×‘×™×– ×’×œ××‘××œ×¢ ×¡×¢×¨×•×•×™×¡×¢×¡.",
+                "badge-growth": "×¤Ö¿×Ö·×¨ ×•×•×Ö·×§×¡",
+                "growth-title": "×“×¢×¨ ×ž×Ö·×œ×˜×™×¤Ö¼×œ×™×§×Ö·×˜×Ö¸×¨.",
+                "growth-p1": "×Ö· × ×™×™×¢ ×•×•×¢×’ ×¦×• ×˜×™×™×œ× ×¢×ž×¢×Ÿ ××™×Ÿ ×“×¢×¨ ×¡×˜×Ö·×‘×™×œ×™×˜×¢×˜ ×¤×•×Ÿ ×“×¢× ×¢×§×Ö¸×¡×™×¡×˜×¢×. × ×•×¦×Ÿ ×“×¢× ×ž×Ö·×œ×˜×™×¤Ö¼×œ×™×§×Ö·×˜×Ö¸×¨ ×¦×• ×¤×Ö·×¨×’×¨×¢×¡×¢×¨×Ÿ ××™×™×¢×¨ ×¢×§×¡×¤Ö¼×Ö¸×–×©×•×¨ ××•×Ÿ ×©×˜×™×¦×Ÿ ×“×™ × ×¢×¥'×¡ ×•×•×™×“×¢×¨×©×˜×× ×“.",
+                "growth-p2": "×¤Ö¿×Ö¸×¨×’×¢×©×¨×™×˜×¢× ×¢ ×ž×›×©×™×¨×™× ×¤Ö¿×Ö·×¨ ×“×™ ×•×•××¡ ×•×•×¢×œ×Ÿ ×˜×Ö¸×Ÿ ×ž×¢×¨ ×•×•×™ × ×Ö¸×¨ ×¦×Ö¸×œ×Ÿ.",
+                "cta-title": "×’×¨×™×™×˜ ×¦×• ×¤×Ö¸×¨×¢× ×“×¢×¨ ×¦×•×§×•× ×¤×˜?",
+                "cta-p": "×˜×¨×¢×˜×Ÿ ××¨×™×™×Ÿ ××™×Ÿ ×“×¢× ×¢×¤× ×˜×œ×¢×›×Ÿ ×˜×¢×¡×˜. ×¤Ö¼×¨×•Ö¼×•×•×˜ ×¦×• ×¦×¢×‘×¨×¢×›×Ÿ ×“×™ ×¡×™×¡×˜×¢×. ×”×¢×œ×¤×˜ ××•× ×– ×‘×•×™×¢×Ÿ ×“×™ ×ž×¢×¨×¡×˜ ×¤×Ö·×¨×œ×Ö¸×–×œ×¢×›×¢ ×’×¢×œ×˜ ×¤Ö¼×œ×Ö·×˜×¤×Ö¸×¨×ž×¢ ××™×Ÿ ×“×¢×¨ ×•×•×¢×œ×˜.",
+                "footer": "Stables - ××™× ×¤Ö¿×Ö¸×¨×ž×Ö·×¦×™×¢ ××™×‘×¢×¨×‘×œ×™×§ v1.0",
+                "mock-wallet": "×•×•×Ö·×œ×œ×¢×˜",
+                "mock-coffee": "×§×Ö·×•×•×¢ ×©×•×¤Ö¼",
+                "mock-salary": "×’×¢×”×Ö·×œ×˜",
                 "mock-val-coffee": "- 6.98 USDs",
                 "mock-val-salary": "+ 3,500 USDs",
-                "mock-merchant": "האַנדלער קוק",
-                "mock-status": "סטאטוס: אָנליין",
-                "mock-paid": "באַצאָלט",
-                "mock-order": "אָרדער #8291",
-                "mock-receipt": "דרוק קאַבאָלע",
-                "mock-investment": "ינוועסטירונג",
-                "mock-multi": "מאַלטיפּליקאַטאָר",
-                "mock-pos": "אַקטיווע פּאָזיציע",
-                "mock-yield": "אַרויסטראָג",
-                "mock-apy": "אקטועלער APY"
+                "mock-merchant": "×”×Ö·× ×“×œ×¢×¨ ×§×•×§",
+                "mock-status": "×¡×˜××˜×•×¡: ×Ö¸× ×œ×™×™×Ÿ",
+                "mock-paid": "×‘×Ö·×¦×Ö¸×œ×˜",
+                "mock-order": "×Ö¸×¨×“×¢×¨ #8291",
+                "mock-receipt": "×“×¨×•×§ ×§×Ö·×‘×Ö¸×œ×¢",
+                "mock-investment": "×™× ×•×•×¢×¡×˜×™×¨×•× ×’",
+                "mock-multi": "×ž×Ö·×œ×˜×™×¤Ö¼×œ×™×§×Ö·×˜×Ö¸×¨",
+                "mock-pos": "×Ö·×§×˜×™×•×•×¢ ×¤Ö¼×Ö¸×–×™×¦×™×¢",
+                "mock-yield": "×Ö·×¨×•×™×¡×˜×¨×Ö¸×’",
+                "mock-apy": "××§×˜×•×¢×œ×¢×¨ APY"
             },
             tr: {
-                "hero-title": "Bankanız olun",
-                "hero-tagline": "Gerçekten sizin olan para. Güvenli, takma adlı ve durdurulamaz",
-                "hero-cta-text": "Daha fazlasını öğrenmek ister misiniz?",
-                "scroll-indicator": "Keşfetmek için kaydırın",
+                "hero-title": "BankanÄ±z olun",
+                "hero-tagline": "GerÃ§ekten sizin olan para. GÃ¼venli, takma adlÄ± ve durdurulamaz",
+                "hero-cta-text": "Daha fazlasÄ±nÄ± Ã¶ÄŸrenmek ister misiniz?",
+                "scroll-indicator": "KeÅŸfetmek iÃ§in kaydÄ±rÄ±n",
                 "btn-testing": "Vitrini dene",
-                "badge-you": "SİZİN İÇİN",
-                "wallet-title": "Anında ödeyin. Tamamen sahip olun.",
-                "wallet-p": "Bir mesaj kadar hızlı hareket eden parayı deneyimleyin. Hesabınızı donduran banka yok. Gizli ücret yok. Sadece varlıklarınız üzerinde %100 kontrol sağlayan basit ve güçlü bir cüzdan.",
+                "badge-you": "SÄ°ZÄ°N Ä°Ã‡Ä°N",
+                "wallet-title": "AnÄ±nda Ã¶deyin. Tamamen sahip olun.",
+                "wallet-p": "Bir mesaj kadar hÄ±zlÄ± hareket eden parayÄ± deneyimleyin. HesabÄ±nÄ±zÄ± donduran banka yok. Gizli Ã¼cret yok. Sadece varlÄ±klarÄ±nÄ±z Ã¼zerinde %100 kontrol saÄŸlayan basit ve gÃ¼Ã§lÃ¼ bir cÃ¼zdan.",
                 "wallet-li1": "<strong>%100 Kendi Kendine Saklama:</strong> Anahtarlar sadece sizde.",
-                "wallet-li2": "<strong>Günlük kullanıma hazır:</strong> Hızlı, ucuz ve basit.",
-                "wallet-li3": "<strong>Stables:</strong> Değerini korumak için tasarlandı.",
-                "badge-business": "İŞLETMELER İÇİN",
-                "biz-title": "Saniyeler içinde ödendi. Doğrudan bağlanın.",
-                "biz-p1": "Paranız için günlerce beklemeyi bırakın. Stables ile ödemeler saniyeler içinde onaylanır ve ödenir. Aracıların pay alması olmadan müşterilerinizle doğrudan ilişki kurun.",
-                "biz-p2": "Yerel mağazalardan küresel hizmetlere kadar modern ticaret için mükemmel.",
-                "badge-growth": "BÜYÜME İÇİN",
-                "growth-title": "Çarpan.",
-                "growth-p1": "Ekosistemin istikrarına katılmanın yeni bir yolu. Pozisyonunuzu artırmak ve ağın dayanıklılığını desteklemek için Çarpan'ı kullanın.",
-                "growth-p2": "Sadece ödeme yapmaktan daha fazlasını isteyenler için gelişmiş araçlar.",
-                "cta-title": "Geleceği şekillendirmeye hazır mısınız?",
-                "cta-p": "Halka açık teste katılın. Sistemi kırmayı deneyin. Dünyanın en güvenilir para platformunu inşa etmemize yardımcı olun.",
-                "footer": "Stables - Bilgilendirme Özeti v1.0",
-                "mock-wallet": "Cüzdan",
-                "mock-coffee": "Kahve Dükkanı",
-                "mock-salary": "Maaş",
+                "wallet-li2": "<strong>GÃ¼nlÃ¼k kullanÄ±ma hazÄ±r:</strong> HÄ±zlÄ±, ucuz ve basit.",
+                "wallet-li3": "<strong>Stables:</strong> DeÄŸerini korumak iÃ§in tasarlandÄ±.",
+                "badge-business": "Ä°ÅžLETMELER Ä°Ã‡Ä°N",
+                "biz-title": "Saniyeler iÃ§inde Ã¶dendi. DoÄŸrudan baÄŸlanÄ±n.",
+                "biz-p1": "ParanÄ±z iÃ§in gÃ¼nlerce beklemeyi bÄ±rakÄ±n. Stables ile Ã¶demeler saniyeler iÃ§inde onaylanÄ±r ve Ã¶denir. AracÄ±larÄ±n pay almasÄ± olmadan mÃ¼ÅŸterilerinizle doÄŸrudan iliÅŸki kurun.",
+                "biz-p2": "Yerel maÄŸazalardan kÃ¼resel hizmetlere kadar modern ticaret iÃ§in mÃ¼kemmel.",
+                "badge-growth": "BÃœYÃœME Ä°Ã‡Ä°N",
+                "growth-title": "Ã‡arpan.",
+                "growth-p1": "Ekosistemin istikrarÄ±na katÄ±lmanÄ±n yeni bir yolu. Pozisyonunuzu artÄ±rmak ve aÄŸÄ±n dayanÄ±klÄ±lÄ±ÄŸÄ±nÄ± desteklemek iÃ§in Ã‡arpan'Ä± kullanÄ±n.",
+                "growth-p2": "Sadece Ã¶deme yapmaktan daha fazlasÄ±nÄ± isteyenler iÃ§in geliÅŸmiÅŸ araÃ§lar.",
+                "cta-title": "GeleceÄŸi ÅŸekillendirmeye hazÄ±r mÄ±sÄ±nÄ±z?",
+                "cta-p": "Halka aÃ§Ä±k teste katÄ±lÄ±n. Sistemi kÄ±rmayÄ± deneyin. DÃ¼nyanÄ±n en gÃ¼venilir para platformunu inÅŸa etmemize yardÄ±mcÄ± olun.",
+                "footer": "Stables - Bilgilendirme Ã–zeti v1.0",
+                "mock-wallet": "CÃ¼zdan",
+                "mock-coffee": "Kahve DÃ¼kkanÄ±",
+                "mock-salary": "MaaÅŸ",
                 "mock-val-coffee": "- 6.98 TRYs",
                 "mock-val-salary": "+ 3.500 TRYs",
-                "mock-merchant": "Satıcı Görünümü",
-                "mock-status": "Durum: Çevrimiçi",
-                "mock-paid": "ÖDENDİ",
-                "mock-order": "Sipariş #8291",
-                "mock-receipt": "Fiş Yazdır",
-                "mock-investment": "Yatırım",
-                "mock-multi": "Çarpan",
+                "mock-merchant": "SatÄ±cÄ± GÃ¶rÃ¼nÃ¼mÃ¼",
+                "mock-status": "Durum: Ã‡evrimiÃ§i",
+                "mock-paid": "Ã–DENDÄ°",
+                "mock-order": "SipariÅŸ #8291",
+                "mock-receipt": "FiÅŸ YazdÄ±r",
+                "mock-investment": "YatÄ±rÄ±m",
+                "mock-multi": "Ã‡arpan",
                 "mock-pos": "Aktif Pozisyon",
                 "mock-yield": "Getiri",
                 "mock-apy": "Mevcut APY"
             },
             ru: {
-                "hero-title": "Будь себе банком",
-                "hero-tagline": "Деньги, которые действительно твои. Безопасные, анонимные и неподконтрольные",
-                "hero-cta-text": "Хочешь узнать больше?",
-                "scroll-indicator": "Прокрутите, чтобы изучить",
-                "btn-testing": "Тестировать витрину",
-                "badge-you": "ДЛЯ ТЕБЯ",
-                "wallet-title": "Плати мгновенно. Владей полностью.",
-                "wallet-p": "Попробуй деньги, которые движутся так же быстро, как сообщение. Никаких банков, чтобы заморозить твой счёт. Никаких скрытых комиссий. Просто простой и мощный кошелёк, который даёт тебе 100% контроль над активами.",
-                "wallet-li1": "<strong>100% Самокастоди:</strong> Только у тебя есть ключи.",
-                "wallet-li2": "<strong>Готов к ежедневному использованию:</strong> Быстро, дёшево и просто.",
-                "wallet-li3": "<strong>Stables:</strong> Созданы для сохранения стоимости.",
-                "badge-business": "ДЛЯ БИЗНЕСА",
-                "biz-title": "Расчёты за секунды. Подключайся напрямую.",
-                "biz-p1": "Перестань ждать дни за свои деньги. С Stables платежи подтверждаются и обрабатываются за секунды. Строй прямые отношения с клиентами без посредников, берущих комиссию.",
-                "biz-p2": "Идеально для современной коммерции, от местных магазинов до глобальных сервисов.",
-                "badge-growth": "ДЛЯ РОСТА",
-                "growth-title": "Мультипликатор.",
-                "growth-p1": "Новый способ участвовать в стабильности экосистемы. Используй Мультипликатор для увеличения экспозиции и поддержки устойчивости сети.",
-                "growth-p2": "Продвинутые инструменты для тех, кто хочет делать больше, чем просто платить.",
-                "cta-title": "Готов формировать будущее?",
-                "cta-p": "Присоединяйся к публичному тесту. Попробуй сломать систему. Помоги нам построить самую надёжную денежную платформу в мире.",
-                "footer": "Stables - Информационный обзор v1.0",
-                "mock-wallet": "Кошелёк",
-                "mock-coffee": "Кофейня",
-                "mock-salary": "Зарплата",
+                "hero-title": "Ð‘ÑƒÐ´ÑŒ ÑÐµÐ±Ðµ Ð±Ð°Ð½ÐºÐ¾Ð¼",
+                "hero-tagline": "Ð”ÐµÐ½ÑŒÐ³Ð¸, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð´ÐµÐ¹ÑÑ‚Ð²Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾ Ñ‚Ð²Ð¾Ð¸. Ð‘ÐµÐ·Ð¾Ð¿Ð°ÑÐ½Ñ‹Ðµ, Ð°Ð½Ð¾Ð½Ð¸Ð¼Ð½Ñ‹Ðµ Ð¸ Ð½ÐµÐ¿Ð¾Ð´ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»ÑŒÐ½Ñ‹Ðµ",
+                "hero-cta-text": "Ð¥Ð¾Ñ‡ÐµÑˆÑŒ ÑƒÐ·Ð½Ð°Ñ‚ÑŒ Ð±Ð¾Ð»ÑŒÑˆÐµ?",
+                "scroll-indicator": "ÐŸÑ€Ð¾ÐºÑ€ÑƒÑ‚Ð¸Ñ‚Ðµ, Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð¸Ð·ÑƒÑ‡Ð¸Ñ‚ÑŒ",
+                "btn-testing": "Ð¢ÐµÑÑ‚Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ Ð²Ð¸Ñ‚Ñ€Ð¸Ð½Ñƒ",
+                "badge-you": "Ð”Ð›Ð¯ Ð¢Ð•Ð‘Ð¯",
+                "wallet-title": "ÐŸÐ»Ð°Ñ‚Ð¸ Ð¼Ð³Ð½Ð¾Ð²ÐµÐ½Ð½Ð¾. Ð’Ð»Ð°Ð´ÐµÐ¹ Ð¿Ð¾Ð»Ð½Ð¾ÑÑ‚ÑŒÑŽ.",
+                "wallet-p": "ÐŸÐ¾Ð¿Ñ€Ð¾Ð±ÑƒÐ¹ Ð´ÐµÐ½ÑŒÐ³Ð¸, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð´Ð²Ð¸Ð¶ÑƒÑ‚ÑÑ Ñ‚Ð°Ðº Ð¶Ðµ Ð±Ñ‹ÑÑ‚Ñ€Ð¾, ÐºÐ°Ðº ÑÐ¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ. ÐÐ¸ÐºÐ°ÐºÐ¸Ñ… Ð±Ð°Ð½ÐºÐ¾Ð², Ñ‡Ñ‚Ð¾Ð±Ñ‹ Ð·Ð°Ð¼Ð¾Ñ€Ð¾Ð·Ð¸Ñ‚ÑŒ Ñ‚Ð²Ð¾Ð¹ ÑÑ‡Ñ‘Ñ‚. ÐÐ¸ÐºÐ°ÐºÐ¸Ñ… ÑÐºÑ€Ñ‹Ñ‚Ñ‹Ñ… ÐºÐ¾Ð¼Ð¸ÑÑÐ¸Ð¹. ÐŸÑ€Ð¾ÑÑ‚Ð¾ Ð¿Ñ€Ð¾ÑÑ‚Ð¾Ð¹ Ð¸ Ð¼Ð¾Ñ‰Ð½Ñ‹Ð¹ ÐºÐ¾ÑˆÐµÐ»Ñ‘Ðº, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ð¹ Ð´Ð°Ñ‘Ñ‚ Ñ‚ÐµÐ±Ðµ 100% ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð»ÑŒ Ð½Ð°Ð´ Ð°ÐºÑ‚Ð¸Ð²Ð°Ð¼Ð¸.",
+                "wallet-li1": "<strong>100% Ð¡Ð°Ð¼Ð¾ÐºÐ°ÑÑ‚Ð¾Ð´Ð¸:</strong> Ð¢Ð¾Ð»ÑŒÐºÐ¾ Ñƒ Ñ‚ÐµÐ±Ñ ÐµÑÑ‚ÑŒ ÐºÐ»ÑŽÑ‡Ð¸.",
+                "wallet-li2": "<strong>Ð“Ð¾Ñ‚Ð¾Ð² Ðº ÐµÐ¶ÐµÐ´Ð½ÐµÐ²Ð½Ð¾Ð¼Ñƒ Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ð½Ð¸ÑŽ:</strong> Ð‘Ñ‹ÑÑ‚Ñ€Ð¾, Ð´Ñ‘ÑˆÐµÐ²Ð¾ Ð¸ Ð¿Ñ€Ð¾ÑÑ‚Ð¾.",
+                "wallet-li3": "<strong>Stables:</strong> Ð¡Ð¾Ð·Ð´Ð°Ð½Ñ‹ Ð´Ð»Ñ ÑÐ¾Ñ…Ñ€Ð°Ð½ÐµÐ½Ð¸Ñ ÑÑ‚Ð¾Ð¸Ð¼Ð¾ÑÑ‚Ð¸.",
+                "badge-business": "Ð”Ð›Ð¯ Ð‘Ð˜Ð-ÐÐ•Ð¡Ð",
+                "biz-title": "Ð Ð°ÑÑ‡Ñ‘Ñ‚Ñ‹ Ð·Ð° ÑÐµÐºÑƒÐ½Ð´Ñ‹. ÐŸÐ¾Ð´ÐºÐ»ÑŽÑ‡Ð°Ð¹ÑÑ Ð½Ð°Ð¿Ñ€ÑÐ¼ÑƒÑŽ.",
+                "biz-p1": "ÐŸÐµÑ€ÐµÑÑ‚Ð°Ð½ÑŒ Ð¶Ð´Ð°Ñ‚ÑŒ Ð´Ð½Ð¸ Ð·Ð° ÑÐ²Ð¾Ð¸ Ð´ÐµÐ½ÑŒÐ³Ð¸. Ð¡ Stables Ð¿Ð»Ð°Ñ‚ÐµÐ¶Ð¸ Ð¿Ð¾Ð´Ñ‚Ð²ÐµÑ€Ð¶Ð´Ð°ÑŽÑ‚ÑÑ Ð¸ Ð¾Ð±Ñ€Ð°Ð±Ð°Ñ‚Ñ‹Ð²Ð°ÑŽÑ‚ÑÑ Ð·Ð° ÑÐµÐºÑƒÐ½Ð´Ñ‹. Ð¡Ñ‚Ñ€Ð¾Ð¹ Ð¿Ñ€ÑÐ¼Ñ‹Ðµ Ð¾Ñ‚Ð½Ð¾ÑˆÐµÐ½Ð¸Ñ Ñ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð°Ð¼Ð¸ Ð±ÐµÐ· Ð¿Ð¾ÑÑ€ÐµÐ´Ð½Ð¸ÐºÐ¾Ð², Ð±ÐµÑ€ÑƒÑ‰Ð¸Ñ… ÐºÐ¾Ð¼Ð¸ÑÑÐ¸ÑŽ.",
+                "biz-p2": "Ð˜Ð´ÐµÐ°Ð»ÑŒÐ½Ð¾ Ð´Ð»Ñ ÑÐ¾Ð²Ñ€ÐµÐ¼ÐµÐ½Ð½Ð¾Ð¹ ÐºÐ¾Ð¼Ð¼ÐµÑ€Ñ†Ð¸Ð¸, Ð¾Ñ‚ Ð¼ÐµÑÑ‚Ð½Ñ‹Ñ… Ð¼Ð°Ð³Ð°Ð·Ð¸Ð½Ð¾Ð² Ð´Ð¾ Ð³Ð»Ð¾Ð±Ð°Ð»ÑŒÐ½Ñ‹Ñ… ÑÐµÑ€Ð²Ð¸ÑÐ¾Ð².",
+                "badge-growth": "Ð”Ð›Ð¯ Ð ÐžÐ¡Ð¢Ð",
+                "growth-title": "ÐœÑƒÐ»ÑŒÑ‚Ð¸Ð¿Ð»Ð¸ÐºÐ°Ñ‚Ð¾Ñ€.",
+                "growth-p1": "ÐÐ¾Ð²Ñ‹Ð¹ ÑÐ¿Ð¾ÑÐ¾Ð± ÑƒÑ‡Ð°ÑÑ‚Ð²Ð¾Ð²Ð°Ñ‚ÑŒ Ð² ÑÑ‚Ð°Ð±Ð¸Ð»ÑŒÐ½Ð¾ÑÑ‚Ð¸ ÑÐºÐ¾ÑÐ¸ÑÑ‚ÐµÐ¼Ñ‹. Ð˜ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐ¹ ÐœÑƒÐ»ÑŒÑ‚Ð¸Ð¿Ð»Ð¸ÐºÐ°Ñ‚Ð¾Ñ€ Ð´Ð»Ñ ÑƒÐ²ÐµÐ»Ð¸Ñ‡ÐµÐ½Ð¸Ñ ÑÐºÑÐ¿Ð¾Ð·Ð¸Ñ†Ð¸Ð¸ Ð¸ Ð¿Ð¾Ð´Ð´ÐµÑ€Ð¶ÐºÐ¸ ÑƒÑÑ‚Ð¾Ð¹Ñ‡Ð¸Ð²Ð¾ÑÑ‚Ð¸ ÑÐµÑ‚Ð¸.",
+                "growth-p2": "ÐŸÑ€Ð¾Ð´Ð²Ð¸Ð½ÑƒÑ‚Ñ‹Ðµ Ð¸Ð½ÑÑ‚Ñ€ÑƒÐ¼ÐµÐ½Ñ‚Ñ‹ Ð´Ð»Ñ Ñ‚ÐµÑ…, ÐºÑ‚Ð¾ Ñ…Ð¾Ñ‡ÐµÑ‚ Ð´ÐµÐ»Ð°Ñ‚ÑŒ Ð±Ð¾Ð»ÑŒÑˆÐµ, Ñ‡ÐµÐ¼ Ð¿Ñ€Ð¾ÑÑ‚Ð¾ Ð¿Ð»Ð°Ñ‚Ð¸Ñ‚ÑŒ.",
+                "cta-title": "Ð“Ð¾Ñ‚Ð¾Ð² Ñ„Ð¾Ñ€Ð¼Ð¸Ñ€Ð¾Ð²Ð°Ñ‚ÑŒ Ð±ÑƒÐ´ÑƒÑ‰ÐµÐµ?",
+                "cta-p": "ÐŸÑ€Ð¸ÑÐ¾ÐµÐ´Ð¸Ð½ÑÐ¹ÑÑ Ðº Ð¿ÑƒÐ±Ð»Ð¸Ñ‡Ð½Ð¾Ð¼Ñƒ Ñ‚ÐµÑÑ‚Ñƒ. ÐŸÐ¾Ð¿Ñ€Ð¾Ð±ÑƒÐ¹ ÑÐ»Ð¾Ð¼Ð°Ñ‚ÑŒ ÑÐ¸ÑÑ‚ÐµÐ¼Ñƒ. ÐŸÐ¾Ð¼Ð¾Ð³Ð¸ Ð½Ð°Ð¼ Ð¿Ð¾ÑÑ‚Ñ€Ð¾Ð¸Ñ‚ÑŒ ÑÐ°Ð¼ÑƒÑŽ Ð½Ð°Ð´Ñ‘Ð¶Ð½ÑƒÑŽ Ð´ÐµÐ½ÐµÐ¶Ð½ÑƒÑŽ Ð¿Ð»Ð°Ñ‚Ñ„Ð¾Ñ€Ð¼Ñƒ Ð² Ð¼Ð¸Ñ€Ðµ.",
+                "footer": "Stables - Ð˜Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ð¾Ð½Ð½Ñ‹Ð¹ Ð¾Ð±Ð·Ð¾Ñ€ v1.0",
+                "mock-wallet": "ÐšÐ¾ÑˆÐµÐ»Ñ‘Ðº",
+                "mock-coffee": "ÐšÐ¾Ñ„ÐµÐ¹Ð½Ñ",
+                "mock-salary": "Ð-Ð°Ñ€Ð¿Ð»Ð°Ñ‚Ð°",
                 "mock-val-coffee": "- 6.98 RUBs",
                 "mock-val-salary": "+ 3.500 RUBs",
-                "mock-merchant": "Вид продавца",
-                "mock-status": "Статус: Онлайн",
-                "mock-paid": "ОПЛАЧЕНО",
-                "mock-order": "Заказ #8291",
-                "mock-receipt": "Печать чека",
-                "mock-investment": "Инвестиция",
-                "mock-multi": "Мультипликатор",
-                "mock-pos": "Активная позиция",
-                "mock-yield": "Доходность",
-                "mock-apy": "Текущий APY"
+                "mock-merchant": "Ð’Ð¸Ð´ Ð¿Ñ€Ð¾Ð´Ð°Ð²Ñ†Ð°",
+                "mock-status": "Ð¡Ñ‚Ð°Ñ‚ÑƒÑ: ÐžÐ½Ð»Ð°Ð¹Ð½",
+                "mock-paid": "ÐžÐŸÐ›ÐÐ§Ð•ÐÐž",
+                "mock-order": "Ð-Ð°ÐºÐ°Ð· #8291",
+                "mock-receipt": "ÐŸÐµÑ‡Ð°Ñ‚ÑŒ Ñ‡ÐµÐºÐ°",
+                "mock-investment": "Ð˜Ð½Ð²ÐµÑÑ‚Ð¸Ñ†Ð¸Ñ",
+                "mock-multi": "ÐœÑƒÐ»ÑŒÑ‚Ð¸Ð¿Ð»Ð¸ÐºÐ°Ñ‚Ð¾Ñ€",
+                "mock-pos": "ÐÐºÑ‚Ð¸Ð²Ð½Ð°Ñ Ð¿Ð¾Ð·Ð¸Ñ†Ð¸Ñ",
+                "mock-yield": "Ð”Ð¾Ñ…Ð¾Ð´Ð½Ð¾ÑÑ‚ÑŒ",
+                "mock-apy": "Ð¢ÐµÐºÑƒÑ‰Ð¸Ð¹ APY"
             },
             zh: {
-                "hero-title": "做你的银行",
-                "hero-tagline": "真正属于你的钱。安全、匿名、不可阻挡",
-                "hero-cta-text": "想了解更多？",
-                "scroll-indicator": "下滑继续了解",
-                "btn-testing": "体验展示",
-                "badge-you": "为你而生",
-                "wallet-title": "即时支付，完全掌控。",
-                "wallet-p": "体验像消息一样快速流动的货币。没有银行冻结你的账户，没有隐藏费用。一个简单而强大的钱包，让你对资产拥有 100% 的掌控。",
-                "wallet-li1": "<strong>100% 自主管理：</strong> 只有你掌握私钥。",
-                "wallet-li2": "<strong>日常支付就绪：</strong> 快速、低费、简单易用。",
-                "wallet-li3": "<strong>Stables：</strong> 为保持价值而设计。",
-                "badge-business": "为商户而生",
-                "biz-title": "秒级结算，直接连接。",
-                "biz-p1": "不再为到账等待数天。使用 Stables，支付在数秒内确认并结算。与你的客户直接建立关系，中间不再有人抽成。",
-                "biz-p2": "适用于现代商业，从本地小店到全球服务。",
-                "badge-growth": "为增长而生",
-                "growth-title": "倍增器。",
-                "growth-p1": "参与生态稳定性的全新方式。使用倍增器放大你的敞口，帮助网络更具韧性。",
-                "growth-p2": "为不满足于只做支付的人准备的高级工具。",
-                "cta-title": "准备好一起塑造未来了吗？",
-                "cta-p": "加入公开测试。试着把系统用到极限。帮助我们打造世界上最可靠的货币平台。",
-                "footer": "Stables - 信息概览 v1.0",
-                "mock-wallet": "钱包",
-                "mock-coffee": "咖啡店",
-                "mock-salary": "工资",
+                "hero-title": "åšä½ çš„é“¶è¡Œ",
+                "hero-tagline": "çœŸæ­£å±žäºŽä½ çš„é’±ã€‚å®‰å…¨ã€åŒ¿åã€ä¸å¯é˜»æŒ¡",
+                "hero-cta-text": "æƒ³äº†è§£æ›´å¤šï¼Ÿ",
+                "scroll-indicator": "ä¸‹æ»‘ç»§ç»­äº†è§£",
+                "btn-testing": "ä½“éªŒå±•ç¤º",
+                "badge-you": "ä¸ºä½ è€Œç”Ÿ",
+                "wallet-title": "å³æ-¶æ”¯ä»˜ï¼Œå®Œå…¨æŽŒæŽ§ã€‚",
+                "wallet-p": "ä½“éªŒåƒæ¶ˆæ¯ä¸€æ ·å¿«é€ŸæµåŠ¨çš„è´§å¸ã€‚æ²¡æœ‰é“¶è¡Œå†»ç»“ä½ çš„è´¦æˆ·ï¼Œæ²¡æœ‰éšè-è´¹ç”¨ã€‚ä¸€ä¸ªç®€å•è€Œå¼ºå¤§çš„é’±åŒ…ï¼Œè®©ä½ å¯¹èµ„äº§æ‹¥æœ‰ 100% çš„æŽŒæŽ§ã€‚",
+                "wallet-li1": "<strong>100% è‡ªä¸»ç®¡ç†ï¼š</strong> åªæœ‰ä½ æŽŒæ¡ç§é’¥ã€‚",
+                "wallet-li2": "<strong>æ-¥å¸¸æ”¯ä»˜å°±ç»ªï¼š</strong> å¿«é€Ÿã€ä½Žè´¹ã€ç®€å•æ˜“ç”¨ã€‚",
+                "wallet-li3": "<strong>Stablesï¼š</strong> ä¸ºä¿æŒä»·å€¼è€Œè®¾è®¡ã€‚",
+                "badge-business": "ä¸ºå•†æˆ·è€Œç”Ÿ",
+                "biz-title": "ç§’çº§ç»“ç®-ï¼Œç›´æŽ¥è¿žæŽ¥ã€‚",
+                "biz-p1": "ä¸å†ä¸ºåˆ°è´¦ç­‰å¾…æ•°å¤©ã€‚ä½¿ç”¨ Stablesï¼Œæ”¯ä»˜åœ¨æ•°ç§’å†…ç¡®è®¤å¹¶ç»“ç®-ã€‚ä¸Žä½ çš„å®¢æˆ·ç›´æŽ¥å»ºç«‹å…³ç³»ï¼Œä¸­é-´ä¸å†æœ‰äººæŠ½æˆã€‚",
+                "biz-p2": "é€‚ç”¨äºŽçŽ°ä»£å•†ä¸šï¼Œä»Žæœ¬åœ°å°åº-åˆ°å…¨çƒæœåŠ¡ã€‚",
+                "badge-growth": "ä¸ºå¢žé•¿è€Œç”Ÿ",
+                "growth-title": "å€å¢žå™¨ã€‚",
+                "growth-p1": "å‚ä¸Žç”Ÿæ€ç¨³å®šæ€§çš„å…¨æ–°æ–¹å¼ã€‚ä½¿ç”¨å€å¢žå™¨æ”¾å¤§ä½ çš„æ•žå£ï¼Œå¸®åŠ©ç½‘ç»œæ›´å…·éŸ§æ€§ã€‚",
+                "growth-p2": "ä¸ºä¸æ»¡è¶³äºŽåªåšæ”¯ä»˜çš„äººå‡†å¤‡çš„é«˜çº§å·¥å…·ã€‚",
+                "cta-title": "å‡†å¤‡å¥½ä¸€èµ·å¡‘é€ æœªæ¥äº†å-ï¼Ÿ",
+                "cta-p": "åŠ å…¥å…¬å¼€æµ‹è¯•ã€‚è¯•ç€æŠŠç³»ç»Ÿç”¨åˆ°æžé™ã€‚å¸®åŠ©æˆ‘ä»¬æ‰“é€ ä¸–ç•Œä¸Šæœ€å¯é çš„è´§å¸å¹³å°ã€‚",
+                "footer": "Stables - ä¿¡æ¯æ¦‚è§ˆ v1.0",
+                "mock-wallet": "é’±åŒ…",
+                "mock-coffee": "å’–å•¡åº-",
+                "mock-salary": "å·¥èµ„",
                 "mock-val-coffee": "- 6.98 CNYs",
                 "mock-val-salary": "+ 3,500 CNYs",
-                "mock-merchant": "商户视图",
-                "mock-status": "状态：在线",
-                "mock-paid": "已支付",
-                "mock-order": "订单 #8291",
-                "mock-receipt": "打印小票",
-                "mock-investment": "投资",
-                "mock-multi": "倍增器",
-                "mock-pos": "持仓中",
-                "mock-yield": "收益",
-                "mock-apy": "当前 APY",
-                "agent-title-sub": "询问有关 Stables 的任何问题",
-                "agent-disclaimer": "请勿分享私人或敏感信息",
-                "agent-fab-tip": "与 StablesAgent 聊天",
-                "agent-online": "在线",
-                "agent-offline": "离线",
-                "agent-fallback-p": "安全连接激活后，聊天将直接在此加载。<br>目前，请在新标签页中打开：",
-                "agent-fallback-link": "打开 StablesAgent ↗"
+                "mock-merchant": "å•†æˆ·è§†å›¾",
+                "mock-status": "çŠ¶æ€ï¼šåœ¨çº¿",
+                "mock-paid": "å·²æ”¯ä»˜",
+                "mock-order": "è®¢å• #8291",
+                "mock-receipt": "æ‰“å°å°ç¥¨",
+                "mock-investment": "æŠ•èµ„",
+                "mock-multi": "å€å¢žå™¨",
+                "mock-pos": "æŒä»“ä¸­",
+                "mock-yield": "æ”¶ç›Š",
+                "mock-apy": "å½“å‰ APY",
+                "agent-title-sub": "è¯¢é-®æœ‰å…³ Stables çš„ä»»ä½•é-®é¢˜",
+                "agent-disclaimer": "è¯·å‹¿åˆ†äº«ç§äººæˆ–æ•æ„Ÿä¿¡æ¯",
+                "agent-fab-tip": "ä¸Ž StablesAgent èŠå¤©",
+                "agent-online": "åœ¨çº¿",
+                "agent-offline": "ç¦»çº¿",
+                "agent-fallback-p": "å®‰å…¨è¿žæŽ¥æ¿€æ´»åŽï¼ŒèŠå¤©å°†ç›´æŽ¥åœ¨æ­¤åŠ è½½ã€‚<br>ç›®å‰ï¼Œè¯·åœ¨æ–°æ ‡ç­¾é¡µä¸­æ‰“å¼€ï¼š",
+                "agent-fallback-link": "æ‰“å¼€ StablesAgent â†-"
             },
             gn: {
-                "hero-title": "Eje ne rembiapohára",
-                "hero-tagline": "Viru ne rembiapohára añetehápe. Tekotevẽ, ikirirĩ ha ndaikatúi joko.",
-                "hero-cta-text": "¿Reikuaasépa?",
-                "scroll-indicator": "Ehecha hag̃ua scroll",
-                "btn-testing": "Ñeha'ã pe showcase",
+                "hero-title": "Eje ne rembiapohÃ¡ra",
+                "hero-tagline": "Viru ne rembiapohÃ¡ra aÃ±etehÃ¡pe. Tekoteváº½, ikirirÄ© ha ndaikatÃºi joko.",
+                "hero-cta-text": "Â¿ReikuaasÃ©pa?",
+                "scroll-indicator": "Ehecha hagÌƒua scroll",
+                "btn-testing": "Ã‘eha'Ã£ pe showcase",
                 "btn-follow": "Eku'ejey X-pe",
                 "btn-instagram": "Eku'ejey Instagram-pe",
                 "btn-telegram": "Ejuaju Telegram-pe",
-                "badge-you": "NDÉVE GUA",
-                "wallet-title": "Ehepyme'ẽ pya'e. Eñangareko opaite.",
-                "wallet-p": "Eipuru viru oñeñani pya'e ha'eha ñe'ẽmondo. Ndaipóri banco ojoko hag̃ua ne mba'ete. Ndaipóri viru ñemi. Peteĩ kartera simple ha mbarete eñangareko hag̃ua 100% ne viru rehegua.",
-                "wallet-li1": "<strong>100% Ne ñangareko:</strong> Nde piko eguereko pe ñe'ẽpehẽ.",
-                "wallet-li2": "<strong>Oĩma ára ha ára:</strong> Pya'e, hepy'ỹ ha simple.",
-                "wallet-li3": "<strong>Stables:</strong> Ojejapo oñeñongatu hag̃ua hepykue.",
-                "badge-business": "ÑEMUHA GUA",
-                "biz-title": "Oñeñangareko segundo rupi. Eñepyrũta yképe.",
-                "biz-p1": "Anive eha'arõ ára opaite ne viru rehe. Stables ndive, viru oñemoneĩ ha oñeñangareko segundo rupi. Eñepyrũta mba'ete ne ñemuha ndive, oĩ'ỹva mokõiha oñe'ẽva.",
-                "biz-p2": "Porãite tembiapo ag̃agua, tenda local guive tembiporu mundial peve.",
-                "badge-growth": "ÑEMOÑANGAREKO GUA",
-                "growth-title": "Ñemomba'eguasu.",
-                "growth-p1": "Tembiapo pyahu eñepyrũ hag̃ua tekotevẽ ecosistema rehegua. Eipuru Ñemomba'eguasu eñemomba'eguasu hag̃ua ha eipytyvõ hag̃ua tekotevẽ ñandutípe.",
-                "growth-p2": "Tembiporu oikovevaháva oipotáva eha'ãve hag̃ua ehepyme'ẽ rupi.",
-                "cta-title": "Oĩma eñepyrũ hag̃ua ko'ẽrõ?",
-                "cta-p": "Ejuaju ñeha'ã opavavépe. Eñeha'ã ojoko hag̃ua sistema. Eipytyvõ ore ñemopu'ã hag̃ua viru plataforma oikovevaháva yvy ape ári.",
-                "footer": "Stables - Marandu Ñemoha'ãnga v1.0",
+                "badge-you": "NDÃ‰VE GUA",
+                "wallet-title": "Ehepyme'áº½ pya'e. EÃ±angareko opaite.",
+                "wallet-p": "Eipuru viru oÃ±eÃ±ani pya'e ha'eha Ã±e'áº½mondo. NdaipÃ³ri banco ojoko hagÌƒua ne mba'ete. NdaipÃ³ri viru Ã±emi. PeteÄ© kartera simple ha mbarete eÃ±angareko hagÌƒua 100% ne viru rehegua.",
+                "wallet-li1": "<strong>100% Ne Ã±angareko:</strong> Nde piko eguereko pe Ã±e'áº½peháº½.",
+                "wallet-li2": "<strong>OÄ©ma Ã¡ra ha Ã¡ra:</strong> Pya'e, hepy'á»¹ ha simple.",
+                "wallet-li3": "<strong>Stables:</strong> Ojejapo oÃ±eÃ±ongatu hagÌƒua hepykue.",
+                "badge-business": "Ã‘EMUHA GUA",
+                "biz-title": "OÃ±eÃ±angareko segundo rupi. EÃ±epyrÅ©ta ykÃ©pe.",
+                "biz-p1": "Anive eha'arÃµ Ã¡ra opaite ne viru rehe. Stables ndive, viru oÃ±emoneÄ© ha oÃ±eÃ±angareko segundo rupi. EÃ±epyrÅ©ta mba'ete ne Ã±emuha ndive, oÄ©'á»¹va mokÃµiha oÃ±e'áº½va.",
+                "biz-p2": "PorÃ£ite tembiapo agÌƒagua, tenda local guive tembiporu mundial peve.",
+                "badge-growth": "Ã‘EMOÃ‘ANGAREKO GUA",
+                "growth-title": "Ã‘emomba'eguasu.",
+                "growth-p1": "Tembiapo pyahu eÃ±epyrÅ© hagÌƒua tekoteváº½ ecosistema rehegua. Eipuru Ã‘emomba'eguasu eÃ±emomba'eguasu hagÌƒua ha eipytyvÃµ hagÌƒua tekoteváº½ Ã±andutÃ­pe.",
+                "growth-p2": "Tembiporu oikovevahÃ¡va oipotÃ¡va eha'Ã£ve hagÌƒua ehepyme'áº½ rupi.",
+                "cta-title": "OÄ©ma eÃ±epyrÅ© hagÌƒua ko'áº½rÃµ?",
+                "cta-p": "Ejuaju Ã±eha'Ã£ opavavÃ©pe. EÃ±eha'Ã£ ojoko hagÌƒua sistema. EipytyvÃµ ore Ã±emopu'Ã£ hagÌƒua viru plataforma oikovevahÃ¡va yvy ape Ã¡ri.",
+                "footer": "Stables - Marandu Ã‘emoha'Ã£nga v1.0",
                 "mock-wallet": "Kartera",
-                "mock-coffee": "Kafé tenda",
+                "mock-coffee": "KafÃ© tenda",
                 "mock-salary": "Mba'aporepy",
                 "mock-val-coffee": "- 6.98 PYGs",
                 "mock-val-salary": "+ 3.500 PYGs",
-                "mock-merchant": "Ñemuha jehecha",
-                "mock-status": "Tekotevẽ: Online",
-                "mock-paid": "OÑEMONEĨMA",
+                "mock-merchant": "Ã‘emuha jehecha",
+                "mock-status": "Tekoteváº½: Online",
+                "mock-paid": "OÃ‘EMONEÄ¨MA",
                 "mock-order": "Mba'ejerure #8291",
-                "mock-receipt": "Ehai'ỹ pe resibo",
-                "mock-investment": "Ñemono'õ",
-                "mock-multi": "Ñemomba'eguasu",
-                "mock-pos": "Tekotevẽ oĩva",
+                "mock-receipt": "Ehai'á»¹ pe resibo",
+                "mock-investment": "Ã‘emono'Ãµ",
+                "mock-multi": "Ã‘emomba'eguasu",
+                "mock-pos": "Tekoteváº½ oÄ©va",
                 "mock-yield": "Jepy'apy",
-                "mock-apy": "APY ag̃agua"
+                "mock-apy": "APY agÌƒagua"
             },
             bg: {
-                "hero-title": "Бъди твоя банка",
-                "hero-tagline": "Пари, които наистина са твои. Сигурни, анонимни и неспираеми",
-                "hero-cta-text": "Искаш ли да научиш повече?",
-                "scroll-indicator": "Превърти, за да разгледаш",
-                "btn-testing": "Тествай витрината",
-                "badge-you": "ЗА ТЕБ",
-                "wallet-title": "Плащай мигновено. Притежавай напълно.",
-                "wallet-p": "Изживей пари, които се движат толкова бързо, колкото съобщение. Няма банки да замразят сметката ти. Няма скрити такси. Просто прост и мощен портфейл, който ти дава 100% контрол върху активите.",
-                "wallet-li1": "<strong>100% Самостопанство:</strong> Само ти имаш ключовете.",
-                "wallet-li2": "<strong>Готов за всекидневна употреба:</strong> Бързо, евтино и просто.",
-                "wallet-li3": "<strong>Stables:</strong> Проектирани да запазят стойността си.",
-                "badge-business": "ЗА БИЗНЕС",
-                "biz-title": "Разплащане за секунди. Свържи се директно.",
-                "biz-p1": "Спрете да чакате дни за парите си. С Stables плащанията се потвърждават и разплащат за секунди. Изградете директна връзка с клиентите си без посредници, които взимат комисионна.",
-                "biz-p2": "Идеално за модерната търговия, от местни магазини до глобални услуги.",
-                "badge-growth": "ЗА РАСТЕЖ",
-                "growth-title": "Мултипликаторът.",
-                "growth-p1": "Нов начин за участие в стабилността на екосистемата. Използвайте Мултипликатора, за да увеличите експозицията си и да подкрепите устойчивостта на мрежата.",
-                "growth-p2": "Напреднали инструменти за тези, които искат да правят повече от просто плащане.",
-                "cta-title": "Готов да оформиш бъдещето?",
-                "cta-p": "Присъедини се към публичния тест. Опитай се да счупиш системата. Помогни ни да изградим най-надеждната парична платформа в света.",
-                "footer": "Stables - Информационен преглед v1.0",
-                "mock-wallet": "Портфейл",
-                "mock-coffee": "Кафене",
-                "mock-salary": "Заплата",
+                "hero-title": "Ð‘ÑŠÐ´Ð¸ Ñ‚Ð²Ð¾Ñ Ð±Ð°Ð½ÐºÐ°",
+                "hero-tagline": "ÐŸÐ°Ñ€Ð¸, ÐºÐ¾Ð¸Ñ‚Ð¾ Ð½Ð°Ð¸ÑÑ‚Ð¸Ð½Ð° ÑÐ° Ñ‚Ð²Ð¾Ð¸. Ð¡Ð¸Ð³ÑƒÑ€Ð½Ð¸, Ð°Ð½Ð¾Ð½Ð¸Ð¼Ð½Ð¸ Ð¸ Ð½ÐµÑÐ¿Ð¸Ñ€Ð°ÐµÐ¼Ð¸",
+                "hero-cta-text": "Ð˜ÑÐºÐ°Ñˆ Ð»Ð¸ Ð´Ð° Ð½Ð°ÑƒÑ‡Ð¸Ñˆ Ð¿Ð¾Ð²ÐµÑ‡Ðµ?",
+                "scroll-indicator": "ÐŸÑ€ÐµÐ²ÑŠÑ€Ñ‚Ð¸, Ð·Ð° Ð´Ð° Ñ€Ð°Ð·Ð³Ð»ÐµÐ´Ð°Ñˆ",
+                "btn-testing": "Ð¢ÐµÑÑ‚Ð²Ð°Ð¹ Ð²Ð¸Ñ‚Ñ€Ð¸Ð½Ð°Ñ‚Ð°",
+                "badge-you": "Ð-Ð Ð¢Ð•Ð‘",
+                "wallet-title": "ÐŸÐ»Ð°Ñ‰Ð°Ð¹ Ð¼Ð¸Ð³Ð½Ð¾Ð²ÐµÐ½Ð¾. ÐŸÑ€Ð¸Ñ‚ÐµÐ¶Ð°Ð²Ð°Ð¹ Ð½Ð°Ð¿ÑŠÐ»Ð½Ð¾.",
+                "wallet-p": "Ð˜Ð·Ð¶Ð¸Ð²ÐµÐ¹ Ð¿Ð°Ñ€Ð¸, ÐºÐ¾Ð¸Ñ‚Ð¾ ÑÐµ Ð´Ð²Ð¸Ð¶Ð°Ñ‚ Ñ‚Ð¾Ð»ÐºÐ¾Ð²Ð° Ð±ÑŠÑ€Ð·Ð¾, ÐºÐ¾Ð»ÐºÐ¾Ñ‚Ð¾ ÑÑŠÐ¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ. ÐÑÐ¼Ð° Ð±Ð°Ð½ÐºÐ¸ Ð´Ð° Ð·Ð°Ð¼Ñ€Ð°Ð·ÑÑ‚ ÑÐ¼ÐµÑ‚ÐºÐ°Ñ‚Ð° Ñ‚Ð¸. ÐÑÐ¼Ð° ÑÐºÑ€Ð¸Ñ‚Ð¸ Ñ‚Ð°ÐºÑÐ¸. ÐŸÑ€Ð¾ÑÑ‚Ð¾ Ð¿Ñ€Ð¾ÑÑ‚ Ð¸ Ð¼Ð¾Ñ‰ÐµÐ½ Ð¿Ð¾Ñ€Ñ‚Ñ„ÐµÐ¹Ð», ÐºÐ¾Ð¹Ñ‚Ð¾ Ñ‚Ð¸ Ð´Ð°Ð²Ð° 100% ÐºÐ¾Ð½Ñ‚Ñ€Ð¾Ð» Ð²ÑŠÑ€Ñ…Ñƒ Ð°ÐºÑ‚Ð¸Ð²Ð¸Ñ‚Ðµ.",
+                "wallet-li1": "<strong>100% Ð¡Ð°Ð¼Ð¾ÑÑ‚Ð¾Ð¿Ð°Ð½ÑÑ‚Ð²Ð¾:</strong> Ð¡Ð°Ð¼Ð¾ Ñ‚Ð¸ Ð¸Ð¼Ð°Ñˆ ÐºÐ»ÑŽÑ‡Ð¾Ð²ÐµÑ‚Ðµ.",
+                "wallet-li2": "<strong>Ð“Ð¾Ñ‚Ð¾Ð² Ð·Ð° Ð²ÑÐµÐºÐ¸Ð´Ð½ÐµÐ²Ð½Ð° ÑƒÐ¿Ð¾Ñ‚Ñ€ÐµÐ±Ð°:</strong> Ð‘ÑŠÑ€Ð·Ð¾, ÐµÐ²Ñ‚Ð¸Ð½Ð¾ Ð¸ Ð¿Ñ€Ð¾ÑÑ‚Ð¾.",
+                "wallet-li3": "<strong>Stables:</strong> ÐŸÑ€Ð¾ÐµÐºÑ‚Ð¸Ñ€Ð°Ð½Ð¸ Ð´Ð° Ð·Ð°Ð¿Ð°Ð·ÑÑ‚ ÑÑ‚Ð¾Ð¹Ð½Ð¾ÑÑ‚Ñ‚Ð° ÑÐ¸.",
+                "badge-business": "Ð-Ð Ð‘Ð˜Ð-ÐÐ•Ð¡",
+                "biz-title": "Ð Ð°Ð·Ð¿Ð»Ð°Ñ‰Ð°Ð½Ðµ Ð·Ð° ÑÐµÐºÑƒÐ½Ð´Ð¸. Ð¡Ð²ÑŠÑ€Ð¶Ð¸ ÑÐµ Ð´Ð¸Ñ€ÐµÐºÑ‚Ð½Ð¾.",
+                "biz-p1": "Ð¡Ð¿Ñ€ÐµÑ‚Ðµ Ð´Ð° Ñ‡Ð°ÐºÐ°Ñ‚Ðµ Ð´Ð½Ð¸ Ð·Ð° Ð¿Ð°Ñ€Ð¸Ñ‚Ðµ ÑÐ¸. Ð¡ Stables Ð¿Ð»Ð°Ñ‰Ð°Ð½Ð¸ÑÑ‚Ð° ÑÐµ Ð¿Ð¾Ñ‚Ð²ÑŠÑ€Ð¶Ð´Ð°Ð²Ð°Ñ‚ Ð¸ Ñ€Ð°Ð·Ð¿Ð»Ð°Ñ‰Ð°Ñ‚ Ð·Ð° ÑÐµÐºÑƒÐ½Ð´Ð¸. Ð˜Ð·Ð³Ñ€Ð°Ð´ÐµÑ‚Ðµ Ð´Ð¸Ñ€ÐµÐºÑ‚Ð½Ð° Ð²Ñ€ÑŠÐ·ÐºÐ° Ñ ÐºÐ»Ð¸ÐµÐ½Ñ‚Ð¸Ñ‚Ðµ ÑÐ¸ Ð±ÐµÐ· Ð¿Ð¾ÑÑ€ÐµÐ´Ð½Ð¸Ñ†Ð¸, ÐºÐ¾Ð¸Ñ‚Ð¾ Ð²Ð·Ð¸Ð¼Ð°Ñ‚ ÐºÐ¾Ð¼Ð¸ÑÐ¸Ð¾Ð½Ð½Ð°.",
+                "biz-p2": "Ð˜Ð´ÐµÐ°Ð»Ð½Ð¾ Ð·Ð° Ð¼Ð¾Ð´ÐµÑ€Ð½Ð°Ñ‚Ð° Ñ‚ÑŠÑ€Ð³Ð¾Ð²Ð¸Ñ, Ð¾Ñ‚ Ð¼ÐµÑÑ‚Ð½Ð¸ Ð¼Ð°Ð³Ð°Ð·Ð¸Ð½Ð¸ Ð´Ð¾ Ð³Ð»Ð¾Ð±Ð°Ð»Ð½Ð¸ ÑƒÑÐ»ÑƒÐ³Ð¸.",
+                "badge-growth": "Ð-Ð Ð ÐÐ¡Ð¢Ð•Ð–",
+                "growth-title": "ÐœÑƒÐ»Ñ‚Ð¸Ð¿Ð»Ð¸ÐºÐ°Ñ‚Ð¾Ñ€ÑŠÑ‚.",
+                "growth-p1": "ÐÐ¾Ð² Ð½Ð°Ñ‡Ð¸Ð½ Ð·Ð° ÑƒÑ‡Ð°ÑÑ‚Ð¸Ðµ Ð² ÑÑ‚Ð°Ð±Ð¸Ð»Ð½Ð¾ÑÑ‚Ñ‚Ð° Ð½Ð° ÐµÐºÐ¾ÑÐ¸ÑÑ‚ÐµÐ¼Ð°Ñ‚Ð°. Ð˜Ð·Ð¿Ð¾Ð»Ð·Ð²Ð°Ð¹Ñ‚Ðµ ÐœÑƒÐ»Ñ‚Ð¸Ð¿Ð»Ð¸ÐºÐ°Ñ‚Ð¾Ñ€Ð°, Ð·Ð° Ð´Ð° ÑƒÐ²ÐµÐ»Ð¸Ñ‡Ð¸Ñ‚Ðµ ÐµÐºÑÐ¿Ð¾Ð·Ð¸Ñ†Ð¸ÑÑ‚Ð° ÑÐ¸ Ð¸ Ð´Ð° Ð¿Ð¾Ð´ÐºÑ€ÐµÐ¿Ð¸Ñ‚Ðµ ÑƒÑÑ‚Ð¾Ð¹Ñ‡Ð¸Ð²Ð¾ÑÑ‚Ñ‚Ð° Ð½Ð° Ð¼Ñ€ÐµÐ¶Ð°Ñ‚Ð°.",
+                "growth-p2": "ÐÐ°Ð¿Ñ€ÐµÐ´Ð½Ð°Ð»Ð¸ Ð¸Ð½ÑÑ‚Ñ€ÑƒÐ¼ÐµÐ½Ñ‚Ð¸ Ð·Ð° Ñ‚ÐµÐ·Ð¸, ÐºÐ¾Ð¸Ñ‚Ð¾ Ð¸ÑÐºÐ°Ñ‚ Ð´Ð° Ð¿Ñ€Ð°Ð²ÑÑ‚ Ð¿Ð¾Ð²ÐµÑ‡Ðµ Ð¾Ñ‚ Ð¿Ñ€Ð¾ÑÑ‚Ð¾ Ð¿Ð»Ð°Ñ‰Ð°Ð½Ðµ.",
+                "cta-title": "Ð“Ð¾Ñ‚Ð¾Ð² Ð´Ð° Ð¾Ñ„Ð¾Ñ€Ð¼Ð¸Ñˆ Ð±ÑŠÐ´ÐµÑ‰ÐµÑ‚Ð¾?",
+                "cta-p": "ÐŸÑ€Ð¸ÑÑŠÐµÐ´Ð¸Ð½Ð¸ ÑÐµ ÐºÑŠÐ¼ Ð¿ÑƒÐ±Ð»Ð¸Ñ‡Ð½Ð¸Ñ Ñ‚ÐµÑÑ‚. ÐžÐ¿Ð¸Ñ‚Ð°Ð¹ ÑÐµ Ð´Ð° ÑÑ‡ÑƒÐ¿Ð¸Ñˆ ÑÐ¸ÑÑ‚ÐµÐ¼Ð°Ñ‚Ð°. ÐŸÐ¾Ð¼Ð¾Ð³Ð½Ð¸ Ð½Ð¸ Ð´Ð° Ð¸Ð·Ð³Ñ€Ð°Ð´Ð¸Ð¼ Ð½Ð°Ð¹-Ð½Ð°Ð´ÐµÐ¶Ð´Ð½Ð°Ñ‚Ð° Ð¿Ð°Ñ€Ð¸Ñ‡Ð½Ð° Ð¿Ð»Ð°Ñ‚Ñ„Ð¾Ñ€Ð¼Ð° Ð² ÑÐ²ÐµÑ‚Ð°.",
+                "footer": "Stables - Ð˜Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ð¾Ð½ÐµÐ½ Ð¿Ñ€ÐµÐ³Ð»ÐµÐ´ v1.0",
+                "mock-wallet": "ÐŸÐ¾Ñ€Ñ‚Ñ„ÐµÐ¹Ð»",
+                "mock-coffee": "ÐšÐ°Ñ„ÐµÐ½Ðµ",
+                "mock-salary": "Ð-Ð°Ð¿Ð»Ð°Ñ‚Ð°",
                 "mock-val-coffee": "- 6.98 LEVs",
                 "mock-val-salary": "+ 3.500 LEVs",
-                "mock-merchant": "Изглед на търговец",
-                "mock-status": "Статус: Онлайн",
-                "mock-paid": "ПЛАТЕНО",
-                "mock-order": "Поръчка #8291",
-                "mock-receipt": "Принтиране на разписка",
-                "mock-investment": "Инвестиция",
-                "mock-multi": "Мултипликатор",
-                "mock-pos": "Активна позиция",
-                "mock-yield": "Доходност",
-                "mock-apy": "Текущ APY"
+                "mock-merchant": "Ð˜Ð·Ð³Ð»ÐµÐ´ Ð½Ð° Ñ‚ÑŠÑ€Ð³Ð¾Ð²ÐµÑ†",
+                "mock-status": "Ð¡Ñ‚Ð°Ñ‚ÑƒÑ: ÐžÐ½Ð»Ð°Ð¹Ð½",
+                "mock-paid": "ÐŸÐ›ÐÐ¢Ð•ÐÐž",
+                "mock-order": "ÐŸÐ¾Ñ€ÑŠÑ‡ÐºÐ° #8291",
+                "mock-receipt": "ÐŸÑ€Ð¸Ð½Ñ‚Ð¸Ñ€Ð°Ð½Ðµ Ð½Ð° Ñ€Ð°Ð·Ð¿Ð¸ÑÐºÐ°",
+                "mock-investment": "Ð˜Ð½Ð²ÐµÑÑ‚Ð¸Ñ†Ð¸Ñ",
+                "mock-multi": "ÐœÑƒÐ»Ñ‚Ð¸Ð¿Ð»Ð¸ÐºÐ°Ñ‚Ð¾Ñ€",
+                "mock-pos": "ÐÐºÑ‚Ð¸Ð²Ð½Ð° Ð¿Ð¾Ð·Ð¸Ñ†Ð¸Ñ",
+                "mock-yield": "Ð”Ð¾Ñ…Ð¾Ð´Ð½Ð¾ÑÑ‚",
+                "mock-apy": "Ð¢ÐµÐºÑƒÑ‰ APY"
             },
             ca: {
                 "hero-title": "Sigues el teu banc",
-                "hero-tagline": "Diners que són veritablement teus. Segurs, pseudònims i imparables",
-                "hero-cta-text": "Vols saber-ne més?",
-                "scroll-indicator": "Desplaça't per explorar",
+                "hero-tagline": "Diners que sÃ³n veritablement teus. Segurs, pseudÃ²nims i imparables",
+                "hero-cta-text": "Vols saber-ne mÃ©s?",
+                "scroll-indicator": "DesplaÃ§a't per explorar",
                 "btn-testing": "Prova la vitrina",
                 "badge-you": "PER A TU",
                 "wallet-title": "Paga a l'instant. Posseeix completament.",
-                "wallet-p": "Experimenta diners que es mouen tan ràpid com un missatge. Sense bancs que congelin el teu compte. Sense comissions ocultes. Només una cartera senzilla i potent que et dona el 100% de control sobre els teus actius.",
-                "wallet-li1": "<strong>100% Auto-custòdia:</strong> Només tu tens les claus.",
-                "wallet-li2": "<strong>Llest pel dia a dia:</strong> Ràpid, econòmic i senzill.",
+                "wallet-p": "Experimenta diners que es mouen tan rÃ pid com un missatge. Sense bancs que congelin el teu compte. Sense comissions ocultes. NomÃ©s una cartera senzilla i potent que et dona el 100% de control sobre els teus actius.",
+                "wallet-li1": "<strong>100% Auto-custÃ²dia:</strong> NomÃ©s tu tens les claus.",
+                "wallet-li2": "<strong>Llest pel dia a dia:</strong> RÃ pid, econÃ²mic i senzill.",
                 "wallet-li3": "<strong>Stables:</strong> Dissenyat per mantenir el seu valor.",
                 "badge-business": "PER A EMPRESES",
                 "biz-title": "Liquidat en segons. Connecta directament.",
-                "biz-p1": "Deixa d'esperar dies pels teus diners. Amb Stables, els pagaments es confirmen i liquiden en segons. Construeix una relació directa amb els teus clients sense intermediaris que es quedin amb una part.",
-                "biz-p2": "Perfecte per al comerç modern, des de botigues locals fins a serveis globals.",
+                "biz-p1": "Deixa d'esperar dies pels teus diners. Amb Stables, els pagaments es confirmen i liquiden en segons. Construeix una relaciÃ³ directa amb els teus clients sense intermediaris que es quedin amb una part.",
+                "biz-p2": "Perfecte per al comerÃ§ modern, des de botigues locals fins a serveis globals.",
                 "badge-growth": "PER A CREIXEMENT",
                 "growth-title": "El Multiplicador.",
-                "growth-p1": "Una nova manera de participar en l'estabilitat de l'ecosistema. Utilitza el Multiplicador per amplificar la teva exposició i donar suport a la resiliència de la xarxa.",
-                "growth-p2": "Eines avançades per a aquells que volen fer més que només pagar.",
+                "growth-p1": "Una nova manera de participar en l'estabilitat de l'ecosistema. Utilitza el Multiplicador per amplificar la teva exposiciÃ³ i donar suport a la resiliÃ¨ncia de la xarxa.",
+                "growth-p2": "Eines avanÃ§ades per a aquells que volen fer mÃ©s que nomÃ©s pagar.",
                 "cta-title": "Preparat per donar forma al futur?",
-                "cta-p": "Uneix-te a la prova pública. Intenta trencar el sistema. Ajuda'ns a construir la plataforma monetària més fiable del món.",
-                "footer": "Stables - Visió general informativa v1.0",
+                "cta-p": "Uneix-te a la prova pÃºblica. Intenta trencar el sistema. Ajuda'ns a construir la plataforma monetÃ ria mÃ©s fiable del mÃ³n.",
+                "footer": "Stables - VisiÃ³ general informativa v1.0",
                 "mock-wallet": "Cartera",
                 "mock-coffee": "Cafeteria",
                 "mock-salary": "Salari",
                 "mock-val-coffee": "- 6.98 EURs",
                 "mock-val-salary": "+ 3.500 EURs",
                 "mock-merchant": "Vista comerciant",
-                "mock-status": "Estat: En línia",
+                "mock-status": "Estat: En lÃ­nia",
                 "mock-paid": "PAGAT",
                 "mock-order": "Comanda #8291",
                 "mock-receipt": "Imprimir rebut",
-                "mock-investment": "Inversió",
+                "mock-investment": "InversiÃ³",
                 "mock-multi": "Multiplicador",
-                "mock-pos": "Posició activa",
+                "mock-pos": "PosiciÃ³ activa",
                 "mock-yield": "Rendiment",
                 "mock-apy": "APY actual"
             },
             cs: {
-                "hero-title": "Buď svou bankou",
-                "hero-tagline": "Peníze, které jsou opravdu tvoje. Bezpečné, anonymní a nezastavitelné",
-                "hero-cta-text": "Chceš vědět víc?",
-                "scroll-indicator": "Posuň se dolů a prozkoumej",
-                "btn-testing": "Vyzkoušet showcase",
+                "hero-title": "BuÄ svou bankou",
+                "hero-tagline": "PenÃ­ze, kterÃ© jsou opravdu tvoje. BezpeÄnÃ©, anonymnÃ­ a nezastavitelnÃ©",
+                "hero-cta-text": "ChceÅ¡ vÄ›dÄ›t vÃ­c?",
+                "scroll-indicator": "PosuÅˆ se dolÅ¯ a prozkoumej",
+                "btn-testing": "VyzkouÅ¡et showcase",
                 "btn-follow": "Sleduj na X",
                 "btn-instagram": "Sleduj na Instagramu",
-                "btn-telegram": "Připoj se na Telegram",
+                "btn-telegram": "PÅ™ipoj se na Telegram",
                 "badge-you": "PRO TEBE",
-                "wallet-title": "Plať okamžitě. Vlastni úplně.",
-                "wallet-p": "Zažij peníze, které se pohybují rychle jako zpráva. Žádné banky, které ti zmrazí účet. Žádné skryté poplatky. Jednoduchá a výkonná peněženka, která ti dává 100% kontrolu nad tvými aktivy.",
-                "wallet-li1": "<strong>100% Vlastní správa:</strong> Pouze ty máš klíče.",
-                "wallet-li2": "<strong>Připraveno k dennímu použití:</strong> Rychlé, levné a jednoduché.",
-                "wallet-li3": "<strong>Stables:</strong> Navrženo pro udržení hodnoty.",
-                "badge-business": "PRO PODNIKÁNÍ",
-                "biz-title": "Vyrovnáno za sekundy. Připoj se přímo.",
-                "biz-p1": "Přestaň čekat dny na své peníze. Se Stables jsou platby potvrzeny a vyrovnány za sekundy. Vytvářej přímý vztah se svými zákazníky bez zprostředkovatelů, kteří si berou podíl.",
-                "biz-p2": "Perfektní pro moderní obchod, od místních obchodů po globální služby.",
-                "badge-growth": "PRO RŮST",
-                "growth-title": "Multiplikátor.",
-                "growth-p1": "Nový způsob, jak se podílet na stabilitě ekosystému. Použij Multiplikátor k zesílení své expozice a podpoře odolnosti sítě.",
-                "growth-p2": "Pokročilé nástroje pro ty, kteří chtějí dělat víc než jen platit.",
-                "cta-title": "Připraven utvářet budoucnost?",
-                "cta-p": "Připoj se k veřejnému testu. Zkus rozbít systém. Pomoz nám vybudovat nejspolehlivější peněžní platformu na světě.",
-                "footer": "Stables - Informační přehled v1.0",
-                "mock-wallet": "Peněženka",
-                "mock-coffee": "Kavárna",
+                "wallet-title": "PlaÅ¥ okamÅ¾itÄ›. Vlastni ÃºplnÄ›.",
+                "wallet-p": "ZaÅ¾ij penÃ­ze, kterÃ© se pohybujÃ­ rychle jako zprÃ¡va. Å½Ã¡dnÃ© banky, kterÃ© ti zmrazÃ­ ÃºÄet. Å½Ã¡dnÃ© skrytÃ© poplatky. JednoduchÃ¡ a vÃ½konnÃ¡ penÄ›Å¾enka, kterÃ¡ ti dÃ¡vÃ¡ 100% kontrolu nad tvÃ½mi aktivy.",
+                "wallet-li1": "<strong>100% VlastnÃ­ sprÃ¡va:</strong> Pouze ty mÃ¡Å¡ klÃ­Äe.",
+                "wallet-li2": "<strong>PÅ™ipraveno k dennÃ­mu pouÅ¾itÃ­:</strong> RychlÃ©, levnÃ© a jednoduchÃ©.",
+                "wallet-li3": "<strong>Stables:</strong> NavrÅ¾eno pro udrÅ¾enÃ­ hodnoty.",
+                "badge-business": "PRO PODNIKÃNÃ",
+                "biz-title": "VyrovnÃ¡no za sekundy. PÅ™ipoj se pÅ™Ã­mo.",
+                "biz-p1": "PÅ™estaÅˆ Äekat dny na svÃ© penÃ­ze. Se Stables jsou platby potvrzeny a vyrovnÃ¡ny za sekundy. VytvÃ¡Å™ej pÅ™Ã­mÃ½ vztah se svÃ½mi zÃ¡kaznÃ­ky bez zprostÅ™edkovatelÅ¯, kteÅ™Ã­ si berou podÃ­l.",
+                "biz-p2": "PerfektnÃ­ pro modernÃ­ obchod, od mÃ­stnÃ­ch obchodÅ¯ po globÃ¡lnÃ­ sluÅ¾by.",
+                "badge-growth": "PRO RÅ®ST",
+                "growth-title": "MultiplikÃ¡tor.",
+                "growth-p1": "NovÃ½ zpÅ¯sob, jak se podÃ­let na stabilitÄ› ekosystÃ©mu. PouÅ¾ij MultiplikÃ¡tor k zesÃ­lenÃ­ svÃ© expozice a podpoÅ™e odolnosti sÃ­tÄ›.",
+                "growth-p2": "PokroÄilÃ© nÃ¡stroje pro ty, kteÅ™Ã­ chtÄ›jÃ­ dÄ›lat vÃ­c neÅ¾ jen platit.",
+                "cta-title": "PÅ™ipraven utvÃ¡Å™et budoucnost?",
+                "cta-p": "PÅ™ipoj se k veÅ™ejnÃ©mu testu. Zkus rozbÃ­t systÃ©m. Pomoz nÃ¡m vybudovat nejspolehlivÄ›jÅ¡Ã­ penÄ›Å¾nÃ­ platformu na svÄ›tÄ›.",
+                "footer": "Stables - InformaÄnÃ­ pÅ™ehled v1.0",
+                "mock-wallet": "PenÄ›Å¾enka",
+                "mock-coffee": "KavÃ¡rna",
                 "mock-salary": "Plat",
                 "mock-val-coffee": "- 6.98 CZKs",
                 "mock-val-salary": "+ 3.500 CZKs",
-                "mock-merchant": "Pohled obchodníka",
+                "mock-merchant": "Pohled obchodnÃ­ka",
                 "mock-status": "Stav: Online",
                 "mock-paid": "ZAPLACENO",
-                "mock-order": "Objednávka #8291",
-                "mock-receipt": "Tisknout účtenku",
+                "mock-order": "ObjednÃ¡vka #8291",
+                "mock-receipt": "Tisknout ÃºÄtenku",
                 "mock-investment": "Investice",
-                "mock-multi": "Multiplikátor",
-                "mock-pos": "Aktivní pozice",
-                "mock-yield": "Výnos",
-                "mock-apy": "Aktuální APY"
+                "mock-multi": "MultiplikÃ¡tor",
+                "mock-pos": "AktivnÃ­ pozice",
+                "mock-yield": "VÃ½nos",
+                "mock-apy": "AktuÃ¡lnÃ­ APY"
             },
             lt: {
-                "hero-title": "Būk tavo bankas",
-                "hero-tagline": "Pinigai, kurie tikrai tavo. Saugūs, anonimiški ir nesustabdytini",
-                "hero-cta-text": "Norite sužinoti daugiau?",
-                "scroll-indicator": "Slinkite, kad tyrinėtumėte",
-                "btn-testing": "Išbandykite vitriną",
+                "hero-title": "BÅ«k tavo bankas",
+                "hero-tagline": "Pinigai, kurie tikrai tavo. SaugÅ«s, anonimiÅ¡ki ir nesustabdytini",
+                "hero-cta-text": "Norite suÅ¾inoti daugiau?",
+                "scroll-indicator": "Slinkite, kad tyrinÄ-tumÄ-te",
+                "btn-testing": "IÅ¡bandykite vitrinÄ…",
                 "badge-you": "TAVO",
-                "wallet-title": "Mokėk akimirksniu. Valdyk visiškai.",
-                "wallet-p": "Patirk pinigus, kurie juda taip greitai kaip žinutė. Nėra bankų, kurie užšaldytų tavo sąskaitą. Nėra paslėptų mokesčių. Tiesiog paprastas ir galingas piniginė, kuri suteikia 100% kontrolę per tavo turtą.",
-                "wallet-li1": "<strong>100% Savo kontrolė:</strong> Tik tu turi raktus.",
-                "wallet-li2": "<strong>Paruošta kasdieniam naudojimui:</strong> Greita, pigu ir paprasta.",
-                "wallet-li3": "<strong>Stables:</strong> Sukurta išlaikyti savo vertę.",
+                "wallet-title": "MokÄ-k akimirksniu. Valdyk visiÅ¡kai.",
+                "wallet-p": "Patirk pinigus, kurie juda taip greitai kaip Å¾inutÄ-. NÄ-ra bankÅ³, kurie uÅ¾Å¡aldytÅ³ tavo sÄ…skaitÄ…. NÄ-ra paslÄ-ptÅ³ mokesÄiÅ³. Tiesiog paprastas ir galingas piniginÄ-, kuri suteikia 100% kontrolÄ™ per tavo turtÄ….",
+                "wallet-li1": "<strong>100% Savo kontrolÄ-:</strong> Tik tu turi raktus.",
+                "wallet-li2": "<strong>ParuoÅ¡ta kasdieniam naudojimui:</strong> Greita, pigu ir paprasta.",
+                "wallet-li3": "<strong>Stables:</strong> Sukurta iÅ¡laikyti savo vertÄ™.",
                 "badge-business": "VERSLUJANTIEMS",
-                "biz-title": "Apskaičiuota per sekundes. Prisijunk tiesiogiai.",
-                "biz-p1": "Nustok laukti dienas pinigų. Su Stables mokėjimai patvirtinami ir apskaičiuojami per sekundes. Kurti tiesioginį ryšį su klientais be tarpininkų, kurie ima komisinį.",
-                "biz-p2": "Puikiai tinka šiuolaikiniam prekybai, nuo vietinių parduotuvių iki pasaulinių paslaugų.",
+                "biz-title": "ApskaiÄiuota per sekundes. Prisijunk tiesiogiai.",
+                "biz-p1": "Nustok laukti dienas pinigÅ³. Su Stables mokÄ-jimai patvirtinami ir apskaiÄiuojami per sekundes. Kurti tiesioginÄ¯ ryÅ¡Ä¯ su klientais be tarpininkÅ³, kurie ima komisinÄ¯.",
+                "biz-p2": "Puikiai tinka Å¡iuolaikiniam prekybai, nuo vietiniÅ³ parduotuviÅ³ iki pasauliniÅ³ paslaugÅ³.",
                 "badge-growth": "AUGIMUI",
                 "growth-title": "Daugintuvas.",
-                "growth-p1": "Naujas būdas dalyvauti ekosistemos stabilume. Naudok Daugintuvą, kad padidintum savo ekspoziciją ir palaikytum tinklo atsparumą.",
-                "growth-p2": "Pažangūs įrankiai tiems, kurie nori daryti daugiau nei tik mokėti.",
-                "cta-title": "Pasiruošęs formuoti ateitį?",
-                "cta-p": "Prisijunk prie viešojo testo. Stenkis sugadinti sistemą. Padėk mums sukurti patikimiausią pinigų platformą pasaulyje.",
-                "footer": "Stables - Informacinis apžvalga v1.0",
-                "mock-wallet": "Piniginė",
-                "mock-coffee": "Kavinė",
+                "growth-p1": "Naujas bÅ«das dalyvauti ekosistemos stabilume. Naudok DaugintuvÄ…, kad padidintum savo ekspozicijÄ… ir palaikytum tinklo atsparumÄ….",
+                "growth-p2": "PaÅ¾angÅ«s Ä¯rankiai tiems, kurie nori daryti daugiau nei tik mokÄ-ti.",
+                "cta-title": "PasiruoÅ¡Ä™s formuoti ateitÄ¯?",
+                "cta-p": "Prisijunk prie vieÅ¡ojo testo. Stenkis sugadinti sistemÄ…. PadÄ-k mums sukurti patikimiausiÄ… pinigÅ³ platformÄ… pasaulyje.",
+                "footer": "Stables - Informacinis apÅ¾valga v1.0",
+                "mock-wallet": "PiniginÄ-",
+                "mock-coffee": "KavinÄ-",
                 "mock-salary": "Atlyginimas",
                 "mock-val-coffee": "- 6.98 EURs",
                 "mock-val-salary": "+ 3.500 EURs",
                 "mock-merchant": "Prekeivio rodinys",
-                "mock-status": "Būsena: Prisijungęs",
-                "mock-paid": "SUMOKĖTA",
-                "mock-order": "Užsakymas #8291",
-                "mock-receipt": "Spausdinti kvitą",
+                "mock-status": "BÅ«sena: PrisijungÄ™s",
+                "mock-paid": "SUMOKÄ–TA",
+                "mock-order": "UÅ¾sakymas #8291",
+                "mock-receipt": "Spausdinti kvitÄ…",
                 "mock-investment": "Investicija",
                 "mock-multi": "Daugintuvas",
                 "mock-pos": "Aktyvi pozicija",
@@ -1930,40 +2182,40 @@
             },
             lb: {
                 "hero-title": "Sief deng Bank",
-                "hero-tagline": "Geld dat wierklech dengt ass. Sécher, pseudonym a net ze stoppen",
-                "hero-cta-text": "Wëllt Dir méi erfueren?",
+                "hero-tagline": "Geld dat wierklech dengt ass. SÃ©cher, pseudonym a net ze stoppen",
+                "hero-cta-text": "WÃ«llt Dir mÃ©i erfueren?",
                 "scroll-indicator": "Scrollt fir ze entdecken",
                 "btn-testing": "Showcase testen",
                 "btn-follow": "Follegt op X",
                 "btn-instagram": "Follegt op Instagram",
                 "btn-telegram": "Matmaachen op Telegram",
                 "badge-you": "FIR DIECH",
-                "wallet-title": "Bezuelt direkt. Besëtzt komplett.",
-                "wallet-p": "Erlieft Geld dat sech sou séier beweegt wéi eng Messag. Keng Banken déi Äre Kont frieren. Keng verstoppte Käschten. Just e simple a mächtege Portfeuille deen Iech 100% Kontroll iwwer Är Aktiven gëtt.",
-                "wallet-li1": "<strong>100% Eegestuerg:</strong> Nëmmen Dir hutt d'Schlësselen.",
-                "wallet-li2": "<strong>Fäerdeg fir deegleche Gebrauch:</strong> Séier, bëlleg a simple.",
-                "wallet-li3": "<strong>Stables:</strong> Designéiert fir säi Wäert ze behalen.",
-                "badge-business": "FIR GESCHÄFTER",
-                "biz-title": "An Sekonnen gereegelt. Verbënnt direkt.",
-                "biz-p1": "Hält op Deeg op Äert Geld ze waarden. Mat Stables ginn Bezuelungen a Sekonnen bestätegt a gereegelt. Baut eng direkt Relatioun mat Äre Clienten ouni Mëttelsmänner déi e Schnëtt huelen.",
+                "wallet-title": "Bezuelt direkt. BesÃ«tzt komplett.",
+                "wallet-p": "Erlieft Geld dat sech sou sÃ©ier beweegt wÃ©i eng Messag. Keng Banken dÃ©i Ã„re Kont frieren. Keng verstoppte KÃ¤schten. Just e simple a mÃ¤chtege Portfeuille deen Iech 100% Kontroll iwwer Ã„r Aktiven gÃ«tt.",
+                "wallet-li1": "<strong>100% Eegestuerg:</strong> NÃ«mmen Dir hutt d'SchlÃ«sselen.",
+                "wallet-li2": "<strong>FÃ¤erdeg fir deegleche Gebrauch:</strong> SÃ©ier, bÃ«lleg a simple.",
+                "wallet-li3": "<strong>Stables:</strong> DesignÃ©iert fir sÃ¤i WÃ¤ert ze behalen.",
+                "badge-business": "FIR GESCHÃ„FTER",
+                "biz-title": "An Sekonnen gereegelt. VerbÃ«nnt direkt.",
+                "biz-p1": "HÃ¤lt op Deeg op Ã„ert Geld ze waarden. Mat Stables ginn Bezuelungen a Sekonnen bestÃ¤tegt a gereegelt. Baut eng direkt Relatioun mat Ã„re Clienten ouni MÃ«ttelsmÃ¤nner dÃ©i e SchnÃ«tt huelen.",
                 "biz-p2": "Perfekt fir modernen Handel, vu lokale Butteker bis global Servicer.",
                 "badge-growth": "FIR WUESS",
                 "growth-title": "De Multiplikateur.",
-                "growth-p1": "Eng nei Manéier fir un der Stabilitéit vum Ecosystem deelzehuelen. Benotzt de Multiplikateur fir Är Expositioun ze verstäerken an d'Resilienz vum Netz ze ënnerstëtzen.",
-                "growth-p2": "Erweidert Tools fir déi déi méi wëlle maachen wéi just bezuelen.",
+                "growth-p1": "Eng nei ManÃ©ier fir un der StabilitÃ©it vum Ecosystem deelzehuelen. Benotzt de Multiplikateur fir Ã„r Expositioun ze verstÃ¤erken an d'Resilienz vum Netz ze Ã«nnerstÃ«tzen.",
+                "growth-p2": "Erweidert Tools fir dÃ©i dÃ©i mÃ©i wÃ«lle maachen wÃ©i just bezuelen.",
                 "cta-title": "Prett fir d'Zukunft ze forme?",
-                "cta-p": "Maacht mat beim ëffentleche Test. Versicht d'System ze briechen. Hëlleft eis déi zouverlässegst Geldplattform op der Welt ze bauen.",
+                "cta-p": "Maacht mat beim Ã«ffentleche Test. Versicht d'System ze briechen. HÃ«lleft eis dÃ©i zouverlÃ¤ssegst Geldplattform op der Welt ze bauen.",
                 "footer": "Stables - Informativ Iwwersiicht v1.0",
                 "mock-wallet": "Portfeuille",
-                "mock-coffee": "Café",
+                "mock-coffee": "CafÃ©",
                 "mock-salary": "Salaire",
                 "mock-val-coffee": "- 6.98 EURs",
                 "mock-val-salary": "+ 3.500 EURs",
-                "mock-merchant": "Händler Vue",
+                "mock-merchant": "HÃ¤ndler Vue",
                 "mock-status": "Status: Online",
                 "mock-paid": "BEZUELT",
                 "mock-order": "Bestellung #8291",
-                "mock-receipt": "Quittung drécken",
+                "mock-receipt": "Quittung drÃ©cken",
                 "mock-investment": "Investitioun",
                 "mock-multi": "Multiplikateur",
                 "mock-pos": "Aktiv Positioun",
@@ -1972,114 +2224,114 @@
             },
             lv: {
                 "hero-title": "Tava banka",
-                "hero-tagline": "Nauda, kas patiešām ir Tavējā. Droša, anonīma un neapturama",
-                "hero-cta-text": "Vēlaties uzzināt vairāk?",
-                "scroll-indicator": "Ritiniet, lai izpētītu",
-                "btn-testing": "Izmēģināt vitrīnu",
+                "hero-tagline": "Nauda, kas patieÅ¡Äm ir TavÄ“jÄ. DroÅ¡a, anonÄ«ma un neapturama",
+                "hero-cta-text": "VÄ“laties uzzinÄt vairÄk?",
+                "scroll-indicator": "Ritiniet, lai izpÄ“tÄ«tu",
+                "btn-testing": "IzmÄ“Ä£inÄt vitrÄ«nu",
                 "badge-you": "TEV",
-                "wallet-title": "Maksā acumirklī. Pieder pilnībā.",
-                "wallet-p": "Piedzīvo naudu, kas pārvietojas tikpat ātri kā ziņojums. Nav banku, kas aizsaldētu tavu kontu. Nav slēptu maksu. Tikai vienkāršs un jaudīgs maciņš, kas dod 100% kontroli pār taviem aktīviem.",
-                "wallet-li1": "<strong>100% Pašpārvalde:</strong> Tik tu īpašnieki atslēgas.",
-                "wallet-li2": "<strong>Gatavs ikdienas lietošanai:</strong> Ātri, lēti un vienkārši.",
-                "wallet-li3": "<strong>Stables:</strong> Izveidots, lai saglabātu vērtību.",
+                "wallet-title": "MaksÄ acumirklÄ«. Pieder pilnÄ«bÄ.",
+                "wallet-p": "PiedzÄ«vo naudu, kas pÄrvietojas tikpat Ätri kÄ ziÅ†ojums. Nav banku, kas aizsaldÄ“tu tavu kontu. Nav slÄ“ptu maksu. Tikai vienkÄrÅ¡s un jaudÄ«gs maciÅ†Å¡, kas dod 100% kontroli pÄr taviem aktÄ«viem.",
+                "wallet-li1": "<strong>100% PaÅ¡pÄrvalde:</strong> Tik tu Ä«paÅ¡nieki atslÄ“gas.",
+                "wallet-li2": "<strong>Gatavs ikdienas lietoÅ¡anai:</strong> Ä€tri, lÄ“ti un vienkÄrÅ¡i.",
+                "wallet-li3": "<strong>Stables:</strong> Izveidots, lai saglabÄtu vÄ“rtÄ«bu.",
                 "badge-business": "BIZNESAM",
-                "biz-title": "Norēķināts sekundēs. Savienojies tieši.",
-                "biz-p1": "Beidz gaidīt dienas uz savu naudu. Ar Stables maksājumi tiek apstiprināti un norēķināti sekundēs. Veido tiešu attiecības ar klientiem bez starpniekiem, kas ņem komisiju.",
-                "biz-p2": "Perfekti mūsdienu tirdzniecībai, no vietējiem veikaliem līdz globālajiem pakalpojumiem.",
+                "biz-title": "NorÄ“Ä·inÄts sekundÄ“s. Savienojies tieÅ¡i.",
+                "biz-p1": "Beidz gaidÄ«t dienas uz savu naudu. Ar Stables maksÄjumi tiek apstiprinÄti un norÄ“Ä·inÄti sekundÄ“s. Veido tieÅ¡u attiecÄ«bas ar klientiem bez starpniekiem, kas Å†em komisiju.",
+                "biz-p2": "Perfekti mÅ«sdienu tirdzniecÄ«bai, no vietÄ“jiem veikaliem lÄ«dz globÄlajiem pakalpojumiem.",
                 "badge-growth": "IZAUGSMEI",
-                "growth-title": "Reizinātājs.",
-                "growth-p1": "Jauns veids, kā piedalīties ekosistēmas stabilitātē. Izmanto Reizinātāju, lai palielinātu savu ekspozīciju un atbalstītu tīkla noturību.",
-                "growth-p2": "Paaugstināti instrumenti tiem, kas vēlas darīt vairāk nekā tikai maksāt.",
-                "cta-title": "Gatavs veidot nākotni?",
-                "cta-p": "Pievienojies publiskajam testam. Mēģini salauzt sistēmu. Palīdzi mums izveidot uzticamāko naudas platformu pasaulē.",
-                "footer": "Stables - Informācijas pārskats v1.0",
-                "mock-wallet": "Maciņš",
-                "mock-coffee": "Kafejnīca",
+                "growth-title": "ReizinÄtÄjs.",
+                "growth-p1": "Jauns veids, kÄ piedalÄ«ties ekosistÄ“mas stabilitÄtÄ“. Izmanto ReizinÄtÄju, lai palielinÄtu savu ekspozÄ«ciju un atbalstÄ«tu tÄ«kla noturÄ«bu.",
+                "growth-p2": "PaaugstinÄti instrumenti tiem, kas vÄ“las darÄ«t vairÄk nekÄ tikai maksÄt.",
+                "cta-title": "Gatavs veidot nÄkotni?",
+                "cta-p": "Pievienojies publiskajam testam. MÄ“Ä£ini salauzt sistÄ“mu. PalÄ«dzi mums izveidot uzticamÄko naudas platformu pasaulÄ“.",
+                "footer": "Stables - InformÄcijas pÄrskats v1.0",
+                "mock-wallet": "MaciÅ†Å¡",
+                "mock-coffee": "KafejnÄ«ca",
                 "mock-salary": "Alga",
                 "mock-val-coffee": "- 6.98 EURs",
                 "mock-val-salary": "+ 3.500 EURs",
-                "mock-merchant": "Pārdevēja skats",
-                "mock-status": "Statuss: Tiešsaistē",
+                "mock-merchant": "PÄrdevÄ“ja skats",
+                "mock-status": "Statuss: TieÅ¡saistÄ“",
                 "mock-paid": "APMAKSTS",
-                "mock-order": "Pasūtījums #8291",
-                "mock-receipt": "Drukāt kvīti",
-                "mock-investment": "Investīcija",
-                "mock-multi": "Reizinātājs",
-                "mock-pos": "Aktīvā pozīcija",
-                "mock-yield": "Ienākums",
-                "mock-apy": "Pašreizējais APY"
+                "mock-order": "PasÅ«tÄ«jums #8291",
+                "mock-receipt": "DrukÄt kvÄ«ti",
+                "mock-investment": "InvestÄ«cija",
+                "mock-multi": "ReizinÄtÄjs",
+                "mock-pos": "AktÄ«vÄ pozÄ«cija",
+                "mock-yield": "IenÄkums",
+                "mock-apy": "PaÅ¡reizÄ“jais APY"
             },
             sk: {
-                "hero-title": "Buď tvojou bankou",
-                "hero-tagline": "Peniaze, ktoré sú naozaj tvoje. Bezpečné, anonymné a nezastaviteľné",
-                "hero-cta-text": "Chceš vedieť viac?",
-                "scroll-indicator": "Posuň sa dole a preskúmaj",
-                "btn-testing": "Otestovať vitrínu",
+                "hero-title": "BuÄ tvojou bankou",
+                "hero-tagline": "Peniaze, ktorÃ© sÃº naozaj tvoje. BezpeÄnÃ©, anonymnÃ© a nezastaviteÄ¾nÃ©",
+                "hero-cta-text": "ChceÅ¡ vedieÅ¥ viac?",
+                "scroll-indicator": "PosuÅˆ sa dole a preskÃºmaj",
+                "btn-testing": "OtestovaÅ¥ vitrÃ­nu",
                 "badge-you": "PRE TEBE",
-                "wallet-title": "Plať okamžite. Vlastni úplne.",
-                "wallet-p": "Zažij peniaze, ktoré sa pohybujú rýchlo ako správa. Žiadne banky, ktoré ti zamrazia účet. Žiadne skryté poplatky. Jednoduchá a výkonná peňaženka, ktorá ti dáva 100% kontrolu nad tvojimi aktívami.",
-                "wallet-li1": "<strong>100% Vlastná správa:</strong> Iba ty máš kľúče.",
-                "wallet-li2": "<strong>Pripravené na každodenné použitie:</strong> Rýchle, lacné a jednoduché.",
-                "wallet-li3": "<strong>Stables:</strong> Navrhnuté na udržanie hodnoty.",
+                "wallet-title": "PlaÅ¥ okamÅ¾ite. Vlastni Ãºplne.",
+                "wallet-p": "ZaÅ¾ij peniaze, ktorÃ© sa pohybujÃº rÃ½chlo ako sprÃ¡va. Å½iadne banky, ktorÃ© ti zamrazia ÃºÄet. Å½iadne skrytÃ© poplatky. JednoduchÃ¡ a vÃ½konnÃ¡ peÅˆaÅ¾enka, ktorÃ¡ ti dÃ¡va 100% kontrolu nad tvojimi aktÃ­vami.",
+                "wallet-li1": "<strong>100% VlastnÃ¡ sprÃ¡va:</strong> Iba ty mÃ¡Å¡ kÄ¾ÃºÄe.",
+                "wallet-li2": "<strong>PripravenÃ© na kaÅ¾dodennÃ© pouÅ¾itie:</strong> RÃ½chle, lacnÃ© a jednoduchÃ©.",
+                "wallet-li3": "<strong>Stables:</strong> NavrhnutÃ© na udrÅ¾anie hodnoty.",
                 "badge-business": "PRE PODNIKANIE",
-                "biz-title": "Vyrovnané za sekundy. Pripoj sa priamo.",
-                "biz-p1": "Prestaň čakať dni na svoje peniaze. So Stables sú platby potvrdené a vyrovnané za sekundy. Vytváraj priamy vzťah so svojimi zákazníkmi bez sprostredkovateľov, ktorí si berú podiel.",
-                "biz-p2": "Perfektné pre moderný obchod, od miestnych obchodov po globálne služby.",
+                "biz-title": "VyrovnanÃ© za sekundy. Pripoj sa priamo.",
+                "biz-p1": "PrestaÅˆ ÄakaÅ¥ dni na svoje peniaze. So Stables sÃº platby potvrdenÃ© a vyrovnanÃ© za sekundy. VytvÃ¡raj priamy vzÅ¥ah so svojimi zÃ¡kaznÃ­kmi bez sprostredkovateÄ¾ov, ktorÃ­ si berÃº podiel.",
+                "biz-p2": "PerfektnÃ© pre modernÃ½ obchod, od miestnych obchodov po globÃ¡lne sluÅ¾by.",
                 "badge-growth": "PRE RAST",
-                "growth-title": "Multiplikátor.",
-                "growth-p1": "Nový spôsob, ako sa podieľať na stabilite ekosystému. Použi Multiplikátor na zosilnenie svojej expozície a podporu odolnosti siete.",
-                "growth-p2": "Pokročilé nástroje pre tých, ktorí chcú robiť viac ako len platiť.",
-                "cta-title": "Pripravený formovať budúcnosť?",
-                "cta-p": "Pridaj sa k verejnému testu. Skús rozbiť systém. Pomôž nám vybudovať najspoľahlivejšiu peňažnú platformu na svete.",
-                "footer": "Stables - Informačný prehľad v1.0",
-                "mock-wallet": "Peňaženka",
-                "mock-coffee": "Kaviareň",
+                "growth-title": "MultiplikÃ¡tor.",
+                "growth-p1": "NovÃ½ spÃ´sob, ako sa podieÄ¾aÅ¥ na stabilite ekosystÃ©mu. PouÅ¾i MultiplikÃ¡tor na zosilnenie svojej expozÃ­cie a podporu odolnosti siete.",
+                "growth-p2": "PokroÄilÃ© nÃ¡stroje pre tÃ½ch, ktorÃ­ chcÃº robiÅ¥ viac ako len platiÅ¥.",
+                "cta-title": "PripravenÃ½ formovaÅ¥ budÃºcnosÅ¥?",
+                "cta-p": "Pridaj sa k verejnÃ©mu testu. SkÃºs rozbiÅ¥ systÃ©m. PomÃ´Å¾ nÃ¡m vybudovaÅ¥ najspoÄ¾ahlivejÅ¡iu peÅˆaÅ¾nÃº platformu na svete.",
+                "footer": "Stables - InformaÄnÃ½ prehÄ¾ad v1.0",
+                "mock-wallet": "PeÅˆaÅ¾enka",
+                "mock-coffee": "KaviareÅˆ",
                 "mock-salary": "Plat",
                 "mock-val-coffee": "- 6.98 EURs",
                 "mock-val-salary": "+ 3.500 EURs",
-                "mock-merchant": "Pohľad predajcu",
+                "mock-merchant": "PohÄ¾ad predajcu",
                 "mock-status": "Stav: Online",
-                "mock-paid": "ZAPLATENÉ",
-                "mock-order": "Objednávka #8291",
-                "mock-receipt": "Tlačiť účtenku",
-                "mock-investment": "Investícia",
-                "mock-multi": "Multiplikátor",
-                "mock-pos": "Aktívna pozícia",
-                "mock-yield": "Výnos",
-                "mock-apy": "Aktuálny APY"
+                "mock-paid": "ZAPLATENÃ‰",
+                "mock-order": "ObjednÃ¡vka #8291",
+                "mock-receipt": "TlaÄiÅ¥ ÃºÄtenku",
+                "mock-investment": "InvestÃ­cia",
+                "mock-multi": "MultiplikÃ¡tor",
+                "mock-pos": "AktÃ­vna pozÃ­cia",
+                "mock-yield": "VÃ½nos",
+                "mock-apy": "AktuÃ¡lny APY"
             },
             sv: {
                 "hero-title": "Var din bank",
-                "hero-tagline": "Pengar som verkligen är dina. Säker, anonym och ostoppbar",
+                "hero-tagline": "Pengar som verkligen Ã¤r dina. SÃ¤ker, anonym och ostoppbar",
                 "hero-cta-text": "Vill du veta mer?",
-                "scroll-indicator": "Scrolla för att utforska",
+                "scroll-indicator": "Scrolla fÃ¶r att utforska",
                 "btn-testing": "Testa showcase",
-                "badge-you": "FÖR DIG",
-                "wallet-title": "Betala direkt. Äg helt.",
-                "wallet-p": "Upplev pengar som rör sig lika snabbt som ett meddelande. Inga banker som fryser ditt konto. Inga dolda avgifter. Bara en enkel och kraftfull plånbok som ger dig 100% kontroll över dina tillgångar.",
-                "wallet-li1": "<strong>100% Självförvaltning:</strong> Bara du har nycklarna.",
-                "wallet-li2": "<strong>Redo för vardagen:</strong> Snabb, billig och enkel.",
-                "wallet-li3": "<strong>Stables:</strong> Designade för att behålla sitt värde.",
-                "badge-business": "FÖR FÖRETAG",
-                "biz-title": "Saldat på sekunder. Anslut direkt.",
-                "biz-p1": "Sluta vänta dagar på dina pengar. Med Stables bekräftas och saldas betalningar på sekunder. Bygg en direkt relation med dina kunder utan mellanhänder som tar en del.",
-                "biz-p2": "Perfekt för modernt handel, från lokala butiker till globala tjänster.",
-                "badge-growth": "FÖR TILLVÄXT",
+                "badge-you": "FÃ–R DIG",
+                "wallet-title": "Betala direkt. Ã„g helt.",
+                "wallet-p": "Upplev pengar som rÃ¶r sig lika snabbt som ett meddelande. Inga banker som fryser ditt konto. Inga dolda avgifter. Bara en enkel och kraftfull plÃ¥nbok som ger dig 100% kontroll Ã¶ver dina tillgÃ¥ngar.",
+                "wallet-li1": "<strong>100% SjÃ¤lvfÃ¶rvaltning:</strong> Bara du har nycklarna.",
+                "wallet-li2": "<strong>Redo fÃ¶r vardagen:</strong> Snabb, billig och enkel.",
+                "wallet-li3": "<strong>Stables:</strong> Designade fÃ¶r att behÃ¥lla sitt vÃ¤rde.",
+                "badge-business": "FÃ–R FÃ–RETAG",
+                "biz-title": "Saldat pÃ¥ sekunder. Anslut direkt.",
+                "biz-p1": "Sluta vÃ¤nta dagar pÃ¥ dina pengar. Med Stables bekrÃ¤ftas och saldas betalningar pÃ¥ sekunder. Bygg en direkt relation med dina kunder utan mellanhÃ¤nder som tar en del.",
+                "biz-p2": "Perfekt fÃ¶r modernt handel, frÃ¥n lokala butiker till globala tjÃ¤nster.",
+                "badge-growth": "FÃ–R TILLVÃ„XT",
                 "growth-title": "Multiplikatorn.",
-                "growth-p1": "Ett nytt sätt att delta i ekosystemets stabilitet. Använd Multiplikatorn för att öka din exponering och stödja nätverkets motståndskraft.",
-                "growth-p2": "Avancerade verktyg för dem som vill göra mer än bara betala.",
+                "growth-p1": "Ett nytt sÃ¤tt att delta i ekosystemets stabilitet. AnvÃ¤nd Multiplikatorn fÃ¶r att Ã¶ka din exponering och stÃ¶dja nÃ¤tverkets motstÃ¥ndskraft.",
+                "growth-p2": "Avancerade verktyg fÃ¶r dem som vill gÃ¶ra mer Ã¤n bara betala.",
                 "cta-title": "Redo att forma framtiden?",
-                "cta-p": "Gå med i den publika testen. Försök bryta systemet. Hjälp oss bygga den mest pålitliga pengaplattformen i världen.",
-                "footer": "Stables - Informationsöversikt v1.0",
-                "mock-wallet": "Plånbok",
-                "mock-coffee": "Kafé",
-                "mock-salary": "Lön",
+                "cta-p": "GÃ¥ med i den publika testen. FÃ¶rsÃ¶k bryta systemet. HjÃ¤lp oss bygga den mest pÃ¥litliga pengaplattformen i vÃ¤rlden.",
+                "footer": "Stables - InformationsÃ¶versikt v1.0",
+                "mock-wallet": "PlÃ¥nbok",
+                "mock-coffee": "KafÃ©",
+                "mock-salary": "LÃ¶n",
                 "mock-val-coffee": "- 6.98 SEKs",
                 "mock-val-salary": "+ 3.500 SEKs",
                 "mock-merchant": "Handlarens vy",
                 "mock-status": "Status: Online",
                 "mock-paid": "BETALT",
-                "mock-order": "Beställning #8291",
+                "mock-order": "BestÃ¤llning #8291",
                 "mock-receipt": "Skriv ut kvitto",
                 "mock-investment": "Investering",
                 "mock-multi": "Multiplikator",
@@ -2089,33 +2341,33 @@
             },
             fi: {
                 "hero-title": "Ole pankkisi",
-                "hero-tagline": "Rahat, jotka todella kuuluvat sinulle. Turvallinen, pseudonyymi ja pysäyttämätön",
-                "hero-cta-text": "Haluatko tietää lisää?",
-                "scroll-indicator": "Vieritä tutkiaksesi",
-                "btn-testing": "Kokeile esittelyä",
+                "hero-tagline": "Rahat, jotka todella kuuluvat sinulle. Turvallinen, pseudonyymi ja pysÃ¤yttÃ¤mÃ¤tÃ¶n",
+                "hero-cta-text": "Haluatko tietÃ¤Ã¤ lisÃ¤Ã¤?",
+                "scroll-indicator": "VieritÃ¤ tutkiaksesi",
+                "btn-testing": "Kokeile esittelyÃ¤",
                 "badge-you": "SINULLE",
                 "wallet-title": "Maksa heti. Omista kokonaan.",
-                "wallet-p": "Koe rahaa, joka liikkuu yhtä nopeasti kuin viesti. Ei pankkeja, jotka jäädyttävät tilisi. Ei piilotettuja maksuja. Yksinkertainen ja tehokas lompakko, joka antaa sinulle 100% kontrollin varoistasi.",
+                "wallet-p": "Koe rahaa, joka liikkuu yhtÃ¤ nopeasti kuin viesti. Ei pankkeja, jotka jÃ¤Ã¤dyttÃ¤vÃ¤t tilisi. Ei piilotettuja maksuja. Yksinkertainen ja tehokas lompakko, joka antaa sinulle 100% kontrollin varoistasi.",
                 "wallet-li1": "<strong>100% Itsehallinto:</strong> Vain sinulla on avaimet.",
-                "wallet-li2": "<strong>Valmis päivittäiseen käyttöön:</strong> Nopea, halpa ja yksinkertainen.",
-                "wallet-li3": "<strong>Stables:</strong> Suunniteltu säilyttämään arvonsa.",
+                "wallet-li2": "<strong>Valmis pÃ¤ivittÃ¤iseen kÃ¤yttÃ¶Ã¶n:</strong> Nopea, halpa ja yksinkertainen.",
+                "wallet-li3": "<strong>Stables:</strong> Suunniteltu sÃ¤ilyttÃ¤mÃ¤Ã¤n arvonsa.",
                 "badge-business": "YRITYKSILLE",
-                "biz-title": "Sovittu sekunneissa. Yhdistä suoraan.",
-                "biz-p1": "Lopeta odottamasta päiviä rahojasi varten. Stablesin kanssa maksut vahvistetaan ja sovitaan sekunneissa. Rakenna suora suhde asiakkaisiin ilman välikäsiä, jotka ottavat osan.",
-                "biz-p2": "Täydellinen modernille kaupankäynnille, paikallisista kaupoista globaaleihin palveluihin.",
+                "biz-title": "Sovittu sekunneissa. YhdistÃ¤ suoraan.",
+                "biz-p1": "Lopeta odottamasta pÃ¤iviÃ¤ rahojasi varten. Stablesin kanssa maksut vahvistetaan ja sovitaan sekunneissa. Rakenna suora suhde asiakkaisiin ilman vÃ¤likÃ¤siÃ¤, jotka ottavat osan.",
+                "biz-p2": "TÃ¤ydellinen modernille kaupankÃ¤ynnille, paikallisista kaupoista globaaleihin palveluihin.",
                 "badge-growth": "KASVUA VARTEN",
                 "growth-title": "Moninkertaistaja.",
-                "growth-p1": "Uusi tapa osallistua ekosysteemin vakauteen. Käytä Moninkertaistajaa vahvistaaksesi altistumisesi ja tukemaasi verkoston kestävyyttä.",
-                "growth-p2": "Kehittyneet työkalut niille, jotka haluavat tehdä enemmän kuin vain maksaa.",
+                "growth-p1": "Uusi tapa osallistua ekosysteemin vakauteen. KÃ¤ytÃ¤ Moninkertaistajaa vahvistaaksesi altistumisesi ja tukemaasi verkoston kestÃ¤vyyttÃ¤.",
+                "growth-p2": "Kehittyneet tyÃ¶kalut niille, jotka haluavat tehdÃ¤ enemmÃ¤n kuin vain maksaa.",
                 "cta-title": "Valmis muovaamaan tulevaisuutta?",
-                "cta-p": "Liity julkiseen testiin. Yritä rikkoa järjestelmä. Auta meitä rakentamaan maailman luotettavin rahapohjainen alusta.",
+                "cta-p": "Liity julkiseen testiin. YritÃ¤ rikkoa jÃ¤rjestelmÃ¤. Auta meitÃ¤ rakentamaan maailman luotettavin rahapohjainen alusta.",
                 "footer": "Stables - Tietoelokuva v1.0",
                 "mock-wallet": "Lompakko",
                 "mock-coffee": "Kahvila",
                 "mock-salary": "Palkka",
                 "mock-val-coffee": "- 6.98 EURs",
                 "mock-val-salary": "+ 3.500 EURs",
-                "mock-merchant": "Kauppiaan näkymä",
+                "mock-merchant": "Kauppiaan nÃ¤kymÃ¤",
                 "mock-status": "Tila: Verkossa",
                 "mock-paid": "MAKSETTU",
                 "mock-order": "Tilaus #8291",
@@ -2127,6 +2379,30 @@
                 "mock-apy": "Nykyinen APY"
             }
         };
+
+        (function applyPresentationMainPatch() {
+            var patch = typeof window !== "undefined" ? window.PRESENTATION_MAIN_PATCH : null;
+            if (!patch) return;
+            Object.keys(patch).forEach(function (lang) {
+                if (translations[lang]) {
+                    Object.assign(translations[lang], patch[lang]);
+                }
+            });
+        })();
+
+        (function fillMissingKeysFromEn() {
+            var en = translations.en;
+            if (!en) return;
+            Object.keys(translations).forEach(function (lang) {
+                if (lang === "en") return;
+                var loc = translations[lang];
+                Object.keys(en).forEach(function (key) {
+                    if (loc[key] === undefined || loc[key] === null || String(loc[key]).trim() === "") {
+                        loc[key] = en[key];
+                    }
+                });
+            });
+        })();
 
         // Detect browser language and set default
         function detectBrowserLanguage() {
@@ -2148,7 +2424,7 @@
                 'fi': 'fi', // Finnish
                 'fr': 'fr', // French
                 'fa': 'fa', // Persian/Farsi
-                'gn': 'gn', // Guaraní
+                'gn': 'gn', // GuaranÃ­
                 'he': 'he', // Hebrew
                 'it': 'it', // Italian
                 'lv': 'lv', // Latvian
@@ -2168,11 +2444,114 @@
             return detectedLang || 'en';
         }
 
-        // Set language on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            const defaultLang = detectBrowserLanguage();
-            updateLanguage(defaultLang);
+        function toggleLangMenu() {
+            document.getElementById('langMenu').classList.toggle('active');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.lang-switcher')) {
+                const langMenu = document.getElementById('langMenu');
+                if (langMenu) langMenu.classList.remove('active');
+            }
+            if (!e.target.closest('.share-switcher')) {
+                const shareMenu = document.getElementById('shareMenu');
+                if (shareMenu) shareMenu.classList.remove('active');
+            }
         });
+
+        function toggleShareMenu() {
+            document.getElementById('shareMenu').classList.toggle('active');
+        }
+
+        async function handleShare() {
+            const url = window.location.href;
+            const title = 'Stables | Be your bank';
+            const text = 'Money that is truly yours. Secure, Pseudonymous and Unstoppable. Built on Minima.';
+
+            // Try native Web Share API first (mobile)
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: title,
+                        text: text,
+                        url: url
+                    });
+                    return;
+                } catch (err) {
+                    // User cancelled or error occurred, fall through to menu
+                    if (err.name !== 'AbortError') {
+                        console.error('Error sharing:', err);
+                    }
+                }
+            }
+
+            // Fallback: show share menu
+            toggleShareMenu();
+        }
+
+        function shareToTwitter() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('Stables | Be your bank - Money that is truly yours. Secure, Pseudonymous and Unstoppable.');
+            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank', 'width=550,height=420');
+            document.getElementById('shareMenu').classList.remove('active');
+        }
+
+        function shareToFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=550,height=420');
+            document.getElementById('shareMenu').classList.remove('active');
+        }
+
+        function shareToLinkedIn() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank', 'width=550,height=420');
+            document.getElementById('shareMenu').classList.remove('active');
+        }
+
+        function shareToWhatsApp() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('Stables | Be your bank - Money that is truly yours. Secure, Pseudonymous and Unstoppable.');
+            window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
+            document.getElementById('shareMenu').classList.remove('active');
+        }
+
+        function shareToTelegram() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('Stables | Be your bank - Money that is truly yours. Secure, Pseudonymous and Unstoppable.');
+            window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
+            document.getElementById('shareMenu').classList.remove('active');
+        }
+
+        async function copyLink() {
+            const url = window.location.href;
+            const btn = document.querySelector('#shareMenu button:last-child');
+            const originalText = btn.innerHTML;
+            
+            try {
+                await navigator.clipboard.writeText(url);
+                // Show feedback
+                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    document.getElementById('shareMenu').classList.remove('active');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = url;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    document.getElementById('shareMenu').classList.remove('active');
+                }, 2000);
+            }
+        }
 
         let currentStablesLang = 'en';
         function updateLanguage(lang) {
@@ -2209,26 +2588,47 @@
             if (menu) menu.classList.remove('active');
             const label = document.querySelector('.agent-popup-status span:last-child');
             if (label && typeof lastAgentOnline !== 'undefined') {
-                const t = translations[lang] || translations.en;
+                const t = Object.assign({}, translations.en || {}, translations[lang] || {});
                 label.textContent = lastAgentOnline ? (t && t['agent-online']) || 'Online' : (t && t['agent-offline']) || 'Offline';
             }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            const stored = localStorage.getItem('stables_lang');
-            if (stored && translations[stored]) {
-                currentStablesLang = stored;
-                updateLanguage(stored);
+            try {
+                const stored = localStorage.getItem('stables_lang');
+                const lang = (stored && translations[stored]) ? stored : detectBrowserLanguage();
+                updateLanguage(lang);
+            } catch (e) {
+                updateLanguage('en');
             }
         });
 
+        const sections = document.querySelectorAll('section');
+        const navDots = document.getElementById('navDots');
+        sections.forEach((s, i) => {
+            const dot = document.createElement('div');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            dot.onclick = () => scrollToSection(i);
+            navDots.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll('.dot');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    const index = Array.from(sections).findIndex(s => s.id === entry.target.id);
+                    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+                }
+            });
+        }, { threshold: 0.35 });
+        sections.forEach(section => observer.observe(section));
+        function scrollToSection(index) { sections[index].scrollIntoView({ behavior: 'smooth' }); }
     </script>
-    <script src="assets/site-rail-controls.js" defer></script>
-    <script src="assets/site-rail.js" defer></script>
 
     <!-- StablesAgent floating widget + popup -->
     <style>
-        /* ── FAB ── */
+        /* â”€â”€ FAB â”€â”€ */
         .agent-fab {
             position: fixed;
             bottom: 32px;
@@ -2289,7 +2689,7 @@
             100% { transform: scale(2.2); opacity: 0;   }
         }
 
-        /* ── Backdrop (closes popup on outside click) ── */
+        /* â”€â”€ Backdrop (closes popup on outside click) â”€â”€ */
         .agent-backdrop {
             display: none;
             position: fixed; inset: 0;
@@ -2298,7 +2698,7 @@
         }
         .agent-backdrop.open { display: block; }
 
-        /* ── Popup panel ── */
+        /* â”€â”€ Popup panel â”€â”€ */
         .agent-popup {
             position: fixed;
             bottom: 104px;
@@ -2356,7 +2756,7 @@
             background: #22c55e;
             box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
         }
-        /* Online dot is now the close affordance — no X needed */
+        /* Online dot is now the close affordance â€” no X needed */
         .agent-popup-status {
             cursor: pointer;
             padding: 5px 10px;
@@ -2377,7 +2777,7 @@
             color: #fbbf24;
             text-align: center;
             flex-shrink: 0;
-            text-transform: none; /* Preserve accents (é, É) in French */
+            text-transform: none; /* Preserve accents (Ã©, Ã‰) in French */
         }
 
         .agent-popup-body {
@@ -2431,7 +2831,7 @@
     <div class="agent-popup" id="agentPopup">
         <div class="agent-popup-header">
             <div class="agent-popup-logo">
-                <img src="/stables_agent_avatar.png" alt="StablesAgent" />
+                <img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" />
             </div>
             <div class="agent-popup-title">
                 <div class="agent-popup-title-main">StablesAgent</div>
@@ -2446,10 +2846,10 @@
         <div class="agent-popup-body">
             <iframe id="agentFrame" title="StablesAgent Chat"></iframe>
             <div class="agent-popup-fallback" id="agentFallback">
-                <img src="/stables_agent_avatar.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;" />
+                <img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;" />
                 <p data-key="agent-fallback-p">The chat will load here directly once the secure connection is active.<br>For now, open it in a new tab:</p>
                 <a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer" data-key="agent-fallback-link">
-                    Open StablesAgent ↗
+                    Open StablesAgent â†-
                 </a>
             </div>
         </div>
@@ -2462,7 +2862,7 @@
             <span class="agent-fab-pulse"></span>
             <span class="agent-fab-pulse"></span>
             <span class="agent-fab-pulse"></span>
-            <img src="/stables_agent_avatar.png" alt="StablesAgent" />
+            <img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" />
             <span class="agent-fab-dot"></span>
         </div>
     </button>
@@ -2473,7 +2873,7 @@
         let agentOpen = false;
         let lastAgentOnline = false;
 
-        // ── Real status ping ──────────────────────────────────────────
+        // â”€â”€ Real status ping â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function setStatus(online) {
             lastAgentOnline = online;
             const dot  = document.querySelector('.agent-popup-status-dot');
@@ -2533,4 +2933,5 @@
 </body>
 
 </html>
+
 

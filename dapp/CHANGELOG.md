@@ -18,6 +18,12 @@ Post–**v00.00.03** work in the active dev folder. **Do not** describe these it
 
 ### Changed
 
+- **GitHub Pages / web: showcase URL:** The full interactive page moved from **`/dapp/index.html`** to **`/dapp/showcase/index.html`**. **`/dapp/index.html`** is a short **redirect** to **`showcase/`**. Canonical and Open Graph URLs for the live preview point at **`https://stablescouncil.org/dapp/showcase/`** (and the GitHub Pages host equivalent). Script and image paths in the page use **`../assets/`**, **`../agent.png`**, etc. **`assets/routes/feedback.js`** and **`activity-contacts.js`** use **`../agent.png`** for inline agent thumbnails so they resolve from the **`showcase/`** document.
+
+- **`dapp.conf` hub entry:** **`web`** is **`showcase/index.html`** so **`.mds.zip`** installs match the **Pages** tree (same relative layout: **`showcase/`** + **`assets/`** at zip root).
+
+- **Docs (zip = Pages):** **`MINIDAPP_VERSIONING.md`** adds *Zip contents (same as GitHub Pages `dapp/`)* ( **`dapp.conf`**, **`showcase/index.html`**, **`assets/`**, root images, optional root redirect). **`latest-version/README.md`** links that section and **`../../../prod_stables_app_v00.00.00.00.03/build/README.md`** for build steps.
+
 - **Dev folder rename (showcase):** **`prod_stables_app_v00.00.02`** → **`prod_stables_app_v00.00.00.00.03`** so the path matches the canonical five-segment label. Handshake, **`minidapp_version.md`**, UI inventory, and Cursor rules point at the new folder. **GitHub Pages** working copy: **`1_development/stream_1_app/task_stablescouncil_github_io/dapp/`** was refreshed from this tree (excluding **`build/`** and **`latest version/`**); **`MINIDAPP_VERSIONING.md`** and **`latest-version/VERSION_HISTORY.md`** note the alignment.
 
 - **Version label (showcase):** **`APP_BUILD_VERSION`**, **`dapp.conf` `version`**, and top bar default use the canonical **five-segment** body **`00.00.00.00.03`** (`vPM.Pn.TT.DD.SS`, see **`0_handshake/minidapp_version.md`**). **`APP_UPDATE_POLICY.latestPublishedVersion`** matches this label; Council comms compares legacy **three-segment** labels as **`a.b.c` → `a.b.0.0.c`** in **`activity-contacts.js`**.

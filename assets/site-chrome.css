@@ -18,6 +18,25 @@
   color: var(--text-primary);
 }
 
+/* Hub / deck pages using centered header math (links.html pattern) */
+body.site-chrome-body.links-page-body {
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 0;
+}
+
+body.links-page-body .lang-menu {
+  max-height: min(78vh, calc(100dvh - var(--site-header-h, 52px) - 100px));
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body.links-page-body .lang-menu::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
 .site-chrome-header {
   position: fixed;
   top: 0;
@@ -117,9 +136,23 @@ body.links-page-body {
   --links-h-pad-l: clamp(12px, 4vw, 28px);
   --links-h-pad-r: clamp(12px, 4vw, 28px);
   --links-inner-w: calc(100vw - var(--links-h-pad-l) - var(--links-h-pad-r));
+  /* Default: All links hub column (680px). Override per page to match main max-width. */
   --links-stack-max: 680px;
   --links-stack-w: min(var(--links-stack-max), var(--links-inner-w));
   --links-stack-right: calc(var(--links-h-pad-l) + (var(--links-inner-w) + var(--links-stack-w)) / 2);
+}
+
+/* Same centered header as links.html; stack width matches .site-chrome-main--document (960px). */
+body.links-page-body.playing-field-page,
+body.links-page-body.qr-code-page,
+body.links-page-body.circulareconomy-page,
+body.links-page-body.bankingsystem-page {
+  --links-stack-max: 960px;
+}
+
+/* Ambassador program spec: main .container max-width 860px */
+body.links-page-body.ambassadors-doc-page {
+  --links-stack-max: 860px;
 }
 
 @media (min-width: 768px) {
@@ -155,6 +188,98 @@ body.links-page-body .site-chrome-header__pill {
   display: flex;
   flex-direction: column;
   min-height: 0;
+}
+
+/*
+ * Document deck pages: first title stack (reference: circulareconomy/).
+ * Same offset below the fixed header, same Inter scale for h1 + .subtitle.
+ */
+body.links-page-body.deck-chrome-page .site-chrome-main--document {
+  padding-top: var(--site-header-h);
+  padding-left: clamp(12px, 4vw, 28px);
+  padding-right: calc(clamp(12px, 4vw, 28px) + 52px);
+  padding-bottom: 2.5rem;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+@media (min-width: 768px) {
+  body.links-page-body.deck-chrome-page .site-chrome-main--document {
+    padding-right: calc(clamp(12px, 4vw, 28px) + 56px);
+  }
+}
+
+body.links-page-body.deck-chrome-page .site-chrome-main--document > .title-block:first-child,
+body.links-page-body.deck-chrome-page .playing-field-inner > .title-block:first-child,
+body.links-page-body.deck-chrome-page .bankingsystem-main > .title-block:first-child {
+  text-align: center;
+  margin-bottom: 28px;
+  max-width: 800px;
+  width: 100%;
+  align-self: center;
+  padding-top: clamp(1.5rem, 4.5vw, 3rem);
+  box-sizing: border-box;
+}
+
+body.links-page-body.deck-chrome-page .site-chrome-main--document > .container > .title-block:first-child {
+  text-align: center;
+  margin: 0 auto 28px;
+  max-width: 800px;
+  width: 100%;
+  padding-top: clamp(1.5rem, 4.5vw, 3rem);
+  box-sizing: border-box;
+}
+
+body.links-page-body.ambassadors-doc-page .site-chrome-main--document > .container > .title-block:first-child {
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+body.links-page-body.bankingsystem-page .bankingsystem-main > .title-block:first-child {
+  margin-bottom: clamp(28px, 4vw, 48px);
+}
+
+body.links-page-body.deck-chrome-page .title-block > h1:first-of-type {
+  font-size: clamp(2rem, 5.5vw, 2.625rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin: 0 0 12px;
+  text-align: center;
+  text-wrap: balance;
+  background: linear-gradient(135deg, #ffffff 0%, var(--accent-cyan) 50%, var(--accent-purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+body.links-page-body.deck-chrome-page .title-block > .subtitle {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+body.links-page-body.deck-chrome-page .title-block > .subtitle + .subtitle {
+  margin-top: 0.65rem;
+}
+
+body.links-page-body.deck-chrome-page .title-block > .subtitle.philosophy-text {
+  max-width: 52rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 720px) {
+  body.links-page-body.deck-chrome-page .title-block > h1:first-of-type {
+    font-size: clamp(1.75rem, 6vw, 2.25rem);
+  }
 }
 
 /* Links (and similar) template: scrollable column, room for right rail */
@@ -222,7 +347,7 @@ body.has-site-rail {
   flex-shrink: 0;
   margin-top: auto;
   padding: 0.55rem clamp(12px, 4vw, 28px) 0.65rem;
-  border-top: 1px solid rgba(103, 232, 249, 0.22);
+  border-top: none;
   background: rgba(11, 15, 20, 0.82);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -263,6 +388,31 @@ body.has-site-rail {
 .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial__link--icon svg {
   display: block;
   flex-shrink: 0;
+}
+
+.site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial__link--all-links {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(103, 232, 249, 0.28);
+  background: rgba(15, 23, 42, 0.55);
+  color: var(--accent-cyan);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial__link--all-links:hover {
+  border-color: rgba(103, 232, 249, 0.55);
+  color: var(--text-primary);
+  text-decoration: none;
+  box-shadow: 0 0 18px rgba(103, 232, 249, 0.14);
 }
 
 .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerMeta {
@@ -363,5 +513,92 @@ body.has-site-rail {
   .site-chrome-header__mark {
     width: 30px;
     height: 30px;
+  }
+}
+
+/*
+ * Deck pages (Playing Field, Links hub, QR helper, …): same header scale as playing_field.html.
+ * Add body class `deck-chrome-page` alongside `site-chrome-body`.
+ */
+body.deck-chrome-page {
+  --site-header-h: 76px;
+}
+
+body.deck-chrome-page .site-chrome-header__brand {
+  gap: 16px;
+}
+
+body.deck-chrome-page .site-chrome-header__mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+}
+
+body.deck-chrome-page .site-chrome-header__name {
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+body.deck-chrome-page .site-chrome-header__slogan {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
+
+body.deck-chrome-page .site-chrome-header__pill {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 8px 18px;
+}
+
+@media (max-width: 700px) {
+  body.deck-chrome-page .site-chrome-header__mark {
+    width: 44px;
+    height: 44px;
+  }
+
+  body.deck-chrome-page .site-chrome-header__name {
+    font-size: 1.125rem;
+    letter-spacing: 0.06em;
+  }
+
+  body.deck-chrome-page .site-chrome-header__slogan {
+    font-size: 11px;
+    margin-top: 3px;
+  }
+
+  body.deck-chrome-page .site-chrome-header__pill {
+    font-size: 9px;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  body.deck-chrome-page {
+    --site-header-h: 64px;
+  }
+
+  body.deck-chrome-page .site-chrome-header__mark {
+    width: 40px;
+    height: 40px;
+  }
+
+  body.deck-chrome-page .site-chrome-header__name {
+    font-size: 1.125rem;
+    letter-spacing: 0.06em;
+  }
+
+  body.deck-chrome-page .site-chrome-header__slogan {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  body.deck-chrome-page .site-chrome-header__pill {
+    font-size: 9px;
+    padding: 6px 12px;
   }
 }

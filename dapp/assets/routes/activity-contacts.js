@@ -605,7 +605,7 @@
       </details>`;
     document.getElementById('agentActionTitle').textContent = 'Exchange details';
     const titleRight = document.getElementById('agentActionTitleRight');
-    if (titleRight) titleRight.innerHTML = '<button class="btn" title="Ask StablesAgent" style="width:auto;padding:6px 10px;font-size:12px" onclick="openAgentExplain(\'Exchange details\')"><img src="agent.png" alt="Agent" style="width:14px;height:14px;border-radius:4px;vertical-align:-2px"></button>';
+    if (titleRight) titleRight.innerHTML = '<button class="btn" title="Ask StablesAgent" style="width:auto;padding:6px 10px;font-size:12px" onclick="openAgentExplain(\'Exchange details\')"><img src="../agent.png" alt="Agent" style="width:14px;height:14px;border-radius:4px;vertical-align:-2px"></button>';
     document.getElementById('agentActionContent').innerHTML = body;
     document.getElementById('agentActionModal').classList.add('open');
   };
@@ -663,7 +663,7 @@
       </details>`;
     document.getElementById('agentActionTitle').textContent = 'Transaction details';
     const titleRight = document.getElementById('agentActionTitleRight');
-    if (titleRight) titleRight.innerHTML = '<button class="btn" title="Ask StablesAgent" style="width:auto;padding:6px 10px;font-size:12px" onclick="openAgentExplain(\'Transaction details\')"><img src="agent.png" alt="Agent" style="width:14px;height:14px;border-radius:4px;vertical-align:-2px"></button>';
+    if (titleRight) titleRight.innerHTML = '<button class="btn" title="Ask StablesAgent" style="width:auto;padding:6px 10px;font-size:12px" onclick="openAgentExplain(\'Transaction details\')"><img src="../agent.png" alt="Agent" style="width:14px;height:14px;border-radius:4px;vertical-align:-2px"></button>';
     document.getElementById('agentActionContent').innerHTML = body;
     document.getElementById('agentActionModal').classList.add('open');
   };
@@ -867,7 +867,7 @@
     const zipUrl = typeof cfg.MDS_ZIP_URL === 'string' ? cfg.MDS_ZIP_URL.trim() : '';
 
     if (!needsUpdate) {
-      return `<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20"><div class="stitle-row"><div class="stitle">App version</div><button type="button" class="agent-mini-btn" onclick="openAgentExplain('Council communications: app version status')" title="StablesAgent"><img src="agent.png" alt="StablesAgent"></button></div><div class="card app-section-card" style="padding:14px;margin-bottom:8px;border:1px solid rgba(103,232,249,.28);background:rgba(103,232,249,.06)">
+      return `<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20"><div class="stitle-row"><div class="stitle">App version</div><button type="button" class="agent-mini-btn" onclick="openAgentExplain('Council communications: app version status')" title="StablesAgent"><img src="../agent.png" alt="StablesAgent"></button></div><div class="card app-section-card" style="padding:14px;margin-bottom:8px;border:1px solid rgba(103,232,249,.28);background:rgba(103,232,249,.06)">
         <div style="display:flex;align-items:flex-start;gap:10px">
           <span style="font-size:22px;line-height:1;flex-shrink:0" aria-hidden="true">✅</span>
           <div style="min-width:0">
@@ -887,7 +887,7 @@
       ? `<a class="btn btn-w" style="display:block;text-align:center;margin-top:14px;text-decoration:none;box-sizing:border-box;font-size:14px;font-weight:900;padding:14px 16px" href="${escAttr(zipUrl)}" target="_blank" rel="noopener">Download ${escCouncilHtml(zipName)}</a>`
       : '';
 
-    return `<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20"><div class="stitle-row"><div class="stitle">App version</div><button type="button" class="agent-mini-btn" onclick="openAgentExplain('Council communications: app update available and what changed')" title="StablesAgent"><img src="agent.png" alt="StablesAgent"></button></div><div class="card app-section-card" style="padding:14px;margin-bottom:8px;border:1px solid ${crit.border};background:${crit.bg}">
+    return `<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20"><div class="stitle-row"><div class="stitle">App version</div><button type="button" class="agent-mini-btn" onclick="openAgentExplain('Council communications: app update available and what changed')" title="StablesAgent"><img src="../agent.png" alt="StablesAgent"></button></div><div class="card app-section-card" style="padding:14px;margin-bottom:8px;border:1px solid ${crit.border};background:${crit.bg}">
       <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
         <span style="font-size:22px;line-height:1;flex-shrink:0" aria-hidden="true">⚠️</span>
         <div style="min-width:0">
@@ -925,7 +925,7 @@
         </div>`;
       }).join('');
     }
-    return `<div class="app-section app-section--caption-bottom"><div class="stitle-row"><div class="stitle">Official notices</div><button type="button" class="agent-mini-btn" onclick="openAgentExplain('Council communications: official bulletins and critical notices')" title="StablesAgent"><img src="agent.png" alt="StablesAgent"></button></div><div class="card app-section-card" style="padding:14px;margin-bottom:8px;border:1px solid rgba(167,139,250,.22);background:linear-gradient(135deg,rgba(103,232,249,.05),rgba(167,139,250,.06))">
+    return `<div class="app-section app-section--caption-bottom"><div class="stitle-row"><div class="stitle">Official notices</div><button type="button" class="agent-mini-btn" onclick="openAgentExplain('Council communications: official bulletins and critical notices')" title="StablesAgent"><img src="../agent.png" alt="StablesAgent"></button></div><div class="card app-section-card" style="padding:14px;margin-bottom:8px;border:1px solid rgba(167,139,250,.22);background:linear-gradient(135deg,rgba(103,232,249,.05),rgba(167,139,250,.06))">
       <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">
         <span style="font-size:22px;line-height:1;flex-shrink:0" aria-hidden="true">🏛️</span>
         <div style="min-width:0;font-size:14px;line-height:1.55;font-weight:800;color:var(--muted)">${escCouncilHtml(intro)}</div>
@@ -1949,7 +1949,7 @@
     });
     if (elShowcase) {
       const showcaseText = String(c.showcase || '');
-      const iconHtml = '<img src="agent.png" alt="StablesAgent" style="width:16px;height:16px;border-radius:4px;vertical-align:-3px;margin:0 3px">';
+      const iconHtml = '<img src="../agent.png" alt="StablesAgent" style="width:16px;height:16px;border-radius:4px;vertical-align:-3px;margin:0 3px">';
       const showcaseHtml = showcaseText
         .replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', '\'': '&#39;' }[ch]))
         .replace(/\n/g, '<br>')
