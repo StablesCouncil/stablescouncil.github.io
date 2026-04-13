@@ -16,12 +16,13 @@
 
 .site-chrome-side-rail {
   position: fixed;
-  right: clamp(0.75rem, 2.5vw, 1.5rem);
+  right: max(clamp(0.75rem, 2.5vw, 1.5rem), env(safe-area-inset-right, 0px));
   top: calc(var(--site-header-h) + 12px);
   bottom: clamp(72px, 12vh, 120px);
   width: 44px;
   z-index: 750;
-  display: none;
+  /* Mobile-first: language + share must stay reachable below 768px */
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
@@ -30,12 +31,6 @@
 
 .site-chrome-side-rail > * {
   pointer-events: auto;
-}
-
-@media (min-width: 768px) {
-  .site-chrome-side-rail {
-    display: flex;
-  }
 }
 
 .site-chrome-side-rail__stack {

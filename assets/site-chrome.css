@@ -163,21 +163,33 @@ body.links-page-body .site-chrome-header__pill {
   align-items: stretch;
   justify-content: flex-start;
   padding-left: clamp(12px, 4vw, 28px);
-  padding-right: clamp(12px, 4vw, 28px);
+  /* Base: leave space for fixed 44px rail + gutter (matches mobile-first rail) */
+  padding-right: calc(clamp(12px, 4vw, 28px) + 52px);
   padding-bottom: 2.5rem;
   position: relative;
+}
+
+body.has-site-rail {
+  padding-right: calc(clamp(12px, 4vw, 28px) + 52px);
 }
 
 @media (min-width: 768px) {
   .site-chrome-main--links {
     padding-right: calc(clamp(12px, 4vw, 28px) + 56px);
   }
-}
 
-/* Static pages with the right rail but without the links main shell */
-@media (min-width: 768px) {
   body.has-site-rail {
     padding-right: calc(clamp(12px, 4vw, 28px) + 56px);
+  }
+}
+
+/*
+ * Presentation `index.html`: rail is first in body; no `has-site-rail` body padding.
+ * Skip `body.has-site-rail` (e.g. qr-code) so we do not stack inset with body padding.
+ */
+@media (max-width: 767px) {
+  body:not(.has-site-rail):has(> aside.site-chrome-side-rail) > .container {
+    padding-right: calc(var(--container-pad, 1rem) + 52px);
   }
 }
 
@@ -186,10 +198,7 @@ body.links-page-body .site-chrome-header__pill {
    * Rail column is 44px (.site-chrome-side-rail width). Inset FAB so its right edge
    * meets the rail’s left edge (same vertical strip as globe / share), not +52px past.
    */
-  body.has-site-rail .agent-fab {
-    right: calc(clamp(0.75rem, 2.5vw, 1.5rem) + 44px);
-  }
-
+  body.has-site-rail .agent-fab,
   body.links-page-body .agent-fab {
     right: calc(clamp(0.75rem, 2.5vw, 1.5rem) + 44px);
   }
