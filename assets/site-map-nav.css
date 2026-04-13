@@ -17,6 +17,7 @@
 }
 
 .site-map-nav .btn {
+  /* Row layout: share horizontal space. In column layout, override flex (see mobile) or flex-basis becomes height and flex-grow stretches buttons. */
   flex: 1 1 160px;
   max-width: 260px;
   min-height: 64px;
@@ -48,14 +49,34 @@
   cursor: default;
 }
 
-@media (max-width: 520px) {
+@media (max-width: 768px) {
+  .site-map-nav {
+    margin-bottom: 1.75rem;
+    padding-top: 1.25rem;
+  }
+
   .site-map-nav .buttons.site-map-nav__buttons {
     flex-direction: column;
     align-items: stretch;
+    gap: 10px;
   }
 
   .site-map-nav .btn {
+    /* Prevent vertical flex-grow when column is inside a tall flex parent (Android). */
+    flex: 0 0 auto;
     max-width: none;
     width: 100%;
+    min-height: 52px;
+    padding: 8px 12px;
+    justify-content: center;
+  }
+
+  .site-map-nav__dir {
+    margin-bottom: 0.25rem;
+  }
+
+  .site-map-nav__target {
+    font-size: 0.875rem;
+    line-height: 1.2;
   }
 }
