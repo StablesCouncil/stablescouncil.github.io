@@ -346,7 +346,7 @@ body.has-site-rail {
 .site-chrome-footer.site-chrome-footer--minimal {
   flex-shrink: 0;
   margin-top: auto;
-  padding: 0.55rem clamp(12px, 4vw, 28px) 0.65rem;
+  padding: 0.95rem clamp(12px, 4vw, 28px) 1rem;
   border-top: none;
   background: rgba(11, 15, 20, 0.82);
   backdrop-filter: blur(16px);
@@ -368,8 +368,8 @@ body.has-site-rail {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
   border: 1px solid rgba(103, 232, 249, 0.28);
   background: rgba(15, 23, 42, 0.55);
@@ -394,7 +394,7 @@ body.has-site-rail {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 16px;
   border-radius: 12px;
   border: 1px solid rgba(103, 232, 249, 0.28);
@@ -418,7 +418,7 @@ body.has-site-rail {
 .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerMeta {
   font-size: 0.65rem;
   letter-spacing: 0.04em;
-  margin-top: 0;
+  margin-top: 0.15rem;
 }
 
 .site-chrome-footerSocial {

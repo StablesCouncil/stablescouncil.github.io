@@ -4,6 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Local source preview: resolve root-like asset paths from webpages/pages/* to ../../.. /static.
+        if (location.protocol === "file:") {
+            document.addEventListener("DOMContentLoaded", () => {
+                const staticRoot = "../../../static/";
+                const toLocal = (value) => {
+                    if (!value) return value;
+                    if (value.startsWith("/brand/")) return staticRoot + value.slice(1);
+                    if (value.startsWith("/assets/")) return staticRoot + value.slice(1);
+                    if (value === "stables.css" || value === "../stables.css") return staticRoot + "stables.css";
+                    if (value.startsWith("assets/")) return staticRoot + value;
+                    if (value.startsWith("../assets/")) return staticRoot + value.slice(3);
+                    if (value === "stables_agent_avatar.png") return staticRoot + "stables_agent_avatar.png";
+                    return value;
+                };
+
+                document.querySelectorAll("link[rel='stylesheet'][href]").forEach((el) => {
+                    const next = toLocal(el.getAttribute("href"));
+                    if (next !== el.getAttribute("href")) {
+                        const clone = el.cloneNode(true);
+                        clone.setAttribute("href", next);
+                        el.replaceWith(clone);
+                    }
+                });
+
+                document.querySelectorAll("script[src]").forEach((el) => {
+                    const next = toLocal(el.getAttribute("src"));
+                    if (next !== el.getAttribute("src")) {
+                        const clone = document.createElement("script");
+                        clone.src = next;
+                        if (el.defer) clone.defer = true;
+                        if (el.async) clone.async = true;
+                        el.replaceWith(clone);
+                    }
+                });
+
+                document.querySelectorAll("img[src], source[src], [src]").forEach((el) => {
+                    if (el.hasAttribute("src")) el.setAttribute("src", toLocal(el.getAttribute("src")));
+                });
+                document.querySelectorAll("meta[content]").forEach((el) => {
+                    el.setAttribute("content", toLocal(el.getAttribute("content")));
+                });
+            });
+        }
+    </script>
 
     <!-- Favicon: local favicon.png in this folder is empty; use hosted symbol so tab icon works from file:// and .org -->
     <link rel="icon" type="image/png" href="/brand/assets/logo-symbol.png">
@@ -476,6 +521,58 @@
             font-size: clamp(1.125rem, 3vw, 1.5rem);
             margin-bottom: 48px;
             max-width: 800px;
+        }
+
+        /* Match the "Ready to shape the future?" visual style */
+        section#deck-more {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            text-align: center;
+            padding-top: 0;
+            padding-bottom: 12px;
+        }
+
+        section#deck-more::before,
+        section#deck-more::after,
+        section#deck-next::before,
+        section#deck-next::after {
+            display: none !important;
+            content: none !important;
+        }
+
+        section#deck-more .deck-more-inner {
+            margin: 0 auto;
+            max-width: 900px;
+            text-align: center;
+        }
+
+        section#deck-more .deck-more-title {
+            font-size: clamp(3rem, 7vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin: 0 0 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #67e8f9 50%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        section#deck-more .deck-more-lead {
+            font-size: clamp(1.125rem, 3vw, 1.5rem);
+            font-weight: 500;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        section#deck-next {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding-top: 12px;
+            padding-bottom: 56px;
         }
 
         /* Button Component - ADAPTIVE GAPS */
