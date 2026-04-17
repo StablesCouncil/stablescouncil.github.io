@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://stablescouncil.github.io/brand/assets/logo-symbol.png">
+    <meta property="og:title" content="Stables | Minima archive mirror">
+    <meta property="og:description" content="Council-hosted chain archive export for Minima archive-node operators.">
+    <meta property="og:url" content="https://stablescouncil.org/minima-archive/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Stables | Minima archive mirror</title>
+    <style>
+        :root {
+            --bg: #0b0f14;
+            --panel: #101826;
+            --text-primary: #e6edf3;
+            --text-secondary: #9fb0c0;
+            --accent-cyan: #67e8f9;
+            --accent-purple: #a78bfa;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at top, rgba(103, 232, 249, 0.12), transparent 50%) var(--bg);
+            color: var(--text-primary);
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            min-height: 100vh;
+            padding: 2.5rem 1.25rem 4rem;
+            line-height: 1.6;
+        }
+
+        .wrap {
+            max-width: 640px;
+            margin: 0 auto;
+            background: var(--panel);
+            border: 1px solid rgba(103, 232, 249, 0.25);
+            border-radius: 16px;
+            padding: 2rem 1.75rem;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        h1 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 220px;
+            height: 64px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            border: 1px solid rgba(103, 232, 249, 0.3);
+            box-shadow: 0 4px 24px rgba(103, 232, 249, 0.15);
+        }
+
+        .btn-primary {
+            color: var(--text-primary);
+            background: linear-gradient(135deg, rgba(103, 232, 249, 0.3), rgba(167, 139, 250, 0.3));
+        }
+
+        .btn-secondary {
+            color: var(--text-primary);
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .back {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .back a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .back a:hover {
+            text-decoration: underline;
+        }
+
+        code {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>Minima archive mirror</h1>
+        <p>This Council endpoint publishes <code>archive_*.raw.dat</code> exports for operators who want to bootstrap or
+            re-sync a Minima <strong>archive</strong> node. The node that produces these files is maintained with
+            <strong>genesis coverage</strong> (see operator integrity checks in Stables governance docs).</p>
+        <p>Large downloads are served directly from Council infrastructure (not from Git). Use the buttons below once the
+            first <code>archive action:exportraw</code> run has completed (until then, the latest file link may 404).</p>
+        <div class="buttons">
+            <a class="btn btn-primary" href="http://140.82.36.166:8080/archive_latest.raw.dat">Latest archive
+                (raw.dat)</a>
+            <a class="btn btn-secondary" href="http://140.82.36.166:8080/">Browse directory</a>
+        </div>
+        <p style="margin-top:1.5rem;font-size:0.85rem;">Operator reference (Stables repo): <code>2_current/stream_3_governance/prod_minima_archive_admin/minima_archive_raw_public_export.md</code></p>
+        <div class="back"><a href="https://stablescouncil.org/links.html">Back to All links</a></div>
+    </div>
+</body>
+
+</html>
