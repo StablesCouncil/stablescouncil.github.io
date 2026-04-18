@@ -289,22 +289,19 @@ body.links-page-body.deck-chrome-page .title-block > .subtitle.philosophy-text {
   }
 }
 
-/* Links (and similar) template: scrollable column, room for right rail */
+/* Links (and similar) template: scrollable column */
 .site-chrome-main--links {
   padding-top: var(--site-header-h);
   align-items: stretch;
   justify-content: flex-start;
   padding-left: clamp(12px, 4vw, 28px);
-  /* Base: leave space for fixed 44px rail + gutter (matches mobile-first rail) */
-  padding-right: calc(clamp(12px, 4vw, 28px) + 52px);
+  /* Mobile: full width — fixed rail floats on top as overlay */
+  padding-right: clamp(12px, 4vw, 28px);
   padding-bottom: 2.5rem;
   position: relative;
 }
 
-body.has-site-rail {
-  padding-right: calc(clamp(12px, 4vw, 28px) + 52px);
-}
-
+/* Desktop only: push content clear of the fixed 44px rail */
 @media (min-width: 768px) {
   .site-chrome-main--links {
     padding-right: calc(clamp(12px, 4vw, 28px) + 56px);
@@ -313,13 +310,7 @@ body.has-site-rail {
   body.has-site-rail {
     padding-right: calc(clamp(12px, 4vw, 28px) + 56px);
   }
-}
 
-/*
- * Presentation `index.html`: rail is first in body; no `has-site-rail` body padding.
- * Skip `body.has-site-rail` (e.g. qr-code) so we do not stack inset with body padding.
- */
-@media (max-width: 767px) {
   body:not(.has-site-rail):has(> aside.site-chrome-side-rail) > .container {
     padding-right: calc(var(--container-pad, 1rem) + 52px);
   }

@@ -18,7 +18,7 @@
   position: fixed;
   right: max(clamp(0.75rem, 2.5vw, 1.5rem), env(safe-area-inset-right, 0px));
   top: calc(var(--site-header-h) + 12px);
-  bottom: clamp(72px, 12vh, 120px);
+  bottom: clamp(108px, 14vh, 140px);
   width: 44px;
   z-index: 750;
   /* Mobile-first: language + share must stay reachable below 768px */
