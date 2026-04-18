@@ -159,16 +159,18 @@ document.addEventListener("click", function (event) {
   }
 });
 
-/** Scroll-hide / scroll-show header (app-style behaviour). */
+/** Scroll-hide / scroll-show header + footer (app-style behaviour). */
 (function () {
   var header = null;
+  var footer = null;
   var lastY = 0;
   var ticking = false;
   var THRESHOLD = 6; // px minimum scroll delta before triggering
 
   function init() {
     header = document.querySelector(".site-chrome-header");
-    if (!header) return;
+    footer = document.querySelector(".site-chrome-footer--minimal");
+    if (!header && !footer) return;
     lastY = window.scrollY || 0;
     window.addEventListener("scroll", onScroll, { passive: true });
   }
@@ -182,15 +184,12 @@ document.addEventListener("click", function (event) {
 
   function update() {
     ticking = false;
-    if (!header) return;
     var y = window.scrollY || 0;
     var delta = y - lastY;
     if (Math.abs(delta) < THRESHOLD) return;
-    if (delta > 0 && y > 60) {
-      header.classList.add("site-chrome-header--hidden");
-    } else {
-      header.classList.remove("site-chrome-header--hidden");
-    }
+    var hiding = delta > 0 && y > 60;
+    if (header) header.classList.toggle("site-chrome-header--hidden", hiding);
+    if (footer) footer.classList.toggle("site-chrome-footer--hidden", hiding);
     lastY = y;
   }
 
