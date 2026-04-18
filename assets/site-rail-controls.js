@@ -158,3 +158,45 @@ document.addEventListener("click", function (event) {
     closeShareMenu();
   }
 });
+
+/** Scroll-hide / scroll-show header (app-style behaviour). */
+(function () {
+  var header = null;
+  var lastY = 0;
+  var ticking = false;
+  var THRESHOLD = 6; // px minimum scroll delta before triggering
+
+  function init() {
+    header = document.querySelector(".site-chrome-header");
+    if (!header) return;
+    lastY = window.scrollY || 0;
+    window.addEventListener("scroll", onScroll, { passive: true });
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      requestAnimationFrame(update);
+      ticking = true;
+    }
+  }
+
+  function update() {
+    ticking = false;
+    if (!header) return;
+    var y = window.scrollY || 0;
+    var delta = y - lastY;
+    if (Math.abs(delta) < THRESHOLD) return;
+    if (delta > 0 && y > 60) {
+      header.classList.add("site-chrome-header--hidden");
+    } else {
+      header.classList.remove("site-chrome-header--hidden");
+    }
+    lastY = y;
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();

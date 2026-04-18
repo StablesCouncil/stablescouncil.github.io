@@ -143,15 +143,14 @@
                     <input id="minima-addr" type="text" name="minima_address" spellcheck="false" autocomplete="off" placeholder="0x…">
 
                     <label for="minima-addr-preset">Saved address</label>
-                    <select id="minima-addr-preset" aria-label="Preset or saved address"></select>
-
-                    <label for="saved-addr-name">Save as (this browser)</label>
-                    <input id="saved-addr-name" type="text" name="saved_address_label" spellcheck="false" autocomplete="off" placeholder="Short name (e.g. MEXC cold)">
-                    <div class="buttons">
-                        <button type="button" class="btn btn-secondary" id="save-local-addr-btn">Save address</button>
-                        <button type="button" class="btn btn-secondary" id="forget-saved-addr-btn" disabled>Remove saved</button>
+                    <div class="devtools-saved-addr-row">
+                        <select id="minima-addr-preset" aria-label="Preset or saved address"></select>
+                        <button type="button" class="btn btn-secondary devtools-saved-btn" id="add-addr-btn" onclick="openAddrModal()">Add</button>
+                        <button type="button" class="btn btn-secondary devtools-saved-btn" id="forget-saved-addr-btn" disabled>Remove</button>
                     </div>
-                    <p class="devtools-field-hint">Saved names stay on this device only. For labels shared with everyone, use the Address naming section below.</p>
+                    <!-- Hidden inputs/buttons wired to minima-holdings-query.js -->
+                    <input id="saved-addr-name" type="text" name="saved_address_label" autocomplete="off" style="display:none">
+                    <button type="button" id="save-local-addr-btn" style="display:none">Save</button>
 
                     <span class="devtools-holdings-sub-label">Range</span>
                     <div class="devtools-holdings-segment" role="radiogroup" aria-label="Date range">
@@ -185,24 +184,6 @@
                         <button type="button" class="btn btn-secondary" id="export-csv-btn">Download CSV</button>
                     </div>
                 </div>
-            </div>
-
-            <div class="devtools-panel devtools-holdings-naming-panel">
-                <h2 class="devtools-panel-heading">Address naming</h2>
-                <p class="devtools-holdings-naming-lead">Optional. Uses your <strong>GitHub</strong> handle for attribution. Contribution notes: <a href="https://github.com/StablesCouncil/stablescouncil.github.io/tree/main/github" target="_blank" rel="noopener noreferrer"><code>devtools/minima-query/github</code></a>.</p>
-
-                <form id="holdings-naming-form" class="devtools-holdings-naming-form" action="#" method="get" onsubmit="return false">
-                    <label for="gh-user">GitHub username</label>
-                    <input id="gh-user" type="text" name="github_username" autocomplete="username"
-                        placeholder="e.g. octocat" inputmode="text">
-                    <p class="devtools-field-hint">Public handle only. No tokens or passwords.</p>
-
-                    <label for="addr-label">Label for this address</label>
-                    <input id="addr-label" type="text" name="address_label" placeholder="Short name">
-
-                    <label for="notes">Notes (optional)</label>
-                    <textarea id="notes" name="notes" placeholder="Operator context, no secrets"></textarea>
-                </form>
             </div>
 
             <div class="devtools-panel devtools-discord-panel">
@@ -252,7 +233,73 @@
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script defer src="assets/minima-holdings-query.js"></script>
 
+    <!-- Add Address modal -->
+    <div class="addr-modal-backdrop" id="addrModalBackdrop" onclick="closeAddrModal()"></div>
+    <div class="addr-modal" id="addrModal" role="dialog" aria-modal="true" aria-labelledby="addr-modal-title">
+        <div class="addr-modal-header">
+            <h2 id="addr-modal-title" class="addr-modal-heading">Add address</h2>
+            <button type="button" class="addr-modal-close" onclick="closeAddrModal()" aria-label="Close">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="addr-modal-tabs" role="tablist">
+            <button type="button" class="addr-modal-tab active" id="tab-local" role="tab" aria-selected="true" aria-controls="panel-local" onclick="switchAddrTab('local')">Save locally</button>
+            <button type="button" class="addr-modal-tab" id="tab-community" role="tab" aria-selected="false" aria-controls="panel-community" onclick="switchAddrTab('community')">Share with community</button>
+        </div>
+        <div class="addr-modal-body" id="panel-local" role="tabpanel" aria-labelledby="tab-local">
+            <p class="addr-modal-desc">Saves a label on this device only — never uploaded anywhere.</p>
+            <label class="addr-modal-label" for="modal-saved-name">Label</label>
+            <input id="modal-saved-name" class="addr-modal-input" type="text" autocomplete="off" spellcheck="false" placeholder="Short name (e.g. MEXC cold)">
+            <div class="addr-modal-actions">
+                <button type="button" class="btn btn-primary" id="modal-save-btn" onclick="modalSaveLocal()">Save</button>
+                <button type="button" class="btn btn-secondary" onclick="closeAddrModal()">Cancel</button>
+            </div>
+        </div>
+        <div class="addr-modal-body" id="panel-community" role="tabpanel" aria-labelledby="tab-community" hidden>
+            <p class="addr-modal-desc">Contribute a shared label visible to everyone via a GitHub pull request.</p>
+            <label class="addr-modal-label" for="modal-gh-user">GitHub username</label>
+            <input id="modal-gh-user" class="addr-modal-input" type="text" autocomplete="username" spellcheck="false" placeholder="e.g. octocat">
+            <p class="addr-modal-hint">Public handle only — no tokens or passwords.</p>
+            <label class="addr-modal-label" for="modal-addr-label">Label for this address</label>
+            <input id="modal-addr-label" class="addr-modal-input" type="text" placeholder="Short name">
+            <label class="addr-modal-label" for="modal-notes">Notes (optional)</label>
+            <textarea id="modal-notes" class="addr-modal-textarea" placeholder="Operator context, no secrets"></textarea>
+            <div class="addr-modal-actions">
+                <a class="btn btn-primary" href="https://github.com/StablesCouncil/stablescouncil.github.io/tree/main/github" target="_blank" rel="noopener noreferrer">Open contribution notes ↗</a>
+                <button type="button" class="btn btn-secondary" onclick="closeAddrModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <style>
+        /* --- saved address row --- */
+        .devtools-saved-addr-row { display: flex; gap: 8px; align-items: stretch; }
+        .devtools-saved-addr-row select { flex: 1; min-width: 0; }
+        .devtools-saved-btn { width: auto !important; min-width: 72px; padding: 0 16px; height: 44px; font-size: 13px; }
+        /* --- add-address modal --- */
+        .addr-modal-backdrop { display: none; position: fixed; inset: 0; z-index: 8500; background: rgba(0,0,0,0.55); backdrop-filter: blur(4px); }
+        .addr-modal-backdrop.open { display: block; }
+        .addr-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -48%) scale(0.97); z-index: 8600; width: min(440px, calc(100vw - 32px)); background: #101826; border: 1px solid rgba(103,232,249,0.3); border-radius: 20px; box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 40px rgba(103,232,249,0.1); opacity: 0; pointer-events: none; transition: opacity 0.22s ease, transform 0.22s ease; }
+        .addr-modal.open { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: all; }
+        .addr-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 14px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+        .addr-modal-heading { font-size: 16px; font-weight: 700; color: #e6edf3; font-family: 'Inter', sans-serif; }
+        .addr-modal-close { background: none; border: none; color: #9fb0c0; cursor: pointer; padding: 4px; border-radius: 6px; display: flex; transition: color 0.15s; }
+        .addr-modal-close:hover { color: #e6edf3; }
+        .addr-modal-tabs { display: flex; padding: 12px 20px 0; gap: 4px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+        .addr-modal-tab { background: none; border: none; border-bottom: 2px solid transparent; padding: 8px 14px 10px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: #9fb0c0; cursor: pointer; transition: color 0.15s, border-color 0.15s; margin-bottom: -1px; }
+        .addr-modal-tab.active { color: #67e8f9; border-bottom-color: #67e8f9; }
+        .addr-modal-tab:hover:not(.active) { color: #e6edf3; }
+        .addr-modal-body { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .addr-modal-desc { font-size: 13px; color: #9fb0c0; font-family: 'Inter', sans-serif; line-height: 1.5; }
+        .addr-modal-hint { font-size: 12px; color: #9fb0c0; font-family: 'Inter', sans-serif; margin-top: -4px; }
+        .addr-modal-label { font-size: 13px; font-weight: 600; color: #9fb0c0; font-family: 'Inter', sans-serif; }
+        .addr-modal-input { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(103,232,249,0.2); border-radius: 10px; color: #e6edf3; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+        .addr-modal-input:focus { border-color: rgba(103,232,249,0.5); }
+        .addr-modal-textarea { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(103,232,249,0.2); border-radius: 10px; color: #e6edf3; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; resize: vertical; min-height: 72px; transition: border-color 0.2s; }
+        .addr-modal-textarea:focus { border-color: rgba(103,232,249,0.5); }
+        .addr-modal-actions { display: flex; gap: 10px; flex-wrap: wrap; padding-top: 4px; }
+        .addr-modal-actions .btn { flex: 1; min-width: 120px; height: 48px; font-size: 14px; }
+        @media (max-width: 480px) { .devtools-saved-btn { min-width: 58px; padding: 0 10px; font-size: 12px; } }
         .agent-fab { position: fixed; bottom: 32px; right: 32px; z-index: 9000; display: flex; align-items: center; gap: 12px; cursor: pointer; border: none; background: none; padding: 0; }
         .agent-fab-tip { background: rgba(10,14,20,0.92); border: 1px solid rgba(103,232,249,0.3); color: #e6edf3; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; padding: 8px 14px; border-radius: 10px; white-space: nowrap; opacity: 0; transform: translateX(8px); transition: all 0.25s ease; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
         .agent-fab:hover .agent-fab-tip { opacity: 1; transform: translateX(0); }
@@ -317,6 +364,39 @@
             <span class="agent-fab-dot"></span>
         </div>
     </button>
+    <script>
+        /* --- Add Address modal --- */
+        function openAddrModal() {
+            document.getElementById('addrModal').classList.add('open');
+            document.getElementById('addrModalBackdrop').classList.add('open');
+            var savedName = document.getElementById('modal-saved-name');
+            if (savedName) { savedName.value = ''; setTimeout(function(){ savedName.focus(); }, 50); }
+        }
+        function closeAddrModal() {
+            document.getElementById('addrModal').classList.remove('open');
+            document.getElementById('addrModalBackdrop').classList.remove('open');
+        }
+        function switchAddrTab(tab) {
+            document.getElementById('panel-local').hidden = (tab !== 'local');
+            document.getElementById('panel-community').hidden = (tab !== 'community');
+            document.getElementById('tab-local').classList.toggle('active', tab === 'local');
+            document.getElementById('tab-local').setAttribute('aria-selected', tab === 'local');
+            document.getElementById('tab-community').classList.toggle('active', tab === 'community');
+            document.getElementById('tab-community').setAttribute('aria-selected', tab === 'community');
+        }
+        function modalSaveLocal() {
+            var name = (document.getElementById('modal-saved-name').value || '').trim();
+            if (!name) { document.getElementById('modal-saved-name').focus(); return; }
+            var hiddenInput = document.getElementById('saved-addr-name');
+            var hiddenBtn = document.getElementById('save-local-addr-btn');
+            if (hiddenInput) hiddenInput.value = name;
+            if (hiddenBtn) hiddenBtn.click();
+            closeAddrModal();
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeAddrModal();
+        });
+    </script>
     <script>
         (function(){
             const AGENT_URL='https://agent.stablescouncil.org/chat?embed=1',HEALTH_URL='https://agent.stablescouncil.org/health';

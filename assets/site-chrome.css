@@ -53,6 +53,12 @@ body.links-page-body .lang-menu::-webkit-scrollbar {
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(103, 232, 249, 0.22);
   box-shadow: 0 4px 28px rgba(0, 0, 0, 0.45);
+  transition: transform 0.28s ease;
+  will-change: transform;
+}
+
+.site-chrome-header--hidden {
+  transform: translateY(-100%);
 }
 
 .site-chrome-header__brand {
@@ -146,9 +152,7 @@ body.links-page-body {
 body.links-page-body.playing-field-page,
 body.links-page-body.qr-code-page,
 body.links-page-body.circulareconomy-page,
-body.links-page-body.bankingsystem-page,
-body.links-page-body.devtools-hub-page,
-body.links-page-body.devtools-sub-page {
+body.links-page-body.bankingsystem-page {
   --links-stack-max: 960px;
 }
 
