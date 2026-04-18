@@ -1,0 +1,590 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <script>
+        // Local file:// preview: map /brand and /assets URLs to sibling folders under github_pages_root.
+        if (location.protocol === "file:") {
+            document.addEventListener("DOMContentLoaded", () => {
+                const staticRoot = "./";
+                const toLocal = (value) => {
+                    if (!value) return value;
+                    if (value.startsWith("/brand/")) return staticRoot + value.slice(1);
+                    if (value.startsWith("/assets/")) return staticRoot + value.slice(1);
+                    if (value === "stables.css" || value === "../stables.css") return staticRoot + "stables.css";
+                    if (value.startsWith("assets/")) return staticRoot + value;
+                    if (value.startsWith("../assets/")) return staticRoot + value.slice(3);
+                    if (value === "stables_agent_avatar.png") return staticRoot + "stables_agent_avatar.png";
+                    return value;
+                };
+                document.querySelectorAll("link[rel='stylesheet'][href]").forEach((el) => {
+                    const next = toLocal(el.getAttribute("href"));
+                    if (next !== el.getAttribute("href")) {
+                        const clone = el.cloneNode(true);
+                        clone.setAttribute("href", next);
+                        el.replaceWith(clone);
+                    }
+                });
+                document.querySelectorAll("script[src]").forEach((el) => {
+                    const next = toLocal(el.getAttribute("src"));
+                    if (next !== el.getAttribute("src")) {
+                        const clone = document.createElement("script");
+                        clone.src = next;
+                        if (el.defer) clone.defer = true;
+                        if (el.async) clone.async = true;
+                        el.replaceWith(clone);
+                    }
+                });
+                document.querySelectorAll("img[src], source[src], [src]").forEach((el) => {
+                    if (el.hasAttribute("src")) el.setAttribute("src", toLocal(el.getAttribute("src")));
+                });
+                document.querySelectorAll("meta[content]").forEach((el) => {
+                    el.setAttribute("content", toLocal(el.getAttribute("content")));
+                });
+            });
+        }
+    </script>
+    <title>Stables | Circular economy</title>
+    <meta name="description" content="How external capital, Stables, xMinima, funds, and actors interact in the Stables circular economy.">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Stables">
+    <meta property="og:url" content="https://stablescouncil.org/circulareconomy.html">
+    <meta property="og:title" content="Stables | Circular economy">
+    <meta property="og:description" content="How external capital, Stables, xMinima, funds, and actors interact in the Stables circular economy.">
+    <meta property="og:image" content="/brand/assets/twitter-header.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@StablesCouncil">
+    <meta name="twitter:title" content="Stables | Circular economy">
+    <meta name="twitter:description" content="How capital, Minima, Stables, xMinima, and protocol funds interact.">
+    <meta name="twitter:image" content="/brand/assets/twitter-header.png">
+    <link rel="icon" type="image/png" href="/brand/assets/logo-symbol.png">
+    <link rel="stylesheet" href="stables.css" />
+    <link rel="stylesheet" href="assets/site-chrome.css" />
+    <link rel="stylesheet" href="assets/site-map-nav.css" />
+    <style>
+        :root {
+            --bg: #0b0f14;
+            --accent: #67e8f9;
+            --purple: #a78bfa;
+            --text-main: #ffffff;
+            --muted: #9fb0c0;
+            --panel: rgba(16, 24, 38, 0.95);
+            --card-radius: 12px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body.site-chrome-body.has-site-rail {
+            background: radial-gradient(circle at 50% 0%, rgba(103, 232, 249, 0.12), transparent 55%) var(--bg);
+            color: var(--text-primary);
+            font-family: Inter, system-ui, -apple-system, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Break out of .site-chrome-main--document max-width so the 1520px canvas can scale to the real viewport */
+        .ce-diagram-bleed {
+            width: 100vw;
+            max-width: 100vw;
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+            position: relative;
+            box-sizing: border-box;
+            padding: 0;
+        }
+
+        .diagram-scroll {
+            width: 100%;
+            max-width: none;
+            overflow-x: visible;
+            overflow-y: visible;
+            padding: 8px clamp(12px, 3vw, 28px) 4px;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            justify-content: center;
+        }
+
+        .diagram-scroll::-webkit-scrollbar { height: 8px; }
+        .diagram-scroll::-webkit-scrollbar-thumb {
+            background: rgba(103,232,249,0.35);
+            border-radius: 4px;
+        }
+
+        .diagram-canvas {
+            position: relative;
+            width: 1520px;
+            height: 610px;
+            margin: 0 auto;
+            flex-shrink: 0;
+        }
+
+        .diagram-legend {
+            max-width: 720px;
+            margin: 0 auto 16px;
+            padding: 0 16px;
+            font-size: 12px;
+            color: var(--muted);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px 24px;
+            justify-content: center;
+        }
+        .diagram-legend span { display: inline-flex; align-items: center; gap: 8px; }
+        .diagram-legend .ce-leg-dash {
+            display: inline-block;
+            width: 28px;
+            height: 0;
+            border-top: 2px dashed;
+            vertical-align: middle;
+        }
+        .diagram-legend .lg-cap { border-color: rgba(103,232,249,0.65); }
+        .diagram-legend .lg-proto { border-color: rgba(167,139,250,0.65); }
+        .diagram-legend .lg-council { border-color: rgba(251,191,36,0.65); }
+
+        .diagram-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .ce-node {
+            position: absolute;
+            z-index: 1;
+            background: rgba(16,24,38,0.58);
+            border: 1px solid rgba(230,237,243,0.18);
+            border-radius: 12px;
+            padding: 10px 12px;
+            max-width: 320px;
+            cursor: help;
+            backdrop-filter: blur(6px);
+            text-align: center;
+        }
+
+        .ce-node.treasury {
+            background: rgba(251,191,36,0.09);
+            border: 1px solid rgba(251,191,36,0.5);
+            box-shadow: 0 0 0 1px rgba(251,191,36,0.15) inset;
+        }
+        .ce-node.treasury .ce-title {
+            color: #ffd579;
+        }
+        .ce-node.treasury .ce-sub {
+            color: #f1d8a1;
+        }
+
+        .ce-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #f4f8fb;
+            line-height: 1.04;
+            letter-spacing: 0.005em;
+            text-shadow: 0 1px 0 rgba(0,0,0,0.35);
+        }
+        .ce-sub {
+            font-size: 12px;
+            color: #dce6ef;
+            margin-top: 2px;
+            line-height: 1.08;
+            letter-spacing: 0.01em;
+        }
+
+        .ce-tf {
+            max-width: 100px;
+            text-align: center;
+            padding: 0;
+        }
+        .ce-tf .ce-title { font-size: 20px; color: #f4f8fb; }
+
+        .prose {
+            max-width: 720px;
+            color: var(--text-primary);
+            font-size: 17px;
+            line-height: 1.5;
+            margin-top: 28px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+
+        .ce-flow-legend {
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 clamp(12px, 3vw, 20px);
+        }
+        .ce-flow-legend p {
+            font-size: 14px;
+            line-height: 1.55;
+            color: var(--muted);
+            margin: 0 0 0.65em;
+        }
+        .ce-flow-legend p:last-child {
+            margin-bottom: 0;
+        }
+        .prose p { margin: 0 0 1.1em; color: var(--text-secondary); }
+        .prose .footnote { font-size: 13px; color: var(--muted); margin-top: 0.5em; }
+
+    </style>
+</head>
+<body class="site-chrome-body links-page-body has-site-rail deck-chrome-page circulareconomy-page">
+  <header class="site-chrome-header" role="banner">
+    <a class="site-chrome-header__brand" href="https://stablescouncil.org/">
+      <img class="site-chrome-header__mark" src="/brand/assets/logo-symbol.png" width="48" height="48" alt="Stables">
+      <span class="site-chrome-header__titles">
+        <span class="site-chrome-header__name">Stables</span>
+        <span class="site-chrome-header__slogan">Be your bank</span>
+      </span>
+    </a>
+    <a class="site-chrome-header__pill" href="https://minima.global" target="_blank" rel="noopener noreferrer">Built on MINIMA</a>
+  </header>
+
+    <aside class="site-chrome-side-rail" aria-label="Quick navigation">
+        <div class="site-chrome-side-rail__stack">
+            <div class="lang-switcher">
+                <button type="button" class="globe-btn" onclick="toggleLangMenu()" aria-label="Site navigation">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                </button>
+                <div id="langMenu" class="lang-menu" role="menu">
+                    <a href="https://stablescouncil.org/" role="menuitem">Full presentation</a>
+                    <a href="https://stablescouncil.org/links.html" role="menuitem">All links</a>
+                </div>
+            </div>
+            <div class="share-switcher">
+                <button type="button" class="share-btn" onclick="toggleShareMenu()" aria-label="Share">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="18" cy="5" r="3"></circle>
+                        <circle cx="6" cy="12" r="3"></circle>
+                        <circle cx="18" cy="19" r="3"></circle>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    </svg>
+                </button>
+                <div id="shareMenu" class="share-menu">
+                    <button type="button" onclick="shareToTwitter()">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+                        X
+                    </button>
+                    <button type="button" onclick="shareToFacebook()">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                        Facebook
+                    </button>
+                    <button type="button" onclick="shareToLinkedIn()">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                        LinkedIn
+                    </button>
+                    <button type="button" onclick="shareToWhatsApp()">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                        </svg>
+                        WhatsApp
+                    </button>
+                    <button type="button" onclick="shareToTelegram()">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                        </svg>
+                        Telegram
+                    </button>
+                    <button type="button" onclick="copyLink()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                        </svg>
+                        Copy Link
+                    </button>
+                </div>
+            </div>
+        </div>
+        <nav class="site-chrome-side-rail__dots" id="navDotsRail" aria-label="Page sections"></nav>
+    </aside>
+
+    <main class="site-chrome-main site-chrome-main--document" id="main-content">
+    <div class="title-block">
+        <h1>Stables circular economy</h1>
+        <p class="subtitle">How capital, Minima, Stables, xMinima, and protocol funds interact</p>
+    </div>
+    <div class="ce-diagram-bleed">
+    <div class="diagram-scroll" role="region" aria-label="Circular economy diagram">
+        <div class="diagram-canvas">
+            <svg class="diagram-svg" viewBox="0 0 1520 610" aria-hidden="true">
+                <defs>
+                    <!-- Capital / structural flows: pale shaft; purple tips (accent) read as “where it lands” -->
+                    <marker id="ce-arr-c" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                        <polygon points="0 0, 8 4, 0 8" fill="#a78bfa"/>
+                    </marker>
+                    <marker id="ce-arr-c-r" markerWidth="8" markerHeight="8" refX="1" refY="4" orient="auto-start-reverse">
+                        <polygon points="0 0, 8 4, 0 8" fill="#a78bfa"/>
+                    </marker>
+                    <!-- Mint / burn: cyan shaft; bright tips so direction stands off the line -->
+                    <marker id="ce-arr-bi" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                        <polygon points="0 0, 8 4, 0 8" fill="#f8fafc"/>
+                    </marker>
+                    <marker id="ce-arr-bi-r" markerWidth="8" markerHeight="8" refX="1" refY="4" orient="auto-start-reverse">
+                        <polygon points="0 0, 8 4, 0 8" fill="#f8fafc"/>
+                    </marker>
+                </defs>
+
+                <!--
+                  Edge anchors (design px): use box L/T/W/H from inline styles; H ≈ rendered card height
+                  (2-line 56, Community/Merchants 58, Coverage 3 subs 76, TF ~34).
+                -->
+                <!-- external <-> economic: right mid of External, left mid of Economic -->
+                <line x1="405" y1="124" x2="655" y2="94" stroke="rgba(236,243,250,0.72)" stroke-width="1.6" marker-end="url(#ce-arr-c)" marker-start="url(#ce-arr-c-r)"/>
+
+                <!-- community treasury <-> stables / xminima: bottom edge of treasury to top edge of row -->
+                <path d="M 505 234 L 264 276" fill="none" stroke="rgba(103,232,249,0.9)" stroke-width="1.65" marker-end="url(#ce-arr-bi)" marker-start="url(#ce-arr-bi-r)"/>
+                <path d="M 655 234 L 845 276" fill="none" stroke="rgba(103,232,249,0.9)" stroke-width="1.65" marker-end="url(#ce-arr-bi)" marker-start="url(#ce-arr-bi-r)"/>
+
+                <!-- community treasury <-> external: top of treasury to right mid of External -->
+                <path d="M 580 176 L 405 124" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)" marker-start="url(#ce-arr-c-r)"/>
+
+                <!-- Economic Activity -> Merchants: bottom center EA to top center Merchants -->
+                <path d="M 810 122 L 1250 176" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)"/>
+                <!-- Merchants listing -> Council treasury: bottom center to top center -->
+                <path d="M 1250 236 L 1280 276" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)"/>
+
+                <!-- stables -> means: bottom center to top center -->
+                <path d="M 264 332 L 191 410" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)"/>
+                <!-- stables <-> coverage: bottom-right of Stables to top of Coverage (on edge) -->
+                <path d="M 408 332 L 626 410" fill="none" stroke="rgba(103,232,249,0.9)" stroke-width="1.65" marker-end="url(#ce-arr-bi)" marker-start="url(#ce-arr-bi-r)"/>
+
+                <!-- means -> TF* -> coverage: right mid of Means to left mid of Coverage (same row) -->
+                <path d="M 334 438 L 556 438" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)"/>
+
+                <!-- xMinima <-> coverage: bottom center of xMinima to top center of Coverage -->
+                <path d="M 845 332 L 700 410" fill="none" stroke="rgba(103,232,249,0.9)" stroke-width="1.65" marker-end="url(#ce-arr-bi)" marker-start="url(#ce-arr-bi-r)"/>
+                <!-- xMinima <-> arbitrage: bottom center to top center of Arbitrage -->
+                <path d="M 845 332 L 1130 410" fill="none" stroke="rgba(103,232,249,0.9)" stroke-width="1.65" marker-end="url(#ce-arr-bi)" marker-start="url(#ce-arr-bi-r)"/>
+
+                <!-- council treasury -> arbitrage and structure: bottom center to top center of each fund -->
+                <path d="M 1280 332 L 1130 410" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)"/>
+                <path d="M 1280 332 L 1417 410" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)"/>
+
+                <!-- arbitrage <-> structure: right mid to left mid (wider gap between boxes) -->
+                <path d="M 1260 438 L 1318 438" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)" marker-start="url(#ce-arr-c-r)"/>
+
+                <!-- structure dev -> economic: top center of Structure to bottom center of Economic Activity -->
+                <path d="M 1417 410 L 810 122" fill="none" stroke="rgba(236,243,250,0.72)" stroke-width="1.5" marker-end="url(#ce-arr-c)"/>
+
+                <!-- outer contour -->
+                <path d="M 191 466 C 320 540, 760 520, 810 122"
+                    fill="none" stroke="rgba(236,243,250,0.75)" stroke-width="1.6" stroke-linecap="round" marker-end="url(#ce-arr-c)"/>
+            </svg>
+
+            <!-- exact layout from user sketch -->
+            <div class="ce-node" style="left:140px;top:96px;width:265px;" title="External capital/Oracles.">
+                <div class="ce-title">External capital/Oracles</div>
+                <div class="ce-sub">From CEX/DEX (bridges)</div>
+            </div>
+            <div class="ce-node" style="left:655px;top:66px;width:310px;" title="Economic activity.">
+                <div class="ce-title">Economic Activity</div>
+                <div class="ce-sub">Goods and services</div>
+            </div>
+            <div class="ce-node treasury" style="left:430px;top:176px;width:300px;" title="Community treasury.">
+                <div class="ce-title">Community Treasury (Asset)</div>
+                <div class="ce-sub">Minima</div>
+            </div>
+            <div class="ce-node" style="left:1080px;top:176px;width:340px;" title="Listings and promo.">
+                <div class="ce-title">Merchants listing + Promo</div>
+                <div class="ce-sub">Minima</div>
+            </div>
+
+            <div class="ce-node" style="left:120px;top:276px;width:288px;" title="Stables debt.">
+                <div class="ce-title">Stables (Debt)</div>
+                <div class="ce-sub">USDs, EURs, JPYs, +</div>
+            </div>
+            <div class="ce-node protocol" style="left:700px;top:276px;width:290px;" title="xMinima leveraged equity.">
+                <div class="ce-title">xMinima (Equity)</div>
+                <div class="ce-sub">Minima price risk takers</div>
+            </div>
+            <div class="ce-node treasury" style="left:1150px;top:276px;width:260px;" title="Council treasury.">
+                <div class="ce-title">Council Treasury</div>
+                <div class="ce-sub">Minima</div>
+            </div>
+
+            <div class="ce-node" style="left:48px;top:410px;width:286px;" title="Means of exchange.">
+                <div class="ce-title">Means of Exchange</div>
+                <div class="ce-sub">Accepted by Merchants</div>
+            </div>
+            <div class="ce-node ce-tf" style="left:380px;top:420px;" title="Transaction fees.">
+                <div class="ce-title">TF*</div>
+            </div>
+            <div class="ce-node protocol" style="left:556px;top:410px;width:288px;" title="Coverage fund (convertible).">
+                <div class="ce-title">Coverage Fund (Convertible)</div>
+                <div class="ce-sub">Stables &lt;-&gt; xMinima</div>
+                <div class="ce-sub">USDscf, EURscf, JPYscf, +</div>
+            </div>
+            <div class="ce-node protocol" style="left:1000px;top:410px;width:260px;" title="Arbitrage fund.">
+                <div class="ce-title">Arbitrage Fund</div>
+                <div class="ce-sub">Minima &lt;-&gt; xMinima</div>
+            </div>
+            <div class="ce-node" style="left:1318px;top:410px;width:198px;" title="Structure development.">
+                <div class="ce-title">Structure Dev</div>
+                <div class="ce-sub">Audit, partners, etc</div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="ce-flow-legend" role="note">
+        <p class="subtitle" style="margin-top:8px;">
+            <span style="color:#67e8f9;font-weight:700;">Bidirectional cyan arrows</span> represent minting and burning mechanism flows; <span style="color:#f8fafc;font-weight:700;">white tips</span> mark each end of those links.
+        </p>
+        <p class="subtitle">
+            Other flows use pale lines with <span style="color:#a78bfa;font-weight:700;">purple tips</span> so you can follow where value moves at a glance.
+        </p>
+        <p class="subtitle">
+            * TF: transaction fees.
+        </p>
+    </div>
+    <script>
+        (function () {
+            var designW = 1520;
+            var designH = 610;
+            var scroll = document.querySelector('.diagram-scroll');
+            var canvas = document.querySelector('.diagram-canvas');
+            if (!scroll || !canvas) return;
+
+            function fitDiagram() {
+                var w = scroll.clientWidth;
+                if (!w || w < 2) {
+                    w = window.innerWidth || document.documentElement.clientWidth;
+                }
+                var available = Math.max(320, w - 48);
+                var scale = Math.min(1, available / designW);
+                canvas.style.transform = 'scale(' + scale + ')';
+                canvas.style.transformOrigin = 'top center';
+                scroll.style.height = Math.ceil(designH * scale) + 'px';
+            }
+
+            window.addEventListener('resize', fitDiagram);
+            fitDiagram();
+        }());
+    </script>
+
+    <div class="prose">
+        <p>The Coverage Fund and the Arbitrage Fund each pursue profit inside its own risk budget. Working in parallel with the rest of the map, that activity tends to steer the book back toward balance and keep parity credible.</p>
+        <p>Neither sleeve is a standalone peg guarantor. In a period of stress, the same dislocations external capital would chase become openings for coverage, arbitrage, and other participants to trade with discipline.</p>
+        <p>The layout stays strong when the field is level: merchants, shoppers, treasury routes, and capital holders can each pursue a clear objective while incentives still point the system at resilient parity.</p>
+        <p>The diagram echoes a capital-stack intuition: community treasury asset, senior debt as Stables, leveraged equity in xMinima, and then the rest each with visible room to move.</p>
+        <p>Day to day, that only works when the stack is transparent: tooling to size exposures, a readable global position, settlement paths with low friction, and fees that are easy to find.</p>
+    </div>
+    </main>
+
+    <nav id="siteMapNav" class="site-map-nav" data-site-map-index="2" aria-label="Previous and next in site map order"></nav>
+
+  <footer class="site-chrome-footer site-chrome-footer--minimal" role="contentinfo">
+    <div class="site-chrome-footerSocial">
+      <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" aria-label="Telegram community">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+          <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+        </svg>
+      </a>
+      <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer" aria-label="Stables on X">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+      </a>
+      <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--all-links" href="https://stablescouncil.org/links.html">All links</a>
+    </div>
+    <p class="site-chrome-footerMeta">Stables | Built on Minima</p>
+  </footer>
+
+    <script src="assets/site-rail-controls.js" defer></script>
+    <script src="assets/site-rail.js" defer></script>
+    <script src="assets/site-map-nav.js" defer></script>
+
+    <style>
+        .agent-fab { position: fixed; bottom: 32px; right: 32px; z-index: 9000; display: flex; align-items: center; gap: 12px; cursor: pointer; border: none; background: none; padding: 0; }
+        .agent-fab-tip { background: rgba(10,14,20,0.92); border: 1px solid rgba(103,232,249,0.3); color: #e6edf3; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; padding: 8px 14px; border-radius: 10px; white-space: nowrap; opacity: 0; transform: translateX(8px); transition: all 0.25s ease; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+        .agent-fab:hover .agent-fab-tip { opacity: 1; transform: translateX(0); }
+        .agent-fab-btn { width: 58px; height: 58px; border-radius: 50%; background: linear-gradient(135deg, rgba(103,232,249,0.25), rgba(167,139,250,0.25)); border: 1px solid rgba(103,232,249,0.45); box-shadow: 0 0 24px rgba(103,232,249,0.2); display: flex; align-items: center; justify-content: center; transition: transform 0.25s ease, box-shadow 0.25s ease; flex-shrink: 0; position: relative; }
+        .agent-fab:hover .agent-fab-btn { transform: scale(1.1); box-shadow: 0 0 40px rgba(103,232,249,0.4); }
+        .agent-fab-btn img { width: 32px; height: 32px; object-fit: contain; }
+        .agent-fab-dot { position: absolute; top: 3px; right: 3px; width: 11px; height: 11px; border-radius: 50%; background: #6b7280; border: 2px solid #0b0f14; transition: background 0.4s ease; }
+        .agent-fab-pulse { position: absolute; width: 58px; height: 58px; border-radius: 50%; border: 1px solid rgba(103,232,249,0.5); animation: agent-radar 2.4s ease-out infinite; pointer-events: none; }
+        .agent-fab-pulse:nth-child(2) { animation-delay: 0.8s; }
+        .agent-fab-pulse:nth-child(3) { animation-delay: 1.6s; }
+        @keyframes agent-radar { 0% { transform: scale(1); opacity: 0.6; } 100% { transform: scale(2.2); opacity: 0; } }
+        .agent-backdrop { display: none; position: fixed; inset: 0; z-index: 9050; background: transparent; }
+        .agent-backdrop.open { display: block; }
+        .agent-popup { position: fixed; bottom: 104px; right: 32px; z-index: 9100; width: 390px; height: min(680px, calc(100vh - 130px)); background: #101826; border: 1px solid rgba(103,232,249,0.3); border-radius: 20px; box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 40px rgba(103,232,249,0.12); display: flex; flex-direction: column; overflow: hidden; opacity: 0; transform: translateY(20px) scale(0.97); transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none; }
+        .agent-popup.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+        .agent-popup-header { display: flex; align-items: center; gap: 11px; padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; }
+        .agent-popup-logo { width: 34px; height: 34px; border-radius: 8px; background: rgba(103,232,249,0.08); border: 1px solid rgba(103,232,249,0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .agent-popup-logo img { width: 22px; height: 22px; object-fit: contain; }
+        .agent-popup-title { flex: 1; }
+        .agent-popup-title-main { font-size: 13px; font-weight: 700; color: #e6edf3; font-family: 'Inter', sans-serif; letter-spacing: 0.03em; }
+        .agent-popup-title-sub { font-size: 11px; color: #9fb0c0; font-family: 'Inter', sans-serif; margin-top: 1px; }
+        .agent-popup-status { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #9fb0c0; font-family: 'Inter', sans-serif; cursor: pointer; padding: 5px 10px; border-radius: 999px; transition: background 0.2s; }
+        .agent-popup-status:hover { background: rgba(255,255,255,0.07); }
+        .agent-popup-status-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.2); }
+        .agent-popup-disclaimer { padding: 7px 16px; background: rgba(251, 191, 36, 0.08); border-bottom: 1px solid rgba(251, 191, 36, 0.25); font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: #fbbf24; text-align: center; flex-shrink: 0; }
+        .agent-popup-body { flex: 1; position: relative; overflow: hidden; }
+        .agent-popup-body iframe { width: 100%; height: 100%; border: none; background: #101826; }
+        .agent-popup-fallback { display: none; position: absolute; inset: 0; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 32px; text-align: center; background: #101826; }
+        .agent-popup-fallback.visible { display: flex; }
+        .agent-popup-fallback p { font-family: 'Inter', sans-serif; font-size: 14px; color: #9fb0c0; line-height: 1.6; }
+        .agent-popup-fallback a { display: inline-flex; align-items: center; gap: 8px; padding: 11px 22px; border-radius: 12px; background: linear-gradient(135deg, rgba(103,232,249,0.25), rgba(167,139,250,0.25)); border: 1px solid rgba(103,232,249,0.4); color: #e6edf3; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+        .agent-popup-fallback a:hover { box-shadow: 0 0 20px rgba(103,232,249,0.3); }
+        @media (max-width: 640px) { .agent-fab { bottom: 20px; right: 20px; } .agent-fab-tip { display: none; } .agent-popup { bottom: 0; right: 0; left: 0; width: 100%; height: 75vh; border-radius: 20px 20px 0 0; border-bottom: none; } }
+    </style>
+    <div class="agent-backdrop" id="agentBackdrop" onclick="closeAgent()"></div>
+    <div class="agent-popup" id="agentPopup">
+        <div class="agent-popup-header">
+            <div class="agent-popup-logo"><img src="https://stablescouncil.org/stables_agent_avatar.png" alt="StablesAgent" /></div>
+            <div class="agent-popup-title">
+                <div class="agent-popup-title-main">StablesAgent</div>
+                <div class="agent-popup-title-sub">Ask anything about Stables</div>
+            </div>
+            <div class="agent-popup-status" onclick="closeAgent()" title="Close"><span class="agent-popup-status-dot"></span><span>Online</span></div>
+        </div>
+        <div class="agent-popup-disclaimer">DO NOT SHARE PRIVATE OR SENSITIVE INFORMATION</div>
+        <div class="agent-popup-body">
+            <iframe id="agentFrame" title="StablesAgent Chat"></iframe>
+            <div class="agent-popup-fallback" id="agentFallback">
+                <img src="https://stablescouncil.org/stables_agent_avatar.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;" />
+                <p>The chat will load here directly once the secure connection is active.<br>For now, open it in a new tab:</p>
+                <a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer">Open StablesAgent ↗</a>
+            </div>
+        </div>
+    </div>
+    <button class="agent-fab" id="agentFab" onclick="toggleAgent()" aria-label="Chat with StablesAgent">
+        <span class="agent-fab-tip">Chat with StablesAgent</span>
+        <div class="agent-fab-btn">
+            <span class="agent-fab-pulse"></span>
+            <span class="agent-fab-pulse"></span>
+            <span class="agent-fab-pulse"></span>
+            <img src="https://stablescouncil.org/stables_agent_avatar.png" alt="StablesAgent" />
+            <span class="agent-fab-dot"></span>
+        </div>
+    </button>
+    <script>
+        (function(){
+            const AGENT_URL='https://agent.stablescouncil.org/chat?embed=1',HEALTH_URL='https://agent.stablescouncil.org/health';
+            let agentOpen=false;
+            function setStatus(online){const dot=document.querySelector('.agent-popup-status-dot'),label=document.querySelector('.agent-popup-status span:last-child'),fabDot=document.querySelector('.agent-fab-dot');const c=online?'#22c55e':'#6b7280',g=online?'rgba(34,197,94,0.2)':'none';dot.style.background=c;dot.style.boxShadow=`0 0 0 3px ${g}`;fabDot.style.background=c;label.textContent=online?'Online':'Offline';}
+            async function pingAgent(){try{const r=await fetch(HEALTH_URL,{method:'GET',signal:AbortSignal.timeout(4000)});setStatus(r.ok);}catch{setStatus(false);}}
+            pingAgent();setInterval(pingAgent,30000);
+            function openAgent(){const popup=document.getElementById('agentPopup'),backdrop=document.getElementById('agentBackdrop'),frame=document.getElementById('agentFrame'),fb=document.getElementById('agentFallback');const lang=(function(){try{return localStorage.getItem('stables_lang');}catch(e){return null;}})()||'en';const agentSrc=AGENT_URL+'&lang='+encodeURIComponent(lang);if(!frame.src||frame.src!==agentSrc){frame.src=agentSrc;const t=setTimeout(()=>fb.classList.add('visible'),3000);frame.onload=()=>clearTimeout(t);}popup.classList.add('open');backdrop.classList.add('open');agentOpen=true;}
+            function closeAgent(){document.getElementById('agentPopup').classList.remove('open');document.getElementById('agentBackdrop').classList.remove('open');agentOpen=false;}
+            window.toggleAgent=function(){agentOpen?closeAgent():openAgent();};
+            window.closeAgent=closeAgent;
+            document.addEventListener('keydown',e=>{if(e.key==='Escape'&&agentOpen)closeAgent();});
+        })();
+    </script>
+</body>
+</html>

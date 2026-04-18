@@ -6,8 +6,8 @@
   var ORDER = [
     { href: "https://stablescouncil.org/", label: "Home Page" },
     { href: "https://stablescouncil.org/playing_field.html", label: "The Playing Field" },
-    { href: "https://stablescouncil.org/circulareconomy/", label: "Stables circular economy" },
-    { href: "https://stablescouncil.org/bankingsystem/", label: "Our Banking System" },
+    { href: "https://stablescouncil.org/circulareconomy.html", label: "Stables circular economy" },
+    { href: "https://stablescouncil.org/bankingsystem.html", label: "Our Banking System" },
     { href: "https://stablescouncil.org/ambassadorsprogramdesc.html", label: "Ambassador Program" },
     { href: "https://stablescouncil.org/links.html", label: "All links" },
   ];
@@ -52,24 +52,6 @@
     var role = (nav.getAttribute("data-site-map-role") || "").trim();
     if (role === "qr") {
       return { prev: ORDER[0], next: ORDER[1] };
-    }
-    if (role === "devtools-hub") {
-      return {
-        prev: { href: "https://stablescouncil.org/links.html", label: "All links" },
-        next: { href: "https://stablescouncil.org/", label: "Home Page" },
-      };
-    }
-    if (role === "devtools-archive") {
-      return {
-        prev: { href: "https://stablescouncil.org/devtools/", label: "Minima dev tools" },
-        next: { href: "https://stablescouncil.org/minima-archive/", label: "Public archive-node hub" },
-      };
-    }
-    if (role === "devtools-query") {
-      return {
-        prev: { href: "https://stablescouncil.org/devtools/", label: "Minima dev tools" },
-        next: { href: "https://stablescouncil.org/links.html", label: "All links" },
-      };
     }
     var raw = nav.getAttribute("data-site-map-index");
     var idx = raw != null && raw !== "" ? parseInt(raw, 10) : NaN;
