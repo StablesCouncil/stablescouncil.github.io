@@ -162,60 +162,17 @@ body.links-page-body .lang-menu::-webkit-scrollbar {
     0 0 22px rgba(103, 232, 249, 0.28);
 }
 
-/*
- * Links page: brand centered on the main column (pl + inner_w/2), same axis as the
- * centered .links-page-stack below — not the midpoint of pl→stack_right (that sits
- * left when inner_w > 680px). MINIMA pill absolute to the stack’s right edge.
- */
-body.links-page-body {
-  --links-h-pad-l: clamp(12px, 4vw, 28px);
-  --links-h-pad-r: clamp(12px, 4vw, 28px);
-  --links-inner-w: calc(100vw - var(--links-h-pad-l) - var(--links-h-pad-r));
-  /* Default: All links hub column (680px). Override per page to match main max-width. */
-  --links-stack-max: 680px;
-  --links-stack-w: min(var(--links-stack-max), var(--links-inner-w));
-  --links-stack-right: calc(var(--links-h-pad-l) + (var(--links-inner-w) + var(--links-stack-w)) / 2);
-}
 
-/* Same centered header as links.html; stack width matches .site-chrome-main--document (960px). */
-body.links-page-body.playing-field-page,
-body.links-page-body.qr-code-page,
-body.links-page-body.circulareconomy-page,
-body.links-page-body.bankingsystem-page {
-  --links-stack-max: 960px;
-}
-
-/* Ambassador program spec: main .container max-width 860px */
-body.links-page-body.ambassadors-doc-page {
-  --links-stack-max: 860px;
-}
-
-@media (min-width: 768px) {
-  body.links-page-body {
-    --links-h-pad-r: calc(clamp(12px, 4vw, 28px) + 56px);
-  }
-}
-
-body.links-page-body .site-chrome-header {
-  display: block;
-  padding-left: var(--links-h-pad-l);
-  padding-right: calc(100vw - var(--links-stack-right));
-}
-
+/* Brand left-aligned, pill right — natural flex; no centering overrides */
 body.links-page-body .site-chrome-header__brand {
-  position: absolute;
-  left: calc(var(--links-h-pad-l) + var(--links-inner-w) / 2);
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
+  position: static;
+  transform: none;
 }
 
 body.links-page-body .site-chrome-header__pill {
-  position: absolute;
-  right: calc(100vw - var(--links-stack-right));
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1;
+  position: static;
+  transform: none;
+  margin-left: auto;
 }
 
 .site-chrome-main {
