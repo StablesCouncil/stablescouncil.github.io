@@ -62,7 +62,7 @@
     if (role === "devtools-archive") {
       return {
         prev: { href: "https://stablescouncil.org/devtools/", label: "Minima dev tools" },
-        next: { href: "https://stablescouncil.org/minima-archive/", label: "Minima archive mirror" },
+        next: { href: "https://stablescouncil.org/minima-archive/", label: "Public archive-node hub" },
       };
     }
     if (role === "devtools-query") {
