@@ -204,7 +204,8 @@ body.links-page-body .site-chrome-header__pill {
 body.links-page-body.deck-chrome-page .site-chrome-main--document {
   padding-top: var(--site-header-h);
   padding-left: clamp(12px, 4vw, 28px);
-  padding-right: calc(clamp(12px, 4vw, 28px) + 52px);
+  /* Mobile: full width — fixed rail floats on top as overlay */
+  padding-right: clamp(12px, 4vw, 28px);
   padding-bottom: 2.5rem;
   width: 100%;
   max-width: 960px;
@@ -214,6 +215,7 @@ body.links-page-body.deck-chrome-page .site-chrome-main--document {
   align-items: stretch;
 }
 
+/* Desktop only: push content clear of the 44px fixed rail */
 @media (min-width: 768px) {
   body.links-page-body.deck-chrome-page .site-chrome-main--document {
     padding-right: calc(clamp(12px, 4vw, 28px) + 56px);

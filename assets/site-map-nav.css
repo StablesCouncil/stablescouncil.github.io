@@ -10,6 +10,11 @@
   padding: 1.75rem clamp(12px, 4vw, 28px) 0;
 }
 
+/* When the page has a fixed minimal footer, keep the nav above it */
+body:has(.site-chrome-footer--minimal) .site-map-nav {
+  margin-bottom: calc(var(--site-footer-minimal-h, 96px) + 28px);
+}
+
 .site-map-nav .buttons.site-map-nav__buttons {
   justify-content: space-between;
   width: 100%;

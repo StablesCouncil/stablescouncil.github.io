@@ -259,3 +259,10 @@
     transform: translateY(0);
   }
 }
+
+/* Hide section dots on mobile — they take vertical space without adding navigation value */
+@media (max-width: 767px) {
+  .site-chrome-side-rail__dots {
+    display: none;
+  }
+}
