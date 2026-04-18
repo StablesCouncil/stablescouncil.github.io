@@ -6,7 +6,7 @@
 
 :root {
   --site-header-h: 52px;
-  --site-footer-minimal-h: 68px;
+  --site-footer-minimal-h: 82px;
 }
 
 /* --- Global shell -------------------------------------------------------- */
@@ -349,7 +349,7 @@ body.has-site-rail {
   display: none;
 }
 
-/* Links page footer: compact bar fixed at bottom, mirrors header scroll-hide behaviour */
+/* Compact footer bar fixed at bottom — slides DOWN to hide (anti-sync with header) */
 .site-chrome-footer.site-chrome-footer--minimal {
   position: fixed;
   bottom: 0;
@@ -360,12 +360,12 @@ body.has-site-rail {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 0 clamp(12px, 4vw, 28px);
+  padding: 10px clamp(14px, 4vw, 32px) 14px;
   border-top: 1px solid rgba(103, 232, 249, 0.22);
-  background: var(--bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 -4px 28px rgba(0, 0, 0, 0.45);
+  background: rgba(16, 24, 38, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 -4px 28px rgba(0, 0, 0, 0.35);
   transition: transform 0.28s ease;
   will-change: transform;
 }

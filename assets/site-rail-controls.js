@@ -159,13 +159,18 @@ document.addEventListener("click", function (event) {
   }
 });
 
-/** Scroll-hide / scroll-show header + footer (app-style behaviour). */
+/**
+ * Scroll-hide / scroll-show — app-style, anti-sync:
+ *   Header  → hides when scrolling DOWN  (sliding up,   away from top)
+ *   Footer  → hides when scrolling UP    (sliding down, away from bottom)
+ * Each bar reacts to the direction that moves the user away from its edge.
+ */
 (function () {
   var header = null;
   var footer = null;
   var lastY = 0;
   var ticking = false;
-  var THRESHOLD = 6; // px minimum scroll delta before triggering
+  var THRESHOLD = 6; // px minimum delta before acting
 
   function init() {
     header = document.querySelector(".site-chrome-header");
@@ -187,9 +192,20 @@ document.addEventListener("click", function (event) {
     var y = window.scrollY || 0;
     var delta = y - lastY;
     if (Math.abs(delta) < THRESHOLD) return;
-    var hiding = delta > 0 && y > 60;
-    if (header) header.classList.toggle("site-chrome-header--hidden", hiding);
-    if (footer) footer.classList.toggle("site-chrome-footer--hidden", hiding);
+
+    var pastTop = y > 60;
+    var scrollingDown = delta > 0;
+
+    // Header hides on scroll-down (away from top), shows on scroll-up
+    if (header) {
+      header.classList.toggle("site-chrome-header--hidden", scrollingDown && pastTop);
+    }
+
+    // Footer hides on scroll-up (away from bottom), shows on scroll-down
+    if (footer) {
+      footer.classList.toggle("site-chrome-footer--hidden", !scrollingDown && pastTop);
+    }
+
     lastY = y;
   }
 
