@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
-        // Local source preview: resolve root-like asset paths from webpages/pages/* to ../../.. /static.
+        // Local file:// preview: map /brand and /assets URLs to sibling folders under github_pages_root.
         if (location.protocol === "file:") {
             document.addEventListener("DOMContentLoaded", () => {
-                const staticRoot = "../../../static/";
+                const staticRoot = "./";
                 const toLocal = (value) => {
                     if (!value) return value;
                     if (value.startsWith("/brand/")) return staticRoot + value.slice(1);
@@ -58,17 +58,17 @@
     <meta property="og:title" content="Stables | Be your bank">
     <meta property="og:description"
         content="Money that is truly yours. Secure, Pseudonymous and Unstoppable. Built on Minima.">
-    <meta property="og:image" content="/brand/assets/logo-symbol.png">
-    <meta property="og:image:width" content="512">
-    <meta property="og:image:height" content="512">
+    <meta property="og:image" content="/brand/assets/twitter-header.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://stablescouncil.org/">
+    <meta property="og:url" content="https://stablescouncil.github.io">
 
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Stables | Be your bank">
     <meta name="twitter:description" content="Money that is truly yours. Secure, Pseudonymous and Unstoppable.">
-    <meta name="twitter:image" content="/brand/assets/logo-symbol.png">
+    <meta name="twitter:image" content="/brand/assets/twitter-header.png">
 
     <!-- Google Fonts - Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -859,15 +859,19 @@
             margin: 8px auto 12px;
         }
 
-        @media (max-width: 768px) {
-            .logo-wordmark {
-                margin: 6px auto 10px;
-            }
-        }
-
         @media (max-width: 1023px) {
             .logo-wordmark {
                 max-width: clamp(400px, 85vw, 900px);
+            }
+        }
+
+        /* Mobile: height-driven so symbol + text are always bold regardless of image ratio */
+        @media (max-width: 767px) {
+            .logo-wordmark {
+                width: auto;
+                max-width: 88%;
+                height: clamp(72px, 22vw, 104px);
+                margin: 8px auto 14px;
             }
         }
 
@@ -1244,8 +1248,8 @@
                     <p class="hero-tagline" data-key="hero-tagline">Money that is truly yours. Secure, Pseudonymous and
                         Unstoppable</p>
                     <div class="btn-group">
-                        <a href="https://stablescouncil.org/dapp/showcase/" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><span data-key="btn-testing">Test the showcase</span></a>
-                        <span class="btn btn-secondary" style="pointer-events: none; opacity: 0.78; cursor: default;" title="Demo MiniDapp at stablescouncil.org/dapp/demo is coming soon." role="status"><span data-key="btn-demo-label">Demo</span><span class="btn-label" data-key="btn-demo">Coming soon</span></span>
+                        <a href="https://stablescouncil.org/dapp/1-showcase/" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><span data-key="btn-testing">Test the showcase</span></a>
+                        <span class="btn btn-secondary" style="pointer-events: none; opacity: 0.78; cursor: default;" title="Demo MiniDapp at stablescouncil.org/dapp/2-demo is coming soon." role="status"><span data-key="btn-demo-label">Demo</span><span class="btn-label" data-key="btn-demo">Coming soon</span></span>
                     </div>
                     <div class="scroll-indicator">
                         <span class="scroll-indicator-text" data-key="scroll-indicator">Scroll to explore</span>
@@ -1355,8 +1359,8 @@
                 <h2 data-key="cta-title">Ready to shape the future?</h2>
                 <p data-key="cta-p">Join the public test. Stress real usage paths. Help us ship the most reliable money platform we can build together.</p>
                 <div class="btn-group">
-                    <a href="https://stablescouncil.org/dapp/showcase/" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><span data-key="btn-testing">Test the showcase</span></a>
-                    <span class="btn btn-secondary" style="pointer-events: none; opacity: 0.78; cursor: default;" title="Demo MiniDapp at stablescouncil.org/dapp/demo is coming soon." role="status"><span data-key="btn-demo-label">Demo</span><span class="btn-label" data-key="btn-demo">Coming soon</span></span>
+                    <a href="https://stablescouncil.org/dapp/1-showcase/" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><span data-key="btn-testing">Test the showcase</span></a>
+                    <span class="btn btn-secondary" style="pointer-events: none; opacity: 0.78; cursor: default;" title="Demo MiniDapp at stablescouncil.org/dapp/2-demo is coming soon." role="status"><span data-key="btn-demo-label">Demo</span><span class="btn-label" data-key="btn-demo">Coming soon</span></span>
                 </div>
             </div>
         </section>
