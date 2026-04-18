@@ -374,9 +374,9 @@ body.has-site-rail {
   transform: translateY(100%);
 }
 
-/* Push page content above the fixed footer */
+/* Push page content above the fixed footer with a comfortable gap */
 body:has(.site-chrome-footer--minimal) {
-  padding-bottom: var(--site-footer-minimal-h);
+  padding-bottom: calc(var(--site-footer-minimal-h) + 32px);
 }
 
 .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial {
