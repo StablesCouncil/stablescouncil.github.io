@@ -146,7 +146,9 @@ body.links-page-body {
 body.links-page-body.playing-field-page,
 body.links-page-body.qr-code-page,
 body.links-page-body.circulareconomy-page,
-body.links-page-body.bankingsystem-page {
+body.links-page-body.bankingsystem-page,
+body.links-page-body.devtools-hub-page,
+body.links-page-body.devtools-sub-page {
   --links-stack-max: 960px;
 }
 

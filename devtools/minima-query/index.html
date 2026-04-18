@@ -5,15 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="/brand/assets/logo-symbol.png">
-    <meta property="og:title" content="Stables | Devtools — Minima holdings query">
-    <meta property="og:description" content="Planned SQL-backed holdings explorer for Minima addresses (Council devtools).">
+    <title>Stables | Minima holdings query</title>
+    <meta name="description" content="Minima address holdings explorer (Council devtools): form until the Council-hosted API is live.">
+    <meta property="og:title" content="Stables | Minima holdings query">
+    <meta property="og:description" content="SQL-backed holdings explorer for Minima addresses (Council devtools). API deployment pending governance.">
     <meta property="og:url" content="https://stablescouncil.org/devtools/minima-query/">
+    <meta property="og:image" content="/brand/assets/logo-symbol.png">
+    <link rel="canonical" href="https://stablescouncil.org/devtools/minima-query/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Stables">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@StablesCouncil">
-    <meta name="twitter:title" content="Stables | Devtools — Minima holdings query">
-    <meta name="twitter:description" content="Planned SQL-backed holdings explorer for Minima addresses (Council devtools).">
+    <meta name="twitter:title" content="Stables | Minima holdings query">
+    <meta name="twitter:description" content="SQL-backed holdings explorer for Minima addresses (Council devtools).">
     <meta name="twitter:image" content="/brand/assets/logo-symbol.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +25,6 @@
     <link rel="stylesheet" href="../../assets/site-chrome.css" />
     <link rel="stylesheet" href="../../assets/site-map-nav.css" />
     <link rel="stylesheet" href="../../assets/devtools-pages.css" />
-    <title>Stables | Devtools — Minima holdings query</title>
 </head>
 
 <body class="site-chrome-body links-page-body has-site-rail deck-chrome-page devtools-sub-page">
@@ -114,18 +117,19 @@
                 </div>
             </div>
         </div>
-        <nav class="site-chrome-side-rail__dots" id="navDotsRail" aria-label="Page sections"></nav>
+        <nav class="site-chrome-side-rail__dots" id="navDotsRail" aria-label="Page sections" aria-hidden="true"></nav>
     </aside>
 
     <main class="site-chrome-main site-chrome-main--document" id="main-content">
-        <div class="devtools-inner">
-            <p class="devtools-crumb"><a href="https://stablescouncil.org/devtools/">Minima dev tools</a> / Minima holdings query</p>
+        <div class="container devtools-sub-inner">
             <div class="title-block">
                 <h1>Minima holdings query</h1>
+                <p class="subtitle">Historical holdings from the Council MySQL archive (per-address charts and export). A Council-hosted API is required; SQL and access policy are being finalized in governance.</p>
             </div>
             <div class="devtools-panel">
-                <p><strong>Preview UI.</strong> GitHub Pages cannot talk to the Council MySQL database directly. This page will call a <strong>Council-hosted API</strong> once SQL, access rules, and rate limits are finalized (see governance <code>mysql_readonly_access_procedure.md</code> and related specs in the Stables repo).</p>
-                <p>We ask for your <strong>GitHub username</strong> so requests can be attributed and abuse can be managed when the backend goes live.</p>
+                <p class="devtools-crumb"><a href="../">Minima dev tools</a> / Minima holdings query</p>
+                <p>GitHub Pages cannot reach the Council MySQL database directly. When the backend is deployed, this page will call a Council-hosted API (see governance <code>mysql_readonly_access_procedure.md</code> and related specs in the Stables repo).</p>
+                <p>We ask for your GitHub username so requests can be attributed and abuse can be managed when the service is live.</p>
 
                 <label for="gh-user">GitHub username</label>
                 <input id="gh-user" type="text" name="github_username" autocomplete="username"
@@ -150,14 +154,13 @@
                     Chart and CSV export will render here after the API is deployed.
                 </div>
 
-                <p style="margin-top:1.25rem;font-size:0.85rem;">Related: <a href="https://stablescouncil.org/devtools/minima-archive/">Minima archive (devtools)</a> · <code>minima_archive</code> schema work in progress elsewhere.</p>
+                <p class="devtools-repo-ref">Related: <a href="../minima-archive/">Minima archive (devtools)</a> · <code>minima_archive</code> schema work in progress elsewhere.</p>
+                <p class="devtools-back"><a href="https://stablescouncil.org/links.html">All links</a> · <a href="../">Minima dev tools home</a></p>
             </div>
-            <p class="devtools-back"><a href="https://stablescouncil.org/links.html">All links</a> · <a href="https://stablescouncil.org/devtools/">Minima dev tools home</a></p>
         </div>
     </main>
 
-    <nav id="siteMapNav" class="site-map-nav" data-site-map-index="5"
-        aria-label="Previous and next in site map order"></nav>
+    <nav id="siteMapNav" class="site-map-nav" data-site-map-role="devtools-query" aria-label="Previous and next in site map order"></nav>
 
     <footer class="site-chrome-footer site-chrome-footer--minimal" role="contentinfo">
         <div class="site-chrome-footerSocial">
@@ -236,7 +239,7 @@
             <iframe id="agentFrame" title="StablesAgent Chat"></iframe>
             <div class="agent-popup-fallback" id="agentFallback">
                 <img src="https://stablescouncil.org/stables_agent_avatar.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;" />
-                <p>The chat will load here directly once the secure connection is active.<br>For now, open it in a new tab:</p>
+                <p>The chat will load here directly once the secure connection is active.<br>If it does not appear here, open it in a new tab:</p>
                 <a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer">Open StablesAgent ↗</a>
             </div>
         </div>

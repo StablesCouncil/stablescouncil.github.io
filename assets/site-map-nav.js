@@ -53,6 +53,24 @@
     if (role === "qr") {
       return { prev: ORDER[0], next: ORDER[1] };
     }
+    if (role === "devtools-hub") {
+      return {
+        prev: { href: "https://stablescouncil.org/links.html", label: "All links" },
+        next: { href: "https://stablescouncil.org/", label: "Home Page" },
+      };
+    }
+    if (role === "devtools-archive") {
+      return {
+        prev: { href: "https://stablescouncil.org/devtools/", label: "Minima dev tools" },
+        next: { href: "https://stablescouncil.org/minima-archive/", label: "Minima archive mirror" },
+      };
+    }
+    if (role === "devtools-query") {
+      return {
+        prev: { href: "https://stablescouncil.org/devtools/", label: "Minima dev tools" },
+        next: { href: "https://stablescouncil.org/links.html", label: "All links" },
+      };
+    }
     var raw = nav.getAttribute("data-site-map-index");
     var idx = raw != null && raw !== "" ? parseInt(raw, 10) : NaN;
     if (isNaN(idx) || idx < 0 || idx >= ORDER.length) {
