@@ -865,13 +865,40 @@
             }
         }
 
-        /* Mobile: height-driven so symbol + text are always bold regardless of image ratio */
+        /* Mobile brand: CSS-rendered symbol + text — not affected by PNG padding */
+        .logo-wordmark--mobile {
+            display: none;
+        }
+
         @media (max-width: 767px) {
-            .logo-wordmark {
-                width: auto;
-                max-width: 88%;
-                height: clamp(72px, 22vw, 104px);
-                margin: 8px auto 14px;
+            .logo-wordmark--desktop {
+                display: none;
+            }
+
+            .logo-wordmark--mobile {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: clamp(10px, 3vw, 16px);
+                margin: 10px auto 16px;
+            }
+
+            .logo-symbol-mobile {
+                width: clamp(52px, 14vw, 72px);
+                height: clamp(52px, 14vw, 72px);
+                object-fit: contain;
+                filter: drop-shadow(0 0 12px rgba(103, 232, 249, 0.4));
+                flex-shrink: 0;
+            }
+
+            .logo-name-mobile {
+                font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+                font-size: clamp(2rem, 10vw, 3rem);
+                font-weight: 900;
+                letter-spacing: 0.12em;
+                color: #e6edf3;
+                line-height: 1;
+                text-transform: uppercase;
             }
         }
 
@@ -1243,7 +1270,13 @@
                 <div class="brand-container">
                     <a href="https://minima.global" target="_blank" class="minima-badge">Built on
                         <strong>MINIMA</strong></a>
-                    <img src="/brand/assets/logo-wordmark.png" alt="Stables" class="logo-wordmark">
+                    <!-- Desktop: PNG wordmark -->
+                    <img src="/brand/assets/logo-wordmark.png" alt="Stables" class="logo-wordmark logo-wordmark--desktop">
+                    <!-- Mobile: symbol + CSS text — immune to PNG padding issues -->
+                    <div class="logo-wordmark--mobile" aria-label="Stables">
+                        <img src="/brand/assets/logo-symbol.png" alt="" aria-hidden="true" class="logo-symbol-mobile">
+                        <span class="logo-name-mobile">STABLES</span>
+                    </div>
                     <h1 class="hero-title" data-key="hero-title">Be your bank</h1>
                     <p class="hero-tagline" data-key="hero-tagline">Money that is truly yours. Secure, Pseudonymous and
                         Unstoppable</p>
