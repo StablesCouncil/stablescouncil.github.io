@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="/brand/assets/logo-symbol.png">
     <title>Stables | Minima holdings query</title>
-    <meta name="description" content="Minima address holdings explorer (Council devtools): form until the Council-hosted API is live.">
+    <meta name="description" content="Minima address holdings chart (Council devtools): MEXC default address, live block vs DB block, Council API and Discord on-chain coordination.">
     <meta property="og:title" content="Stables | Minima holdings query">
-    <meta property="og:description" content="SQL-backed holdings explorer for Minima addresses (Council devtools). API deployment pending governance.">
+    <meta property="og:description" content="Holdings chart for Minima addresses: MEXC default, block tip vs archive DB height, Council API.">
     <meta property="og:url" content="https://stablescouncil.org/devtools/minima-query/">
     <meta property="og:image" content="/brand/assets/logo-symbol.png">
     <link rel="canonical" href="https://stablescouncil.org/devtools/minima-query/">
@@ -17,7 +17,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@StablesCouncil">
     <meta name="twitter:title" content="Stables | Minima holdings query">
-    <meta name="twitter:description" content="SQL-backed holdings explorer for Minima addresses (Council devtools).">
+    <meta name="twitter:description" content="Holdings chart: MEXC default address, live vs DB block, Council API.">
     <meta name="twitter:image" content="/brand/assets/logo-symbol.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -124,12 +124,58 @@
         <div class="container devtools-sub-inner">
             <div class="title-block">
                 <h1>Minima holdings query</h1>
-                <p class="subtitle">Historical holdings from the Council MySQL archive (per-address charts and export). A Council-hosted API is required; SQL and access policy are being finalized in governance.</p>
+                <p class="subtitle">Holdings time series for a Minima address (default: MEXC exchange hot wallet). The chart is centered below the title. <strong>Block live</strong> is the chain tip; <strong>Block (DB)</strong> is the highest block represented in the Council MySQL archive for this feed. Values are cached on the server and refresh when the SQL ingest advances.</p>
             </div>
-            <div class="devtools-panel">
+
+            <div class="devtools-panel devtools-holdings-chart-panel">
                 <p class="devtools-crumb"><a href="../">Minima dev tools</a> / Minima holdings query</p>
-                <p>GitHub Pages cannot reach the Council MySQL database directly. When the backend is deployed, this page will call a Council-hosted API (see governance <code>mysql_readonly_access_procedure.md</code> and related specs in the Stables repo).</p>
-                <p>We ask for your GitHub username so requests can be attributed and abuse can be managed when the service is live.</p>
+
+                <div class="devtools-block-row" aria-live="polite">
+                    <div class="devtools-block-pill">
+                        <span class="devtools-block-label">Block live</span>
+                        <span class="devtools-block-value" id="holdings-block-live">—</span>
+                    </div>
+                    <div class="devtools-block-pill">
+                        <span class="devtools-block-label">Block (DB)</span>
+                        <span class="devtools-block-value" id="holdings-block-db">—</span>
+                    </div>
+                </div>
+
+                <div class="devtools-chart-frame">
+                    <canvas id="holdings-chart" aria-label="Holdings balance chart"></canvas>
+                </div>
+
+                <p id="holdings-cache-meta" class="devtools-holdings-meta"></p>
+                <p id="holdings-status" class="devtools-holdings-status devtools-holdings-status--loading" role="status"></p>
+
+                <div class="buttons">
+                    <button type="button" class="btn btn-primary" id="run-query-btn">Run query</button>
+                    <button type="button" class="btn btn-secondary" id="export-csv-btn">Download CSV</button>
+                </div>
+            </div>
+
+            <div class="devtools-panel devtools-discord-panel">
+                <h2 class="devtools-panel-heading">On-chain coordination (Discord)</h2>
+                <p>Stables Council uses a dedicated Discord thread for <strong>on-chain visibility</strong> and operator tooling. Please reference the same stack in that thread so everyone stays aligned:</p>
+                <ul>
+                    <li><strong>Devtools hub</strong> (this site): <a href="../">Minima dev tools</a></li>
+                    <li><strong>Archive node exports</strong> (raw chain files): <a href="../minima-archive/">Minima archive (devtools)</a> and <a href="https://stablescouncil.org/minima-archive/">public mirror</a></li>
+                    <li><strong>DB-backed holdings</strong> (this page and API): chart above, server must expose MySQL via the Council API (not from GitHub Pages)</li>
+                    <li><strong>Webpage</strong>: <a href="https://stablescouncil.org/devtools/minima-query/">stablescouncil.org/devtools/minima-query/</a></li>
+                </ul>
+                <div class="buttons">
+                    <a class="btn btn-primary" href="https://discord.com/channels/1461269219009232997/1493173250497450066" target="_blank" rel="noopener noreferrer">Open Discord thread</a>
+                </div>
+            </div>
+
+            <div class="devtools-panel">
+                <h2 class="devtools-panel-heading">Query parameters</h2>
+                <p>This page calls <code>GET /api/devtools/minima-holdings?address=…</code> on the <strong>stablescouncil.org</strong> origin unless <code>window.STABLES_MINIMA_HOLDINGS_API</code> is set. Wire the endpoint on the Council server with read-only SQL and rate limits (see governance <code>mysql_readonly_access_procedure.md</code> in the Stables repo).</p>
+                <p>We ask for your GitHub username so future authenticated requests can be attributed and abuse-managed.</p>
+
+                <label for="minima-addr">Minima address</label>
+                <input id="minima-addr" type="text" name="minima_address" spellcheck="false" autocomplete="off"
+                    value="0x4AD25252814256BEDDF7EA6F0CF75E48FC10E8D11FE3FC70551BB427A2BBA84A">
 
                 <label for="gh-user">GitHub username</label>
                 <input id="gh-user" type="text" name="github_username" autocomplete="username"
@@ -138,23 +184,12 @@
 
                 <label for="addr-label">Address label (optional)</label>
                 <input id="addr-label" type="text" name="address_label" placeholder="Friendly name for this watch">
-                <p class="devtools-field-hint">Shown in exports and charts once the feature is wired.</p>
-
-                <label for="minima-addr">Minima address</label>
-                <input id="minima-addr" type="text" name="minima_address" placeholder="0x…" spellcheck="false" autocomplete="off">
+                <p class="devtools-field-hint">For exports and operator notes once the API stores labels.</p>
 
                 <label for="notes">Notes for operators (optional)</label>
                 <textarea id="notes" name="notes" placeholder="Context for your request (no secrets)"></textarea>
 
-                <div class="buttons">
-                    <button type="button" class="btn btn-secondary" disabled aria-disabled="true">Run query (offline)</button>
-                </div>
-
-                <div class="devtools-chart-placeholder" id="chart-placeholder" role="region" aria-label="Chart placeholder">
-                    Chart and CSV export will render here after the API is deployed.
-                </div>
-
-                <p class="devtools-repo-ref">Related: <a href="../minima-archive/">Minima archive (devtools)</a> · <code>minima_archive</code> schema work in progress elsewhere.</p>
+                <p class="devtools-repo-ref">Related: <a href="../minima-archive/">Minima archive (devtools)</a> · Client script <code>assets/minima-holdings-query.js</code> documents the JSON contract for implementers.</p>
                 <p class="devtools-back"><a href="https://stablescouncil.org/links.html">All links</a> · <a href="../">Minima dev tools home</a></p>
             </div>
         </div>
@@ -188,6 +223,8 @@
     <script src="../../assets/site-rail-controls.js" defer></script>
     <script src="../../assets/site-rail.js" defer></script>
     <script src="../../assets/site-map-nav.js" defer></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script defer src="../../assets/minima-holdings-query.js"></script>
 
     <style>
         .agent-fab { position: fixed; bottom: 32px; right: 32px; z-index: 9000; display: flex; align-items: center; gap: 12px; cursor: pointer; border: none; background: none; padding: 0; }

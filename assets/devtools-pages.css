@@ -182,3 +182,86 @@ body.devtools-sub-page.site-chrome-body {
     color: var(--text-secondary);
     font-size: 0.9rem;
 }
+
+/* Minima holdings query: chart-first, centered */
+.devtools-holdings-chart-panel {
+    text-align: center;
+}
+
+.devtools-block-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin: 0 0 1.25rem;
+}
+
+.devtools-block-pill {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(103, 232, 249, 0.28);
+    border-radius: 14px;
+    padding: 0.65rem 1.1rem;
+    min-width: 160px;
+    text-align: center;
+}
+
+.devtools-block-pill .devtools-block-label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+}
+
+.devtools-block-pill .devtools-block-value {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--accent-cyan);
+    font-variant-numeric: tabular-nums;
+}
+
+.devtools-chart-frame {
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+    height: min(360px, 52vw);
+    margin: 0 auto 1rem;
+}
+
+.devtools-holdings-meta {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    max-width: 640px;
+    margin: 0 auto 0.75rem;
+}
+
+.devtools-holdings-status {
+    font-size: 0.85rem;
+    margin: 0 auto 1rem;
+    max-width: 640px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+}
+
+.devtools-holdings-status--loading {
+    background: rgba(103, 232, 249, 0.08);
+    color: var(--text-secondary);
+}
+
+.devtools-holdings-status--ok {
+    background: rgba(34, 197, 94, 0.1);
+    color: #86efac;
+}
+
+.devtools-holdings-status--warn {
+    background: rgba(251, 191, 36, 0.1);
+    color: #fcd34d;
+}
+
+.devtools-discord-panel .buttons {
+    justify-content: center;
+    margin-top: 0.75rem;
+}
