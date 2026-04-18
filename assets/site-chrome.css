@@ -6,7 +6,7 @@
 
 :root {
   --site-header-h: 52px;
-  --site-footer-minimal-h: 82px;
+  --site-footer-minimal-h: 96px;
 }
 
 /* --- Global shell -------------------------------------------------------- */
@@ -49,11 +49,11 @@ body.links-page-body .lang-menu::-webkit-scrollbar {
   align-items: center;
   justify-content: space-between;
   padding: 0 clamp(14px, 4vw, 32px);
-  background: var(--bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(16, 24, 38, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(103, 232, 249, 0.22);
-  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.35);
   transition: transform 0.28s ease;
   will-change: transform;
 }
