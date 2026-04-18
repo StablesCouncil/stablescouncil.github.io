@@ -5,7 +5,7 @@
 @import url("site-rail.css");
 
 :root {
-  --site-header-h: 52px;
+  --site-header-h: 64px;
   --site-footer-minimal-h: 96px;
 }
 
@@ -65,19 +65,19 @@ body.links-page-body .lang-menu::-webkit-scrollbar {
 .site-chrome-header__brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   min-width: 0;
   text-decoration: none;
   color: inherit;
 }
 
 .site-chrome-header__mark {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
   flex-shrink: 0;
   object-fit: contain;
-  filter: drop-shadow(0 0 10px rgba(103, 232, 249, 0.22));
+  filter: drop-shadow(0 0 14px rgba(103, 232, 249, 0.35));
 }
 
 .site-chrome-header__titles {
@@ -89,19 +89,19 @@ body.links-page-body .lang-menu::-webkit-scrollbar {
 }
 
 .site-chrome-header__name {
-  font-size: 0.9375rem;
+  font-size: 1.125rem;
   font-weight: 900;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-primary);
 }
 
 .site-chrome-header__slogan {
-  font-size: 0.5625rem;
+  font-size: 0.6875rem;
   font-weight: 700;
   color: var(--accent-cyan);
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   margin-top: 3px;
 }
 
