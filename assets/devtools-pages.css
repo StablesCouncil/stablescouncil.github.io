@@ -1,0 +1,163 @@
+/* Inner layout for /devtools/* pages (used inside site-chrome main) */
+body.devtools-hub-page.site-chrome-body,
+body.devtools-sub-page.site-chrome-body {
+    background: radial-gradient(circle at 50% 0%, rgba(103, 232, 249, 0.12), transparent 55%) var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+.devtools-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 1rem 2rem;
+    box-sizing: border-box;
+}
+
+.devtools-inner .title-block h1 {
+    font-size: clamp(1.35rem, 2.5vw, 1.6rem);
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+.devtools-inner .subtitle,
+.devtools-inner .lede {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+}
+
+.devtools-panel {
+    background: var(--panel);
+    border: 1px solid rgba(103, 232, 249, 0.25);
+    border-radius: 16px;
+    padding: 1.5rem 1.5rem 1.25rem;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+    margin-bottom: 1.25rem;
+}
+
+.devtools-panel h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.devtools-panel p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    line-height: 1.55;
+}
+
+.devtools-crumb {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.devtools-crumb a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.devtools-crumb a:hover {
+    text-decoration: underline;
+}
+
+.devtools-inner .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.devtools-inner .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 220px;
+    height: 64px;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    border: 1px solid rgba(103, 232, 249, 0.3);
+    box-shadow: 0 4px 24px rgba(103, 232, 249, 0.15);
+}
+
+.devtools-inner .btn-primary {
+    color: var(--text-primary);
+    background: linear-gradient(135deg, rgba(103, 232, 249, 0.3), rgba(167, 139, 250, 0.3));
+}
+
+.devtools-inner .btn-secondary {
+    color: var(--text-primary);
+    background: rgba(15, 23, 42, 0.6);
+}
+
+.devtools-inner .btn[disabled],
+.devtools-inner .btn[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.devtools-back {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.devtools-back a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.devtools-back a:hover {
+    text-decoration: underline;
+}
+
+.devtools-inner code {
+    font-size: 0.85rem;
+    color: var(--accent);
+}
+
+.devtools-inner label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+}
+
+.devtools-inner input,
+.devtools-inner textarea {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border-radius: 12px;
+    border: 1px solid rgba(103, 232, 249, 0.25);
+    background: rgba(15, 23, 42, 0.85);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+}
+
+.devtools-inner textarea {
+    min-height: 4rem;
+    resize: vertical;
+}
+
+.devtools-field-hint {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin: -0.65rem 0 1rem;
+}
+
+.devtools-chart-placeholder {
+    margin-top: 1.5rem;
+    padding: 2rem 1rem;
+    border: 1px dashed rgba(103, 232, 249, 0.35);
+    border-radius: 16px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
