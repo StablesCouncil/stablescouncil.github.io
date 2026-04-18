@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://stablescouncil.github.io/brand/assets/logo-symbol.png">
-    <meta property="og:title" content="Stables | Minima archive mirror">
-    <meta property="og:description" content="Council-hosted chain archive export for Minima archive-node operators.">
-    <meta property="og:url" content="https://stablescouncil.org/minima-archive/">
+    <meta property="og:title" content="Stables | Devtools — Minima archive">
+    <meta property="og:description" content="Council Minima archive exports (devtools path).">
+    <meta property="og:url" content="https://stablescouncil.org/devtools/minima-archive/">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <title>Stables | Minima archive mirror</title>
+    <title>Stables | Devtools — Minima archive</title>
     <style>
         :root {
             --bg: #0b0f14;
@@ -50,7 +50,18 @@
         h1 {
             font-size: 1.35rem;
             font-weight: 700;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .crumb {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .crumb a {
+            color: var(--accent-cyan);
+            text-decoration: none;
         }
 
         p {
@@ -100,10 +111,6 @@
             text-decoration: none;
         }
 
-        .back a:hover {
-            text-decoration: underline;
-        }
-
         code {
             font-size: 0.85rem;
             color: var(--accent-cyan);
@@ -113,21 +120,22 @@
 
 <body>
     <div class="wrap">
-        <h1>Minima archive mirror</h1>
-        <p>This Council endpoint publishes <code>archive_*.raw.dat</code> exports for operators who want to bootstrap or
-            re-sync a Minima <strong>archive</strong> node. The node that produces these files is maintained with
-            <strong>genesis coverage</strong> (see operator integrity checks in Stables governance docs).</p>
-        <p>Large downloads are served directly from Council infrastructure (not from Git). New <strong>dated</strong>
-            files appear whenever operators run <code>exportraw</code> on the server (not automatic unless you add
-            <strong>cron</strong>). Developer path: <a href="https://stablescouncil.org/devtools/minima-archive/"
-                style="color:var(--accent-cyan)">/devtools/minima-archive/</a>.</p>
+        <p class="crumb"><a href="https://stablescouncil.org/devtools/">Devtools</a> / Minima archive</p>
+        <h1>Minima archive (devtools)</h1>
+        <p>Same Council-hosted <code>archive_*.raw.dat</code> exports as <a href="https://stablescouncil.org/minima-archive/"
+                style="color:var(--accent-cyan)">the public hub</a>. Genesis-class archive node; large files are served
+            from the VPS, not from GitHub.</p>
+        <p><strong>Updates:</strong> each new dated file is created when operators run <code>exportraw</code> on the
+            server (see Stables governance <code>minima_archive_raw_public_export.md</code>). This is <strong>not</strong>
+            automatic unless you install a <strong>cron</strong> or <strong>systemd timer</strong> for the bundled script.</p>
         <div class="buttons">
             <a class="btn btn-primary" href="http://140.82.36.166:8080/archive_latest.raw.dat">Latest archive
                 (raw.dat)</a>
             <a class="btn btn-secondary" href="http://140.82.36.166:8080/">Browse directory</a>
         </div>
-        <p style="margin-top:1.5rem;font-size:0.85rem;">Operator reference (Stables repo): <code>2_current/stream_3_governance/prod_minima_archive_admin/minima_archive_raw_public_export.md</code></p>
-        <div class="back"><a href="https://stablescouncil.org/links.html">Back to All links</a></div>
+        <p style="margin-top:1.5rem;font-size:0.85rem;">Operator reference: <code>2_current/stream_3_governance/prod_minima_archive_admin/</code></p>
+        <div class="back"><a href="https://stablescouncil.org/links.html">All links</a> · <a
+                href="https://stablescouncil.org/devtools/">Devtools home</a></div>
     </div>
 </body>
 
