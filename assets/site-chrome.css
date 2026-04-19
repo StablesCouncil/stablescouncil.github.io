@@ -62,6 +62,14 @@ body.links-page-body .lang-menu::-webkit-scrollbar {
   transform: translateY(-100%);
 }
 
+/* Desktop: align brand + pill with the centered content column (max-width 960px) */
+@media (min-width: 1024px) {
+  .site-chrome-header {
+    padding-left:  max(clamp(12px, 4vw, 28px), calc((100vw - 960px) / 2));
+    padding-right: max(clamp(12px, 4vw, 28px), calc((100vw - 960px) / 2));
+  }
+}
+
 /* Mobile: taller header, bigger brand */
 @media (max-width: 767px) {
   :root {
