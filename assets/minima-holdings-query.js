@@ -200,15 +200,27 @@
     return [];
   }
 
-  /** Deterministic illustrative series (MEXC-style) when the API is offline or returns no points. */
+  /** Format a Date as "YYYY-MM-DD". */
+  function ymd(d) {
+    return d.getFullYear() + "-" +
+      String(d.getMonth() + 1).padStart(2, "0") + "-" +
+      String(d.getDate()).padStart(2, "0");
+  }
+
+  /** Deterministic illustrative series when the API is offline or returns no points.
+   *  Uses real dates (weekly, going back 34 weeks from today) so the axis always shows dates. */
   function mexcIllustrativeSeries() {
     var out = [];
     var base = 1045.32;
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
     for (var i = 0; i < 34; i++) {
+      var d = new Date(today);
+      d.setDate(d.getDate() - (33 - i) * 7);
       var wobble = Math.sin(i / 4.2) * 28 + Math.cos(i / 2.1) * 12;
       var linear = i * 1.85;
       var y = base + linear + wobble;
-      out.push({ x: "W" + (i + 1), y: Math.round(Math.max(0, y) * 100) / 100 });
+      out.push({ x: ymd(d), y: Math.round(Math.max(0, y) * 100) / 100 });
     }
     return out;
   }
@@ -217,9 +229,13 @@
   function mexcIllustrativeUtxoSeries() {
     var out = [];
     var base = 87;
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
     for (var i = 0; i < 34; i++) {
+      var d = new Date(today);
+      d.setDate(d.getDate() - (33 - i) * 7);
       var wobble = Math.sin(i / 3.7) * 15 + Math.cos(i / 1.9) * 8;
-      out.push({ x: "W" + (i + 1), y: Math.max(1, Math.round(base + wobble)) });
+      out.push({ x: ymd(d), y: Math.max(1, Math.round(base + wobble)) });
     }
     return out;
   }

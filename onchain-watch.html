@@ -245,6 +245,11 @@
     <script src="assets/site-rail-controls.js" defer></script>
     <script src="assets/site-rail.js" defer></script>
     <script src="assets/site-map-nav.js" defer></script>
+    <script>
+        /* Point the holdings query at the live Council API regardless of where the page is opened
+           (file://, localhost, or stablescouncil.org). Override before minima-holdings-query.js loads. */
+        window.STABLES_MINIMA_HOLDINGS_API = "https://agent.stablescouncil.org";
+    </script>
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script defer src="assets/minima-holdings-query.js"></script>
 
