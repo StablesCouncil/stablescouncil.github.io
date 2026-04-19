@@ -62,11 +62,11 @@ body.links-page-body .lang-menu::-webkit-scrollbar {
   transform: translateY(-100%);
 }
 
-/* Desktop: align brand + pill with the centered content column (max-width 960px) */
+/* Desktop: align brand + pill with the text inside the centered 960px content column */
 @media (min-width: 1024px) {
   .site-chrome-header {
-    padding-left:  max(clamp(12px, 4vw, 28px), calc((100vw - 960px) / 2));
-    padding-right: max(clamp(12px, 4vw, 28px), calc((100vw - 960px) / 2));
+    padding-left:  max(clamp(12px, 4vw, 28px), calc((100vw - 960px) / 2 + clamp(12px, 4vw, 28px)));
+    padding-right: max(clamp(12px, 4vw, 28px), calc((100vw - 960px) / 2 + clamp(12px, 4vw, 28px)));
   }
 }
 
