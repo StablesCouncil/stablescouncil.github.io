@@ -865,7 +865,7 @@
             }
         }
 
-        /* Mobile brand: CSS-rendered symbol + text — not affected by PNG padding */
+        /* Mobile brand: icon stacked above text — always centered, no overflow */
         .logo-wordmark--mobile {
             display: none;
         }
@@ -877,28 +877,31 @@
 
             .logo-wordmark--mobile {
                 display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                gap: clamp(10px, 3vw, 16px);
-                margin: 10px auto 16px;
+                gap: clamp(6px, 2vw, 10px);
+                width: 100%;
+                margin: 8px 0 14px;
             }
 
             .logo-symbol-mobile {
-                width: clamp(52px, 14vw, 72px);
-                height: clamp(52px, 14vw, 72px);
+                width: clamp(56px, 16vw, 76px);
+                height: clamp(56px, 16vw, 76px);
                 object-fit: contain;
-                filter: drop-shadow(0 0 12px rgba(103, 232, 249, 0.4));
+                filter: drop-shadow(0 0 14px rgba(103, 232, 249, 0.45));
                 flex-shrink: 0;
             }
 
             .logo-name-mobile {
                 font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-                font-size: clamp(2rem, 10vw, 3rem);
+                font-size: clamp(2.5rem, 11vw, 3.5rem);
                 font-weight: 900;
                 letter-spacing: 0.12em;
                 color: #e6edf3;
                 line-height: 1;
                 text-transform: uppercase;
+                text-align: center;
             }
         }
 
