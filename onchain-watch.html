@@ -127,6 +127,7 @@
                         <span class="devtools-block-inline__sep" aria-hidden="true">·</span>
                         <span class="devtools-block-inline__label">DB:</span>
                         <span class="devtools-block-inline__value" id="holdings-block-db">—</span>
+                        <span class="devtools-block-behind" id="holdings-block-behind" hidden></span>
                     </p>
                     <button type="button" class="devtools-csv-link" id="export-csv-btn">↓ Download CSV</button>
                 </div>
@@ -296,6 +297,7 @@
         .devtools-block-inline__label { color: #9fb0c0; }
         .devtools-block-inline__value { color: #67e8f9; font-weight: 600; font-variant-numeric: tabular-nums; }
         .devtools-block-inline__sep { color: #9fb0c0; opacity: 0.35; }
+        .devtools-block-behind { font-size: 11px; color: #f59e0b; font-variant-numeric: tabular-nums; opacity: 0.85; }
         /* --- csv download link --- */
         .devtools-csv-link { background: none; border: none; color: #67e8f9; font-size: 12px; font-family: 'Inter', sans-serif; cursor: pointer; padding: 2px 0; opacity: 0.65; display: inline-block; transition: opacity 0.15s; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
         .devtools-csv-link:hover { opacity: 1; text-decoration: underline; }
@@ -472,6 +474,16 @@
                 if (mb == null) return '—';
                 return Number(mb).toFixed(1) + ' MB';
             }
+            function setBlockBehind(behind) {
+                var el = document.getElementById('holdings-block-behind');
+                if (!el) return;
+                if (behind != null && behind > 0) {
+                    el.textContent = '−' + behind.toLocaleString();
+                    el.removeAttribute('hidden');
+                } else {
+                    el.setAttribute('hidden', '');
+                }
+            }
             async function fetchArchiveMeta() {
                 var base = apiBase() || 'https://agent.stablescouncil.org';
                 var url = base + '/api/devtools/archive-meta';
@@ -479,13 +491,19 @@
                     var r = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(8000), headers: { Accept: 'application/json' } });
                     if (!r.ok) throw new Error('HTTP ' + r.status);
                     var d = await r.json();
-                    setText('archive-latest-block', d.latest_block != null ? String(d.latest_block) : '—');
+                    setText('archive-latest-block', d.block_db != null ? String(d.block_db)
+                                                  : d.latest_block != null ? String(d.latest_block) : '—');
                     setText('archive-exported-at',  fmtDate(d.exported_at));
                     setText('archive-file-size',    fmtSize(d.file_size_mb));
-                    /* Pre-populate chart block info from archive meta — holdings query will update once run */
-                    var blockStr = d.latest_block != null ? String(d.latest_block) : '—';
-                    setText('holdings-block-db',   blockStr);
-                    setText('holdings-block-live', blockStr);
+                    /* DB block — from the archive MySQL database */
+                    var dbStr = d.block_db != null ? String(d.block_db)
+                              : d.latest_block != null ? String(d.latest_block) : '—';
+                    setText('holdings-block-db', dbStr);
+                    /* Live block — from the Minima node RPC; fall back to DB if unavailable */
+                    var liveStr = d.block_live != null ? String(d.block_live) : dbStr;
+                    setText('holdings-block-live', liveStr);
+                    /* "−X,XXX" delta: how far the DB is behind the live tip */
+                    setBlockBehind(d.block_behind);
                 } catch(e) {
                     /* silent — values stay at — (common when opened from file://) */
                 }
