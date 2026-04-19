@@ -471,6 +471,8 @@
                     setText('archive-latest-block', d.latest_block != null ? String(d.latest_block) : '—');
                     setText('archive-exported-at',  fmtDate(d.exported_at));
                     setText('archive-file-size',    fmtSize(d.file_size_mb));
+                    /* Pre-populate chart block info from archive meta — holdings query will update once run */
+                    setText('holdings-block-db', d.latest_block != null ? String(d.latest_block) : '—');
                 } catch(e) {
                     /* endpoint not yet deployed — values stay at — */
                 }

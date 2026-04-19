@@ -403,6 +403,7 @@
         scales: scales,
       },
     });
+    chartInstance._hasRealData = true;
   }
 
   function setText(id, text) {
@@ -737,7 +738,13 @@
   function wireRangePresets() {
     var nodes = document.querySelectorAll('input[name="holdings-range-preset"]');
     for (var i = 0; i < nodes.length; i++) {
-      nodes[i].addEventListener("change", applyRangePresetToFields);
+      nodes[i].addEventListener("change", function () {
+        applyRangePresetToFields();
+        /* If no query has been run yet (chart has no real data), refresh the skeleton. */
+        if (!chartInstance || !chartInstance._hasRealData) {
+          renderEmptyChart(document.getElementById("holdings-chart"));
+        }
+      });
     }
   }
 
@@ -746,6 +753,102 @@
     populatePresetSelect();
     updateForgetSavedButtonState();
   };
+
+  /** Render an empty chart frame so the timeline is visible before any query runs. */
+  function renderEmptyChart(canvas) {
+    destroyChart();
+    if (!canvas || typeof Chart === "undefined") return;
+
+    /* Build date labels that match the active range selection (default: 1 month). */
+    var mode = getRangePresetValue();
+    var r = (mode === "all" || mode === "custom") ? computedRangeForPreset("1m") : computedRangeForPreset(mode);
+    var labels = [];
+    if (r && r.from && r.to) {
+      var d = new Date(r.from);
+      var end = new Date(r.to);
+      var step = (mode === "1y") ? 7 : 1; /* weekly ticks for 1-year view */
+      while (d <= end) {
+        labels.push(ymd(d));
+        d.setDate(d.getDate() + step);
+      }
+    }
+    if (!labels.length) {
+      /* Ultimate fallback: last 30 days */
+      var today = new Date();
+      for (var i = 29; i >= 0; i--) {
+        var fd = new Date(today);
+        fd.setDate(today.getDate() - i);
+        labels.push(ymd(fd));
+      }
+    }
+
+    var nullData = labels.map(function () { return null; });
+    var ctx = canvas.getContext("2d");
+    chartInstance = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Balance (Minima)",
+            data: nullData,
+            borderColor: "rgba(103,232,249,0.25)",
+            backgroundColor: "rgba(103,232,249,0.04)",
+            fill: true,
+            tension: 0.25,
+            pointRadius: 0,
+            yAxisID: "y",
+          },
+          {
+            label: "UTXO count",
+            data: nullData,
+            borderColor: "rgba(167,139,250,0.25)",
+            backgroundColor: "transparent",
+            fill: false,
+            tension: 0.25,
+            pointRadius: 0,
+            yAxisID: "y1",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: {
+            labels: {
+              color: "#9fb0c0",
+              font: { family: "Inter, system-ui, sans-serif" },
+              usePointStyle: true,
+              pointStyle: "line",
+              pointStyleWidth: 24,
+            },
+          },
+        },
+        scales: {
+          x: {
+            ticks: { color: "#9fb0c0", maxRotation: 45, autoSkip: true, maxTicksLimit: 12 },
+            grid: { color: "rgba(103,232,249,0.08)" },
+          },
+          y: {
+            position: "right",
+            min: 0,
+            ticks: { color: "#9fb0c0" },
+            grid: { color: "rgba(103,232,249,0.08)" },
+            title: { display: true, text: "Balance", color: "#9fb0c0", font: { size: 11 } },
+          },
+          y1: {
+            position: "right",
+            min: 0,
+            ticks: { color: "#a78bfa" },
+            grid: { drawOnChartArea: false },
+            title: { display: true, text: "UTXOs", color: "#a78bfa", font: { size: 11 } },
+          },
+        },
+      },
+    });
+  }
 
   function init() {
     pruneCache(); /* quietly remove stale cache entries on page load */
@@ -760,6 +863,9 @@
 
     updateForgetSavedButtonState();
     applyRangePresetToFields();
+
+    /* Render the empty chart frame immediately so the timeline is visible. */
+    renderEmptyChart(document.getElementById("holdings-chart"));
 
     if (btn) {
       /* Single click → use cache if available.
@@ -778,7 +884,6 @@
     if (csvBtn) {
       csvBtn.addEventListener("click", exportCsv);
     }
-    /* No auto-load — user enters address manually and clicks Run query. */
   }
 
   if (document.readyState === "loading") {
