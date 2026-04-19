@@ -473,8 +473,8 @@
                 return Number(mb).toFixed(1) + ' MB';
             }
             async function fetchArchiveMeta() {
-                var base = apiBase();
-                var url = (base || '') + '/api/devtools/archive-meta';
+                var base = apiBase() || 'https://agent.stablescouncil.org';
+                var url = base + '/api/devtools/archive-meta';
                 try {
                     var r = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(8000), headers: { Accept: 'application/json' } });
                     if (!r.ok) throw new Error('HTTP ' + r.status);

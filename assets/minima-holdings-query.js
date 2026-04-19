@@ -44,7 +44,8 @@
     if (typeof window.STABLES_MINIMA_HOLDINGS_API === "string" && window.STABLES_MINIMA_HOLDINGS_API.trim()) {
       return window.STABLES_MINIMA_HOLDINGS_API.replace(/\/$/, "");
     }
-    return "";
+    /* Fallback: always point at the Council VPS so a stale cached page still works. */
+    return "https://agent.stablescouncil.org";
   }
 
   function localYMD(d) {
