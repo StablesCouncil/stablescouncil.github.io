@@ -136,6 +136,11 @@
                 </div>
 
                 <p id="holdings-cache-meta" class="devtools-holdings-meta" hidden></p>
+                <p id="holdings-file-warn" class="devtools-holdings-status devtools-holdings-status--warn" role="status" hidden>
+                    Opened from a local file — live data requires a web server. Open from
+                    <a href="https://stablescouncil.org/onchain-watch.html" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">stablescouncil.org</a>
+                    to query the API.
+                </p>
                 <p id="holdings-status" class="devtools-holdings-status devtools-holdings-status--loading" role="status" hidden></p>
 
                 <div class="devtools-holdings-query-inline">
@@ -480,10 +485,18 @@
                     /* Pre-populate chart block info from archive meta — holdings query will update once run */
                     setText('holdings-block-db', d.latest_block != null ? String(d.latest_block) : '—');
                 } catch(e) {
-                    /* endpoint not yet deployed — values stay at — */
+                    /* silent — values stay at — (common when opened from file://) */
                 }
             }
             fetchArchiveMeta();
+        })();
+
+        /* --- Warn when opened from file:// (browsers block cross-origin API calls) --- */
+        (function() {
+            if (window.location.protocol === 'file:') {
+                var el = document.getElementById('holdings-file-warn');
+                if (el) el.removeAttribute('hidden');
+            }
         })();
 
         /* --- Load community-contributed addresses from JSON in the repo --- */

@@ -492,8 +492,18 @@
       payload   = result.payload;
       fromCache = result.fromCache;
     } catch (err) {
-      var msg = (err && err.message) ? err.message : "Network error";
-      setStatusBanner(statusEl, "error", "API unreachable — " + msg + ". Check connection and try again.");
+      var msg;
+      if (window.location.protocol === "file:") {
+        msg = "Page opened from a local file — browser blocks outbound requests. " +
+              "Open from stablescouncil.org or a local server to query live data.";
+      } else if (err && err.name === "AbortError") {
+        msg = "Request timed out. The API did not respond in 12 s — check your connection.";
+      } else if (err && err.message) {
+        msg = err.message;
+      } else {
+        msg = "Network error — check connection and try again.";
+      }
+      setStatusBanner(statusEl, "error", msg);
       if (btn) { btn.disabled = false; btn.removeAttribute("aria-busy"); }
       return; /* leave the empty chart skeleton intact */
     }
