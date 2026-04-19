@@ -1912,7 +1912,7 @@
       const versionLabel = rawVersion && rawVersion !== 'unknown'
         ? (rawVersion.startsWith('v') ? rawVersion : `v${rawVersion}`)
         : 'unknown';
-      const repoUrl = String(cfg.MDS_ZIP_URL || 'https://github.com/StablesCouncil/stablescouncil.github.io/tree/main/dapp/latest-version').trim();
+      const repoUrl = String(cfg.MDS_ZIP_URL || 'https://github.com/StablesCouncil/stablescouncil.github.io/tree/main/dapp/1-showcase/latest-version').trim();
       const introHtml = String(c.welcomeShowcaseIntroHtml || '')
         .replace(/__APP_VERSION__/g, versionLabel)
         .replace(/__MDS_REPO_URL__/g, repoUrl);

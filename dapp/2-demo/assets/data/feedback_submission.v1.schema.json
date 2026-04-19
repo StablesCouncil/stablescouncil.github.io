@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://stablescouncil.org/schemas/feedback_submission.v1.json",
+  "title": "Stables public feedback submission (v1)",
+  "description": "One object per file in GitHub (e.g. feedback/YYYY/MM/id.json) or one line per record in submissions.jsonl. Never store secrets or personal data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "submitted_at",
+    "source",
+    "topic_domain",
+    "kind",
+    "title",
+    "body",
+    "consent_public_ledger"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "submitted_at": { "type": "string", "format": "date-time", "description": "ISO-8601 UTC" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["app_build", "client"],
+      "properties": {
+        "app_build": { "type": "string" },
+        "client": { "type": "string", "description": "e.g. stables-minidapp" }
+      }
+    },
+    "topic_domain": {
+      "type": "string",
+      "enum": [
+        "general_concept",
+        "financial_structure",
+        "technical_decision",
+        "app",
+        "other",
+        "open_text"
+      ]
+    },
+    "topic_sub": {
+      "type": ["string", "null"],
+      "description": "Last-level topic code within the domain (idea, community_communication, smart_contract, design, functionality, other, etc.)"
+    },
+    "app_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["page_id", "section_hint", "element_hint"],
+      "properties": {
+        "page_id": { "type": ["string", "null"] },
+        "section_hint": { "type": ["string", "null"] },
+        "element_hint": { "type": ["string", "null"] }
+      }
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["improvement", "bug", "comment", "other"]
+    },
+    "title": { "type": "string", "maxLength": 200 },
+    "body": { "type": "string", "maxLength": 8000 },
+    "public_contact": {
+      "type": ["string", "null"],
+      "description": "Optional. Published verbatim. Must not be personal/sensitive data."
+    },
+    "optional_minima_address": {
+      "type": ["string", "null"],
+      "maxLength": 200,
+      "description": "Optional Minima address; public; no promise of future use; Council decides."
+    },
+    "consent_public_ledger": {
+      "type": "boolean",
+      "const": true,
+      "description": "User confirmed public GitHub publication is OK."
+    },
+    "flags": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "low_priority_freeform": {
+          "type": "boolean",
+          "description": "True when topic_domain is open_text (may be triaged slower)."
+        }
+      }
+    }
+  }
+}

@@ -3,6 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        // Local file:// preview: map /brand and /assets URLs to sibling folders under github_pages_root.
+        if (location.protocol === "file:") {
+            document.addEventListener("DOMContentLoaded", () => {
+                const staticRoot = "./";
+                const toLocal = (value) => {
+                    if (!value) return value;
+                    if (value.startsWith("/brand/")) return staticRoot + value.slice(1);
+                    if (value.startsWith("/assets/")) return staticRoot + value.slice(1);
+                    if (value === "stables.css" || value === "../stables.css") return staticRoot + "stables.css";
+                    if (value.startsWith("assets/")) return staticRoot + value;
+                    if (value.startsWith("../assets/")) return staticRoot + value.slice(3);
+                    if (value === "stables_agent_avatar.png") return staticRoot + "stables_agent_avatar.png";
+                    return value;
+                };
+                document.querySelectorAll("link[rel='stylesheet'][href]").forEach((el) => {
+                    const next = toLocal(el.getAttribute("href"));
+                    if (next !== el.getAttribute("href")) {
+                        const clone = el.cloneNode(true);
+                        clone.setAttribute("href", next);
+                        el.replaceWith(clone);
+                    }
+                });
+                document.querySelectorAll("script[src]").forEach((el) => {
+                    const next = toLocal(el.getAttribute("src"));
+                    if (next !== el.getAttribute("src")) {
+                        const clone = document.createElement("script");
+                        clone.src = next;
+                        if (el.defer) clone.defer = true;
+                        if (el.async) clone.async = true;
+                        el.replaceWith(clone);
+                    }
+                });
+                document.querySelectorAll("img[src], source[src], [src]").forEach((el) => {
+                    if (el.hasAttribute("src")) el.setAttribute("src", toLocal(el.getAttribute("src")));
+                });
+                document.querySelectorAll("meta[content]").forEach((el) => {
+                    el.setAttribute("content", toLocal(el.getAttribute("content")));
+                });
+            });
+        }
+    </script>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/brand/assets/logo-symbol.png">
@@ -10,7 +52,7 @@
     <!-- Social Previews -->
     <meta property="og:title" content="Stables | Ambassador Program Framework">
     <meta property="og:description" content="The 16 Big Mac® Economy: A Fair & Global Framework for Protocol Growth. Official Community Draft.">
-    <meta property="og:image" content="/brand/assets/logo-symbol.png">
+    <meta property="og:image" content="/brand/assets/twitter-header.png">
     <meta property="og:url" content="https://stablescouncil.org/ambassadorsprogramdesc.html">
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="Stables">
@@ -20,7 +62,6 @@
     <meta name="twitter:site" content="@StablesCouncil">
     <meta name="twitter:title" content="Stables | Ambassador Program: The 16 Big Mac® Economy">
     <meta name="twitter:description" content="Secure, Pseudonymous, and Unstoppable. View the full specification.">
-    <meta name="twitter:image" content="/brand/assets/logo-symbol.png">
     
     <!-- Inter: loaded via stables.css (@import) for same file:// behaviour as playing_field.html -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

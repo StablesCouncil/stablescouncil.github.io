@@ -1,0 +1,119 @@
+/**
+ * Link-style tiles for devtools hub (matches links.html card pattern).
+ * Loaded only on devtools/index.html; tokens align with links page.
+ */
+:root {
+    --bg: #0b0f14;
+    --panel: #101826;
+    --text-primary: #e6edf3;
+    --text-secondary: #9fb0c0;
+    --accent-cyan: #67e8f9;
+    --accent-purple: #a78bfa;
+}
+
+.devtools-hub-stack.links-page-stack {
+    max-width: 680px;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    padding-top: 0.5rem;
+}
+
+.devtools-hub-stack .links-section {
+    scroll-margin-top: calc(var(--site-header-h, 52px) + 16px);
+    margin-bottom: 1.5rem;
+}
+
+.devtools-hub-stack .links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.devtools-hub-stack .link-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: linear-gradient(135deg, rgba(103, 232, 249, 0.08), rgba(15, 23, 42, 0.8));
+    border: 1px solid rgba(103, 232, 249, 0.3);
+    border-radius: 16px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.devtools-hub-stack .link-item:hover {
+    transform: translateY(-3px);
+    border-color: rgba(103, 232, 249, 0.6);
+    box-shadow: 0 8px 30px rgba(103, 232, 249, 0.2);
+    background: linear-gradient(135deg, rgba(103, 232, 249, 0.15), rgba(15, 23, 42, 0.9));
+}
+
+.devtools-hub-stack .link-icon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(103, 232, 249, 0.1);
+    border: 1px solid rgba(103, 232, 249, 0.2);
+}
+
+.devtools-hub-stack .link-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--accent-cyan);
+}
+
+.devtools-hub-stack .link-content {
+    flex: 1;
+}
+
+.devtools-hub-stack .link-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.devtools-hub-stack .link-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.devtools-hub-stack .section-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--text-secondary);
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    padding-left: 0.25rem;
+}
+
+.devtools-hub-stack .link-item.council {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.07), rgba(15, 23, 42, 0.8));
+    border-color: rgba(251, 191, 36, 0.25);
+}
+
+.devtools-hub-stack .link-item.council:hover {
+    border-color: rgba(251, 191, 36, 0.55);
+    box-shadow: 0 8px 30px rgba(251, 191, 36, 0.15);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.12), rgba(15, 23, 42, 0.9));
+}
+
+.devtools-hub-stack .link-item.council .link-icon {
+    background: rgba(251, 191, 36, 0.08);
+    border-color: rgba(251, 191, 36, 0.2);
+}
+
+.devtools-hub-stack .link-item.council .link-icon svg {
+    fill: #fbbf24;
+}

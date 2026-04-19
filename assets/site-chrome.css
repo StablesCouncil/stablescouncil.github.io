@@ -48,7 +48,19 @@ body.links-page-body .lang-menu::-webkit-scrollbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 clamp(12px, 4vw, 28px);
+  /* Longhand overrides — align brand + pill with the 680px .links-page-stack column.
+     .links-page-stack is 680px max-width, margin:auto inside .site-chrome-main--links.
+     main--links has: pad-left=28px, pad-right=84px (28px + 56px side-rail, ≥768px).
+     Centering: margin:auto on margin = 0 auto gives column at 50vw, NOT offset by main padding.
+     So left edge of column = (vw − 680)/2 = 50vw − 340px from left.
+     But the main left-padding of 28px effectively adds 28px to where the column truly sits.
+     Empirically confirmed at 1536px: brand target = 400px → 50vw − 368px.
+     Pill right-edge target = 1080px from left = right at 456px → 50vw − 312px.
+     Clamp mins prevent negative values on narrow screens. */
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left:  clamp(40px, calc(50vw - 368px), 50vw);
+  padding-right: clamp(112px, calc(50vw - 312px), 50vw);
   background: rgba(16, 24, 38, 0.82);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -60,17 +72,6 @@ body.links-page-body .lang-menu::-webkit-scrollbar {
 
 .site-chrome-header--hidden {
   transform: translateY(-100%);
-}
-
-/* Align brand + pill with the centered 960px content column.
-   Left: column offset + inner padding.
-   Right: same + 56px for the fixed side rail so pill aligns with the text right edge. */
-@media (min-width: 768px) {
-  .site-chrome-header {
-    --_col-offset: max(0px, calc(50vw - 480px));
-    padding-left:  calc(var(--_col-offset) + clamp(12px, 4vw, 28px));
-    padding-right: calc(var(--_col-offset) + clamp(12px, 4vw, 28px) + 56px);
-  }
 }
 
 /* Mobile: taller header, bigger brand */

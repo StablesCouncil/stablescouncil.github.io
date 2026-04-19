@@ -16,7 +16,7 @@ window.STABLES_CONFIG = {
       whatChanged:
         'Example when an update ships: security fixes, mandatory protocol UI changes, or critical Minima MDS fixes.',
       details:
-        'Install the current package from dapp/latest-version (zip name matches the published five-segment label), or use Settings and updates.'
+        'Install the current showcase package from dapp/1-showcase/latest-version (zip name matches the published five-segment label), or use Settings and updates.'
     }
   },
   ACTIVITY_PAGE_SIZE: 25,
@@ -40,7 +40,7 @@ window.STABLES_CONFIG = {
   /** Days between soft reminders when user opted in. */
   VAULT_SOFT_REMINDER_INTERVAL_DAYS: 60,
   /** Public demo: placeholder location for latest MiniDapp package (opens GitHub for now). */
-  MDS_ZIP_URL: 'https://github.com/StablesCouncil/stablescouncil.github.io/tree/main/dapp/latest-version',
+  MDS_ZIP_URL: 'https://github.com/StablesCouncil/stablescouncil.github.io/tree/main/dapp/1-showcase/latest-version',
   /**
    * Stables Charter on GitHub (Markdown). Governing text for how the Council and community run the protocol.
    * Point this at the published file in your org repo when it is live (path below is a placeholder you can change).
