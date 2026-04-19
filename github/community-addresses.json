@@ -1,0 +1,16 @@
+[
+  {
+    "label": "MEXC (hot)",
+    "address": "0x4AD25252814256BEDDF7EA6F0CF75E48FC10E8D11FE3FC70551BB427A2BBA84A",
+    "contributor": "StablesCouncil",
+    "notes": "MEXC exchange hot wallet — high volume inflows/outflows expected.",
+    "added": "2026-04-19"
+  },
+  {
+    "label": "BitMart",
+    "address": "0xCE54ECFB93596460D1FEC3CD4F5665CE7497FB5ABF30898D51AE21CB49B74453",
+    "contributor": "StablesCouncil",
+    "notes": "BitMart exchange wallet.",
+    "added": "2026-04-19"
+  }
+]

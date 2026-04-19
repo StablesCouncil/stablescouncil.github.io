@@ -171,6 +171,35 @@
       .filter(Boolean);
   }
 
+  function normalizeUtxoSeries(raw) {
+    if (!raw) return [];
+    // Preferred: dedicated utxo_series field
+    if (Array.isArray(raw.utxo_series)) {
+      return raw.utxo_series
+        .map(function (p) {
+          if (p == null) return null;
+          if (typeof p.y === "number" && (typeof p.x === "string" || typeof p.x === "number")) {
+            return { x: String(p.x), y: p.y };
+          }
+          return null;
+        })
+        .filter(Boolean);
+    }
+    // Fall back: utxo_count embedded in each series point
+    if (Array.isArray(raw.series)) {
+      var result = raw.series
+        .map(function (p) {
+          if (p == null || typeof p.utxo_count !== "number") return null;
+          var x = p.x != null ? String(p.x) : p.block != null ? String(p.block) : null;
+          if (!x) return null;
+          return { x: x, y: p.utxo_count };
+        })
+        .filter(Boolean);
+      if (result.length) return result;
+    }
+    return [];
+  }
+
   /** Deterministic illustrative series (MEXC-style) when the API is offline or returns no points. */
   function mexcIllustrativeSeries() {
     var out = [];
@@ -180,6 +209,17 @@
       var linear = i * 1.85;
       var y = base + linear + wobble;
       out.push({ x: "W" + (i + 1), y: Math.round(Math.max(0, y) * 100) / 100 });
+    }
+    return out;
+  }
+
+  /** Deterministic illustrative UTXO-count series paired with mexcIllustrativeSeries. */
+  function mexcIllustrativeUtxoSeries() {
+    var out = [];
+    var base = 87;
+    for (var i = 0; i < 34; i++) {
+      var wobble = Math.sin(i / 3.7) * 15 + Math.cos(i / 1.9) * 8;
+      out.push({ x: "W" + (i + 1), y: Math.max(1, Math.round(base + wobble)) });
     }
     return out;
   }
@@ -227,50 +267,82 @@
     }
   }
 
-  function renderChart(canvas, points, label) {
+  function renderChart(canvas, balanceSeries, utxoSeries, balanceLabel) {
     destroyChart();
     if (!canvas || typeof Chart === "undefined") return;
-    var labels = points.map(function (p) {
-      return p.x;
-    });
-    var data = points.map(function (p) {
-      return p.y;
-    });
+    var labels = balanceSeries.map(function (p) { return p.x; });
+    var balanceData = balanceSeries.map(function (p) { return p.y; });
     var ctx = canvas.getContext("2d");
+
+    var datasets = [
+      {
+        label: balanceLabel || "Balance (Minima)",
+        data: balanceData,
+        borderColor: "rgba(103, 232, 249, 0.95)",
+        backgroundColor: "rgba(103, 232, 249, 0.10)",
+        fill: true,
+        tension: 0.25,
+        pointRadius: 2,
+        yAxisID: "y",
+      },
+    ];
+
+    var scales = {
+      x: {
+        ticks: { color: "#9fb0c0", maxRotation: 45, autoSkip: true, maxTicksLimit: 12 },
+        grid: { color: "rgba(103,232,249,0.08)" },
+      },
+      y: {
+        position: "left",
+        ticks: { color: "#9fb0c0" },
+        grid: { color: "rgba(103,232,249,0.08)" },
+        title: { display: true, text: "Balance", color: "#9fb0c0", font: { size: 11 } },
+      },
+    };
+
+    if (utxoSeries && utxoSeries.length) {
+      var utxoMap = {};
+      utxoSeries.forEach(function (p) { utxoMap[p.x] = p.y; });
+      var utxoAligned = labels.map(function (x) {
+        return utxoMap[x] != null ? utxoMap[x] : null;
+      });
+      datasets.push({
+        label: "UTXO count",
+        data: utxoAligned,
+        borderColor: "rgba(167, 139, 250, 0.9)",
+        backgroundColor: "rgba(167, 139, 250, 0.04)",
+        fill: false,
+        tension: 0.25,
+        pointRadius: 2,
+        yAxisID: "y1",
+      });
+      scales.y1 = {
+        position: "right",
+        ticks: { color: "#a78bfa" },
+        grid: { drawOnChartArea: false },
+        title: { display: true, text: "UTXOs", color: "#a78bfa", font: { size: 11 } },
+      };
+    }
+
     chartInstance = new Chart(ctx, {
       type: "line",
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: label || "Balance",
-            data: data,
-            borderColor: "rgba(103, 232, 249, 0.95)",
-            backgroundColor: "rgba(103, 232, 249, 0.12)",
-            fill: true,
-            tension: 0.25,
-            pointRadius: 2,
-          },
-        ],
-      },
+      data: { labels: labels, datasets: datasets },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
         plugins: {
           legend: {
-            labels: { color: "#9fb0c0", font: { family: "Inter, system-ui, sans-serif" } },
+            labels: {
+              color: "#9fb0c0",
+              font: { family: "Inter, system-ui, sans-serif" },
+              usePointStyle: true,
+              pointStyle: "line",
+              pointStyleWidth: 24,
+            },
           },
         },
-        scales: {
-          x: {
-            ticks: { color: "#9fb0c0", maxRotation: 45, autoSkip: true, maxTicksLimit: 12 },
-            grid: { color: "rgba(103,232,249,0.08)" },
-          },
-          y: {
-            ticks: { color: "#9fb0c0" },
-            grid: { color: "rgba(103,232,249,0.08)" },
-          },
-        },
+        scales: scales,
       },
     });
   }
@@ -368,6 +440,11 @@
       usedMexcFallback = true;
     }
 
+    var utxoSeries = normalizeUtxoSeries(payload);
+    if (!utxoSeries.length && usedMexcFallback) {
+      utxoSeries = mexcIllustrativeUtxoSeries();
+    }
+
     setText("holdings-block-live", fmtBlock(payload.block_live));
     setText("holdings-block-db", fmtBlock(payload.block_db));
 
@@ -387,8 +464,8 @@
       }
     }
 
-    var label = usedMexcFallback ? "MEXC balance (local series)" : "Balance (cached)";
-    renderChart(canvas, series, label);
+    var label = usedMexcFallback ? "Balance (local series)" : "Balance (cached)";
+    renderChart(canvas, series, utxoSeries, label);
 
     if (usedMexcFallback) {
       if (statusEl) {
@@ -402,6 +479,7 @@
 
     window.__lastHoldingsPayload = payload;
     window.__lastHoldingsSeries = series;
+    window.__lastHoldingsUtxoSeries = utxoSeries;
     window.__lastHoldingsQuery = queryParams;
 
     if (btn) {
@@ -413,9 +491,18 @@
   function exportCsv() {
     var series = window.__lastHoldingsSeries;
     if (!series || !series.length) return;
-    var rows = [["x", "y"].join(",")].concat(
+    var utxoSeries = window.__lastHoldingsUtxoSeries || [];
+    var hasUtxo = utxoSeries.length > 0;
+    var utxoMap = {};
+    if (hasUtxo) {
+      utxoSeries.forEach(function (p) { utxoMap[p.x] = p.y; });
+    }
+    var header = hasUtxo ? ["x", "balance", "utxo_count"].join(",") : ["x", "balance"].join(",");
+    var rows = [header].concat(
       series.map(function (p) {
-        return [JSON.stringify(p.x), p.y].join(",");
+        var cols = [JSON.stringify(p.x), p.y];
+        if (hasUtxo) cols.push(utxoMap[p.x] != null ? utxoMap[p.x] : "");
+        return cols.join(",");
       })
     );
     var blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8" });
@@ -581,6 +668,12 @@
       nodes[i].addEventListener("change", applyRangePresetToFields);
     }
   }
+
+  /* Expose repopulate so external controls (e.g. Clear all) can refresh the dropdown. */
+  window.__repopulatePresets = function() {
+    populatePresetSelect();
+    updateForgetSavedButtonState();
+  };
 
   function init() {
     populatePresetSelect();
