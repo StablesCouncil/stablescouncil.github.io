@@ -425,7 +425,7 @@
   async function fetchHoldingsRemote(queryParams) {
     var url = holdingsUrl(queryParams);
     var ctrl = new AbortController();
-    var t = setTimeout(function () { ctrl.abort(); }, 12000);
+    var t = setTimeout(function () { ctrl.abort(); }, 45000);
     try {
       var r = await fetch(url, {
         method: "GET",
@@ -497,7 +497,7 @@
         msg = "Page opened from a local file — browser blocks outbound requests. " +
               "Open from stablescouncil.org or a local server to query live data.";
       } else if (err && err.name === "AbortError") {
-        msg = "Request timed out. The API did not respond in 12 s — check your connection.";
+        msg = "Request timed out. The API did not respond in 45 s — the query may still be running; try a narrower date range or MONTH/YEAR interval.";
       } else if (err && err.message) {
         msg = err.message;
       } else {
