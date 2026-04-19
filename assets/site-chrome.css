@@ -62,8 +62,9 @@ body.links-page-body .lang-menu::-webkit-scrollbar {
   transform: translateY(-100%);
 }
 
-/* Desktop: align brand + pill with the text inside the centered 960px content column */
-@media (min-width: 1024px) {
+/* Align brand + pill with the text inside the centered 960px content column.
+   max() ensures the formula never shrinks below the base clamp padding on narrow screens. */
+@media (min-width: 768px) {
   .site-chrome-header {
     padding-left:  max(clamp(12px, 4vw, 28px), calc((100vw - 960px) / 2 + clamp(12px, 4vw, 28px)));
     padding-right: max(clamp(12px, 4vw, 28px), calc((100vw - 960px) / 2 + clamp(12px, 4vw, 28px)));
