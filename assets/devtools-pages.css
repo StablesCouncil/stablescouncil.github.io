@@ -382,6 +382,11 @@ body.devtools-sub-page.site-chrome-body {
     color: #fcd34d;
 }
 
+.devtools-holdings-status--error {
+    background: rgba(248, 113, 113, 0.1);
+    color: #fca5a5;
+}
+
 .devtools-discord-panel .buttons {
     justify-content: center;
     margin-top: 0.75rem;

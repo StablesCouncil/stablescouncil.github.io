@@ -484,81 +484,58 @@
     if (statusEl) statusEl.removeAttribute("hidden");
     setStatusBanner(statusEl, "loading", "Loading…");
 
-    var usedMexcFallback = false;
     var fromCache = false;
     var payload = null;
 
     try {
       var result = await fetchHoldings(queryParams);
-      payload    = result.payload;
-      fromCache  = result.fromCache;
+      payload   = result.payload;
+      fromCache = result.fromCache;
     } catch (err) {
-      usedMexcFallback = true;
-      payload = {
-        address: address,
-        block_live: null,
-        block_db: null,
-        db_refreshed_at: null,
-        series: mexcIllustrativeSeries(),
-      };
+      var msg = (err && err.message) ? err.message : "Network error";
+      setStatusBanner(statusEl, "error", "API unreachable — " + msg + ". Check connection and try again.");
+      if (btn) { btn.disabled = false; btn.removeAttribute("aria-busy"); }
+      return; /* leave the empty chart skeleton intact */
     }
 
-    var series = normalizeSeries(payload);
-    if (!series.length && payload && Array.isArray(payload.series)) {
-      series = mexcIllustrativeSeries();
-      usedMexcFallback = true;
-    }
-    if (!series.length) {
-      series = mexcIllustrativeSeries();
-      usedMexcFallback = true;
-    }
+    /* Update block info only when the payload contains real values. */
+    if (payload.block_live != null) setText("holdings-block-live", fmtBlock(payload.block_live));
+    if (payload.block_db   != null) setText("holdings-block-db",   fmtBlock(payload.block_db));
 
+    var series     = normalizeSeries(payload);
     var utxoSeries = normalizeUtxoSeries(payload);
-    if (!utxoSeries.length && usedMexcFallback) {
-      utxoSeries = mexcIllustrativeUtxoSeries();
-    }
-
-    setText("holdings-block-live", fmtBlock(payload.block_live));
-    setText("holdings-block-db", fmtBlock(payload.block_db));
 
     var metaEl = document.getElementById("holdings-cache-meta");
-    var extra = metaSuffixFromForm();
+    var extra  = metaSuffixFromForm();
+
+    if (!series.length) {
+      /* API responded but returned no rows — keep skeleton chart, show info. */
+      if (metaEl) { metaEl.textContent = ""; metaEl.setAttribute("hidden", "hidden"); }
+      setStatusBanner(statusEl, "ok", "No data returned for this address in the selected range.");
+      if (btn) { btn.disabled = false; btn.removeAttribute("aria-busy"); }
+      return;
+    }
+
     if (metaEl) {
-      if (usedMexcFallback) {
-        metaEl.textContent = "";
-        metaEl.setAttribute("hidden", "hidden");
-      } else {
-        metaEl.removeAttribute("hidden");
-        var parts = [];
-        if (payload.db_refreshed_at) parts.push("DB snapshot: " + payload.db_refreshed_at);
-        if (fromCache) parts.push("from local cache");
-        if (extra) parts.push(extra);
-        metaEl.textContent = parts.length ? parts.join(" · ") : (fromCache ? "From local cache." : "Council API.") + (extra ? " " + extra : "");
-      }
+      metaEl.removeAttribute("hidden");
+      var parts = [];
+      if (payload.db_refreshed_at) parts.push("DB snapshot: " + payload.db_refreshed_at);
+      if (fromCache) parts.push("from local cache");
+      if (extra) parts.push(extra);
+      metaEl.textContent = parts.length ? parts.join(" · ") : (fromCache ? "From local cache." : "Council API.") + (extra ? " " + extra : "");
     }
 
-    var label = usedMexcFallback ? "Balance (illustrative)" : "Balance";
-    renderChart(canvas, series, utxoSeries, label);
+    renderChart(canvas, series, utxoSeries, "Balance");
 
-    if (usedMexcFallback) {
-      if (statusEl) {
-        statusEl.textContent = "";
-        statusEl.setAttribute("hidden", "hidden");
-      }
-    } else {
-      if (statusEl) statusEl.removeAttribute("hidden");
-      setStatusBanner(statusEl, "ok", fromCache ? "Loaded from cache." : "Loaded.");
-    }
+    if (statusEl) statusEl.removeAttribute("hidden");
+    setStatusBanner(statusEl, "ok", fromCache ? "Loaded from cache." : "Loaded.");
 
-    window.__lastHoldingsPayload = payload;
-    window.__lastHoldingsSeries = series;
-    window.__lastHoldingsUtxoSeries = utxoSeries;
-    window.__lastHoldingsQuery = queryParams;
+    window.__lastHoldingsPayload      = payload;
+    window.__lastHoldingsSeries       = series;
+    window.__lastHoldingsUtxoSeries   = utxoSeries;
+    window.__lastHoldingsQuery        = queryParams;
 
-    if (btn) {
-      btn.disabled = false;
-      btn.removeAttribute("aria-busy");
-    }
+    if (btn) { btn.disabled = false; btn.removeAttribute("aria-busy"); }
   }
 
   function exportCsv() {
