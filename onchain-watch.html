@@ -263,6 +263,8 @@
             </button>
         </div>
         <div class="addr-modal-body">
+            <label class="addr-modal-label">Address</label>
+            <div id="modal-addr-display" class="addr-modal-addr-display"></div>
             <label class="addr-modal-label" for="modal-saved-name">Label</label>
             <input id="modal-saved-name" class="addr-modal-input" type="text" autocomplete="off" spellcheck="false" placeholder="Short name (e.g. MEXC cold)">
             <div class="addr-modal-divider">
@@ -322,6 +324,7 @@
         .addr-modal-desc { font-size: 13px; color: #9fb0c0; font-family: 'Inter', sans-serif; line-height: 1.5; margin: 0; }
         .addr-modal-hint { font-size: 12px; color: #9fb0c0; font-family: 'Inter', sans-serif; margin-top: -4px; }
         .addr-modal-label { font-size: 13px; font-weight: 600; color: #9fb0c0; font-family: 'Inter', sans-serif; }
+        .addr-modal-addr-display { width: 100%; padding: 8px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(103,232,249,0.12); border-radius: 10px; color: #67e8f9; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 11px; box-sizing: border-box; word-break: break-all; line-height: 1.5; }
         .addr-modal-input { width: 100%; padding: 8px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(103,232,249,0.2); border-radius: 10px; color: #e6edf3; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; box-sizing: border-box; }
         .addr-modal-input:focus { border-color: rgba(103,232,249,0.5); }
         .addr-modal-textarea { width: 100%; padding: 8px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(103,232,249,0.2); border-radius: 10px; color: #e6edf3; font-family: 'Inter', sans-serif; font-size: 14px; outline: none; resize: vertical; min-height: 52px; transition: border-color 0.2s; box-sizing: border-box; }
@@ -401,6 +404,9 @@
         function openAddrModal() {
             document.getElementById('addrModal').classList.add('open');
             document.getElementById('addrModalBackdrop').classList.add('open');
+            var addr = (document.getElementById('minima-addr') || {}).value || '';
+            var display = document.getElementById('modal-addr-display');
+            if (display) display.textContent = addr.trim() || '—';
             var savedName = document.getElementById('modal-saved-name');
             if (savedName) { savedName.value = ''; setTimeout(function(){ savedName.focus(); }, 50); }
         }
