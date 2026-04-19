@@ -22,22 +22,8 @@
  * Override API root: set window.STABLES_MINIMA_HOLDINGS_API before this file.
  */
 (function () {
-  var DEFAULT_PRESETS = [
-    {
-      label: "MEXC (hot)",
-      address: "0x4AD25252814256BEDDF7EA6F0CF75E48FC10E8D11FE3FC70551BB427A2BBA84A",
-    },
-    {
-      label: "BitMart",
-      address:
-        "0xCE54ECFB93596460D1FEC3CD4F5665CE7497FB5ABF30898D51AE21CB49B74453",
-    },
-    {
-      label: "Exchange 3 (replace in JS)",
-      address:
-        "0xBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
-    },
-  ];
+  /* No hardcoded preset addresses — community list loads from github/community-addresses.json. */
+  var DEFAULT_PRESETS = [];
 
   function presets() {
     if (Array.isArray(window.STABLES_MINIMA_HOLDINGS_PRESETS)) {
@@ -365,7 +351,7 @@
         grid: { color: "rgba(103,232,249,0.08)" },
       },
       y: {
-        position: "left",
+        position: "right",
         ticks: { color: "#9fb0c0" },
         grid: { color: "rgba(103,232,249,0.08)" },
         title: { display: true, text: "Balance", color: "#9fb0c0", font: { size: 11 } },
@@ -617,7 +603,7 @@
     if (!sel) return;
     var list = presets();
     var saved = loadLocalSavedAddresses();
-    var opts = '<option value="">Custom…</option>';
+    var opts = '<option value="">— enter address above —</option>';
     for (var i = 0; i < list.length; i++) {
       var p = list[i];
       if (!p || !p.address) continue;
@@ -769,31 +755,21 @@
     wireRangePresets();
 
     var addrInput = document.getElementById("minima-addr");
-    var presetSel = document.getElementById("minima-addr-preset");
     var btn = document.getElementById("run-query-btn");
     var csvBtn = document.getElementById("export-csv-btn");
-
-    var list = presets();
-    /* Default UX: preset stays "Custom…" while the MEXC address is prefilled in the input. */
-    if (presetSel) presetSel.value = "";
-    if (addrInput && list.length && list[0] && list[0].address) {
-      addrInput.value = list[0].address;
-    }
 
     updateForgetSavedButtonState();
     applyRangePresetToFields();
 
     if (btn) {
       /* Single click → use cache if available.
-         Double-click (or Shift+click) → force fresh fetch, bypass cache. */
+         Shift+click or double-click → bypass cache, force fresh fetch. */
       btn.addEventListener("click", function (e) {
         var a = addrInput ? addrInput.value.trim() : "";
         if (!a) return;
         if (e.shiftKey || e.detail >= 2) {
-          /* Force refresh: delete the cache entry for this query then reload. */
           var key = cacheKey(buildQueryParams(a));
           try { localStorage.removeItem(key); } catch (_) {}
-          btn.title = "";
         }
         loadHoldings(a);
       });
@@ -802,9 +778,7 @@
     if (csvBtn) {
       csvBtn.addEventListener("click", exportCsv);
     }
-
-    var initial = addrInput && addrInput.value.trim() ? addrInput.value.trim() : list[0] ? list[0].address : "";
-    if (initial) loadHoldings(initial);
+    /* No auto-load — user enters address manually and clicks Run query. */
   }
 
   if (document.readyState === "loading") {
