@@ -240,6 +240,62 @@
     return out;
   }
 
+  // ── Timeline result cache ──────────────────────────────────────────────────
+  // Caches successful API responses in localStorage for CACHE_TTL_MS.
+  // The DB updates ~once per day; 6 hours is a safe freshness window.
+  var CACHE_KEY_PREFIX = "stables_hcache_v1:";
+  var CACHE_TTL_MS     = 6 * 60 * 60 * 1000; // 6 hours
+
+  function cacheKey(params) {
+    return CACHE_KEY_PREFIX +
+      (params.address   || "") + ":" +
+      (params.date_from || "all") + ":" +
+      (params.date_to   || "all") + ":" +
+      (params.interval_type || "DAY");
+  }
+
+  function getCached(key) {
+    try {
+      var raw = localStorage.getItem(key);
+      if (!raw) return null;
+      var entry = JSON.parse(raw);
+      if (!entry || typeof entry.ts !== "number" || !entry.payload) return null;
+      if (Date.now() - entry.ts > CACHE_TTL_MS) {
+        localStorage.removeItem(key);
+        return null;
+      }
+      return entry.payload;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function setCached(key, payload) {
+    try {
+      localStorage.setItem(key, JSON.stringify({ ts: Date.now(), payload: payload }));
+    } catch (e) {
+      /* quota exceeded or private mode — silent */
+    }
+  }
+
+  /** Prune all stale cache entries to keep localStorage tidy. */
+  function pruneCache() {
+    try {
+      var now = Date.now();
+      var toRemove = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (!k || k.indexOf(CACHE_KEY_PREFIX) !== 0) continue;
+        try {
+          var e = JSON.parse(localStorage.getItem(k));
+          if (!e || now - e.ts > CACHE_TTL_MS) toRemove.push(k);
+        } catch (_) { toRemove.push(k); }
+      }
+      toRemove.forEach(function (k) { localStorage.removeItem(k); });
+    } catch (_) { /* silent */ }
+  }
+  // ──────────────────────────────────────────────────────────────────────────
+
   var LOCAL_SAVED_KEY = "stables_minima_holdings_saved_v1";
 
   function randomId() {
@@ -379,12 +435,10 @@
     el.textContent = message;
   }
 
-  async function fetchHoldings(queryParams) {
+  async function fetchHoldingsRemote(queryParams) {
     var url = holdingsUrl(queryParams);
     var ctrl = new AbortController();
-    var t = setTimeout(function () {
-      ctrl.abort();
-    }, 12000);
+    var t = setTimeout(function () { ctrl.abort(); }, 12000);
     try {
       var r = await fetch(url, {
         method: "GET",
@@ -399,6 +453,19 @@
       clearTimeout(t);
       throw e;
     }
+  }
+
+  /**
+   * Returns { payload, fromCache }.
+   * Checks localStorage first; only calls the API on a miss or expired entry.
+   */
+  async function fetchHoldings(queryParams) {
+    var key = cacheKey(queryParams);
+    var cached = getCached(key);
+    if (cached) return { payload: cached, fromCache: true };
+    var payload = await fetchHoldingsRemote(queryParams);
+    setCached(key, payload);
+    return { payload: payload, fromCache: false };
   }
 
   function metaSuffixFromForm() {
@@ -431,10 +498,13 @@
     setStatusBanner(statusEl, "loading", "Loading…");
 
     var usedMexcFallback = false;
+    var fromCache = false;
     var payload = null;
 
     try {
-      payload = await fetchHoldings(queryParams);
+      var result = await fetchHoldings(queryParams);
+      payload    = result.payload;
+      fromCache  = result.fromCache;
     } catch (err) {
       usedMexcFallback = true;
       payload = {
@@ -474,13 +544,13 @@
         metaEl.removeAttribute("hidden");
         var parts = [];
         if (payload.db_refreshed_at) parts.push("DB snapshot: " + payload.db_refreshed_at);
-        if (payload.cache_ttl_seconds != null) parts.push("Cache TTL: " + payload.cache_ttl_seconds + "s");
+        if (fromCache) parts.push("from local cache");
         if (extra) parts.push(extra);
-        metaEl.textContent = parts.length ? parts.join(" · ") : "Council API." + (extra ? " " + extra : "");
+        metaEl.textContent = parts.length ? parts.join(" · ") : (fromCache ? "From local cache." : "Council API.") + (extra ? " " + extra : "");
       }
     }
 
-    var label = usedMexcFallback ? "Balance (local series)" : "Balance (cached)";
+    var label = usedMexcFallback ? "Balance (illustrative)" : "Balance";
     renderChart(canvas, series, utxoSeries, label);
 
     if (usedMexcFallback) {
@@ -490,7 +560,7 @@
       }
     } else {
       if (statusEl) statusEl.removeAttribute("hidden");
-      setStatusBanner(statusEl, "ok", "Loaded.");
+      setStatusBanner(statusEl, "ok", fromCache ? "Loaded from cache." : "Loaded.");
     }
 
     window.__lastHoldingsPayload = payload;
@@ -692,6 +762,7 @@
   };
 
   function init() {
+    pruneCache(); /* quietly remove stale cache entries on page load */
     populatePresetSelect();
     wirePresetAndAddress();
     wireLocalSaveControls();
@@ -703,7 +774,7 @@
     var csvBtn = document.getElementById("export-csv-btn");
 
     var list = presets();
-    /* Default UX: preset stays "Custom…" while the MEXC address is prefilled in the input (chart still loads that address). */
+    /* Default UX: preset stays "Custom…" while the MEXC address is prefilled in the input. */
     if (presetSel) presetSel.value = "";
     if (addrInput && list.length && list[0] && list[0].address) {
       addrInput.value = list[0].address;
@@ -713,11 +784,20 @@
     applyRangePresetToFields();
 
     if (btn) {
-      btn.addEventListener("click", function () {
+      /* Single click → use cache if available.
+         Double-click (or Shift+click) → force fresh fetch, bypass cache. */
+      btn.addEventListener("click", function (e) {
         var a = addrInput ? addrInput.value.trim() : "";
         if (!a) return;
+        if (e.shiftKey || e.detail >= 2) {
+          /* Force refresh: delete the cache entry for this query then reload. */
+          var key = cacheKey(buildQueryParams(a));
+          try { localStorage.removeItem(key); } catch (_) {}
+          btn.title = "";
+        }
         loadHoldings(a);
       });
+      btn.title = "Shift+click or double-click to bypass cache and fetch fresh data";
     }
     if (csvBtn) {
       csvBtn.addEventListener("click", exportCsv);
