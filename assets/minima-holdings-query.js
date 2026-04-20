@@ -584,7 +584,7 @@
       var shortAddr = addr.length > 16 ? (addr.slice(0, 8) + "..." + addr.slice(-8)) : addr;
       name += "-" + shortAddr;
     }
-    var latestBlock = payload.block_live != null ? payload.block_live : payload.block_db;
+    var latestBlock = payload.block_db;
     if (latestBlock != null && latestBlock !== "") name += "-block-" + String(latestBlock);
     a.download = name + ".csv";
     a.click();
