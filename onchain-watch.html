@@ -231,9 +231,6 @@
             <div class="devtools-panel devtools-discord-panel">
                 <h2 class="devtools-panel-heading">Discord channel</h2>
                 <p>This Discord channel is for everyone who wants to discuss and share on-chain analysis, including holdings views like this page and other Minima tooling.</p>
-                <div class="buttons">
-                    <a class="btn btn-primary" href="https://discord.com/channels/1461269219009232997/1493173250497450066" target="_blank" rel="noopener noreferrer">Open Discord channel</a>
-                </div>
             </div>
 
         </div>
@@ -324,6 +321,8 @@
             background: linear-gradient(180deg, rgba(11,15,20,0.04), rgba(11,15,20,0.16));
         }
         .devtools-chart-loading[hidden] { display: none !important; }
+        /* hide bottom pager button strip on this page */
+        #siteMapNav { display: none !important; }
         .devtools-chart-loading__ring {
             position: absolute;
             width: 44px;
