@@ -58,7 +58,7 @@
 
   function getRangePresetValue() {
     var el = document.querySelector('input[name="holdings-range-preset"]:checked');
-    return el ? el.value : "1m";
+    return el ? el.value : "all";
   }
 
   function setRangePresetValue(mode) {
