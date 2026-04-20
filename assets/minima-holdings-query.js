@@ -561,16 +561,19 @@
     if (!series || !series.length) return;
     var payload = window.__lastHoldingsPayload || {};
     var q = window.__lastHoldingsQuery || {};
+    var blockDb = payload.block_db != null ? payload.block_db : "";
     var utxoSeries = window.__lastHoldingsUtxoSeries || [];
     var hasUtxo = utxoSeries.length > 0;
     var utxoMap = {};
     if (hasUtxo) {
       utxoSeries.forEach(function (p) { utxoMap[p.x] = p.y; });
     }
-    var header = hasUtxo ? ["date", "balance", "utxo_count"].join(",") : ["date", "balance"].join(",");
+    var header = hasUtxo
+      ? ["date_indicative", "block_db_snapshot", "balance", "utxo_count"].join(",")
+      : ["date_indicative", "block_db_snapshot", "balance"].join(",");
     var rows = [header].concat(
       series.map(function (p) {
-        var cols = [JSON.stringify(p.x), p.y];
+        var cols = [JSON.stringify(p.x), blockDb, p.y];
         if (hasUtxo) cols.push(utxoMap[p.x] != null ? utxoMap[p.x] : "");
         return cols.join(",");
       })
