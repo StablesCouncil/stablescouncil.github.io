@@ -247,7 +247,7 @@
   // ── Timeline result cache ──────────────────────────────────────────────────
   // Caches successful API responses in localStorage for CACHE_TTL_MS.
   // The DB updates ~once per day; 6 hours is a safe freshness window.
-  var CACHE_KEY_PREFIX = "stables_hcache_v1:";
+  var CACHE_KEY_PREFIX = "stables_hcache_v2:";
   var CACHE_TTL_MS     = 6 * 60 * 60 * 1000; // 6 hours
 
   function cacheKey(params) {
