@@ -472,21 +472,6 @@
     return { payload: payload, fromCache: false };
   }
 
-  function metaSuffixFromForm() {
-    var parts = [];
-    var mode = getRangePresetValue();
-    if (mode === "all") parts.push("range: all");
-    else {
-      var df = document.getElementById("date-from");
-      var dt = document.getElementById("date-to");
-      if (df && df.value) parts.push("from " + df.value);
-      if (dt && dt.value) parts.push("to " + dt.value);
-    }
-    var iv = getIntervalTypeValue();
-    if (iv) parts.push(iv);
-    return parts.length ? parts.join(" · ") : "";
-  }
-
   async function loadHoldings(address) {
     var canvas = document.getElementById("holdings-chart");
     var statusEl = document.getElementById("holdings-status");
@@ -519,23 +504,10 @@
       var series     = normalizeSeries(payload);
       var utxoSeries = normalizeUtxoSeries(payload);
 
-      var metaEl = document.getElementById("holdings-cache-meta");
-      var extra  = metaSuffixFromForm();
-
       if (!series.length) {
         /* API responded but returned no rows — keep skeleton chart, show info. */
-        if (metaEl) { metaEl.textContent = ""; metaEl.setAttribute("hidden", "hidden"); }
         setStatusBanner(statusEl, "ok", "No data returned for this address in the selected range.");
         return;
-      }
-
-      if (metaEl) {
-        metaEl.removeAttribute("hidden");
-        var parts = [];
-        if (payload.db_refreshed_at) parts.push("DB snapshot: " + payload.db_refreshed_at);
-        if (fromCache) parts.push("from local cache");
-        if (extra) parts.push(extra);
-        metaEl.textContent = parts.length ? parts.join(" · ") : (fromCache ? "From local cache." : "Council API.") + (extra ? " " + extra : "");
       }
 
       renderChart(canvas, series, utxoSeries, "Balance");
