@@ -157,10 +157,18 @@
       .map(function (p) {
         if (p == null) return null;
         if (typeof p.y === "number" && (typeof p.x === "string" || typeof p.x === "number")) {
-          return { x: String(p.x), y: p.y };
+          var out = { x: String(p.x), y: p.y };
+          if (p.block_db_snapshot != null && Number.isFinite(Number(p.block_db_snapshot))) {
+            out.block_db_snapshot = Number(p.block_db_snapshot);
+          } else if (p.period_max_block != null && Number.isFinite(Number(p.period_max_block))) {
+            out.block_db_snapshot = Number(p.period_max_block);
+          } else if (p.block != null && Number.isFinite(Number(p.block))) {
+            out.block_db_snapshot = Number(p.block);
+          }
+          return out;
         }
         if (typeof p.balance === "number" && p.block != null) {
-          return { x: String(p.block), y: p.balance };
+          return { x: String(p.block), y: p.balance, block_db_snapshot: Number(p.block) };
         }
         return null;
       })
@@ -573,7 +581,8 @@
       : ["date_indicative", "block_db_snapshot", "balance"].join(",");
     var rows = [header].concat(
       series.map(function (p) {
-        var cols = [JSON.stringify(p.x), blockDb, p.y];
+        var rowBlock = p.block_db_snapshot != null ? p.block_db_snapshot : blockDb;
+        var cols = [JSON.stringify(p.x), rowBlock, p.y];
         if (hasUtxo) cols.push(utxoMap[p.x] != null ? utxoMap[p.x] : "");
         return cols.join(",");
       })
