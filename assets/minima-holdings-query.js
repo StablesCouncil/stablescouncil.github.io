@@ -364,7 +364,7 @@
         position: "right",
         ticks: { color: "#9fb0c0" },
         grid: { color: "rgba(103,232,249,0.08)" },
-        title: { display: true, text: "Balance", color: "#9fb0c0", font: { size: 11 } },
+        title: { display: false },
       },
     };
 
@@ -391,7 +391,7 @@
           callback: function (value) { return String(Math.round(Number(value))); },
         },
         grid: { drawOnChartArea: false },
-        title: { display: true, text: "UTXOs", color: "#a78bfa", font: { size: 11 } },
+        title: { display: false },
       };
     }
 
@@ -410,6 +410,16 @@
               usePointStyle: true,
               pointStyle: "line",
               pointStyleWidth: 24,
+            },
+          },
+          tooltip: {
+            displayColors: false,
+            callbacks: {
+              label: function (ctx) {
+                var v = ctx.parsed && ctx.parsed.y != null ? ctx.parsed.y : null;
+                var n = v == null ? "—" : Number(v).toLocaleString("en-GB");
+                return "━ " + String(ctx.dataset && ctx.dataset.label ? ctx.dataset.label : "") + ": " + n;
+              },
             },
           },
         },
@@ -841,6 +851,16 @@
               pointStyleWidth: 24,
             },
           },
+          tooltip: {
+            displayColors: false,
+            callbacks: {
+              label: function (ctx) {
+                var v = ctx.parsed && ctx.parsed.y != null ? ctx.parsed.y : null;
+                var n = v == null ? "—" : Number(v).toLocaleString("en-GB");
+                return "━ " + String(ctx.dataset && ctx.dataset.label ? ctx.dataset.label : "") + ": " + n;
+              },
+            },
+          },
         },
         scales: {
           x: {
@@ -852,7 +872,7 @@
             min: 0,
             ticks: { color: "#9fb0c0" },
             grid: { color: "rgba(103,232,249,0.08)" },
-            title: { display: true, text: "Balance", color: "#9fb0c0", font: { size: 11 } },
+            title: { display: false },
           },
           y1: {
             position: "right",
@@ -862,7 +882,7 @@
               callback: function (value) { return String(Math.round(Number(value))); },
             },
             grid: { drawOnChartArea: false },
-            title: { display: true, text: "UTXOs", color: "#a78bfa", font: { size: 11 } },
+            title: { display: false },
           },
         },
       },
