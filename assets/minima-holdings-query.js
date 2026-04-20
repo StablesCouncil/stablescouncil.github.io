@@ -503,6 +503,9 @@
       /* Update block info only when the payload contains real values. */
       if (payload.block_live != null) setText("holdings-block-live", fmtBlock(payload.block_live));
       if (payload.block_db   != null) setText("holdings-block-db",   fmtBlock(payload.block_db));
+      if (typeof window.setBlockBehind === "function") {
+        window.setBlockBehind(payload.block_behind);
+      }
 
       var series     = normalizeSeries(payload);
       var utxoSeries = normalizeUtxoSeries(payload);
