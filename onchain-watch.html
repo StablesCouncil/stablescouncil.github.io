@@ -174,16 +174,23 @@
                     <div class="devtools-holdings-dates">
                         <div>
                             <label for="date-from">date_from</label>
-                            <input id="date-from" type="date" name="date_from" readonly aria-label="date_from">
+                            <input id="date-from" type="date" name="date_from" aria-label="date_from">
                         </div>
                         <div>
                             <label for="date-to">date_to</label>
-                            <input id="date-to" type="date" name="date_to" readonly aria-label="date_to">
+                            <input id="date-to" type="date" name="date_to" aria-label="date_to">
                         </div>
                     </div>
 
-                    <label for="interval-type">interval_type</label>
-                    <select id="interval-type" name="interval_type" aria-label="interval_type">
+                    <span class="devtools-holdings-sub-label">interval_type</span>
+                    <div class="devtools-holdings-segment" role="radiogroup" aria-label="Interval type">
+                        <label><input type="radio" name="holdings-interval-type" value="DAY" checked> DAY</label>
+                        <label><input type="radio" name="holdings-interval-type" value="WEEK"> WEEK</label>
+                        <label><input type="radio" name="holdings-interval-type" value="MONTH"> MONTH</label>
+                        <label><input type="radio" name="holdings-interval-type" value="QUARTER"> QUARTER</label>
+                        <label><input type="radio" name="holdings-interval-type" value="YEAR"> YEAR</label>
+                    </div>
+                    <select id="interval-type" name="interval_type" aria-label="interval_type" hidden>
                         <option value="DAY" selected>DAY</option>
                         <option value="WEEK">WEEK</option>
                         <option value="MONTH">MONTH</option>
@@ -276,19 +283,20 @@
             <label class="addr-modal-label">Address</label>
             <div id="modal-addr-display" class="addr-modal-addr-display"></div>
             <label class="addr-modal-label" for="modal-saved-name">Label</label>
-            <input id="modal-saved-name" class="addr-modal-input" type="text" autocomplete="off" spellcheck="false" placeholder="Short name (e.g. MEXC cold)">
+            <input id="modal-saved-name" class="addr-modal-input" type="text" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Short name (e.g. MEXC cold)">
             <div class="addr-modal-divider">
                 <span class="addr-modal-divider__label">Share with community</span>
             </div>
             <p class="addr-modal-desc">Contribute a shared label visible to everyone via a GitHub pull request.</p>
             <label class="addr-modal-label" for="modal-gh-user">GitHub username</label>
-            <input id="modal-gh-user" class="addr-modal-input" type="text" autocomplete="username" spellcheck="false" placeholder="e.g. octocat">
+            <input id="modal-gh-user" class="addr-modal-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="e.g. octocat">
             <p class="addr-modal-hint">Public handle only — no tokens or passwords.</p>
             <label class="addr-modal-label" for="modal-notes">Notes (optional)</label>
-            <textarea id="modal-notes" class="addr-modal-textarea" placeholder="Operator context, no secrets"></textarea>
+            <textarea id="modal-notes" class="addr-modal-textarea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Operator context, no secrets"></textarea>
+            <p class="addr-modal-hint">Share flow: fill fields, click Share with community. We copy a ready JSON snippet and open GitHub edit.</p>
             <div class="addr-modal-actions">
                 <button type="button" class="btn btn-primary" id="modal-save-btn" onclick="modalSaveLocal()">Save for me</button>
-                        <a class="btn btn-secondary" href="https://github.com/StablesCouncil/stablescouncil.github.io/edit/main/github/community-addresses.json" target="_blank" rel="noopener noreferrer">Share with community ↗</a>
+                <button type="button" class="btn btn-secondary" id="modal-share-btn" onclick="shareCommunityAddress()">Share with community ↗</button>
             </div>
         </div>
     </div>
@@ -463,6 +471,29 @@
             if (hiddenInput) hiddenInput.value = name;
             if (hiddenBtn) hiddenBtn.click();
             closeAddrModal();
+        }
+        function shareCommunityAddress() {
+            var addr = ((document.getElementById('modal-addr-display') || {}).textContent || '').trim();
+            var label = ((document.getElementById('modal-saved-name') || {}).value || '').trim() || 'Address label';
+            var user = ((document.getElementById('modal-gh-user') || {}).value || '').trim() || 'your-github-user';
+            var notes = ((document.getElementById('modal-notes') || {}).value || '').trim() || 'Context note.';
+            if (!addr || addr === '—') return;
+            var today = new Date().toISOString().slice(0, 10);
+            function esc(s) { return String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"'); }
+            var snippet =
+                '{\n' +
+                '  "label": "' + esc(label) + '",\n' +
+                '  "address": "' + esc(addr) + '",\n' +
+                '  "contributor": "' + esc(user) + '",\n' +
+                '  "notes": "' + esc(notes) + '",\n' +
+                '  "added": "' + today + '"\n' +
+                '}';
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(snippet);
+                }
+            } catch (e) {}
+            window.open('https://github.com/StablesCouncil/stablescouncil.github.io/edit/main/github/community-addresses.json', '_blank', 'noopener,noreferrer');
         }
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeAddrModal();

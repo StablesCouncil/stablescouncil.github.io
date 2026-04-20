@@ -61,6 +61,18 @@
     return el ? el.value : "1m";
   }
 
+  function setRangePresetValue(mode) {
+    var el = document.querySelector('input[name="holdings-range-preset"][value="' + mode + '"]');
+    if (el) el.checked = true;
+  }
+
+  function getIntervalTypeValue() {
+    var radio = document.querySelector('input[name="holdings-interval-type"]:checked');
+    if (radio && radio.value) return String(radio.value).toUpperCase();
+    var sel = document.getElementById("interval-type");
+    return (sel && sel.value ? String(sel.value) : "DAY").toUpperCase();
+  }
+
   /** @returns {{ from: string, to: string } | { from: null, to: null } | null} */
   function computedRangeForPreset(mode) {
     if (mode === "all") return { from: null, to: null };
@@ -80,8 +92,6 @@
     var dt = document.getElementById("date-to");
     if (!df || !dt) return;
     if (mode === "custom") {
-      df.removeAttribute("readonly");
-      dt.removeAttribute("readonly");
       if (!df.value && !dt.value) {
         var r = computedRangeForPreset("1m");
         if (r && r.from && r.to) {
@@ -91,8 +101,6 @@
       }
       return;
     }
-    df.setAttribute("readonly", "readonly");
-    dt.setAttribute("readonly", "readonly");
     if (mode === "all") {
       df.value = "";
       dt.value = "";
@@ -107,8 +115,7 @@
 
   function buildQueryParams(address) {
     var q = { address: address.trim() };
-    var intervalEl = document.getElementById("interval-type");
-    q.interval_type = (intervalEl && intervalEl.value) || "DAY";
+    q.interval_type = getIntervalTypeValue();
     var mode = getRangePresetValue();
     if (mode === "all") {
       return q;
@@ -475,8 +482,8 @@
       if (df && df.value) parts.push("from " + df.value);
       if (dt && dt.value) parts.push("to " + dt.value);
     }
-    var iv = document.getElementById("interval-type");
-    if (iv && iv.value) parts.push(iv.value);
+    var iv = getIntervalTypeValue();
+    if (iv) parts.push(iv);
     return parts.length ? parts.join(" · ") : "";
   }
 
@@ -753,6 +760,32 @@
     }
   }
 
+  function wireDateAutoCustom() {
+    var df = document.getElementById("date-from");
+    var dt = document.getElementById("date-to");
+    function promoteToCustom() {
+      if (getRangePresetValue() !== "custom") setRangePresetValue("custom");
+    }
+    if (df) {
+      df.addEventListener("input", promoteToCustom);
+      df.addEventListener("change", promoteToCustom);
+    }
+    if (dt) {
+      dt.addEventListener("input", promoteToCustom);
+      dt.addEventListener("change", promoteToCustom);
+    }
+  }
+
+  function wireIntervalTypeRadios() {
+    var sel = document.getElementById("interval-type");
+    var nodes = document.querySelectorAll('input[name="holdings-interval-type"]');
+    for (var i = 0; i < nodes.length; i++) {
+      nodes[i].addEventListener("change", function () {
+        if (sel) sel.value = this.value;
+      });
+    }
+  }
+
   /* Expose repopulate so external controls (e.g. Clear all) can refresh the dropdown. */
   window.__repopulatePresets = function() {
     populatePresetSelect();
@@ -861,6 +894,8 @@
     wirePresetAndAddress();
     wireLocalSaveControls();
     wireRangePresets();
+    wireDateAutoCustom();
+    wireIntervalTypeRadios();
 
     var addrInput = document.getElementById("minima-addr");
     var btn = document.getElementById("run-query-btn");
