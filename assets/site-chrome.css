@@ -6,7 +6,8 @@
 
 :root {
   --site-header-h: 64px;
-  --site-footer-minimal-h: 96px;
+  /* Minimal footer bar: reserve enough so social row + meta never clip; body padding uses same token */
+  --site-footer-minimal-h: 112px;
 }
 
 /* --- Global shell -------------------------------------------------------- */
@@ -346,11 +347,12 @@ body.links-page-body.deck-chrome-page .title-block > .subtitle.philosophy-text {
   left: 0;
   right: 0;
   z-index: 700;
-  height: var(--site-footer-minimal-h);
+  min-height: var(--site-footer-minimal-h);
+  height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 10px clamp(14px, 4vw, 32px) 14px;
+  padding: 10px clamp(14px, 4vw, 32px) calc(14px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid rgba(103, 232, 249, 0.22);
   background: rgba(16, 24, 38, 0.82);
   backdrop-filter: blur(14px);
@@ -364,9 +366,13 @@ body.links-page-body.deck-chrome-page .title-block > .subtitle.philosophy-text {
   transform: translateY(100%);
 }
 
-/* Push page content above the fixed footer with a comfortable gap */
+/* Push page content above the fixed footer with a comfortable gap (incl. iOS home indicator) */
+html:has(.site-chrome-footer--minimal) {
+  scroll-padding-bottom: calc(var(--site-footer-minimal-h) + env(safe-area-inset-bottom, 0px) + 12px);
+}
+
 body:has(.site-chrome-footer--minimal) {
-  padding-bottom: calc(var(--site-footer-minimal-h) + 32px);
+  padding-bottom: calc(var(--site-footer-minimal-h) + env(safe-area-inset-bottom, 0px) + 48px);
 }
 
 .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial {
