@@ -2,7 +2,7 @@
  * Minima holdings query UI — calls Council API when deployed.
  *
  * Expected GET (same-origin or STABLES_MINIMA_HOLDINGS_API):
- *   /api/devtools/minima-holdings?address=0x...&date_from=YYYY-MM-DD&date_to=YYYY-MM-DD&interval_type=DAY
+ *   /api/devtools/minima-holdings?address=0x...|Mx...&date_from=YYYY-MM-DD&date_to=YYYY-MM-DD&interval_type=DAY
  *
  * interval_type: DAY | WEEK | MONTH | QUARTER | YEAR
  * Omit date_from / date_to when range is "all" (server interprets full history).
@@ -12,7 +12,8 @@
  *
  * JSON response (example):
  * {
- *   "address": "0x...",
+ *   "address": "0x...",      // canonical address used for query
+ *   "address_input": "Mx...", // optional original input when user typed Mx
  *   "block_live": 1234567,
  *   "block_db": 1234500,
  *   "db_refreshed_at": "2026-04-18T12:00:00.000Z",
@@ -67,8 +68,9 @@
     var to = new Date();
     to.setHours(0, 0, 0, 0);
     var from = new Date(to);
-    if (mode === "1y") from.setFullYear(from.getFullYear() - 1);
-    else from.setMonth(from.getMonth() - 1);
+    if (mode === "1y")      from.setFullYear(from.getFullYear() - 1);
+    else if (mode === "3m") from.setMonth(from.getMonth() - 3);
+    else                    from.setMonth(from.getMonth() - 1);
     return { from: localYMD(from), to: localYMD(to) };
   }
 
@@ -314,7 +316,7 @@
   function looksLikeMinimaAddress(s) {
     var t = String(s || "").trim();
     if (t.length < 16) return false;
-    return /^0x[0-9A-Fa-f]+$/.test(t) || /^[0-9A-Fa-f]+$/.test(t);
+    return /^0x[0-9A-Fa-f]+$/.test(t) || /^[0-9A-Fa-f]+$/.test(t) || /^Mx[0-9A-Za-z]+$/.test(t);
   }
 
   var chartInstance = null;
@@ -423,6 +425,13 @@
     el.textContent = message;
   }
 
+  function setChartLoading(isLoading) {
+    var overlay = document.getElementById("holdings-loading-overlay");
+    if (!overlay) return;
+    if (isLoading) overlay.removeAttribute("hidden");
+    else overlay.setAttribute("hidden", "hidden");
+  }
+
   async function fetchHoldingsRemote(queryParams) {
     var url = holdingsUrl(queryParams);
     var ctrl = new AbortController();
@@ -482,8 +491,11 @@
       btn.disabled = true;
       btn.setAttribute("aria-busy", "true");
     }
-    if (statusEl) statusEl.removeAttribute("hidden");
-    setStatusBanner(statusEl, "loading", "Loading…");
+    if (statusEl) {
+      statusEl.setAttribute("hidden", "hidden");
+      statusEl.textContent = "";
+    }
+    setChartLoading(true);
 
     var fromCache = false;
     var payload = null;
@@ -492,6 +504,43 @@
       var result = await fetchHoldings(queryParams);
       payload   = result.payload;
       fromCache = result.fromCache;
+
+      /* Update block info only when the payload contains real values. */
+      if (payload.block_live != null) setText("holdings-block-live", fmtBlock(payload.block_live));
+      if (payload.block_db   != null) setText("holdings-block-db",   fmtBlock(payload.block_db));
+
+      var series     = normalizeSeries(payload);
+      var utxoSeries = normalizeUtxoSeries(payload);
+
+      var metaEl = document.getElementById("holdings-cache-meta");
+      var extra  = metaSuffixFromForm();
+
+      if (!series.length) {
+        /* API responded but returned no rows — keep skeleton chart, show info. */
+        if (metaEl) { metaEl.textContent = ""; metaEl.setAttribute("hidden", "hidden"); }
+        setStatusBanner(statusEl, "ok", "No data returned for this address in the selected range.");
+        return;
+      }
+
+      if (metaEl) {
+        metaEl.removeAttribute("hidden");
+        var parts = [];
+        if (payload.db_refreshed_at) parts.push("DB snapshot: " + payload.db_refreshed_at);
+        if (fromCache) parts.push("from local cache");
+        if (extra) parts.push(extra);
+        metaEl.textContent = parts.length ? parts.join(" · ") : (fromCache ? "From local cache." : "Council API.") + (extra ? " " + extra : "");
+      }
+
+      renderChart(canvas, series, utxoSeries, "Balance");
+      if (statusEl) {
+        statusEl.setAttribute("hidden", "hidden");
+        statusEl.textContent = "";
+      }
+
+      window.__lastHoldingsPayload      = payload;
+      window.__lastHoldingsSeries       = series;
+      window.__lastHoldingsUtxoSeries   = utxoSeries;
+      window.__lastHoldingsQuery        = queryParams;
     } catch (err) {
       var msg;
       if (window.location.protocol === "file:") {
@@ -505,62 +554,25 @@
         msg = "Network error — check connection and try again.";
       }
       setStatusBanner(statusEl, "error", msg);
-      if (btn) { btn.disabled = false; btn.removeAttribute("aria-busy"); }
       return; /* leave the empty chart skeleton intact */
-    }
-
-    /* Update block info only when the payload contains real values. */
-    if (payload.block_live != null) setText("holdings-block-live", fmtBlock(payload.block_live));
-    if (payload.block_db   != null) setText("holdings-block-db",   fmtBlock(payload.block_db));
-    /* Behind-by indicator (defined in onchain-watch.html inline script) */
-    if (typeof setBlockBehind === "function") setBlockBehind(payload.block_behind ?? null);
-
-    var series     = normalizeSeries(payload);
-    var utxoSeries = normalizeUtxoSeries(payload);
-
-    var metaEl = document.getElementById("holdings-cache-meta");
-    var extra  = metaSuffixFromForm();
-
-    if (!series.length) {
-      /* API responded but returned no rows — keep skeleton chart, show info. */
-      if (metaEl) { metaEl.textContent = ""; metaEl.setAttribute("hidden", "hidden"); }
-      setStatusBanner(statusEl, "ok", "No data returned for this address in the selected range.");
+    } finally {
+      setChartLoading(false);
       if (btn) { btn.disabled = false; btn.removeAttribute("aria-busy"); }
-      return;
     }
-
-    if (metaEl) {
-      metaEl.removeAttribute("hidden");
-      var parts = [];
-      if (payload.db_refreshed_at) parts.push("DB snapshot: " + payload.db_refreshed_at);
-      if (fromCache) parts.push("from local cache");
-      if (extra) parts.push(extra);
-      metaEl.textContent = parts.length ? parts.join(" · ") : (fromCache ? "From local cache." : "Council API.") + (extra ? " " + extra : "");
-    }
-
-    renderChart(canvas, series, utxoSeries, "Balance");
-
-    if (statusEl) statusEl.removeAttribute("hidden");
-    setStatusBanner(statusEl, "ok", fromCache ? "Loaded from cache." : "Loaded.");
-
-    window.__lastHoldingsPayload      = payload;
-    window.__lastHoldingsSeries       = series;
-    window.__lastHoldingsUtxoSeries   = utxoSeries;
-    window.__lastHoldingsQuery        = queryParams;
-
-    if (btn) { btn.disabled = false; btn.removeAttribute("aria-busy"); }
   }
 
   function exportCsv() {
     var series = window.__lastHoldingsSeries;
     if (!series || !series.length) return;
+    var payload = window.__lastHoldingsPayload || {};
+    var q = window.__lastHoldingsQuery || {};
     var utxoSeries = window.__lastHoldingsUtxoSeries || [];
     var hasUtxo = utxoSeries.length > 0;
     var utxoMap = {};
     if (hasUtxo) {
       utxoSeries.forEach(function (p) { utxoMap[p.x] = p.y; });
     }
-    var header = hasUtxo ? ["x", "balance", "utxo_count"].join(",") : ["x", "balance"].join(",");
+    var header = hasUtxo ? ["date", "balance", "utxo_count"].join(",") : ["date", "balance"].join(",");
     var rows = [header].concat(
       series.map(function (p) {
         var cols = [JSON.stringify(p.x), p.y];
@@ -571,11 +583,14 @@
     var blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    var q = window.__lastHoldingsQuery || {};
     var name = "minima-holdings";
-    if (q.date_from) name += "-" + q.date_from;
-    if (q.date_to) name += "_" + q.date_to;
-    if (q.interval_type) name += "-" + String(q.interval_type).toLowerCase();
+    var addr = q.address || payload.address || "";
+    if (addr) {
+      var shortAddr = addr.length > 16 ? (addr.slice(0, 8) + "..." + addr.slice(-8)) : addr;
+      name += "-" + shortAddr;
+    }
+    var latestBlock = payload.block_live != null ? payload.block_live : payload.block_db;
+    if (latestBlock != null && latestBlock !== "") name += "-block-" + String(latestBlock);
     a.download = name + ".csv";
     a.click();
     URL.revokeObjectURL(a.href);
