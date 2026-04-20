@@ -460,19 +460,6 @@
     else overlay.setAttribute("hidden", "hidden");
   }
 
-  function setHoldingsCacheMeta(fromCache) {
-    var el = document.getElementById("holdings-cache-meta");
-    if (!el) return;
-    if (fromCache) {
-      el.textContent =
-        "Loaded from browser cache. Shift+click Run query to fetch a fresh result from the Council API.";
-      el.removeAttribute("hidden");
-    } else {
-      el.setAttribute("hidden", "hidden");
-      el.textContent = "";
-    }
-  }
-
   async function fetchHoldingsRemote(queryParams) {
     var url = holdingsUrl(queryParams);
     var ctrl = new AbortController();
@@ -521,7 +508,6 @@
       statusEl.setAttribute("hidden", "hidden");
       statusEl.textContent = "";
     }
-    setHoldingsCacheMeta(false);
     setChartLoading(true);
 
     var fromCache = false;
@@ -536,11 +522,7 @@
       if (payload.block_live != null) setText("holdings-block-live", fmtBlock(payload.block_live));
       if (payload.block_db   != null) setText("holdings-block-db",   fmtBlock(payload.block_db));
       if (typeof window.setBlockBehind === "function") {
-        var lag = payload.block_behind;
-        if ((lag == null || isNaN(Number(lag))) && payload.block_live != null && payload.block_db != null) {
-          lag = Number(payload.block_live) - Number(payload.block_db);
-        }
-        window.setBlockBehind(lag);
+        window.setBlockBehind(payload.block_behind);
       }
 
       var series     = normalizeSeries(payload);
@@ -548,13 +530,11 @@
 
       if (!series.length) {
         /* API responded but returned no rows — keep skeleton chart, show info. */
-        setHoldingsCacheMeta(false);
         setStatusBanner(statusEl, "ok", "No data returned for this address in the selected range.");
         return;
       }
 
       renderChart(canvas, series, utxoSeries, "Minima balance");
-      setHoldingsCacheMeta(fromCache);
       if (statusEl) {
         statusEl.setAttribute("hidden", "hidden");
         statusEl.textContent = "";
@@ -576,7 +556,6 @@
       } else {
         msg = "Network error — check connection and try again.";
       }
-      setHoldingsCacheMeta(false);
       setStatusBanner(statusEl, "error", msg);
       return; /* leave the empty chart skeleton intact */
     } finally {

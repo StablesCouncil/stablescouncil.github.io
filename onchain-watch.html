@@ -120,21 +120,15 @@
             </div>
 
             <div class="devtools-panel devtools-holdings-chart-panel">
-                <div class="devtools-chart-toprow devtools-chart-toprow--holdings">
-                    <div class="devtools-block-row devtools-block-row--holdings-compact" aria-live="polite">
-                        <div class="devtools-block-pill">
-                            <span class="devtools-block-label">Block live</span>
-                            <span class="devtools-block-value" id="holdings-block-live">—</span>
-                        </div>
-                        <div class="devtools-block-pill">
-                            <span class="devtools-block-label">DB</span>
-                            <span class="devtools-block-value" id="holdings-block-db">—</span>
-                        </div>
-                        <div class="devtools-block-pill">
-                            <span class="devtools-block-label">Lag (live − DB)</span>
-                            <span class="devtools-block-value devtools-block-value--lag" id="holdings-block-behind">—</span>
-                        </div>
-                    </div>
+                <div class="devtools-chart-toprow">
+                    <p class="devtools-block-inline" aria-live="polite">
+                        <span class="devtools-block-inline__label">Block live:</span>
+                        <span class="devtools-block-inline__value" id="holdings-block-live">—</span>
+                        <span class="devtools-block-inline__sep" aria-hidden="true">·</span>
+                        <span class="devtools-block-inline__label">DB:</span>
+                        <span class="devtools-block-inline__value" id="holdings-block-db">—</span>
+                        <span class="devtools-block-behind" id="holdings-block-behind" hidden></span>
+                    </p>
                     <button type="button" class="devtools-csv-link" id="export-csv-btn">↓ Download CSV</button>
                 </div>
 
@@ -145,8 +139,6 @@
                         <span class="devtools-chart-loading__ring devtools-chart-loading__ring--delay"></span>
                     </div>
                 </div>
-
-                <p id="holdings-cache-meta" class="devtools-holdings-meta" hidden></p>
 
                 <p id="holdings-file-warn" class="devtools-holdings-status devtools-holdings-status--warn" role="status" hidden>
                     Opened from a local file — live data requires a web server. Open from
@@ -190,7 +182,7 @@
                         </div>
                     </div>
 
-                    <span class="devtools-holdings-sub-label">Interval</span>
+                    <span class="devtools-holdings-sub-label">interval_type</span>
                     <div class="devtools-holdings-segment" role="radiogroup" aria-label="Interval type">
                         <label><input type="radio" name="holdings-interval-type" value="DAY" checked> Day</label>
                         <label><input type="radio" name="holdings-interval-type" value="WEEK"> Week</label>
@@ -228,7 +220,7 @@
                         <span class="devtools-archive-meta-value" id="archive-file-size">—</span>
                     </span>
                 </div>
-                <p class="devtools-archive-lede">Updated on a daily basis on the Council VPS (<code>140.82.36.166</code>). Live chart data uses <code>agent.stablescouncil.org</code> (same host).</p>
+                <p class="devtools-archive-lede">Updated on a daily basis by the StablesCouncil VPS.</p>
                 <div class="buttons devtools-archive-buttons">
                     <a class="btn btn-primary devtools-archive-download" href="https://agent.stablescouncil.org/api/devtools/archive-download" target="_blank" rel="noopener noreferrer">
                         <span class="devtools-archive-download__label">Download</span>
@@ -310,20 +302,14 @@
     </div>
 
     <style>
-        /* --- chart top row: pill block stats + CSV (shared pill styles in devtools-pages.css) --- */
-        .devtools-chart-toprow--holdings {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 12px 16px;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
-        .devtools-chart-toprow--holdings .devtools-block-row {
-            flex: 1 1 auto;
-            justify-content: center;
-            min-width: min(100%, 280px);
-        }
+        /* --- chart top row: block info left, csv right --- */
+        .devtools-chart-toprow { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+        /* --- compact block row --- */
+        .devtools-block-inline { font-size: 12px; color: #9fb0c0; margin: 0; display: flex; gap: 5px; align-items: center; flex-wrap: wrap; font-family: 'Inter', sans-serif; }
+        .devtools-block-inline__label { color: #9fb0c0; }
+        .devtools-block-inline__value { color: #67e8f9; font-weight: 600; font-variant-numeric: tabular-nums; }
+        .devtools-block-inline__sep { color: #9fb0c0; opacity: 0.35; }
+        .devtools-block-behind { font-size: 11px; color: #f59e0b; font-variant-numeric: tabular-nums; opacity: 0.9; }
         /* --- csv download link --- */
         .devtools-csv-link { background: none; border: none; color: #67e8f9; font-size: 12px; font-family: 'Inter', sans-serif; cursor: pointer; padding: 2px 0; opacity: 0.65; display: inline-block; transition: opacity 0.15s; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
         .devtools-csv-link:hover { opacity: 1; text-decoration: underline; }
@@ -549,12 +535,15 @@
             function setBlockBehind(behind) {
                 var el = document.getElementById('holdings-block-behind');
                 if (!el) return;
-                if (behind == null || behind === '' || isNaN(Number(behind))) {
-                    el.textContent = '—';
+                if (behind == null || isNaN(Number(behind))) {
+                    el.setAttribute('hidden', 'hidden');
+                    el.textContent = '';
                     return;
                 }
                 var n = Number(behind);
-                el.textContent = n.toLocaleString('en-GB');
+                var sign = n > 0 ? '-' : n < 0 ? '+' : '';
+                el.textContent = sign + Math.abs(n).toLocaleString('en-GB');
+                el.removeAttribute('hidden');
             }
             window.setBlockBehind = setBlockBehind;
             function fmtDate(iso) {
@@ -584,11 +573,7 @@
                     var liveBlock = d.block_live != null ? d.block_live : dbBlock;
                     setText('holdings-block-db',   dbBlock != null ? String(dbBlock) : '—');
                     setText('holdings-block-live', liveBlock != null ? String(liveBlock) : '—');
-                    var lag = d.block_behind;
-                    if ((lag == null || isNaN(Number(lag))) && dbBlock != null && liveBlock != null) {
-                        lag = Number(liveBlock) - Number(dbBlock);
-                    }
-                    setBlockBehind(lag);
+                    setBlockBehind(d.block_behind);
                 } catch(e) {
                     /* silent — values stay at — (common when opened from file://) */
                 }

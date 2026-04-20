@@ -228,10 +228,6 @@ body.devtools-sub-page.site-chrome-body {
     font-variant-numeric: tabular-nums;
 }
 
-.devtools-block-pill .devtools-block-value--lag {
-    color: #fbbf24;
-}
-
 /* Holdings query: keep block readouts compact at top of panel */
 .devtools-block-row--holdings-compact {
     margin: 0 0 0.5rem;
@@ -255,10 +251,6 @@ body.devtools-sub-page.site-chrome-body {
     font-weight: 700;
 }
 
-.devtools-block-row--holdings-compact .devtools-block-pill .devtools-block-value--lag {
-    color: #fbbf24;
-}
-
 .devtools-chart-frame {
     position: relative;
     width: 100%;
@@ -274,26 +266,6 @@ body.devtools-sub-page.site-chrome-body {
     margin: 0 auto;
     padding-top: 1.25rem;
     border-top: 1px solid rgba(103, 232, 249, 0.18);
-}
-
-.devtools-holdings-query-inline > label[for="minima-addr"] {
-    margin-top: 0.15rem;
-}
-
-.devtools-holdings-query-inline .devtools-addr-input-row {
-    margin-bottom: 0.5rem;
-}
-
-.devtools-holdings-query-inline #minima-addr-preset {
-    margin-bottom: 1.35rem;
-}
-
-.devtools-holdings-query-inline .devtools-holdings-dates {
-    margin-bottom: 1.15rem;
-}
-
-.devtools-holdings-query-inline > .devtools-holdings-sub-label + .devtools-holdings-segment + .devtools-holdings-dates + .devtools-holdings-sub-label {
-    margin-top: 0.35rem;
 }
 
 .devtools-holdings-query-inline .buttons {
