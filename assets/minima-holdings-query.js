@@ -386,7 +386,10 @@
       });
       scales.y1 = {
         position: "right",
-        ticks: { color: "#a78bfa" },
+        ticks: {
+          color: "#a78bfa",
+          callback: function (value) { return String(Math.round(Number(value))); },
+        },
         grid: { drawOnChartArea: false },
         title: { display: true, text: "UTXOs", color: "#a78bfa", font: { size: 11 } },
       };
@@ -851,7 +854,10 @@
           y1: {
             position: "right",
             min: 0,
-            ticks: { color: "#a78bfa" },
+            ticks: {
+              color: "#a78bfa",
+              callback: function (value) { return String(Math.round(Number(value))); },
+            },
             grid: { drawOnChartArea: false },
             title: { display: true, text: "UTXOs", color: "#a78bfa", font: { size: 11 } },
           },
