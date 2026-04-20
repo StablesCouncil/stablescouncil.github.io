@@ -526,7 +526,7 @@
         return;
       }
 
-      renderChart(canvas, series, utxoSeries, "Balance");
+      renderChart(canvas, series, utxoSeries, "Minima balance");
       if (statusEl) {
         statusEl.setAttribute("hidden", "hidden");
         statusEl.textContent = "";
