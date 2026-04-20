@@ -2,7 +2,7 @@
  * Minima holdings query UI — calls Council API when deployed.
  *
  * Expected GET (same-origin or STABLES_MINIMA_HOLDINGS_API):
- *   /api/devtools/minima-holdings?address=0x...&date_from=YYYY-MM-DD&date_to=YYYY-MM-DD&interval_type=DAY
+ *   /api/devtools/minima-holdings?address=0x...|Mx...&date_from=YYYY-MM-DD&date_to=YYYY-MM-DD&interval_type=DAY
  *
  * interval_type: DAY | WEEK | MONTH | QUARTER | YEAR
  * Omit date_from / date_to when range is "all" (server interprets full history).
@@ -12,7 +12,8 @@
  *
  * JSON response (example):
  * {
- *   "address": "0x...",
+ *   "address": "0x...",      // canonical address used for query
+ *   "address_input": "Mx...", // optional original input when user typed Mx
  *   "block_live": 1234567,
  *   "block_db": 1234500,
  *   "db_refreshed_at": "2026-04-18T12:00:00.000Z",
@@ -57,7 +58,19 @@
 
   function getRangePresetValue() {
     var el = document.querySelector('input[name="holdings-range-preset"]:checked');
-    return el ? el.value : "1m";
+    return el ? el.value : "all";
+  }
+
+  function setRangePresetValue(mode) {
+    var el = document.querySelector('input[name="holdings-range-preset"][value="' + mode + '"]');
+    if (el) el.checked = true;
+  }
+
+  function getIntervalTypeValue() {
+    var radio = document.querySelector('input[name="holdings-interval-type"]:checked');
+    if (radio && radio.value) return String(radio.value).toUpperCase();
+    var sel = document.getElementById("interval-type");
+    return (sel && sel.value ? String(sel.value) : "DAY").toUpperCase();
   }
 
   /** @returns {{ from: string, to: string } | { from: null, to: null } | null} */
@@ -67,8 +80,9 @@
     var to = new Date();
     to.setHours(0, 0, 0, 0);
     var from = new Date(to);
-    if (mode === "1y") from.setFullYear(from.getFullYear() - 1);
-    else from.setMonth(from.getMonth() - 1);
+    if (mode === "1y")      from.setFullYear(from.getFullYear() - 1);
+    else if (mode === "3m") from.setMonth(from.getMonth() - 3);
+    else                    from.setMonth(from.getMonth() - 1);
     return { from: localYMD(from), to: localYMD(to) };
   }
 
@@ -78,8 +92,6 @@
     var dt = document.getElementById("date-to");
     if (!df || !dt) return;
     if (mode === "custom") {
-      df.removeAttribute("readonly");
-      dt.removeAttribute("readonly");
       if (!df.value && !dt.value) {
         var r = computedRangeForPreset("1m");
         if (r && r.from && r.to) {
@@ -89,8 +101,6 @@
       }
       return;
     }
-    df.setAttribute("readonly", "readonly");
-    dt.setAttribute("readonly", "readonly");
     if (mode === "all") {
       df.value = "";
       dt.value = "";
@@ -105,8 +115,7 @@
 
   function buildQueryParams(address) {
     var q = { address: address.trim() };
-    var intervalEl = document.getElementById("interval-type");
-    q.interval_type = (intervalEl && intervalEl.value) || "DAY";
+    q.interval_type = getIntervalTypeValue();
     var mode = getRangePresetValue();
     if (mode === "all") {
       return q;
@@ -148,10 +157,18 @@
       .map(function (p) {
         if (p == null) return null;
         if (typeof p.y === "number" && (typeof p.x === "string" || typeof p.x === "number")) {
-          return { x: String(p.x), y: p.y };
+          var out = { x: String(p.x), y: p.y };
+          if (p.block_db_snapshot != null && Number.isFinite(Number(p.block_db_snapshot))) {
+            out.block_db_snapshot = Number(p.block_db_snapshot);
+          } else if (p.period_max_block != null && Number.isFinite(Number(p.period_max_block))) {
+            out.block_db_snapshot = Number(p.period_max_block);
+          } else if (p.block != null && Number.isFinite(Number(p.block))) {
+            out.block_db_snapshot = Number(p.block);
+          }
+          return out;
         }
         if (typeof p.balance === "number" && p.block != null) {
-          return { x: String(p.block), y: p.balance };
+          return { x: String(p.block), y: p.balance, block_db_snapshot: Number(p.block) };
         }
         return null;
       })
@@ -230,7 +247,7 @@
   // ── Timeline result cache ──────────────────────────────────────────────────
   // Caches successful API responses in localStorage for CACHE_TTL_MS.
   // The DB updates ~once per day; 6 hours is a safe freshness window.
-  var CACHE_KEY_PREFIX = "stables_hcache_v1:";
+  var CACHE_KEY_PREFIX = "stables_hcache_v2:";
   var CACHE_TTL_MS     = 6 * 60 * 60 * 1000; // 6 hours
 
   function cacheKey(params) {
@@ -314,7 +331,7 @@
   function looksLikeMinimaAddress(s) {
     var t = String(s || "").trim();
     if (t.length < 16) return false;
-    return /^0x[0-9A-Fa-f]+$/.test(t) || /^[0-9A-Fa-f]+$/.test(t);
+    return /^0x[0-9A-Fa-f]+$/.test(t) || /^[0-9A-Fa-f]+$/.test(t) || /^Mx[0-9A-Za-z]+$/.test(t);
   }
 
   var chartInstance = null;
@@ -355,7 +372,7 @@
         position: "right",
         ticks: { color: "#9fb0c0" },
         grid: { color: "rgba(103,232,249,0.08)" },
-        title: { display: true, text: "Balance", color: "#9fb0c0", font: { size: 11 } },
+        title: { display: false },
       },
     };
 
@@ -377,9 +394,12 @@
       });
       scales.y1 = {
         position: "right",
-        ticks: { color: "#a78bfa" },
+        ticks: {
+          color: "#a78bfa",
+          callback: function (value) { return String(Math.round(Number(value))); },
+        },
         grid: { drawOnChartArea: false },
-        title: { display: true, text: "UTXOs", color: "#a78bfa", font: { size: 11 } },
+        title: { display: false },
       };
     }
 
@@ -398,6 +418,16 @@
               usePointStyle: true,
               pointStyle: "line",
               pointStyleWidth: 24,
+            },
+          },
+          tooltip: {
+            displayColors: false,
+            callbacks: {
+              label: function (ctx) {
+                var v = ctx.parsed && ctx.parsed.y != null ? ctx.parsed.y : null;
+                var n = v == null ? "—" : Number(v).toLocaleString("en-GB");
+                return "━ " + String(ctx.dataset && ctx.dataset.label ? ctx.dataset.label : "") + ": " + n;
+              },
             },
           },
         },
@@ -421,6 +451,13 @@
     if (!el) return;
     el.className = "devtools-holdings-status devtools-holdings-status--" + kind;
     el.textContent = message;
+  }
+
+  function setChartLoading(isLoading) {
+    var overlay = document.getElementById("holdings-loading-overlay");
+    if (!overlay) return;
+    if (isLoading) overlay.removeAttribute("hidden");
+    else overlay.setAttribute("hidden", "hidden");
   }
 
   async function fetchHoldingsRemote(queryParams) {
@@ -456,21 +493,6 @@
     return { payload: payload, fromCache: false };
   }
 
-  function metaSuffixFromForm() {
-    var parts = [];
-    var mode = getRangePresetValue();
-    if (mode === "all") parts.push("range: all");
-    else {
-      var df = document.getElementById("date-from");
-      var dt = document.getElementById("date-to");
-      if (df && df.value) parts.push("from " + df.value);
-      if (dt && dt.value) parts.push("to " + dt.value);
-    }
-    var iv = document.getElementById("interval-type");
-    if (iv && iv.value) parts.push(iv.value);
-    return parts.length ? parts.join(" · ") : "";
-  }
-
   async function loadHoldings(address) {
     var canvas = document.getElementById("holdings-chart");
     var statusEl = document.getElementById("holdings-status");
@@ -482,8 +504,11 @@
       btn.disabled = true;
       btn.setAttribute("aria-busy", "true");
     }
-    if (statusEl) statusEl.removeAttribute("hidden");
-    setStatusBanner(statusEl, "loading", "Loading…");
+    if (statusEl) {
+      statusEl.setAttribute("hidden", "hidden");
+      statusEl.textContent = "";
+    }
+    setChartLoading(true);
 
     var fromCache = false;
     var payload = null;
@@ -492,6 +517,33 @@
       var result = await fetchHoldings(queryParams);
       payload   = result.payload;
       fromCache = result.fromCache;
+
+      /* Update block info only when the payload contains real values. */
+      if (payload.block_live != null) setText("holdings-block-live", fmtBlock(payload.block_live));
+      if (payload.block_db   != null) setText("holdings-block-db",   fmtBlock(payload.block_db));
+      if (typeof window.setBlockBehind === "function") {
+        window.setBlockBehind(payload.block_behind);
+      }
+
+      var series     = normalizeSeries(payload);
+      var utxoSeries = normalizeUtxoSeries(payload);
+
+      if (!series.length) {
+        /* API responded but returned no rows — keep skeleton chart, show info. */
+        setStatusBanner(statusEl, "ok", "No data returned for this address in the selected range.");
+        return;
+      }
+
+      renderChart(canvas, series, utxoSeries, "Minima balance");
+      if (statusEl) {
+        statusEl.setAttribute("hidden", "hidden");
+        statusEl.textContent = "";
+      }
+
+      window.__lastHoldingsPayload      = payload;
+      window.__lastHoldingsSeries       = series;
+      window.__lastHoldingsUtxoSeries   = utxoSeries;
+      window.__lastHoldingsQuery        = queryParams;
     } catch (err) {
       var msg;
       if (window.location.protocol === "file:") {
@@ -505,65 +557,32 @@
         msg = "Network error — check connection and try again.";
       }
       setStatusBanner(statusEl, "error", msg);
-      if (btn) { btn.disabled = false; btn.removeAttribute("aria-busy"); }
       return; /* leave the empty chart skeleton intact */
-    }
-
-    /* Update block info only when the payload contains real values. */
-    if (payload.block_live != null) setText("holdings-block-live", fmtBlock(payload.block_live));
-    if (payload.block_db   != null) setText("holdings-block-db",   fmtBlock(payload.block_db));
-    /* Behind-by indicator (defined in onchain-watch.html inline script) */
-    if (typeof setBlockBehind === "function") setBlockBehind(payload.block_behind ?? null);
-
-    var series     = normalizeSeries(payload);
-    var utxoSeries = normalizeUtxoSeries(payload);
-
-    var metaEl = document.getElementById("holdings-cache-meta");
-    var extra  = metaSuffixFromForm();
-
-    if (!series.length) {
-      /* API responded but returned no rows — keep skeleton chart, show info. */
-      if (metaEl) { metaEl.textContent = ""; metaEl.setAttribute("hidden", "hidden"); }
-      setStatusBanner(statusEl, "ok", "No data returned for this address in the selected range.");
+    } finally {
+      setChartLoading(false);
       if (btn) { btn.disabled = false; btn.removeAttribute("aria-busy"); }
-      return;
     }
-
-    if (metaEl) {
-      metaEl.removeAttribute("hidden");
-      var parts = [];
-      if (payload.db_refreshed_at) parts.push("DB snapshot: " + payload.db_refreshed_at);
-      if (fromCache) parts.push("from local cache");
-      if (extra) parts.push(extra);
-      metaEl.textContent = parts.length ? parts.join(" · ") : (fromCache ? "From local cache." : "Council API.") + (extra ? " " + extra : "");
-    }
-
-    renderChart(canvas, series, utxoSeries, "Balance");
-
-    if (statusEl) statusEl.removeAttribute("hidden");
-    setStatusBanner(statusEl, "ok", fromCache ? "Loaded from cache." : "Loaded.");
-
-    window.__lastHoldingsPayload      = payload;
-    window.__lastHoldingsSeries       = series;
-    window.__lastHoldingsUtxoSeries   = utxoSeries;
-    window.__lastHoldingsQuery        = queryParams;
-
-    if (btn) { btn.disabled = false; btn.removeAttribute("aria-busy"); }
   }
 
   function exportCsv() {
     var series = window.__lastHoldingsSeries;
     if (!series || !series.length) return;
+    var payload = window.__lastHoldingsPayload || {};
+    var q = window.__lastHoldingsQuery || {};
+    var blockDb = payload.block_db != null ? payload.block_db : "";
     var utxoSeries = window.__lastHoldingsUtxoSeries || [];
     var hasUtxo = utxoSeries.length > 0;
     var utxoMap = {};
     if (hasUtxo) {
       utxoSeries.forEach(function (p) { utxoMap[p.x] = p.y; });
     }
-    var header = hasUtxo ? ["x", "balance", "utxo_count"].join(",") : ["x", "balance"].join(",");
+    var header = hasUtxo
+      ? ["date_indicative", "block_db_snapshot", "balance", "utxo_count"].join(",")
+      : ["date_indicative", "block_db_snapshot", "balance"].join(",");
     var rows = [header].concat(
       series.map(function (p) {
-        var cols = [JSON.stringify(p.x), p.y];
+        var rowBlock = p.block_db_snapshot != null ? p.block_db_snapshot : blockDb;
+        var cols = [JSON.stringify(p.x), rowBlock, p.y];
         if (hasUtxo) cols.push(utxoMap[p.x] != null ? utxoMap[p.x] : "");
         return cols.join(",");
       })
@@ -571,11 +590,14 @@
     var blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8" });
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    var q = window.__lastHoldingsQuery || {};
     var name = "minima-holdings";
-    if (q.date_from) name += "-" + q.date_from;
-    if (q.date_to) name += "_" + q.date_to;
-    if (q.interval_type) name += "-" + String(q.interval_type).toLowerCase();
+    var addr = q.address || payload.address || "";
+    if (addr) {
+      var shortAddr = addr.length > 16 ? (addr.slice(0, 8) + "..." + addr.slice(-8)) : addr;
+      name += "-" + shortAddr;
+    }
+    var latestBlock = payload.block_db;
+    if (latestBlock != null && latestBlock !== "") name += "-block-" + String(latestBlock);
     a.download = name + ".csv";
     a.click();
     URL.revokeObjectURL(a.href);
@@ -738,6 +760,32 @@
     }
   }
 
+  function wireDateAutoCustom() {
+    var df = document.getElementById("date-from");
+    var dt = document.getElementById("date-to");
+    function promoteToCustom() {
+      if (getRangePresetValue() !== "custom") setRangePresetValue("custom");
+    }
+    if (df) {
+      df.addEventListener("input", promoteToCustom);
+      df.addEventListener("change", promoteToCustom);
+    }
+    if (dt) {
+      dt.addEventListener("input", promoteToCustom);
+      dt.addEventListener("change", promoteToCustom);
+    }
+  }
+
+  function wireIntervalTypeRadios() {
+    var sel = document.getElementById("interval-type");
+    var nodes = document.querySelectorAll('input[name="holdings-interval-type"]');
+    for (var i = 0; i < nodes.length; i++) {
+      nodes[i].addEventListener("change", function () {
+        if (sel) sel.value = this.value;
+      });
+    }
+  }
+
   /* Expose repopulate so external controls (e.g. Clear all) can refresh the dropdown. */
   window.__repopulatePresets = function() {
     populatePresetSelect();
@@ -815,6 +863,16 @@
               pointStyleWidth: 24,
             },
           },
+          tooltip: {
+            displayColors: false,
+            callbacks: {
+              label: function (ctx) {
+                var v = ctx.parsed && ctx.parsed.y != null ? ctx.parsed.y : null;
+                var n = v == null ? "—" : Number(v).toLocaleString("en-GB");
+                return "━ " + String(ctx.dataset && ctx.dataset.label ? ctx.dataset.label : "") + ": " + n;
+              },
+            },
+          },
         },
         scales: {
           x: {
@@ -826,14 +884,17 @@
             min: 0,
             ticks: { color: "#9fb0c0" },
             grid: { color: "rgba(103,232,249,0.08)" },
-            title: { display: true, text: "Balance", color: "#9fb0c0", font: { size: 11 } },
+            title: { display: false },
           },
           y1: {
             position: "right",
             min: 0,
-            ticks: { color: "#a78bfa" },
+            ticks: {
+              color: "#a78bfa",
+              callback: function (value) { return String(Math.round(Number(value))); },
+            },
             grid: { drawOnChartArea: false },
-            title: { display: true, text: "UTXOs", color: "#a78bfa", font: { size: 11 } },
+            title: { display: false },
           },
         },
       },
@@ -846,6 +907,8 @@
     wirePresetAndAddress();
     wireLocalSaveControls();
     wireRangePresets();
+    wireDateAutoCustom();
+    wireIntervalTypeRadios();
 
     var addrInput = document.getElementById("minima-addr");
     var btn = document.getElementById("run-query-btn");
