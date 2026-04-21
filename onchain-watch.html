@@ -609,6 +609,8 @@
                         }
                     });
                 } catch(e) { /* file not yet in repo — silent */ }
+                    /* refresh dropdown now that community addresses are loaded */
+                    if (typeof window.__repopulatePresets === 'function') window.__repopulatePresets();
             }
             loadCommunityAddresses();
         })();
