@@ -155,7 +155,7 @@
                     </div>
 
                     <div class="devtools-saved-label-row">
-                        <label for="minima-addr-preset">Saved address</label>
+                        <label for="minima-addr-preset">Saved addresses</label>
                         <button type="button" class="devtools-clear-link" id="clear-saved-btn" title="Remove all locally saved addresses">Clear all</button>
                     </div>
                     <select id="minima-addr-preset" aria-label="Preset or saved address"></select>
@@ -608,6 +608,7 @@
                             window.STABLES_MINIMA_HOLDINGS_PRESETS.push({ label: item.label, address: item.address });
                         }
                     });
+                    if (typeof window.__repopulatePresets === 'function') window.__repopulatePresets();
                 } catch(e) { /* file not yet in repo — silent */ }
                     /* refresh dropdown now that community addresses are loaded */
                     if (typeof window.__repopulatePresets === 'function') window.__repopulatePresets();

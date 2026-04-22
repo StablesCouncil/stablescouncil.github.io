@@ -617,15 +617,19 @@
     var list = presets();
     var saved = loadLocalSavedAddresses();
     var opts = '<option value="">— enter address above —</option>';
-    for (var i = 0; i < list.length; i++) {
-      var p = list[i];
-      if (!p || !p.address) continue;
-      opts +=
-        '<option value="' +
-        escapeHtml(presetOptionValueForBuiltin(p.address)) +
-        '">' +
-        escapeHtml(p.label || p.address.slice(0, 10) + "…") +
-        "</option>";
+    if (list.length) {
+      opts += '<optgroup label="Community">';
+      for (var i = 0; i < list.length; i++) {
+        var p = list[i];
+        if (!p || !p.address) continue;
+        opts +=
+          '<option value="' +
+          escapeHtml(presetOptionValueForBuiltin(p.address)) +
+          '">' +
+          escapeHtml(p.label || p.address.slice(0, 10) + "…") +
+          "</option>";
+      }
+      opts += '</optgroup>';
     }
     if (saved.length) {
       opts += '<optgroup label="Saved on this device">';
