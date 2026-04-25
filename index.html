@@ -732,10 +732,24 @@
             line-height: 1.5;
         }
 
+        .hero-tagline strong {
+            color: var(--text-primary);
+            font-weight: 900;
+            text-shadow: 0 0 18px rgba(103, 232, 249, 0.22);
+        }
+
+        .hero-tagline-break {
+            display: inline;
+        }
+
         @media (max-width: 768px) {
             .hero-tagline {
                 margin-bottom: 12px;
                 font-size: clamp(1rem, 3vw, 1.25rem);
+            }
+
+            .hero-tagline-break {
+                display: block;
             }
         }
 
@@ -1312,8 +1326,7 @@
                         <span class="logo-name-mobile">STABLES</span>
                     </div>
                     <h1 class="hero-title" data-key="hero-title">Be your bank</h1>
-                    <p class="hero-tagline" data-key="hero-tagline">Money that is truly yours. Secure, Pseudonymous and
-                        Unstoppable</p>
+                    <p class="hero-tagline" data-key="hero-tagline">The world's only <span class="hero-tagline-break"><strong>Secure</strong>, <strong>Pseudonymous</strong> and <strong>Unstoppable</strong></span> banking app</p>
                     <div class="btn-group">
                         <a href="https://stablescouncil.org/dapp/1-showcase/" target="_blank" rel="noopener noreferrer" class="btn btn-primary"><span data-key="btn-testing">Test the showcase</span></a>
                         <span class="btn btn-secondary" style="pointer-events: none; opacity: 0.78; cursor: default;" title="Demo MiniDapp at stablescouncil.org/dapp/2-demo is coming soon." role="status"><span data-key="btn-demo-label">Demo</span><span class="btn-label" data-key="btn-demo">Coming soon</span></span>
@@ -1517,7 +1530,7 @@
             },
             en: {
                 "hero-title": "Be your bank",
-                "hero-tagline": "Money that is truly yours. Secure, Pseudonymous and Unstoppable",
+                "hero-tagline": "The world's only <span class=\"hero-tagline-break\"><strong>Secure</strong>, <strong>Pseudonymous</strong> and <strong>Unstoppable</strong></span> banking app",
                 "deck-more-title": "Want to know more?",
                 "deck-more-lead": "Walk the structural view next: how each role lines up incentives with the peg.",
                 "scroll-indicator": "Scroll to explore",
