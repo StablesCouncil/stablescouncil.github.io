@@ -636,12 +636,76 @@
     return "local:" + row.id;
   }
 
+  function shortAddress(addr) {
+    addr = String(addr || "");
+    return addr.length > 18 ? addr.slice(0, 8) + "…" + addr.slice(-8) : addr;
+  }
+
+  function addressMenuSection(title, rows) {
+    var html =
+      '<div class="devtools-address-menu-section">' +
+      '<div class="devtools-address-menu-heading">' +
+      escapeHtml(title) +
+      "</div>";
+    if (!rows.length) {
+      return html + '<div class="devtools-address-menu-empty">None yet</div></div>';
+    }
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      if (!row || !row.address) continue;
+      var label = row.label || shortAddress(row.address);
+      html +=
+        '<button type="button" class="devtools-address-option" role="option" data-address="' +
+        escapeHtml(row.address) +
+        '">' +
+        '<span class="devtools-address-option-label">' +
+        escapeHtml(label) +
+        "</span>" +
+        '<span class="devtools-address-option-short">' +
+        escapeHtml(shortAddress(row.address)) +
+        "</span>" +
+        "</button>";
+    }
+    return html + "</div>";
+  }
+
   function populatePresetSelect() {
     var sel = document.getElementById("minima-addr-preset");
     if (!sel) return;
     var list = presets();
     var saved = loadLocalSavedAddresses();
-    var opts = '<option value="">— enter address above —</option>';
+    if (sel.classList && sel.classList.contains("devtools-address-menu")) {
+      sel.innerHTML =
+        addressMenuSection("Community saved addresses", list) +
+        addressMenuSection("Personal saved addresses", saved);
+      return;
+    }
+    var isDatalist = sel.tagName && sel.tagName.toLowerCase() === "datalist";
+    var opts = isDatalist ? "" : '<option value=""></option>';
+    if (isDatalist) {
+      for (var d = 0; d < saved.length; d++) {
+        var savedRow = saved[d];
+        if (!savedRow || !savedRow.address) continue;
+        opts +=
+          '<option value="' +
+          escapeHtml(savedRow.address) +
+          '" label="' +
+          escapeHtml(savedRow.label || "Saved address") +
+          '"></option>';
+      }
+      for (var c = 0; c < list.length; c++) {
+        var communityRow = list[c];
+        if (!communityRow || !communityRow.address) continue;
+        opts +=
+          '<option value="' +
+          escapeHtml(communityRow.address) +
+          '" label="' +
+          escapeHtml(communityRow.label || "Community address") +
+          '"></option>';
+      }
+      sel.innerHTML = opts;
+      return;
+    }
     if (list.length) {
       opts += '<optgroup label="Community">';
       for (var i = 0; i < list.length; i++) {
@@ -689,6 +753,14 @@
   function syncPresetDropdownFromAddress(addr) {
     var sel = document.getElementById("minima-addr-preset");
     if (!sel) return;
+    if (sel.classList && sel.classList.contains("devtools-address-menu")) {
+      updateForgetSavedButtonState();
+      return;
+    }
+    if (sel.tagName && sel.tagName.toLowerCase() === "datalist") {
+      updateForgetSavedButtonState();
+      return;
+    }
     var normalized = addr.trim().toUpperCase();
     if (!normalized) {
       sel.value = "";
@@ -719,6 +791,14 @@
     var btn = document.getElementById("forget-saved-addr-btn");
     var sel = document.getElementById("minima-addr-preset");
     if (!btn || !sel) return;
+    if (sel.classList && sel.classList.contains("devtools-address-menu")) {
+      btn.disabled = true;
+      return;
+    }
+    if (sel.tagName && sel.tagName.toLowerCase() === "datalist") {
+      btn.disabled = true;
+      return;
+    }
     var v = sel.value || "";
     btn.disabled = v.indexOf("local:") !== 0;
   }
@@ -727,11 +807,46 @@
     var sel = document.getElementById("minima-addr-preset");
     var input = document.getElementById("minima-addr");
     if (sel && input) {
-      sel.addEventListener("change", function () {
-        var addr = addressFromPresetValue(sel.value);
-        if (addr) input.value = addr;
-        updateForgetSavedButtonState();
-      });
+      if (sel.classList && sel.classList.contains("devtools-address-menu")) {
+        var toggle = document.getElementById("minima-addr-menu-btn");
+        var setMenuOpen = function (open) {
+          sel.hidden = !open;
+          input.setAttribute("aria-expanded", open ? "true" : "false");
+          if (toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
+        };
+        if (toggle) {
+          toggle.addEventListener("click", function () {
+            setMenuOpen(sel.hidden);
+          });
+        }
+        sel.addEventListener("click", function (event) {
+          var node = event.target;
+          while (node && node !== sel && (!node.classList || !node.classList.contains("devtools-address-option"))) {
+            node = node.parentNode;
+          }
+          if (!node || node === sel) return;
+          var addr = node.getAttribute("data-address") || "";
+          if (addr) {
+            input.value = addr;
+            syncPresetDropdownFromAddress(addr);
+            setMenuOpen(false);
+            input.focus();
+          }
+        });
+        document.addEventListener("click", function (event) {
+          if (event.target === input || (toggle && toggle.contains(event.target)) || sel.contains(event.target)) return;
+          setMenuOpen(false);
+        });
+        input.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") setMenuOpen(false);
+        });
+      } else if (!sel.tagName || sel.tagName.toLowerCase() !== "datalist") {
+        sel.addEventListener("change", function () {
+          var addr = addressFromPresetValue(sel.value);
+          if (addr) input.value = addr;
+          updateForgetSavedButtonState();
+        });
+      }
       input.addEventListener("input", function () {
         syncPresetDropdownFromAddress(input.value);
       });
