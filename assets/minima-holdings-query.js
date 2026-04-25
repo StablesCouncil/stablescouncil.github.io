@@ -641,6 +641,18 @@
     return addr.length > 18 ? addr.slice(0, 8) + "…" + addr.slice(-8) : addr;
   }
 
+  function displayAddressLabel(label, addr) {
+    label = String(label || "").trim();
+    var shortAddr = shortAddress(addr);
+    return label && label !== shortAddr ? label + " — " + shortAddr : shortAddr;
+  }
+
+  function selectedAddressValue(input) {
+    if (!input) return "";
+    var selected = input.getAttribute("data-selected-address") || "";
+    return selected.trim() || input.value.trim();
+  }
+
   function addressMenuSection(title, rows) {
     var html =
       '<div class="devtools-address-menu-section">' +
@@ -657,6 +669,8 @@
       html +=
         '<button type="button" class="devtools-address-option" role="option" data-address="' +
         escapeHtml(row.address) +
+        '" data-label="' +
+        escapeHtml(label) +
         '">' +
         '<span class="devtools-address-option-label">' +
         escapeHtml(label) +
@@ -826,8 +840,10 @@
           }
           if (!node || node === sel) return;
           var addr = node.getAttribute("data-address") || "";
+          var label = node.getAttribute("data-label") || "";
           if (addr) {
-            input.value = addr;
+            input.value = displayAddressLabel(label, addr);
+            input.setAttribute("data-selected-address", addr);
             syncPresetDropdownFromAddress(addr);
             setMenuOpen(false);
             input.focus();
@@ -848,6 +864,7 @@
         });
       }
       input.addEventListener("input", function () {
+        input.removeAttribute("data-selected-address");
         syncPresetDropdownFromAddress(input.value);
       });
     }
@@ -862,7 +879,7 @@
 
     if (saveBtn && addrInput) {
       saveBtn.addEventListener("click", function () {
-        var addr = addrInput.value.trim();
+        var addr = selectedAddressValue(addrInput);
         if (!looksLikeMinimaAddress(addr)) return;
         var label = (nameInput && nameInput.value.trim()) || "Saved address";
         var rows = loadLocalSavedAddresses();
@@ -928,7 +945,7 @@
       nodes[i].addEventListener("change", function () {
         setIntervalTypeValue(this.value);
         var addrInput = document.getElementById("minima-addr");
-        var address = addrInput ? addrInput.value.trim() : "";
+        var address = selectedAddressValue(addrInput);
         if (address && chartInstance && chartInstance._hasRealData) {
           loadHoldings(address);
         }
@@ -1074,7 +1091,7 @@
       /* Single click fetches fresh data.
          Shift+click or double-click also clears any legacy local snapshot. */
       btn.addEventListener("click", function (e) {
-        var a = addrInput ? addrInput.value.trim() : "";
+        var a = selectedAddressValue(addrInput);
         if (!a) return;
         if (e.shiftKey || e.detail >= 2) {
           var key = cacheKey(buildQueryParams(a));
