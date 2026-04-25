@@ -177,6 +177,9 @@ document.addEventListener("click", function (event) {
     footer = document.querySelector(".site-chrome-footer--minimal");
     if (!header && !footer) return;
     lastY = window.scrollY || 0;
+    if (footer && lastY <= 60) {
+      footer.classList.add("site-chrome-footer--hidden");
+    }
     window.addEventListener("scroll", onScroll, { passive: true });
   }
 
@@ -203,7 +206,7 @@ document.addEventListener("click", function (event) {
 
     // Footer hides on scroll-up (away from bottom), shows on scroll-down
     if (footer) {
-      footer.classList.toggle("site-chrome-footer--hidden", !scrollingDown && pastTop);
+      footer.classList.toggle("site-chrome-footer--hidden", !pastTop || (!scrollingDown && pastTop));
     }
 
     lastY = y;
