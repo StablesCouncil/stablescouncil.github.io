@@ -484,7 +484,7 @@
       var r = await fetch(url, {
         method: "GET",
         signal: ctrl.signal,
-        headers: { Accept: "application/json", "Cache-Control": "no-store" },
+        headers: { Accept: "application/json" },
         credentials: "omit",
         cache: "no-store",
       });
