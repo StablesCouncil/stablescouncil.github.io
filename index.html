@@ -310,7 +310,7 @@
 
         @media (max-width: 768px) {
             section#hero {
-                padding-top: 0.5rem;
+                padding-top: clamp(16px, 3.5vh, 28px);
                 padding-bottom: 0.5rem;
                 padding-left: clamp(10px, 3vw, 14px);
                 padding-right: clamp(10px, 3vw, 14px);
@@ -320,6 +320,7 @@
                 min-height: 100vh;
                 display: flex;
                 align-items: center;
+                justify-content: flex-start;
             }
 
             section#hero > .container {
@@ -348,7 +349,7 @@
 
         @media (max-width: 768px) {
             section#hero .brand-container .minima-badge {
-                margin-bottom: 6px;
+                margin-bottom: clamp(12px, 2.8vh, 18px);
             }
 
             section#hero .brand-container .logo-wordmark {
@@ -356,13 +357,13 @@
             }
 
             section#hero .brand-container .hero-tagline {
-                margin-bottom: clamp(22px, 5vw, 36px);
+                margin-bottom: clamp(28px, 5.5vh, 44px);
                 max-width: none;
                 width: 100%;
             }
 
             section#hero .brand-container .btn-group {
-                margin-top: clamp(8px, 2.5vw, 16px);
+                margin-top: clamp(12px, 3vh, 20px);
                 width: min(100%, 300px);
             }
 
@@ -717,7 +718,7 @@
 
         @media (max-width: 768px) {
             h1.hero-title {
-                margin-bottom: 3px;
+                margin-bottom: clamp(8px, 1.8vh, 12px);
                 font-size: clamp(2.5rem, 10vw, 3.5rem);
             }
         }
@@ -925,9 +926,9 @@
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                gap: clamp(6px, 2vw, 10px);
+                gap: clamp(8px, 2.2vw, 12px);
                 width: 100%;
-                margin: 8px 0 14px;
+                margin: 0 0 clamp(16px, 3vh, 24px);
             }
 
             .logo-symbol-mobile {
