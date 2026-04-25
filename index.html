@@ -290,6 +290,19 @@
             background: radial-gradient(circle at top, rgba(103, 232, 249, 0.18), transparent 55%) #0b0f14;
         }
 
+        @media (max-width: 768px) {
+            body > .container {
+                max-width: none;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            section {
+                padding-left: clamp(10px, 3vw, 14px);
+                padding-right: clamp(10px, 3vw, 14px);
+            }
+        }
+
         section#hero {
             padding-top: 1rem;
             padding-bottom: 1rem;
@@ -299,9 +312,20 @@
             section#hero {
                 padding-top: 0.5rem;
                 padding-bottom: 0.5rem;
+                padding-left: clamp(10px, 3vw, 14px);
+                padding-right: clamp(10px, 3vw, 14px);
+                width: 100vw;
+                margin-left: calc(50% - 50vw);
+                margin-right: calc(50% - 50vw);
                 min-height: 100vh;
                 display: flex;
                 align-items: center;
+            }
+
+            section#hero > .container {
+                max-width: none;
+                padding-left: 0;
+                padding-right: 0;
             }
         }
 
@@ -333,10 +357,17 @@
 
             section#hero .brand-container .hero-tagline {
                 margin-bottom: clamp(22px, 5vw, 36px);
+                max-width: none;
+                width: 100%;
             }
 
             section#hero .brand-container .btn-group {
                 margin-top: clamp(8px, 2.5vw, 16px);
+                width: min(100%, 300px);
+            }
+
+            section#hero .brand-container .btn {
+                width: 100%;
             }
         }
 
