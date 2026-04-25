@@ -140,6 +140,7 @@
       var v = params[k];
       if (v != null && v !== "") search.set(k, String(v));
     });
+    search.set("_", String(Date.now()));
     var path = "/api/devtools/minima-holdings?" + search.toString();
     if (base) return base + path;
     try {
@@ -245,10 +246,10 @@
   }
 
   // ── Timeline result cache ──────────────────────────────────────────────────
-  // Caches successful API responses in localStorage for CACHE_TTL_MS.
-  // The DB updates ~once per day; 6 hours is a safe freshness window.
-  var CACHE_KEY_PREFIX = "stables_hcache_v2:";
-  var CACHE_TTL_MS     = 6 * 60 * 60 * 1000; // 6 hours
+  // Disabled for live holdings queries: the API is the source of truth and the
+  // page must not mask freshly indexed DB blocks with browser-local snapshots.
+  var CACHE_KEY_PREFIX = "stables_hcache_v3:";
+  var CACHE_TTL_MS     = 0;
 
   function cacheKey(params) {
     return CACHE_KEY_PREFIX +
@@ -264,6 +265,10 @@
       if (!raw) return null;
       var entry = JSON.parse(raw);
       if (!entry || typeof entry.ts !== "number" || !entry.payload) return null;
+      if (CACHE_TTL_MS <= 0) {
+        localStorage.removeItem(key);
+        return null;
+      }
       if (Date.now() - entry.ts > CACHE_TTL_MS) {
         localStorage.removeItem(key);
         return null;
@@ -275,6 +280,7 @@
   }
 
   function setCached(key, payload) {
+    if (CACHE_TTL_MS <= 0) return;
     try {
       localStorage.setItem(key, JSON.stringify({ ts: Date.now(), payload: payload }));
     } catch (e) {
@@ -348,6 +354,9 @@
     if (!canvas || typeof Chart === "undefined") return;
     var labels = balanceSeries.map(function (p) { return p.x; });
     var balanceData = balanceSeries.map(function (p) { return p.y; });
+    var blockData = balanceSeries.map(function (p) {
+      return p.block_db_snapshot != null ? p.block_db_snapshot : null;
+    });
     var ctx = canvas.getContext("2d");
 
     var datasets = [
@@ -428,6 +437,13 @@
                 var n = v == null ? "—" : Number(v).toLocaleString("en-GB");
                 return "━ " + String(ctx.dataset && ctx.dataset.label ? ctx.dataset.label : "") + ": " + n;
               },
+              afterBody: function (tooltipItems) {
+                if (!tooltipItems || !tooltipItems.length) return [];
+                var idx = tooltipItems[0].dataIndex;
+                var block = blockData[idx];
+                if (block == null) return [];
+                return ["Block: " + Number(block).toLocaleString("en-GB")];
+              },
             },
           },
         },
@@ -468,8 +484,9 @@
       var r = await fetch(url, {
         method: "GET",
         signal: ctrl.signal,
-        headers: { Accept: "application/json" },
+        headers: { Accept: "application/json", "Cache-Control": "no-store" },
         credentials: "omit",
+        cache: "no-store",
       });
       clearTimeout(t);
       if (!r.ok) throw new Error("HTTP " + r.status);
@@ -925,8 +942,8 @@
     renderEmptyChart(document.getElementById("holdings-chart"));
 
     if (btn) {
-      /* Single click → use cache if available.
-         Shift+click or double-click → bypass cache, force fresh fetch. */
+      /* Single click fetches fresh data.
+         Shift+click or double-click also clears any legacy local snapshot. */
       btn.addEventListener("click", function (e) {
         var a = addrInput ? addrInput.value.trim() : "";
         if (!a) return;
@@ -936,7 +953,7 @@
         }
         loadHoldings(a);
       });
-      btn.title = "Shift+click or double-click to bypass cache and fetch fresh data";
+      btn.title = "Always fetches fresh data; Shift+click or double-click also clears any saved legacy snapshot";
     }
     if (csvBtn) {
       csvBtn.addEventListener("click", exportCsv);
