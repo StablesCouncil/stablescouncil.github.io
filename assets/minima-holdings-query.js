@@ -73,6 +73,14 @@
     return (sel && sel.value ? String(sel.value) : "DAY").toUpperCase();
   }
 
+  function setIntervalTypeValue(value) {
+    var next = String(value || "DAY").toUpperCase();
+    var sel = document.getElementById("interval-type");
+    if (sel) sel.value = next;
+    var radio = document.querySelector('input[name="holdings-interval-type"][value="' + next + '"]');
+    if (radio) radio.checked = true;
+  }
+
   /** @returns {{ from: string, to: string } | { from: null, to: null } | null} */
   function computedRangeForPreset(mode) {
     if (mode === "all") return { from: null, to: null };
@@ -800,9 +808,15 @@
   function wireIntervalTypeRadios() {
     var sel = document.getElementById("interval-type");
     var nodes = document.querySelectorAll('input[name="holdings-interval-type"]');
+    setIntervalTypeValue(sel && sel.value ? sel.value : getIntervalTypeValue());
     for (var i = 0; i < nodes.length; i++) {
       nodes[i].addEventListener("change", function () {
-        if (sel) sel.value = this.value;
+        setIntervalTypeValue(this.value);
+        var addrInput = document.getElementById("minima-addr");
+        var address = addrInput ? addrInput.value.trim() : "";
+        if (address && chartInstance && chartInstance._hasRealData) {
+          loadHoldings(address);
+        }
       });
     }
   }
