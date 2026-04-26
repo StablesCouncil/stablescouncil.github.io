@@ -24,7 +24,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="stables.css">
     <link rel="stylesheet" href="assets/site-chrome.css">
-    <link rel="stylesheet" href="assets/site-map-nav.css">
     <link rel="stylesheet" href="assets/devtools-pages.css">
 </head>
 <body class="site-chrome-body links-page-body has-site-rail deck-chrome-page">
@@ -243,8 +242,6 @@
         </div>
     </main>
 
-    <nav id="siteMapNav" class="site-map-nav" data-site-map-index="6" aria-label="Previous and next in site map order"></nav>
-
     <footer class="site-chrome-footer site-chrome-footer--minimal" role="contentinfo">
         <div class="site-chrome-footerSocial">
             <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" aria-label="Telegram community">
@@ -264,7 +261,6 @@
 
     <script src="assets/site-rail-controls.js" defer></script>
     <script src="assets/site-rail.js" defer></script>
-    <script src="assets/site-map-nav.js" defer></script>
     <script>
         /* Point the holdings query at the live Council API regardless of where the page is opened
            (file://, localhost, or stablescouncil.org). Override before minima-holdings-query.js loads. */
@@ -329,8 +325,6 @@
             background: linear-gradient(180deg, rgba(11,15,20,0.04), rgba(11,15,20,0.16));
         }
         .devtools-chart-loading[hidden] { display: none !important; }
-        /* hide bottom pager button strip on this page */
-        #siteMapNav { display: none !important; }
         .devtools-chart-loading__ring {
             position: absolute;
             width: 44px;

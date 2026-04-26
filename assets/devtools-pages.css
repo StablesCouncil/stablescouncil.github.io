@@ -1,8 +1,7 @@
 /* Onchain tooling page styles — panels, forms, and utilities. Title stack (h1 + .subtitle)
    comes from site-chrome.css via main > .container > .title-block. */
 
-body.devtools-hub-page.site-chrome-body,
-body.devtools-sub-page.site-chrome-body {
+body.site-chrome-body {
     background: radial-gradient(circle at 50% 0%, rgba(103, 232, 249, 0.12), transparent 55%) var(--bg);
     color: var(--text-primary);
     min-height: 100vh;
