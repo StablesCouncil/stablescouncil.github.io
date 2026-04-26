@@ -49,11 +49,7 @@
     return s;
   }
 
-  function resolvePrevNext(nav) {
-    var role = (nav.getAttribute("data-site-map-role") || "").trim();
-    if (role === "qr") {
-      return { prev: ORDER[0], next: ORDER[1] };
-    }
+function resolvePrevNext(nav) {
     var raw = nav.getAttribute("data-site-map-index");
     var idx = raw != null && raw !== "" ? parseInt(raw, 10) : NaN;
     if (isNaN(idx) || idx < 0 || idx >= ORDER.length) {

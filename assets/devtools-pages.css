@@ -1,5 +1,5 @@
-/* /devtools/* — panels, forms, and utilities. Title stack (h1 + .subtitle) comes from
-   site-chrome.css via main > .container > .title-block (same as qr-code, playing_field, …). */
+/* Onchain tooling page styles — panels, forms, and utilities. Title stack (h1 + .subtitle)
+   comes from site-chrome.css via main > .container > .title-block. */
 
 body.devtools-hub-page.site-chrome-body,
 body.devtools-sub-page.site-chrome-body {
