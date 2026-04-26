@@ -4,13 +4,13 @@
  */
 (function () {
   var ORDER = [
-    { href: "https://stablescouncil.org/", label: "Home Page" },
-    { href: "https://stablescouncil.org/playing_field.html", label: "The Playing Field" },
-    { href: "https://stablescouncil.org/circulareconomy.html", label: "Stables circular economy" },
-    { href: "https://stablescouncil.org/bankingsystem.html", label: "Our Banking System" },
-    { href: "https://stablescouncil.org/ambassadorsprogramdesc.html", label: "Ambassador Program" },
-    { href: "https://stablescouncil.org/links.html", label: "All links" },
-    { href: "https://stablescouncil.org/onchain-watch.html", label: "Minima Onchain Watch" },
+    { href: "/", label: "Home Page" },
+    { href: "/playing_field.html", label: "The Playing Field" },
+    { href: "/circulareconomy.html", label: "Stables circular economy" },
+    { href: "/bankingsystem.html", label: "Our Banking System" },
+    { href: "/ambassadorsprogramdesc.html", label: "Ambassador Program" },
+    { href: "/links.html", label: "All links" },
+    { href: "/onchain-watch.html", label: "Minima Onchain Watch" },
   ];
 
   function el(tag, cls, attrs) {

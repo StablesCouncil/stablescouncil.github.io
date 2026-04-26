@@ -939,7 +939,7 @@ Object.assign(window.PRESENTATION_MAIN_PATCH, {
   },
   "fr-qc-edgy": {
     "hero-title": "Sois ta banque batince",
-    "hero-tagline": "La seule app bancaire au monde <span class=\"hero-tagline-break\"><strong>sécurisée</strong>, <strong>pseudonyme</strong> et <strong>inarrêtable</strong></span>. Pas de permission. Pas de niaisage.",
+    "hero-tagline": "La seule app bancaire au monde <span class=\"hero-tagline-break\"><strong>sécurisée</strong>, <strong>pseudonyme</strong> et <strong>inarrêtable.</strong></span> Pas de permission. Pas de niaisage.",
     "deck-more-title": "Tu veux voir la mécanique?",
     "deck-more-lead": "Ensuite: le terrain de jeu. Qui garde le peg solide, qui se fait payer, pis où le risque se cache pour vrai.",
     "scroll-indicator": "Scroll pour explorer",
