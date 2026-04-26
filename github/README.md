@@ -11,4 +11,4 @@ When the Council publishes a concrete workflow (issue template, JSON schema, or 
 
 **Query string (holdings API):** `address`, optional `date_from` / `date_to` (YYYY-MM-DD, omitted when range is **All**), and `interval_type` one of `DAY`, `WEEK`, `MONTH`, `QUARTER`, `YEAR`.
 
-**Repo:** [stablescouncil.github.io](https://github.com/StablesCouncil/stablescouncil.github.io) — path `devtools/minima-query/`.
+**Repo:** [stablescouncil.github.io](https://github.com/StablesCouncil/stablescouncil.github.io) — path `onchain-watch.html`.
