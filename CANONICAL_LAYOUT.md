@@ -7,12 +7,9 @@ These **top-level names** are stable contracts. Do not rename casually (URLs and
 | `index.html` | Home `/` |
 | `links.html` | `/links.html` |
 | `playing_field.html` | `/playing_field.html` |
-| `qr-code.html` | `/qr-code.html` |
 | `ambassadorsprogramdesc.html` | `/ambassadorsprogramdesc.html` |
 | `circulareconomy/` | `/circulareconomy/` |
 | `bankingsystem/` | `/bankingsystem/` |
-| `devtools/minima-archive/` | `/devtools/minima-archive/` (archive mirror hub) |
-| `devtools/` | `/devtools/` (hub + `minima-query/` + `minima-archive/`) |
 | `assets/` | Shared JS/CSS for document pages |
 | `brand/` | Logos and brand assets |
 | `stables.css` | Council shell (also linked from pages) |

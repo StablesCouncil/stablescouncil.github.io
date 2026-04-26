@@ -1,6 +1,6 @@
 # Minima holdings query — GitHub-side naming
 
-This folder documents how **address labels** and **operator notes** on the [Minima holdings query](https://stablescouncil.org/devtools/minima-query/) page relate to **GitHub**.
+This folder documents how **address labels** and **operator notes** on the [Minima Onchain Watch](https://stablescouncil.org/onchain-watch.html) page relate to **GitHub**.
 
 - The on-page **Address naming** box collects a **public GitHub username**, an optional **label** for the Minima address shown in the chart panel, and optional **notes**. Nothing here is submitted automatically from static Pages; wire-up belongs on the Council API when ready.
 - Use your **normal GitHub identity** for attribution. Do not put secrets, keys, or session tokens in issues or PRs.
