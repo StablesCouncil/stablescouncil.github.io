@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stables | BYB</title>
-    <link rel="canonical" href="https://stablescouncil.org/dapp/showcase/">
+    <title>Showcase · Stables</title>
+    <link rel="canonical" href="/dapp/showcase/">
     <!-- Link preview: Open Graph + X (Twitter) Card (absolute URLs required for crawlers) -->
     <meta name="description" content="Stables MiniDapp showcase on Minima. Preview wallet, mint, merchants, and StablesAgent. Be your bank.">
     <meta property="og:type" content="website">
@@ -5169,7 +5169,7 @@
                         The <strong style="color:var(--t)">Ambassador program</strong> is a fair, global layer that helps merchants join the Stables directory and grow spending.
                         <strong style="color:var(--c)">Permissionless entry:</strong> no gatekeeper—once you register in the protocol you can act as an Ambassador.
                         Ambassadors are the human layer for onboarding, support, and quality listings (see the
-                        <a href="https://stablescouncil.org/ambassadorsprogramdesc.html" target="_blank" rel="noopener noreferrer" style="color:var(--c);font-weight:800;text-decoration:underline">full specification</a>).
+                        <a href="/ambassadorsprogramdesc.html" target="_blank" rel="noopener noreferrer" style="color:var(--c);font-weight:800;text-decoration:underline">full specification</a>).
                     </p>
                     <p class="sec-body" style="margin:0 0 12px;line-height:1.55;color:var(--m)">
                         <strong style="color:var(--c)">Fees (Big Mac® index, ~12‑month listing):</strong>
@@ -5189,7 +5189,7 @@
                         The program also covers <strong style="color:var(--t)">renewals</strong>, <strong style="color:var(--t)">hub tools</strong>, <strong style="color:var(--t)">campaigns</strong>, and <strong style="color:var(--t)">reviews</strong> tied to real spend—governance and implementation evolve with the community.
                     </p>
                     <div class="buttons" style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
-                        <a class="btn btn-w btn-primary" href="https://stablescouncil.org/ambassadorsprogramdesc.html" target="_blank" rel="noopener noreferrer"
+                        <a class="btn btn-w btn-primary" href="/ambassadorsprogramdesc.html" target="_blank" rel="noopener noreferrer"
                             style="text-align:center;text-decoration:none;box-sizing:border-box">Full specification (web)</a>
                         <a class="btn btn-w btn-secondary" href="https://t.me/stablescommunity/358" target="_blank" rel="noopener noreferrer"
                             style="text-align:center;text-decoration:none;box-sizing:border-box">Ambassador topic — Telegram</a>
@@ -5920,7 +5920,7 @@
                     </p>
                     <div class="xs mu" style="font-weight:800;margin:0 0 8px;color:var(--t)">Domains &amp; sites</div>
                     <ul style="margin:0 0 14px;padding-left:1.15em;line-height:1.55;font-size:13px;color:var(--m)">
-                        <li><a href="https://stablescouncil.org/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.org</a> — public site · By Stables on Minima</li>
+                        <li><a href="/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.org</a> — public site · By Stables on Minima</li>
                         <li><a href="https://stablescouncil.github.io/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.github.io</a> — GitHub Pages presentation &amp; resources</li>
                         <li><a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer" style="color:var(--c)">agent.stablescouncil.org</a> — StablesAgent web chat</li>
                     </ul>
@@ -9174,7 +9174,7 @@
         function openAmbassadorTopicsModal() {
             const raw = window.STABLES_CONFIG && window.STABLES_CONFIG.AMBASSADOR_TOPICS_TELEGRAM_URL;
             const url = String(raw || 'https://t.me/stablescommunity/358').trim();
-            const specUrl = 'https://stablescouncil.org/ambassadorsprogramdesc.html';
+      const specUrl = '/ambassadorsprogramdesc.html';
             const joinBtn = url
                 ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="btn btn-w btn-g" style="display:block;width:100%;text-align:center;text-decoration:none;box-sizing:border-box">Open Ambassador topic on Telegram</a>`
                 : `<button class="btn btn-w" style="width:100%" onclick="showToast('Ambassadors Telegram link not set yet')">Open Ambassador topic on Telegram</button>`;
@@ -16032,7 +16032,7 @@
             }
         }
 
-        const APP_TAB_TITLE = 'Stables - BYB';
+const APP_TAB_TITLE = 'Showcase · Stables';
         const TOPBAR_BRAND_SUB_DEFAULT = 'Be your bank';
         const TOPBAR_BRAND_SUB_PERSONAL = 'By Stables/Minima';
         const COUNCIL_PROFILE_MODE_KEY = 'stables_profile_mode_v1';

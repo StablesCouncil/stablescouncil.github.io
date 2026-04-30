@@ -217,18 +217,18 @@ window.PRESENTATION_MAIN_PATCH = {
     "mock-investment": "Mba'éichagua omyenyhẽ",
     "mock-inv-row-equity": "Equity ha governance",
     "mock-inv-hint-equity": "Pukukuaa ipukúva",
-    "mock-inv-row-leverage": "Leveraged positioning",
-    "mock-inv-hint-leverage": "Sized risk",
-    "mock-inv-row-income": "Income-oriented exposure",
-    "mock-inv-hint-income": "Coverage-side",
-    "mock-inv-row-arb": "Arbitrage-style plays",
-    "mock-inv-hint-arb": "Liquidity depth",
+    "mock-inv-row-leverage": "Posición leverage rehegua",
+    "mock-inv-hint-leverage": "Risko oñemediáva",
+    "mock-inv-row-income": "Exposición ingreso rehegua",
+    "mock-inv-hint-income": "Coverage yképe",
+    "mock-inv-row-arb": "Estrategia arbitrage rehegua",
+    "mock-inv-hint-arb": "Likidez pypuku",
     "deck-more-title": "Remiandu oikuaave?",
     "deck-more-lead": "Upeigua structural view: mba'éichagua ojojogua incentives peg-re.",
     "btn-demo-label": "Demo",
-    "btn-demo": "Aguyje",
+    "btn-demo": "Pya'e ou",
     "deck-next-label": "Upeigua",
-    "deck-next-title": "The Structural Playing Field"
+    "deck-next-title": "Ñembosarái renda estructural"
   },
   "lv": {
     "biz-title": "Maksājumi bez atļaujas. Palaižami minūšu laikā.",
@@ -254,6 +254,7 @@ window.PRESENTATION_MAIN_PATCH = {
     "deck-next-title": "Strukturālā spēles laukums"
   },
   "lt": {
+    "hero-cta-text": "Norite sužinoti daugiau?",
     "biz-title": "Mokėjimai be leidimo. Paleidžiama per minutes.",
     "biz-p1": "Stables yra prekybininkams skirta infrastruktūra: leidimo nereikalaujantis mokėjimo sprendimas, kurį paleidžiate per minutes, galite naudoti pseudonimiškai ir gauti atsiskaitymą per sekundes, kai atsiskaitymas lieka tiesiogiai tarp jūsų ir klientų.",
     "biz-p2": "Savitvarkos bėgiai, momentinis atsiskaitymas ir atsiskaitymo srautas, kurį valdote nuo pradžios iki pabaigos.",
@@ -550,11 +551,19 @@ window.PRESENTATION_MAIN_PATCH = {
     "btn-demo-label": "Demo",
     "btn-demo": "Coming soon",
     "deck-next-label": "Next",
-    "deck-next-title": "The Playing Field"
+    "deck-next-title": "Le terrain de jeu"
   }
 };
 
-Object.assign(window.PRESENTATION_MAIN_PATCH, {
+(function mergePresentationMainPatch(nextPatch) {
+  Object.keys(nextPatch).forEach(function (lang) {
+    window.PRESENTATION_MAIN_PATCH[lang] = Object.assign(
+      {},
+      window.PRESENTATION_MAIN_PATCH[lang] || {},
+      nextPatch[lang]
+    );
+  });
+})({
   "eu": {
     "hero-title": "Izan zure bankua",
     "hero-tagline": "Munduko banku-aplikazio bakarra <span class=\"hero-tagline-break\"><strong>Segurua</strong>, <strong>Pseudonimoa</strong> eta <strong>Geldiezina</strong></span>",
@@ -935,7 +944,7 @@ Object.assign(window.PRESENTATION_MAIN_PATCH, {
     "agent-fallback-p": "The chat loads here once the secure connection is active.<br>For now, kick it open in a new tab:",
     "agent-fallback-link": "Open StablesAgent →",
     "deck-next-label": "Next up",
-    "deck-next-title": "The Playing Field"
+    "deck-next-title": "Le terrain de jeu"
   },
   "fr-qc-edgy": {
     "hero-title": "Sois ta banque batince",
@@ -994,6 +1003,6 @@ Object.assign(window.PRESENTATION_MAIN_PATCH, {
     "agent-fallback-p": "Le chat va se charger ici une fois la connexion sécurisée active.<br>En attendant, ouvre-le dans un nouvel onglet:",
     "agent-fallback-link": "Ouvrir StablesAgent →",
     "deck-next-label": "La suite",
-    "deck-next-title": "The Playing Field"
+    "deck-next-title": "Le terrain de jeu"
   }
 });

@@ -18,6 +18,12 @@ Post–**v00.00.03** work in the active dev folder. **Do not** describe these it
 
 ### Changed
 
+- **Protocol stress copy:** Mint simulator CR stress messaging no longer says minting or xWiniwa burns are locked at a 110% threshold. It now presents CR as visible stress information with market depth and participant rebalancing.
+
+- **Browser tab titles:** public MiniDapp pages now use short, consistent **`Page · Stables`** titles so the active page remains readable in narrow browser tabs.
+
+- **Top bar channel switch (shared shell):** the center pill in **showcase** and **demo** now opens a two-option channel selector so users can switch between **`1-showcase/`** and **`2-demo/`** directly from the wallet top bar. The current channel stays highlighted; display version on the pill is now the shorter human-facing format (`v0.0.0.0.3` style) without changing canonical internal versioning.
+
 - **Community links (Discord):** **More → Community → Legal & notices** Discord invite updated to **`https://discord.gg/rTdqwRGPXR`** (canonical **`0_handshake/links.md`**). Same URL in **showcase** shell **`1-showcase/index.html`**.
 
 - **`0_handshake/handshake.md`:** **Active MiniDapp trees** bullet now references **`dapp/PORTING_GAP.md`** as optional porting ledger (routing defaults unchanged).

@@ -12,11 +12,29 @@
 
 Post–**v00.00.00.01.00** demo work: do not describe these items as part of a **published** demo zip until this section is merged into a dated release and `minidapp_version_log.md` is updated.
 
+### Added
+
+- **`CHARTER_DEMO_TRACEABILITY.md`:** handout for other agents mapping **Charter + protocol mechanics** to demo UI and copy (authority order, traceability tables, non-functional rules).
+- **x402 readiness note in handout:** `CHARTER_DEMO_TRACEABILITY.md` now includes an **optional, modular x402 integration track** (flow shape, boundary rules, finality labeling, provider-agnostic posture, and watch-channel pointer).
+- **x402 implementation brief:** `CHARTER_DEMO_TRACEABILITY.md` now includes a **concrete file-target task list** (new `assets/x402/*` modules, runtime flags, route/UI insertion points, replay/idempotency checks, and acceptance checklist).
+
 ### Removed
 
 - **`latest-version/`** and **`latest version/`** (duplicate placeholder READMEs only). **Moved** to **`3_archive/stream_1_app/task_archived_dapp_2_demo_latest_placeholders_2026-04-16/`**. Published demo **`.mds.zip`** builds use **`build/README.md`** and **`2-demo/build/`**.
 
 ### Changed
+
+- **Protocol stress copy:** Mint simulator CR stress messaging no longer says minting or xWiniwa burns are locked at a 110% threshold. It now presents CR as visible stress information with market depth and participant rebalancing.
+
+- **Browser tab titles:** demo pages now use short, consistent **`Page · Stables`** titles so the active page remains readable in narrow browser tabs.
+
+- **Top bar channel switch:** the center pill now opens a channel selector so users can switch between **Showcase** and **Demo** directly from the wallet top bar. The current channel stays highlighted; the pill uses a shorter human-facing display version (`v0.0.0.0.3` style) while canonical internal versioning remains unchanged.
+
+- **Send modal copy:** trimmed the large explanatory block so the first message is clearer and shorter: **Minima** is the native on-chain send path when **Node live** is active; **Winiwa** remains test-only; other Stables balances stay illustrative unless a flow says otherwise.
+
+- **Wallet recent activity:** recent rows are now sorted by parsed transaction time instead of raw insertion order, so newly created **Exchange** activity can surface on the wallet home screen instead of being buried behind older entries.
+
+- **Activity filters:** **My transactions** now supports three extra time controls in addition to the existing direction/currency filters: **timeframe** (`Today`, `This week`, `This month`, `This year`), **relative period** (`Last 7d`, `30d`, `90d`, `365d`), and explicit **date from / date to** fields.
 
 - **Community links (Discord):** **More → Community → Legal & notices** Discord invite updated to **`https://discord.gg/rTdqwRGPXR`** (canonical **`0_handshake/links.md`**).
 

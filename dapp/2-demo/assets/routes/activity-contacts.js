@@ -150,6 +150,10 @@
   let activityCcyFilter = 'all';
   let activitySearch = '';
   let activitySort = 'date_desc';
+  let activityTimeframe = 'all';
+  let activityPeriod = 'all';
+  let activityDateFrom = '';
+  let activityDateTo = '';
   let activityPage = 0;
   let selectedTxId = null;
   let selectedExchangeId = null;
@@ -225,6 +229,96 @@
     return x.dir === activityFilter;
   }
 
+  function parseActivityDateValue(raw) {
+    const text = String(raw || '').trim();
+    if (!text) return null;
+    const direct = new Date(text);
+    if (!Number.isNaN(direct.getTime())) return direct;
+
+    const mdTime = text.match(/^([A-Za-z]{3})\s+(\d{1,2})\s+·\s+(\d{2}):(\d{2})$/);
+    if (mdTime) {
+      const now = new Date();
+      let year = now.getFullYear();
+      const probe = new Date(`${mdTime[1]} ${mdTime[2]} ${year} ${mdTime[3]}:${mdTime[4]}:00`);
+      if (!Number.isNaN(probe.getTime())) {
+        if (probe.getTime() - now.getTime() > 36 * 60 * 60 * 1000) {
+          probe.setFullYear(year - 1);
+        }
+        return probe;
+      }
+    }
+
+    const fallback = new Date(text.replace('·', '').replace(/\s+/g, ' '));
+    if (!Number.isNaN(fallback.getTime())) return fallback;
+    return null;
+  }
+
+  function activityMatchesTimeframe(date) {
+    if (!(date instanceof Date) || Number.isNaN(date.getTime())) return activityTimeframe === 'all';
+    if (activityTimeframe === 'all') return true;
+    const now = new Date();
+    const start = new Date(now);
+    start.setHours(0, 0, 0, 0);
+    if (activityTimeframe === 'today') {
+      const end = new Date(start);
+      end.setDate(end.getDate() + 1);
+      return date >= start && date < end;
+    }
+    if (activityTimeframe === 'week') {
+      const weekStart = new Date(start);
+      const day = weekStart.getDay();
+      const diff = day === 0 ? 6 : day - 1;
+      weekStart.setDate(weekStart.getDate() - diff);
+      return date >= weekStart;
+    }
+    if (activityTimeframe === 'month') {
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      return date >= monthStart;
+    }
+    if (activityTimeframe === 'year') {
+      const yearStart = new Date(now.getFullYear(), 0, 1);
+      return date >= yearStart;
+    }
+    return true;
+  }
+
+  function activityMatchesPeriod(date) {
+    if (activityPeriod === 'all') return true;
+    if (!(date instanceof Date) || Number.isNaN(date.getTime())) return false;
+    const days = parseInt(String(activityPeriod).replace(/[^\d]/g, ''), 10);
+    if (!Number.isFinite(days) || days <= 0) return true;
+    const cutoff = new Date();
+    cutoff.setHours(0, 0, 0, 0);
+    cutoff.setDate(cutoff.getDate() - days);
+    return date >= cutoff;
+  }
+
+  function activityMatchesDateRange(date) {
+    if (!activityDateFrom && !activityDateTo) return true;
+    if (!(date instanceof Date) || Number.isNaN(date.getTime())) return false;
+    if (activityDateFrom) {
+      const from = new Date(`${activityDateFrom}T00:00:00`);
+      if (!Number.isNaN(from.getTime()) && date < from) return false;
+    }
+    if (activityDateTo) {
+      const to = new Date(`${activityDateTo}T23:59:59.999`);
+      if (!Number.isNaN(to.getTime()) && date > to) return false;
+    }
+    return true;
+  }
+
+  function activityTimestamp(tx) {
+    const date = parseActivityDateValue(tx && tx.date);
+    return date ? date.getTime() : 0;
+  }
+
+  function sortActivityItems(items) {
+    if (activitySort === 'amount_desc') {
+      return items.sort((a, b) => Math.abs(b.amt) - Math.abs(a.amt));
+    }
+    return items.sort((a, b) => activityTimestamp(b) - activityTimestamp(a));
+  }
+
   function getFilteredActivity() {
     const q = (activitySearch || '').toLowerCase().trim();
     const hiddenOnly = activityFilter === 'hidden';
@@ -238,6 +332,10 @@
       }
       if (!activityMatchesDir(x)) return false;
       if (activityCcyFilter !== 'all' && x.ccy !== activityCcyFilter) return false;
+      const txDate = parseActivityDateValue(x.date);
+      if (!activityMatchesTimeframe(txDate)) return false;
+      if (!activityMatchesPeriod(txDate)) return false;
+      if (!activityMatchesDateRange(txDate)) return false;
       const note = getTxNote(x).toLowerCase();
       if (q && !x.counterparty.toLowerCase().includes(q) && !x.category.toLowerCase().includes(q) && !note.includes(q)) return false;
       return true;
@@ -544,8 +642,18 @@
   window.resetActivityFilters = function () {
     activityFilter = 'all';
     activityCcyFilter = 'all';
-    ['actFilterAll', 'actFilterIn', 'actFilterOut', 'actFilterHidden', 'actCcyFilterUSDw', 'actCcyFilterEURw'].forEach(id => document.getElementById(id)?.classList.remove('on'));
+    activityTimeframe = 'all';
+    activityPeriod = 'all';
+    activityDateFrom = '';
+    activityDateTo = '';
+    ['actFilterAll', 'actFilterIn', 'actFilterOut', 'actFilterHidden', 'actCcyFilterUSDw', 'actCcyFilterEURw', 'actTimeframeAll', 'actTimeframeToday', 'actTimeframeWeek', 'actTimeframeMonth', 'actTimeframeYear', 'actPeriodAll', 'actPeriod7d', 'actPeriod30d', 'actPeriod90d', 'actPeriod365d'].forEach(id => document.getElementById(id)?.classList.remove('on'));
     document.getElementById('actFilterAll')?.classList.add('on');
+    document.getElementById('actTimeframeAll')?.classList.add('on');
+    document.getElementById('actPeriodAll')?.classList.add('on');
+    const dateFromEl = document.getElementById('activityDateFrom');
+    const dateToEl = document.getElementById('activityDateTo');
+    if (dateFromEl) dateFromEl.value = '';
+    if (dateToEl) dateToEl.value = '';
     activityPage = 0;
     window.renderActivity();
   };
@@ -560,6 +668,37 @@
     window.renderActivity();
   };
 
+  window.setActivityTimeframe = function (mode) {
+    activityTimeframe = ['today', 'week', 'month', 'year'].includes(mode) ? mode : 'all';
+    ['actTimeframeAll', 'actTimeframeToday', 'actTimeframeWeek', 'actTimeframeMonth', 'actTimeframeYear'].forEach(id => document.getElementById(id)?.classList.remove('on'));
+    if (activityTimeframe === 'today') document.getElementById('actTimeframeToday')?.classList.add('on');
+    else if (activityTimeframe === 'week') document.getElementById('actTimeframeWeek')?.classList.add('on');
+    else if (activityTimeframe === 'month') document.getElementById('actTimeframeMonth')?.classList.add('on');
+    else if (activityTimeframe === 'year') document.getElementById('actTimeframeYear')?.classList.add('on');
+    else document.getElementById('actTimeframeAll')?.classList.add('on');
+    activityPage = 0;
+    window.renderActivity();
+  };
+
+  window.setActivityPeriod = function (mode) {
+    activityPeriod = ['7d', '30d', '90d', '365d'].includes(mode) ? mode : 'all';
+    ['actPeriodAll', 'actPeriod7d', 'actPeriod30d', 'actPeriod90d', 'actPeriod365d'].forEach(id => document.getElementById(id)?.classList.remove('on'));
+    if (activityPeriod === '7d') document.getElementById('actPeriod7d')?.classList.add('on');
+    else if (activityPeriod === '30d') document.getElementById('actPeriod30d')?.classList.add('on');
+    else if (activityPeriod === '90d') document.getElementById('actPeriod90d')?.classList.add('on');
+    else if (activityPeriod === '365d') document.getElementById('actPeriod365d')?.classList.add('on');
+    else document.getElementById('actPeriodAll')?.classList.add('on');
+    activityPage = 0;
+    window.renderActivity();
+  };
+
+  window.setActivityDateRange = function (fromValue, toValue) {
+    activityDateFrom = String(fromValue || '').trim();
+    activityDateTo = String(toValue || '').trim();
+    activityPage = 0;
+    window.renderActivity();
+  };
+
   window.setActivitySearch = function (value) { activitySearch = String(value || ''); activityPage = 0; window.renderActivity(); };
   window.showNextActivityPage = function () { const items = getFilteredActivity(); const maxPage = Math.max(0, Math.ceil(items.length / ACTIVITY_PAGE_SIZE) - 1); activityPage = Math.min(maxPage, activityPage + 1); window.renderActivity(); };
   window.showPrevActivityPage = function () { activityPage = Math.max(0, activityPage - 1); window.renderActivity(); };
@@ -568,10 +707,7 @@
     const list = document.getElementById('activityList'); if (!list) return;
     const nextBtn = document.getElementById('activityMoreBtn');
     const prevBtn = document.getElementById('activityPrevBtn');
-    const items = getFilteredActivity();
-    if (activitySort === 'amount_desc') {
-      items.sort((a, b) => Math.abs(b.amt) - Math.abs(a.amt));
-    }
+    const items = sortActivityItems(getFilteredActivity());
     const start = activityPage * ACTIVITY_PAGE_SIZE;
     const end = Math.min(items.length, start + ACTIVITY_PAGE_SIZE);
     list.innerHTML = '';
@@ -593,7 +729,9 @@
   window.renderWalletRecentActivity = function () {
     const list = document.getElementById('walletRecentList');
     if (!list) return;
-    const items = activitySource().filter(x => !deletedTx.has(x.id) && !hiddenTx.has(x.id) && !hiddenShops.has(x.counterparty)).slice(0, 10);
+    const items = sortActivityItems(
+      activitySource().filter(x => !deletedTx.has(x.id) && !hiddenTx.has(x.id) && !hiddenShops.has(x.counterparty))
+    ).slice(0, 10);
     list.innerHTML = '';
     items.forEach(x => {
       const row = document.createElement('div');

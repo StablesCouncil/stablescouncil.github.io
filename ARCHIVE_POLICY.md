@@ -6,7 +6,7 @@ When retiring a shipped site snapshot or an old authoring tree, move the **entir
 
 **Rules**
 
-1. **Preserve interior paths** (`devtools/`, `minima-archive/`, `assets/`, …) exactly as they were at promotion time. Do not flatten or rename inside the archive slice.
+1. **Preserve interior paths** (`devtools/`, `assets/`, …) exactly as they were at promotion time. Do not flatten or rename inside the archive slice.
 2. **Include a short `README.md`** in the archive task folder stating source date, live commit SHA if known, and why it was archived.
 3. **Never delete** archive material; only **move** under **`3_archive/`** per handshake.
 

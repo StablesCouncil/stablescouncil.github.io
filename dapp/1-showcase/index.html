@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stables - BYB</title>
+    <title>Showcase · Stables</title>
     <link rel="canonical" href="https://stablescouncil.org/dapp/1-showcase/">
     <!-- Link preview: Open Graph + X (Twitter) Card (absolute URLs required for crawlers) -->
     <meta name="description" content="Stables MiniDapp showcase on Minima. Preview wallet, mint, merchants, and StablesAgent. Be your bank.">
@@ -431,6 +431,87 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+
+        .topbar-channel-switch {
+            position: relative;
+            justify-self: center;
+        }
+
+        .test-pill--selector {
+            position: relative;
+            padding-right: 28px;
+        }
+
+        .test-pill-caret {
+            position: absolute;
+            right: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: var(--am);
+            opacity: .95;
+            pointer-events: none;
+        }
+
+        .topbar-channel-menu {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(280px, 76vw);
+            padding: 8px;
+            border-radius: 18px;
+            border: 1px solid rgba(251, 191, 36, .26);
+            background: rgba(16, 24, 38, .96);
+            box-shadow: 0 20px 44px rgba(0, 0, 0, .45);
+            backdrop-filter: blur(18px);
+            z-index: 160;
+        }
+
+        .topbar-channel-menu[hidden] {
+            display: none;
+        }
+
+        .topbar-channel-option {
+            width: 100%;
+            border: 1px solid transparent;
+            background: transparent;
+            border-radius: 14px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            text-align: left;
+            cursor: pointer;
+            color: var(--t);
+            transition: background .14s ease, border-color .14s ease, transform .14s ease;
+        }
+
+        .topbar-channel-option:hover,
+        .topbar-channel-option:focus-visible {
+            background: rgba(103, 232, 249, .08);
+            border-color: rgba(103, 232, 249, .18);
+            transform: translateY(-1px);
+            outline: none;
+        }
+
+        .topbar-channel-option[aria-current="true"] {
+            background: rgba(251, 191, 36, .1);
+            border-color: rgba(251, 191, 36, .25);
+            cursor: default;
+        }
+
+        .topbar-channel-option-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--t);
+        }
+
+        .topbar-channel-option-sub {
+            font-size: 11px;
+            line-height: 1.4;
+            color: var(--m);
         }
 
         /* LAYOUT */
@@ -4020,9 +4101,27 @@
                 <span class="brand-hover-tip__text">My bank made possible by Stables on Minima</span>
             </div>
         </div>
-    <!-- Column 2: Test Pill (Center) -->
-    <div id="topbarShowcasePill" class="test-pill" style="justify-self: center;cursor:default">
-        Showcase · v00.00.00.00.03
+    <!-- Column 2: Channel selector (Center) -->
+    <div class="topbar-channel-switch" id="topbarChannelSwitch">
+        <button type="button" id="topbarShowcasePill" class="test-pill test-pill--selector"
+            onclick="toggleTopbarChannelMenu(event)" aria-haspopup="menu" aria-expanded="false"
+            title="Switch between Showcase and Demo">
+            <span class="test-pill-title" id="topbarShowcasePillTitle">Showcase</span>
+            <span class="test-pill-sub" id="topbarShowcasePillSub">v00.00.00.00.03</span>
+            <span class="test-pill-caret" aria-hidden="true">▾</span>
+        </button>
+        <div class="topbar-channel-menu" id="topbarChannelMenu" role="menu" hidden>
+            <button type="button" class="topbar-channel-option" id="topbarChannelOptionShowcase" role="menuitem"
+                onclick="stablesNavigateTopbarChannel(event,'showcase')">
+                <span class="topbar-channel-option-title">Showcase</span>
+                <span class="topbar-channel-option-sub">Synthetic bank view with rich illustrative data</span>
+            </button>
+            <button type="button" class="topbar-channel-option" id="topbarChannelOptionDemo" role="menuitem"
+                onclick="stablesNavigateTopbarChannel(event,'demo')">
+                <span class="topbar-channel-option-title">Demo</span>
+                <span class="topbar-channel-option-sub">Node-linked MINIMA flows plus demo-only Winiwa and Wables</span>
+            </button>
+        </div>
     </div>
     <!-- Column 3: single pill — status dot + block height (or connect / MDS state); tap opens Connect -->
     <div class="topbar-node-cluster">
@@ -5169,7 +5268,7 @@
                         The <strong style="color:var(--t)">Ambassador program</strong> is a fair, global layer that helps merchants join the Stables directory and grow spending.
                         <strong style="color:var(--c)">Permissionless entry:</strong> no gatekeeper—once you register in the protocol you can act as an Ambassador.
                         Ambassadors are the human layer for onboarding, support, and quality listings (see the
-                        <a href="https://stablescouncil.org/ambassadorsprogramdesc.html" target="_blank" rel="noopener noreferrer" style="color:var(--c);font-weight:800;text-decoration:underline">full specification</a>).
+            <a href="/ambassadorsprogramdesc.html" target="_blank" rel="noopener noreferrer" style="color:var(--c);font-weight:800;text-decoration:underline">full specification</a>).
                     </p>
                     <p class="sec-body" style="margin:0 0 12px;line-height:1.55;color:var(--m)">
                         <strong style="color:var(--c)">Fees (Big Mac® index, ~12‑month listing):</strong>
@@ -5189,7 +5288,7 @@
                         The program also covers <strong style="color:var(--t)">renewals</strong>, <strong style="color:var(--t)">hub tools</strong>, <strong style="color:var(--t)">campaigns</strong>, and <strong style="color:var(--t)">reviews</strong> tied to real spend—governance and implementation evolve with the community.
                     </p>
                     <div class="buttons" style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
-                        <a class="btn btn-w btn-primary" href="https://stablescouncil.org/ambassadorsprogramdesc.html" target="_blank" rel="noopener noreferrer"
+            <a class="btn btn-w btn-primary" href="/ambassadorsprogramdesc.html" target="_blank" rel="noopener noreferrer"
                             style="text-align:center;text-decoration:none;box-sizing:border-box">Full specification (web)</a>
                         <a class="btn btn-w btn-secondary" href="https://t.me/stablescommunity/358" target="_blank" rel="noopener noreferrer"
                             style="text-align:center;text-decoration:none;box-sizing:border-box">Ambassador topic — Telegram</a>
@@ -5920,7 +6019,7 @@
                     </p>
                     <div class="xs mu" style="font-weight:800;margin:0 0 8px;color:var(--t)">Domains &amp; sites</div>
                     <ul style="margin:0 0 14px;padding-left:1.15em;line-height:1.55;font-size:13px;color:var(--m)">
-                        <li><a href="https://stablescouncil.org/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.org</a> — public site · By Stables on Minima</li>
+        <li><a href="/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.org</a> — public site · By Stables on Minima</li>
                         <li><a href="https://stablescouncil.github.io/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.github.io</a> — GitHub Pages presentation &amp; resources</li>
                         <li><a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer" style="color:var(--c)">agent.stablescouncil.org</a> — StablesAgent web chat</li>
                     </ul>
@@ -6268,7 +6367,7 @@
                         <div style="position:relative; height:64px; margin-bottom:12px;">
                             <!-- Y-axis scale labels -->
                             <div id="crEvolutionTopLabel" style="position:absolute; left:0; top:0; font-size:9px; color:rgba(255,255,255,0.4); line-height:1;">130%</div>
-                            <div id="crEvolutionBottomLabel" style="position:absolute; left:0; bottom:8px; font-size:9px; color:rgba(255,255,255,0.4); line-height:1;">110%</div>
+                            <div id="crEvolutionBottomLabel" style="position:absolute; left:0; bottom:8px; font-size:9px; color:rgba(255,255,255,0.4); line-height:1;">100%</div>
                             
                             <div id="crEvolutionGraph" style="height:100%; width:100%; position:absolute; inset:0; overflow:hidden; border-radius:4px; pointer-events:none;"></div>
                         </div>
@@ -8782,9 +8881,82 @@
                 else if (s === 'test') stageLabel = 'Test';
                 else if (s === 'prod') stageLabel = 'Prod';
                 else if (s === 'showcase') stageLabel = 'Showcase';
-                showcasePill.textContent = stageLabel + ' · v' + String(buildVersion).trim();
+                const pillTitle = document.getElementById('topbarShowcasePillTitle');
+                const pillSub = document.getElementById('topbarShowcasePillSub');
+                if (pillTitle) pillTitle.textContent = stageLabel;
+                if (pillSub) pillSub.textContent = stablesFormatDisplayVersion(buildVersion);
+                stablesSyncTopbarChannelMenu();
             }
         }
+
+        function stablesFormatDisplayVersion(rawVersion) {
+            const raw = rawVersion != null ? String(rawVersion).trim() : '';
+            if (!raw) return 'v0';
+            const parts = raw.split('.').map(function (part) {
+                const n = Number(part);
+                return Number.isFinite(n) ? String(n) : String(part).trim();
+            });
+            return 'v' + parts.join('.');
+        }
+
+        function stablesCurrentAppStage() {
+            const stageRaw = window.STABLES_CONFIG && window.STABLES_CONFIG.APP_STAGE;
+            return stageRaw != null ? String(stageRaw).trim().toLowerCase() : 'showcase';
+        }
+
+        function stablesChannelHref(targetStage) {
+            if (targetStage === 'showcase') return '../1-showcase/';
+            if (targetStage === 'demo') return '../2-demo/';
+            return '#';
+        }
+
+        function stablesCloseTopbarChannelMenu() {
+            const menu = document.getElementById('topbarChannelMenu');
+            const pill = document.getElementById('topbarShowcasePill');
+            if (menu) menu.hidden = true;
+            if (pill) pill.setAttribute('aria-expanded', 'false');
+        }
+
+        function toggleTopbarChannelMenu(event) {
+            if (event) event.stopPropagation();
+            const menu = document.getElementById('topbarChannelMenu');
+            const pill = document.getElementById('topbarShowcasePill');
+            if (!menu || !pill) return;
+            const nextHidden = !menu.hidden;
+            menu.hidden = nextHidden;
+            pill.setAttribute('aria-expanded', nextHidden ? 'false' : 'true');
+        }
+
+        function stablesSyncTopbarChannelMenu() {
+            const current = stablesCurrentAppStage();
+            const showcaseBtn = document.getElementById('topbarChannelOptionShowcase');
+            const demoBtn = document.getElementById('topbarChannelOptionDemo');
+            if (showcaseBtn) showcaseBtn.setAttribute('aria-current', current === 'showcase' ? 'true' : 'false');
+            if (demoBtn) demoBtn.setAttribute('aria-current', current === 'demo' ? 'true' : 'false');
+        }
+
+        function stablesNavigateTopbarChannel(event, targetStage) {
+            if (event) event.stopPropagation();
+            const current = stablesCurrentAppStage();
+            if (targetStage === current) {
+                stablesCloseTopbarChannelMenu();
+                return;
+            }
+            const href = stablesChannelHref(targetStage);
+            if (!href || href === '#') {
+                if (typeof showToast === 'function') showToast('Channel path not configured yet.');
+                return;
+            }
+            window.location.href = href;
+        }
+
+        document.addEventListener('click', function (event) {
+            const switcher = document.getElementById('topbarChannelSwitch');
+            const menu = document.getElementById('topbarChannelMenu');
+            if (!switcher || !menu || menu.hidden) return;
+            if (switcher.contains(event.target)) return;
+            stablesCloseTopbarChannelMenu();
+        });
 
         function showStablesCharterComingNotice() {
             if (typeof openModal === 'function') openModal('stablesCharterComingModal');
@@ -9177,7 +9349,7 @@
         function openAmbassadorTopicsModal() {
             const raw = window.STABLES_CONFIG && window.STABLES_CONFIG.AMBASSADOR_TOPICS_TELEGRAM_URL;
             const url = String(raw || 'https://t.me/stablescommunity/358').trim();
-            const specUrl = 'https://stablescouncil.org/ambassadorsprogramdesc.html';
+      const specUrl = '/ambassadorsprogramdesc.html';
             const joinBtn = url
                 ? `<a href="${url}" target="_blank" rel="noopener noreferrer" class="btn btn-w btn-g" style="display:block;width:100%;text-align:center;text-decoration:none;box-sizing:border-box">Open Ambassador topic on Telegram</a>`
                 : `<button class="btn btn-w" style="width:100%" onclick="showToast('Ambassadors Telegram link not set yet')">Open Ambassador topic on Telegram</button>`;
@@ -15172,8 +15344,8 @@
                         <stop offset="100%" stop-color="rgba(103,232,249,0.0)" />
                     </linearGradient>
                 </defs>
-                <!-- Baseline 110% line -->
-                <line x1="0" y1="${scaleY(110)}" x2="${w}" y2="${scaleY(110)}" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="2,2"/>
+                <!-- Reference 100% line -->
+                <line x1="0" y1="${scaleY(100)}" x2="${w}" y2="${scaleY(100)}" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="2,2"/>
                 <!-- Area -->
                 <polygon points="${areaPoints}" fill="url(#crGrad)" />
                 <!-- Line -->
@@ -15774,10 +15946,10 @@
             if (crEl) {
                 if (newCR < 100) {
                     crEl.style.cssText = 'margin-top:10px;padding:8px 12px;border-radius:9px;background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.25);font-size:13px;font-weight:700;text-align:center;color:var(--rd)';
-                    crEl.innerHTML = 'CR ' + newCR + '% \u26a0\ufe0f Crisis \u2014 cover pool converts to xWiniwa';
-                } else if (newCR < 110) {
+                    crEl.innerHTML = 'CR ' + newCR + '% \u26a0\ufe0f Severe stress \u00b7 market rebalancing active';
+                } else if (newCR < 130) {
                     crEl.style.cssText = 'margin-top:10px;padding:8px 12px;border-radius:9px;background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.25);font-size:13px;font-weight:700;text-align:center;color:var(--am)';
-                    crEl.innerHTML = 'CR ' + newCR + '% \u26a0\ufe0f Minting LOCKED \u00b7 xWiniwa burn LOCKED';
+                    crEl.innerHTML = 'CR ' + newCR + '% \u26a0\ufe0f Visible stress \u00b7 market depth applies';
                 } else {
                     crEl.style.cssText = 'margin-top:10px;padding:8px 12px;border-radius:9px;background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.18);font-size:13px;font-weight:700;text-align:center;color:var(--gr)';
                     crEl.innerHTML = 'CR ' + newCR + '%';
@@ -16076,7 +16248,7 @@
             }
         }
 
-        const APP_TAB_TITLE = 'Stables - BYB';
+const APP_TAB_TITLE = 'Showcase · Stables';
         const TOPBAR_BRAND_SUB_DEFAULT = 'Be your bank';
         const TOPBAR_BRAND_SUB_PERSONAL = 'By Stables/Minima';
         const COUNCIL_PROFILE_MODE_KEY = 'stables_profile_mode_v1';
