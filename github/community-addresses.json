@@ -12,5 +12,12 @@
     "contributor": "StablesCouncil",
     "notes": "BitMart exchange wallet.",
     "added": "2026-04-19"
+  },
+  {
+    "label": "Future Cash",
+    "address": "MxG087AH0HPWAYJPQTQGYEMG03F1K2R1H43HVWYH19NB0RTW3SZWY7Q2F79810N",
+    "contributor": "Charles0xhorizonxyz",
+    "notes": "Context note.",
+    "added": "2026-05-01"
   }
 ]
