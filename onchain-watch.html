@@ -167,10 +167,10 @@
 
                     <span class="devtools-holdings-sub-label">Range</span>
                     <div class="devtools-holdings-segment" role="radiogroup" aria-label="Date range">
-                        <label><input type="radio" name="holdings-range-preset" value="1m"> 1 month</label>
+                        <label><input type="radio" name="holdings-range-preset" value="1m" checked> 1 month</label>
                         <label><input type="radio" name="holdings-range-preset" value="3m"> 3 months</label>
                         <label><input type="radio" name="holdings-range-preset" value="1y"> 1 year</label>
-                        <label><input type="radio" name="holdings-range-preset" value="all" checked> All</label>
+                        <label><input type="radio" name="holdings-range-preset" value="all"> All</label>
                         <label><input type="radio" name="holdings-range-preset" value="custom"> Custom dates</label>
                     </div>
                     <div class="devtools-holdings-dates">
@@ -287,12 +287,9 @@
                 <span class="addr-modal-divider__label">Share with community</span>
             </div>
             <p class="addr-modal-desc">Contribute a shared label visible to everyone via a GitHub pull request.</p>
-            <label class="addr-modal-label" for="modal-gh-user">GitHub username</label>
-            <input id="modal-gh-user" class="addr-modal-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="e.g. octocat">
-            <p class="addr-modal-hint">Public handle only — no tokens or passwords.</p>
             <label class="addr-modal-label" for="modal-notes">Notes (optional)</label>
             <textarea id="modal-notes" class="addr-modal-textarea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Operator context, no secrets"></textarea>
-            <p class="addr-modal-hint">Share flow: fill fields, click Share with community. We copy a ready JSON snippet and open GitHub edit.</p>
+            <p class="addr-modal-hint">Share flow: fill fields, click Share with community. A pre-filled GitHub issue opens — submit it and the Council admin is notified for review.</p>
             <div class="addr-modal-actions">
                 <button type="button" class="btn btn-primary" id="modal-save-btn" onclick="modalSaveLocal()">Save for me</button>
                 <button type="button" class="btn btn-secondary" id="modal-share-btn" onclick="shareCommunityAddress()">Share with community ↗</button>
@@ -490,7 +487,6 @@
         function shareCommunityAddress() {
             var addr = ((document.getElementById('modal-addr-display') || {}).textContent || '').trim();
             var label = ((document.getElementById('modal-saved-name') || {}).value || '').trim() || 'Address label';
-            var user = ((document.getElementById('modal-gh-user') || {}).value || '').trim() || 'your-github-user';
             var notes = ((document.getElementById('modal-notes') || {}).value || '').trim() || 'Context note.';
             if (!addr || addr === '—') return;
             var today = new Date().toISOString().slice(0, 10);
@@ -499,19 +495,29 @@
                 '{\n' +
                 '  "label": "' + esc(label) + '",\n' +
                 '  "address": "' + esc(addr) + '",\n' +
-                '  "contributor": "' + esc(user) + '",\n' +
+                '  "contributor": "",\n' +
                 '  "notes": "' + esc(notes) + '",\n' +
                 '  "added": "' + today + '"\n' +
                 '}';
-            try {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(snippet);
-                }
-            } catch (e) {}
-            window.open('https://github.com/StablesCouncil/stablescouncil.github.io/edit/main/github/community-addresses.json', '_blank', 'noopener,noreferrer');
+            var issueTitle = 'Community address: ' + label;
+            var issueBody =
+                '### Address submission\n\n' +
+                '**Address:** `' + addr + '`\n' +
+                '**Label:** ' + label + '\n' +
+                '**Date:** ' + today + '\n\n' +
+                '### JSON entry\n\n' +
+                '```json\n' + snippet + '\n```\n\n' +
+                '_Submitted from [onchain-watch](https://stablescouncil.org/onchain-watch.html)_';
+            var issueUrl = 'https://github.com/StablesCouncil/stablescouncil.github.io/issues/new' +
+                '?title=' + encodeURIComponent(issueTitle) +
+                '&body=' + encodeURIComponent(issueBody);
+            window.open(issueUrl, '_blank', 'noopener,noreferrer');
         }
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeAddrModal();
+        });
+        document.getElementById('minima-addr').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') document.getElementById('run-query-btn').click();
         });
 
         /* --- Clear all locally saved addresses --- */
