@@ -1,0 +1,52 @@
+{
+  "index_version": 1,
+  "generated_at": "2026-05-01T18:38:48.768Z",
+  "submissions_root": "submissions",
+  "count": 2,
+  "items": [
+    {
+      "file": "submissions/stables-feedback-2026-03-30T19-48-17-s7s3xu.json",
+      "schema_version": 1,
+      "submitted_at": "2026-03-30T19:48:17.158Z",
+      "topic_domain": "general_concept",
+      "topic_sub": null,
+      "kind": "comment",
+      "title": "test1",
+      "app_page_id": null,
+      "source_client": "stables-minidapp",
+      "source_app_build": "0.01.01"
+    },
+    {
+      "file": "submissions/stables-feedback-2026-03-30T19-49-35-q0ahgl.json",
+      "schema_version": 1,
+      "submitted_at": "2026-03-30T12:00:00.000Z",
+      "topic_domain": "general_concept",
+      "topic_sub": {},
+      "kind": "comment",
+      "title": "curl test",
+      "app_page_id": null,
+      "source_client": "test",
+      "source_app_build": "curl"
+    }
+  ],
+  "groups": {
+    "by_topic_domain": {
+      "general_concept": [
+        "submissions/stables-feedback-2026-03-30T19-48-17-s7s3xu.json",
+        "submissions/stables-feedback-2026-03-30T19-49-35-q0ahgl.json"
+      ]
+    },
+    "by_kind": {
+      "comment": [
+        "submissions/stables-feedback-2026-03-30T19-48-17-s7s3xu.json",
+        "submissions/stables-feedback-2026-03-30T19-49-35-q0ahgl.json"
+      ]
+    },
+    "by_month": {
+      "2026-03": [
+        "submissions/stables-feedback-2026-03-30T19-48-17-s7s3xu.json",
+        "submissions/stables-feedback-2026-03-30T19-49-35-q0ahgl.json"
+      ]
+    }
+  }
+}
