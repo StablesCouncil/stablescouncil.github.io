@@ -383,13 +383,22 @@
             white-space: nowrap;
         }
 
-        /* Drafting state � visible but not yet linked */
+        /* Drafting state: linked drafts stay clickable; non-link drafts remain informational. */
         .link-item.drafting {
             opacity: 0.65;
             cursor: default;
-            pointer-events: none;
             background: linear-gradient(135deg, rgba(251,191,36,0.06), rgba(15,23,42,0.7));
             border-color: rgba(251,191,36,0.2);
+        }
+
+        a.link-item.drafting {
+            opacity: 1;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        div.link-item.drafting {
+            pointer-events: none;
         }
 
         .link-item.drafting .link-icon {
