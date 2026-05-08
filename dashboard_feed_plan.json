@@ -1,0 +1,226 @@
+{
+  "version": "0.1",
+  "updated": "2026-05-07",
+  "summary": "Plan for filling dashboard_snapshots/latest.json with real, source-backed success figures.",
+  "stages": [
+    {
+      "id": "stage-1-manual-public-baselines",
+      "name": "Manual Public Baselines",
+      "status": "in-progress",
+      "objective": "Enter visible public counts with explicit source notes while API credentials are not available.",
+      "metrics": [
+        "x_followers",
+        "instagram_followers",
+        "facebook_page_followers",
+        "facebook_group_members",
+        "youtube_subscribers",
+        "tiktok_followers",
+        "twitch_followers",
+        "moltbook_followers",
+        "discord_members",
+        "telegram_community_members"
+      ],
+      "nextStep": "Keep x_followers as the first public baseline, then manually add only counts that can be verified from the official public profile or a clearly recorded mirror/source."
+    },
+    {
+      "id": "stage-2-council-channel-signals",
+      "name": "Council Channel Signals",
+      "status": "source-design-needed",
+      "objective": "Measure voluntary Council interest and engagement from dedicated Council channels only.",
+      "metrics": [
+        "telegram_council_members",
+        "telegram_council_post_views",
+        "telegram_council_reactions",
+        "telegram_council_comments_or_replies",
+        "discord_council_thread_participants",
+        "discord_council_messages",
+        "council_questions_submitted",
+        "council_role_interest_signals"
+      ],
+      "nextStep": "Define the weekly manual export/review process for Telegram Council Official and any Council-specific Discord channels before entering baseline values."
+    },
+    {
+      "id": "stage-3-low-friction-api",
+      "name": "Low-Friction API Connectors",
+      "status": "ready",
+      "objective": "Wire platforms where a single credential can produce stable counts.",
+      "metrics": [
+        "youtube_subscribers",
+        "youtube_recent_views",
+        "telegram_community_members",
+        "telegram_council_members",
+        "discord_members"
+      ],
+      "nextStep": "Add YOUTUBE_API_KEY first, then TELEGRAM_BOT_TOKEN, then resolve Discord invite fetch or use DISCORD_BOT_TOKEN plus DISCORD_GUILD_ID."
+    },
+    {
+      "id": "stage-4-social-api",
+      "name": "Social API Connectors",
+      "status": "pending-credentials",
+      "objective": "Replace manual public baselines with authenticated platform data.",
+      "metrics": [
+        "x_followers",
+        "x_engagement_actions",
+        "instagram_followers",
+        "instagram_engagement_actions",
+        "facebook_page_followers",
+        "facebook_group_members"
+      ],
+      "nextStep": "Add X_BEARER_TOKEN for X, then configure META_ACCESS_TOKEN plus Instagram business and Facebook page identifiers."
+    },
+    {
+      "id": "stage-5-ambassador-and-merchant-ledgers",
+      "name": "Ambassador And Merchant Ledgers",
+      "status": "source-design-needed",
+      "objective": "Track ambassador and merchant-network success without counting demo-only merchant profiles.",
+      "metrics": [
+        "interested_ambassadors",
+        "ambassador_topic_activity",
+        "ambassador_questions_collected",
+        "merchant_directory_listings",
+        "merchant_payment_requests_created",
+        "merchant_validations_issued",
+        "merchant_reviews_submitted"
+      ],
+      "nextStep": "Define the ambassador signal review process and the real merchant directory or declared public-test ledger. Demo profiles stay excluded."
+    },
+    {
+      "id": "stage-6-agent-ledgers",
+      "name": "Agent Ledgers",
+      "status": "source-design-needed",
+      "objective": "Measure StablesAgent usage and answer gaps from explicit agent logs or exports.",
+      "metrics": [
+        "agent_telegram_questions",
+        "agent_web_questions",
+        "agent_total_questions",
+        "agent_answer_gaps",
+        "agent_feedback_items"
+      ],
+      "nextStep": "Define the StablesAgent event export schema before these metrics receive automated values."
+    }
+  ],
+  "metricPlan": {
+    "x_followers": {
+      "status": "manual-baseline-entered",
+      "currentValue": 117,
+      "currentSource": "https://twstalker.com/StablesCouncil",
+      "nextStep": "Replace public mirror baseline with X API once X_BEARER_TOKEN is available."
+    },
+    "youtube_subscribers": {
+      "status": "identifier-ready",
+      "currentValue": null,
+      "currentSource": "https://www.youtube.com/@StablesCouncil",
+      "discoveredIdentifier": "UCM5BEZunwtgndfB9f8R-2rw",
+      "nextStep": "Set YOUTUBE_API_KEY and run npm run dashboard:update."
+    },
+    "youtube_recent_views": {
+      "status": "identifier-ready",
+      "currentValue": null,
+      "currentSource": "https://www.youtube.com/@StablesCouncil",
+      "discoveredIdentifier": "UCM5BEZunwtgndfB9f8R-2rw",
+      "nextStep": "Use YouTube API first for channel views, then refine to recent-video weekly views."
+    },
+    "discord_members": {
+      "status": "fetch-failing",
+      "currentValue": null,
+      "currentSource": "https://discord.gg/rTdqwRGPXR",
+      "nextStep": "Retry invite count from the server or use DISCORD_BOT_TOKEN plus DISCORD_GUILD_ID."
+    },
+    "telegram_community_members": {
+      "status": "needs-token",
+      "currentValue": null,
+      "currentSource": "https://t.me/stablescommunity",
+      "nextStep": "Set TELEGRAM_BOT_TOKEN and confirm the bot can read member count for @stablescommunity."
+    },
+    "telegram_council_members": {
+      "status": "needs-token",
+      "currentValue": null,
+      "currentSource": "https://t.me/StablesCouncilOfficial",
+      "nextStep": "Set TELEGRAM_BOT_TOKEN and confirm the bot can read member count for @StablesCouncilOfficial."
+    },
+    "instagram_followers": {
+      "status": "manual-or-meta-api-needed",
+      "currentValue": null,
+      "currentSource": "https://www.instagram.com/stablescouncil",
+      "nextStep": "Either enter a manual public baseline with source note or configure Meta Graph API."
+    },
+    "facebook_page_followers": {
+      "status": "manual-or-meta-api-needed",
+      "currentValue": null,
+      "currentSource": "https://www.facebook.com/share/16nCLsLHkg/",
+      "nextStep": "Either enter a manual public baseline with source note or configure Meta Graph API."
+    },
+    "facebook_group_members": {
+      "status": "manual-first",
+      "currentValue": null,
+      "currentSource": "https://www.facebook.com/groups/stablescommunity",
+      "nextStep": "Enter a manual public baseline if visible; API access may require additional Meta permissions."
+    },
+    "tiktok_followers": {
+      "status": "manual-first",
+      "currentValue": null,
+      "currentSource": "https://www.tiktok.com/@stablescouncil",
+      "nextStep": "Enter a manual public baseline if visible; public collector did not find a stable count."
+    },
+    "twitch_followers": {
+      "status": "manual-first",
+      "currentValue": null,
+      "currentSource": "https://www.twitch.tv/stablescouncil",
+      "nextStep": "Enter a manual public baseline if visible; public collector did not find a stable count."
+    },
+    "moltbook_followers": {
+      "status": "manual-first",
+      "currentValue": null,
+      "currentSource": "https://www.moltbook.com/u/stablesagent",
+      "nextStep": "Enter a manual public baseline if visible; public collector did not find a stable count."
+    },
+    "merchant_directory_listings": {
+      "status": "real-ledger-needed",
+      "currentValue": null,
+      "currentSource": null,
+      "nextStep": "Define a production or declared public-test merchant directory ledger. Demo merchant profiles are excluded."
+    },
+    "telegram_council_post_views": {
+      "status": "manual-first",
+      "currentValue": null,
+      "currentSource": "Telegram Council Official post analytics/manual",
+      "nextStep": "Collect from dedicated Council channels only; no cookies or passive website tracking."
+    },
+    "telegram_council_reactions": {
+      "status": "manual-first",
+      "currentValue": null,
+      "currentSource": "Telegram Council Official reactions/manual",
+      "nextStep": "Collect from dedicated Council channels only; no cookies or passive website tracking."
+    },
+    "telegram_council_comments_or_replies": {
+      "status": "manual-first",
+      "currentValue": null,
+      "currentSource": "Telegram Council Official replies/manual",
+      "nextStep": "Collect from dedicated Council channels only; no cookies or passive website tracking."
+    },
+    "discord_council_thread_participants": {
+      "status": "manual-first",
+      "currentValue": null,
+      "currentSource": "Discord Council channels/manual",
+      "nextStep": "Collect from dedicated Council channels only; no cookies or passive website tracking."
+    },
+    "discord_council_messages": {
+      "status": "manual-first",
+      "currentValue": null,
+      "currentSource": "Discord Council channels/manual",
+      "nextStep": "Collect from dedicated Council channels only; no cookies or passive website tracking."
+    },
+    "council_questions_submitted": {
+      "status": "manual-first",
+      "currentValue": null,
+      "currentSource": "Council dedicated channels/manual",
+      "nextStep": "Collect from dedicated Council channels only; no cookies or passive website tracking."
+    },
+    "council_role_interest_signals": {
+      "status": "manual-first",
+      "currentValue": null,
+      "currentSource": "Council dedicated channels/manual",
+      "nextStep": "Collect from dedicated Council channels only; no cookies or passive website tracking."
+    }
+  }
+}

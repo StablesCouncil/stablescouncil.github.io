@@ -1,0 +1,49 @@
+{
+  "measurementDate": "2026-05-07",
+  "notes": "Manual inputs only. Add values here only when they cannot be computed from local website files, trackers, feedback files, or generated data. Public mirrors are acceptable as draft baselines only when source notes are recorded.",
+  "values": {
+    "x_followers": 117,
+    "x_recent_posts": null,
+    "x_engagement_actions": null,
+    "instagram_followers": null,
+    "instagram_recent_posts": null,
+    "instagram_engagement_actions": null,
+    "telegram_community_members": null,
+    "telegram_community_messages": null,
+    "telegram_council_members": null,
+    "facebook_page_followers": null,
+    "facebook_group_members": null,
+    "youtube_subscribers": null,
+    "youtube_recent_views": null,
+    "tiktok_followers": null,
+    "twitch_followers": null,
+    "moltbook_followers": null,
+    "discord_members": null,
+    "interested_ambassadors": null,
+    "ambassador_topic_activity": null,
+    "ambassador_questions_collected": null,
+    "agent_telegram_questions": null,
+    "agent_web_questions": null,
+    "agent_total_questions": null,
+    "agent_answer_gaps": null,
+    "agent_feedback_items": null,
+    "merchant_payment_requests_created": null,
+    "merchant_validations_issued": null,
+    "merchant_reviews_submitted": null,
+    "telegram_council_post_views": null,
+    "telegram_council_reactions": null,
+    "telegram_council_comments_or_replies": null,
+    "discord_council_thread_participants": null,
+    "discord_council_messages": null,
+    "council_questions_submitted": null,
+    "council_role_interest_signals": null
+  },
+  "sources": {
+    "x_followers": {
+      "source": "https://twstalker.com/StablesCouncil",
+      "sourceDetail": "Manual public-mirror baseline from TwStalker search result: @StablesCouncil showed 117 followers, crawled 5 days before 2026-05-07. Replace with X API once X_BEARER_TOKEN is available.",
+      "measuredAt": "2026-05-07",
+      "quality": "public-mirror-baseline"
+    }
+  }
+}

@@ -2,7 +2,7 @@
 
 **For the community.** This page explains how we name builds and what **showcase**, **demo**, **test**, and **prod** mean for on-chain scope. It stays aligned with Council handshake **`0_handshake/minidapp_version.md`** in the main Stables workspace.
 
-**Authoring and ship:** Edit this file under **`1_development/stream_1_app/dapp/`** (same tree as **`https://stablescouncil.org/dapp/`**). Run **`npm run sync:site`** from **`task_stablescouncil_github_io/`**; the script copies this **`dapp/`** folder into **`site/dapp/`**. When you refresh GitHub Pages, ship the **`site/`** tree so the live repo gets **`dapp/MINIDAPP_VERSIONING.md`** from here (no separate manual copy unless you bypass **`site/`**).
+**Authoring and ship:** Edit this file under **`1_development/stream_1_app/website/dapp/`** (same tree as **`https://stablescouncil.org/dapp/`**). Serve the parent **`website/`** tree directly for preview, then publish the validated **`website/`** tree to GitHub Pages.
 
 **Read on GitHub (rendered):**  
 [github.com/StablesCouncil/stablescouncil.github.io/blob/main/dapp/MINIDAPP_VERSIONING.md](https://github.com/StablesCouncil/stablescouncil.github.io/blob/main/dapp/MINIDAPP_VERSIONING.md)
@@ -18,7 +18,7 @@
 
 ### Pages `dapp/` layout (four channels)
 
-Under **`1_development/stream_1_app/dapp/`** (and **`site/dapp/`** after **`npm run sync:site`**), routes are grouped **by channel**. Each channel has **`latest-version/`** for published **`.mds.zip`** lines when shipped. Retired **previous-versions** READMEs and related copy for all four channels live only in **`3_archive/stream_1_app/task_archived_dapp_channel_previous_versions_2026-04-16/dapp/`** (not under active **`dapp/`**). **Parity indexes:** **`2_current/stream_1_app/dapp/`**, **`3_archive/stream_1_app/dapp/`**.
+Under **`1_development/stream_1_app/website/dapp/`**, routes are grouped **by channel**. Each channel has **`latest-version/`** for published **`.mds.zip`** lines when shipped. Retired **previous-versions** READMEs and related copy for all four channels live only in archive.
 
 | Folder | Stage | Live URL | Notes |
 |--------|-------|----------|--------|
@@ -51,7 +51,7 @@ Read **left to right**. **Showcase** line keeps **`PM.Pn.TT.DD`** at **`00`** an
 
 1. **Stage** is stated on the package: **zip filename**, **`dapp.conf`**, **`runtime-config.js`** (`APP_STAGE`), or release notes: `showcase | demo | test | prod`.
 2. **Counters:** When we ship a release for a stage, we bump **that stage’s** two-digit group (see handshake **`minidapp_version.md`**).
-3. **Dev folder (showcase source):** **`1_development/stream_1_app/dapp/`** (**`1-showcase/`**, root **`assets/`**, **`dapp.conf`**; hub zip **`dapp/build/README.md`**).
+3. **Dev folder (showcase source):** **`1_development/stream_1_app/website/dapp/`** (**`1-showcase/`**, root **`assets/`**, **`dapp.conf`**; hub zip **`dapp/build/README.md`**).
 
 ### Demo vs test (important)
 
@@ -80,4 +80,4 @@ Examples: **`Stables_v00.00.00.00.03.mds.zip`** (current **showcase** **`1-showc
 
 ---
 
-*Last updated: 2026-04-16 (Council): numbered channel folders **`1-showcase/`** … **`4-prod/`**; active **`dapp/`** no longer contains **`previous-versions/`** (see archive and **`2_current/stream_1_app/dapp/`**, **`3_archive/stream_1_app/dapp/`** README indexes).*
+*Last updated: 2026-04-30 (Council): active Pages-hosted MiniDapp source is under **`website/dapp/`** inside the single public website tree.*

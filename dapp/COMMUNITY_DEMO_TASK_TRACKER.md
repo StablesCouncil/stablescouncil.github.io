@@ -1,7 +1,7 @@
 # Stables MiniDapp - Community Demo Task Tracker
 
 **Status:** Active execution tracker  
-**Scope:** `1_development/stream_1_app/dapp/`  
+**Scope:** `1_development/stream_1_app/website/dapp/`  
 **Primary target:** `dapp/2-demo/`  
 **Companion plan:** `COMMUNITY_DEMO_DEVELOPMENT_PLAN.md`
 
@@ -53,25 +53,11 @@ Each item tracks:
 
 Use these commands as the standard local startup routine.
 
-### Fast app-only loop
+### Full local website loop
 
 ```powershell
-Set-Location "C:\Users\Charles\Documents\Stables\1_development\stream_1_app\task_stablescouncil_github_io"
-npm run serve:dapp
-```
-
-Open:
-
-```text
-http://localhost:8081/2-demo/
-```
-
-### Full site-shell localhost check
-
-```powershell
-Set-Location "C:\Users\Charles\Documents\Stables\1_development\stream_1_app\task_stablescouncil_github_io"
-npm run sync:site
-npm run serve:site
+Set-Location "C:\Users\Charles\Documents\Stables"
+node 1_development/stream_1_app/work/tools/website/serve-local.mjs ../../website 8080
 ```
 
 Open:
@@ -154,7 +140,7 @@ http://127.0.0.1:8788/api/feedback
 
 ## x402 readiness board
 
-Source: `1_development/stream_1_app/dapp/2-demo/CHARTER_DEMO_TRACEABILITY.md` section 14.
+Source: `1_development/stream_1_app/website/dapp/2-demo/CHARTER_DEMO_TRACEABILITY.md` section 14.
 
 | ID | Task | Key elements | Implementation | Review | Confirm | Status | Released | Version |
 |----|------|--------------|----------------|--------|---------|--------|----------|---------|

@@ -285,6 +285,18 @@ body.links-page-body.deck-chrome-page .title-block > .subtitle + .subtitle {
   margin-top: 0.65rem;
 }
 
+body.links-page-body.deck-chrome-page .title-block > .subtitle.version-tag {
+  color: var(--text-secondary);
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+body.links-page-body.deck-chrome-page .title-block .highlight-amber {
+  color: #fbbf24;
+}
+
 body.links-page-body.deck-chrome-page .title-block > .subtitle.philosophy-text {
   max-width: 52rem;
   margin-left: auto;

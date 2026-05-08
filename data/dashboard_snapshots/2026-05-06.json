@@ -1,0 +1,70 @@
+{
+  "version": "0.1",
+  "generatedAt": "2026-05-06T15:29:55.919Z",
+  "measurementDate": "2026-05-06",
+  "generatedBy": "tools/collect-dashboard-snapshots.mjs",
+  "metrics": {
+    "merchant_directory_listings": {
+      "value": 3,
+      "measuredAt": "2026-05-06",
+      "source": "dapp/2-demo/assets/routes/activity-contacts.js",
+      "sourceDetail": "Computed from local demo merchant SHOP_PROFILES.",
+      "collector": "local-ledgers",
+      "quality": "local-computed"
+    }
+  },
+  "collectors": [
+    {
+      "name": "local-ledgers",
+      "status": "ok",
+      "metricCount": 1,
+      "notes": [],
+      "errors": []
+    },
+    {
+      "name": "x",
+      "status": "skipped",
+      "metricCount": 0,
+      "notes": [
+        "Set X_BEARER_TOKEN to collect X follower and engagement metrics."
+      ],
+      "errors": []
+    },
+    {
+      "name": "meta",
+      "status": "skipped",
+      "metricCount": 0,
+      "notes": [
+        "Set META_ACCESS_TOKEN plus INSTAGRAM_BUSINESS_ACCOUNT_ID and/or FACEBOOK_PAGE_ID to collect Meta metrics."
+      ],
+      "errors": []
+    },
+    {
+      "name": "youtube",
+      "status": "skipped",
+      "metricCount": 0,
+      "notes": [
+        "Set YOUTUBE_API_KEY and YOUTUBE_CHANNEL_ID to collect YouTube metrics."
+      ],
+      "errors": []
+    },
+    {
+      "name": "telegram",
+      "status": "skipped",
+      "metricCount": 0,
+      "notes": [
+        "Set TELEGRAM_BOT_TOKEN plus chat ids to collect Telegram counts."
+      ],
+      "errors": []
+    },
+    {
+      "name": "discord",
+      "status": "skipped",
+      "metricCount": 0,
+      "notes": [
+        "Set DISCORD_INVITE_CODE, or DISCORD_BOT_TOKEN plus DISCORD_GUILD_ID, to collect Discord members."
+      ],
+      "errors": []
+    }
+  ]
+}

@@ -5,6 +5,31 @@
 var STABLES_SHARE_TEXT =
   "Stables | Be your bank - Money that is truly yours. Secure, Pseudonymous and Unstoppable.";
 
+function isLocalStablesDevHost() {
+  return (
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "::1"
+  );
+}
+
+function rewriteInternalLinksForLocalhost() {
+  if (!isLocalStablesDevHost()) return;
+
+  document.querySelectorAll("a[href]").forEach(function (link) {
+    var href = link.getAttribute("href");
+    if (!href) return;
+
+    var localHref = href
+      .replace(/^https:\/\/stablescouncil\.org(?=\/|$)/, window.location.origin)
+      .replace(/^http:\/\/stablescouncil\.org(?=\/|$)/, window.location.origin);
+
+    if (localHref !== href) {
+      link.setAttribute("href", localHref);
+    }
+  });
+}
+
 function toggleLangMenu() {
   var menu = document.getElementById("langMenu");
   if (menu) menu.classList.toggle("active");
@@ -158,6 +183,12 @@ document.addEventListener("click", function (event) {
     closeShareMenu();
   }
 });
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", rewriteInternalLinksForLocalhost);
+} else {
+  rewriteInternalLinksForLocalhost();
+}
 
 /**
  * Scroll-hide / scroll-show — app-style, anti-sync:

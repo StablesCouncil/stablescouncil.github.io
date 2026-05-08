@@ -4,7 +4,10 @@
   "description": "Static site sources for StablesCouncil/stablescouncil.github.io (Eleventy)",
   "scripts": {
     "build": "eleventy",
-    "start": "eleventy --serve"
+    "start": "eleventy --serve",
+    "dashboard:collect": "node tools/collect-dashboard-snapshots.mjs",
+    "dashboard:generate": "node tools/generate-dashboard-state.mjs",
+    "dashboard:update": "node tools/collect-dashboard-snapshots.mjs && node tools/generate-dashboard-state.mjs"
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.0.0"

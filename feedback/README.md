@@ -41,7 +41,7 @@ Each file is a single JSON object (schema version **1**). Typical fields include
 - optional `public_contact`, `optional_minima_address`
 - `source` (app build, client id)
 
-The canonical JSON Schema for developers lives with the MiniDapp source (e.g. `feedback_submission.v1.schema.json` in the Stables app repo).
+The canonical JSON Schema for developers lives with the MiniDapp source (e.g. `feedback_submission.v1.schema.json` in the Stables Dapp repo).
 
 ## Aggregating, sorting, and grouping
 

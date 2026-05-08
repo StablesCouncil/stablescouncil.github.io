@@ -1,0 +1,44 @@
+{
+  "version": "0.1",
+  "updated": "2026-05-07",
+  "notes": "Public account identifiers used by dashboard collectors. Secrets stay in environment variables, never in this file.",
+  "x": {
+    "username": "StablesCouncil",
+    "url": "https://x.com/StablesCouncil"
+  },
+  "youtube": {
+    "handle": "@StablesCouncil",
+    "url": "https://www.youtube.com/@StablesCouncil",
+    "channelId": "UCM5BEZunwtgndfB9f8R-2rw"
+  },
+  "discord": {
+    "inviteCode": "rTdqwRGPXR",
+    "url": "https://discord.gg/rTdqwRGPXR"
+  },
+  "telegram": {
+    "communityChatId": "@stablescommunity",
+    "councilChatId": "@StablesCouncilOfficial",
+    "communityUrl": "https://t.me/stablescommunity",
+    "councilUrl": "https://t.me/StablesCouncilOfficial"
+  },
+  "instagram": {
+    "username": "stablescouncil",
+    "url": "https://www.instagram.com/stablescouncil"
+  },
+  "facebook": {
+    "groupUrl": "https://www.facebook.com/groups/stablescommunity",
+    "pageUrl": "https://www.facebook.com/share/16nCLsLHkg/"
+  },
+  "tiktok": {
+    "username": "stablescouncil",
+    "url": "https://www.tiktok.com/@stablescouncil"
+  },
+  "twitch": {
+    "username": "stablescouncil",
+    "url": "https://www.twitch.tv/stablescouncil"
+  },
+  "moltbook": {
+    "username": "stablesagent",
+    "url": "https://www.moltbook.com/u/stablesagent"
+  }
+}

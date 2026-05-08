@@ -1,19 +1,22 @@
-# Canonical layout (dev = ship = promote = archive interior)
+# Canonical Website Layout
 
-These **top-level names** are stable contracts. Do not rename casually (URLs and operators depend on them).
+These top-level names are stable because they map directly to public URLs and the GitHub Pages repository root.
 
-| Path (repo root / `site/` / `github_pages_root/`) | Purpose |
-|---------------------------------------------------|---------|
+| Path | Purpose |
+|------|---------|
 | `index.html` | Home `/` |
 | `links.html` | `/links.html` |
 | `playing_field.html` | `/playing_field.html` |
 | `ambassadorsprogramdesc.html` | `/ambassadorsprogramdesc.html` |
-| `circulareconomy/` | `/circulareconomy/` |
-| `bankingsystem/` | `/bankingsystem/` |
+| `bankingsystem.html` | `/bankingsystem.html` |
+| `circulareconomy.html` | `/circulareconomy.html` |
+| `qr-code.html` | `/qr-code.html` |
+| `devtools/` | Multi-page developer tools area |
+| `dapp/` | Pages-hosted MiniDapp area |
 | `assets/` | Shared JS/CSS for document pages |
 | `brand/` | Logos and brand assets |
-| `stables.css` | Council shell (also linked from pages) |
+| `stables.css` | Council shell CSS |
 | `CNAME`, `favicon.png`, `stables_agent_avatar.png` | Site root files |
-| `dapp/` | **Overlay only** from **`stream_1_app/dapp/`** at sync time (same paths as **`https://stablescouncil.org/dapp/`**) |
 
-**Rule:** `github_pages_root` **must** stay aligned with this table. **`prod_stablescouncil_github_pages_root`** and **`3_archive/...`** snapshots should use **identical** relative paths inside the tree so diffs and restores stay predictable.
+The active source tree is `1_development/stream_1_app/website/`. The promoted mirror is `2_current/stream_1_app/website/`.
+

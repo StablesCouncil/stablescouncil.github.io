@@ -56,7 +56,7 @@ Accept all your electronic payments in a **Permissionless** framework where no p
 -   **Full Sovereignty:** You own **your bank**, your node, your keys, and your customer relationships.
 
 ### **Why Listing?**
-Choosing to pay the 16 Big Mac® entry fee to be listed in the official Stables app provides critical advantages:
+Choosing to pay the 16 Big Mac® entry fee to be listed in the official Stables Dapp provides critical advantages:
 -   **Visibility:** Featured on the global Stables map and in the merchant directory.
 -   **Trust & Verification:** Listing provides a "Verified" status, showing the merchant is part of the official community.
 -   **Discoverability:** Customers looking to spend Stables can find the merchant based on categories and geolocation.

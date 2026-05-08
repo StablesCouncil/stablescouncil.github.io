@@ -1,0 +1,1930 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard · Stables</title>
+  <meta name="description" content="Dashboard for weekly Stables community, app, feedback, agent, and navigation indicators.">
+  <link rel="icon" type="image/png" href="brand/assets/logo-symbol.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="stables.css">
+  <link rel="stylesheet" href="assets/site-chrome.css">
+  <style>
+    :root {
+      --dash-bg: #0b0f14;
+      --dash-panel: rgba(15, 23, 42, 0.66);
+      --dash-line: rgba(103, 232, 249, 0.27);
+      --dash-line-soft: rgba(148, 163, 184, 0.18);
+      --dash-text: #e6edf3;
+      --dash-muted: #9fb0c0;
+      --dash-cyan: #67e8f9;
+      --dash-purple: #a78bfa;
+      --dash-amber: #fbbf24;
+      --dash-green: #34d399;
+      --dash-radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body.site-chrome-body {
+      color: var(--dash-text);
+      background:
+        radial-gradient(circle at top, rgba(103, 232, 249, 0.14), transparent 48%),
+        linear-gradient(180deg, rgba(11, 15, 20, 0.96), var(--dash-bg) 34%),
+        var(--dash-bg);
+    }
+
+    a {
+      color: var(--dash-cyan);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    body.chrome-autohide-ready .site-chrome-header,
+    body.chrome-autohide-ready .site-chrome-footer {
+      transition: transform 240ms ease, opacity 240ms ease, box-shadow 240ms ease;
+      will-change: transform, opacity;
+    }
+
+    body.chrome-autohide-ready.chrome-hidden:not(.chrome-top-hot) .site-chrome-header {
+      transform: translateY(calc(-100% + 14px));
+      opacity: 0.88;
+      pointer-events: auto;
+      box-shadow: none;
+      cursor: ns-resize;
+    }
+
+    body.chrome-autohide-ready.chrome-hidden:not(.chrome-bottom-hot) .site-chrome-footer {
+      transform: translateY(calc(100% - 14px));
+      opacity: 0.88;
+      pointer-events: auto;
+      box-shadow: none;
+      cursor: ns-resize;
+    }
+
+    .chrome-hot-zone {
+      position: fixed;
+      left: 0;
+      right: 0;
+      z-index: 9998;
+      pointer-events: none;
+      background: transparent;
+    }
+
+    .chrome-hot-zone--top {
+      top: 0;
+      height: 34px;
+    }
+
+    .chrome-hot-zone--bottom {
+      bottom: 0;
+      height: 40px;
+    }
+
+    .dashboard-main {
+      width: min(1480px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: calc(var(--site-header-h, 60px) + 46px) 0 56px;
+    }
+
+    .dashboard-hero {
+      max-width: 900px;
+      margin: 0 auto 72px;
+      text-align: center;
+    }
+
+    .dashboard-kicker {
+      margin-bottom: 12px;
+      color: var(--dash-cyan);
+      font-size: 0.72rem;
+      font-weight: 850;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .dashboard-version {
+      margin: -4px 0 16px;
+      color: var(--dash-muted);
+      font-size: 0.86rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .dashboard-version span {
+      color: var(--dash-amber);
+    }
+
+    .dashboard-title {
+      margin: 0 0 20px;
+      max-width: 100%;
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      font-size: clamp(3rem, 6.4vw, 56px);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #ffffff 0%, #67e8f9 54%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .dashboard-lede {
+      max-width: 900px;
+      margin: 0 auto;
+      color: var(--dash-muted);
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .global-indicators {
+      width: min(1200px, 100%);
+      margin: 32px auto 0;
+    }
+
+    .global-indicators__head {
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    .global-indicators__title {
+      color: var(--dash-cyan);
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+
+    .global-indicators__text {
+      max-width: 780px;
+      margin: 8px auto 0;
+      color: var(--dash-muted);
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+
+    .global-gauge-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .global-gauge {
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid rgba(103, 232, 249, 0.24);
+      border-radius: var(--dash-radius);
+      background: linear-gradient(135deg, rgba(103, 232, 249, 0.08), rgba(15, 23, 42, 0.9));
+      overflow: hidden;
+    }
+
+    .global-gauge__title {
+      color: var(--dash-text);
+      font-size: 0.82rem;
+      font-weight: 850;
+      line-height: 1.25;
+      text-align: center;
+    }
+
+    .global-gauge__dial {
+      position: relative;
+      width: min(180px, 100%);
+      aspect-ratio: 2 / 1;
+      margin: 18px auto 0;
+      overflow: hidden;
+    }
+
+    .global-gauge__arc {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px 999px 0 0;
+      background:
+        conic-gradient(from 270deg at 50% 100%,
+          rgba(103, 232, 249, 0.95) 0deg,
+          rgba(167, 139, 250, 0.95) var(--gauge-angle, 0deg),
+          rgba(148, 163, 184, 0.18) var(--gauge-angle, 0deg),
+          rgba(148, 163, 184, 0.18) 180deg,
+          transparent 180deg);
+    }
+
+    .global-gauge__arc::after {
+      content: "";
+      position: absolute;
+      left: 13%;
+      right: 13%;
+      bottom: 0;
+      height: 74%;
+      border-radius: 999px 999px 0 0;
+      background: #101826;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .global-gauge__needle {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 3px;
+      height: 82%;
+      border-radius: 999px;
+      background: #ffffff;
+      transform-origin: 50% 100%;
+      transform: translateX(-50%) rotate(var(--needle-angle, -90deg));
+      box-shadow: 0 0 12px rgba(103, 232, 249, 0.72);
+      z-index: 2;
+    }
+
+    .global-gauge__hub {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(103, 232, 249, 0.9);
+      border-radius: 50%;
+      background: #101826;
+      transform: translate(-50%, 50%);
+      z-index: 3;
+      box-shadow: 0 0 14px rgba(103, 232, 249, 0.45);
+    }
+
+    .global-gauge__value {
+      margin-top: 12px;
+      color: var(--dash-text);
+      font-size: 1.3rem;
+      font-weight: 900;
+      line-height: 1;
+      text-align: center;
+    }
+
+    .global-gauge__meta {
+      margin-top: 7px;
+      color: var(--dash-muted);
+      font-size: 0.74rem;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .dashboard-feed-summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      width: min(1200px, 100%);
+      margin: 18px auto 0;
+    }
+
+    .dashboard-feed-summary__item {
+      min-width: 0;
+      padding: 10px 12px;
+      border: 1px solid rgba(103, 232, 249, 0.18);
+      border-radius: var(--dash-radius);
+      background: rgba(2, 6, 23, 0.24);
+    }
+
+    .dashboard-feed-summary__value {
+      color: var(--dash-text);
+      font-size: 1rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .dashboard-feed-summary__label {
+      margin-top: 5px;
+      color: var(--dash-muted);
+      font-size: 0.7rem;
+      line-height: 1.3;
+    }
+
+    .dashboard-stat {
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid rgba(103, 232, 249, 0.22);
+      border-radius: var(--dash-radius);
+      background: linear-gradient(135deg, rgba(103, 232, 249, 0.08), rgba(15, 23, 42, 0.9));
+    }
+
+    .dashboard-stat__value {
+      color: var(--dash-text);
+      font-size: 1.38rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .dashboard-stat__label {
+      margin-top: 8px;
+      color: var(--dash-muted);
+      font-size: 0.78rem;
+      line-height: 1.35;
+    }
+
+    .dashboard-stat--situation {
+      border-color: rgba(103, 232, 249, 0.28);
+      background: rgba(2, 6, 23, 0.32);
+    }
+
+    .dashboard-filters {
+      width: min(1200px, 100%);
+      margin: 34px auto 0;
+      padding: 16px;
+      border: 1px solid rgba(103, 232, 249, 0.2);
+      border-radius: var(--dash-radius);
+      background: rgba(15, 23, 42, 0.52);
+      box-shadow: 0 18px 55px rgba(0, 0, 0, 0.22);
+    }
+
+    .dashboard-filter-search {
+      width: 100%;
+      min-height: 44px;
+      padding: 0 14px;
+      border: 1px solid rgba(103, 232, 249, 0.32);
+      border-radius: 8px;
+      color: var(--dash-text);
+      background: rgba(2, 6, 23, 0.42);
+      font: inherit;
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .dashboard-filter-search:focus {
+      border-color: rgba(103, 232, 249, 0.72);
+      box-shadow: 0 0 0 3px rgba(103, 232, 249, 0.1);
+    }
+
+    .dashboard-filter-row {
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      margin-top: 14px;
+    }
+
+    .dashboard-filter-label {
+      color: var(--dash-cyan);
+      font-size: 0.7rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+
+    .dashboard-filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .dashboard-filter-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 5px 9px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 999px;
+      color: var(--dash-muted);
+      background: rgba(2, 6, 23, 0.28);
+      font: inherit;
+      font-size: 0.74rem;
+      font-weight: 800;
+      line-height: 1.15;
+      cursor: pointer;
+    }
+
+    .dashboard-filter-chip[aria-pressed="true"] {
+      border-color: rgba(103, 232, 249, 0.66);
+      color: var(--dash-text);
+      background: rgba(103, 232, 249, 0.12);
+    }
+
+    .dashboard-filter-footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      color: var(--dash-muted);
+      font-size: 0.76rem;
+      line-height: 1.35;
+    }
+
+    .dashboard-filter-reset {
+      min-height: 32px;
+      padding: 5px 10px;
+      border: 1px solid rgba(167, 139, 250, 0.36);
+      border-radius: 999px;
+      color: var(--dash-text);
+      background: rgba(167, 139, 250, 0.1);
+      font: inherit;
+      font-size: 0.74rem;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 32px;
+      align-items: stretch;
+      width: min(1200px, 100%);
+      margin: 46px auto 0;
+    }
+
+    .metric-category {
+      display: grid;
+      grid-template-rows: 86px minmax(0, 1fr);
+      min-width: 0;
+    }
+
+    .metric-category__head {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      min-height: 86px;
+      padding: 0;
+      border-bottom: 0;
+      background: transparent;
+      text-align: center;
+    }
+
+    .metric-category__title {
+      color: var(--dash-cyan);
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      line-height: 1.25;
+      text-transform: uppercase;
+    }
+
+    .metric-category__meta {
+      margin-top: 8px;
+      color: var(--dash-muted);
+      font-size: 0.76rem;
+    }
+
+    .metric-list {
+      display: grid;
+      align-content: start;
+      gap: 12px;
+      margin-top: 0;
+      padding: 16px;
+      border: 1px solid var(--dash-line);
+      border-radius: var(--dash-radius);
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(18px);
+      overflow: hidden;
+      box-shadow: 0 22px 70px rgba(0, 0, 0, 0.32);
+    }
+
+    .metric-card {
+      border: 1px solid rgba(103, 232, 249, 0.2);
+      border-radius: var(--dash-radius);
+      background: linear-gradient(135deg, rgba(103, 232, 249, 0.07), rgba(15, 23, 42, 0.88));
+      overflow: hidden;
+    }
+
+    .metric-card[open] {
+      border-color: rgba(103, 232, 249, 0.48);
+      box-shadow: 0 0 28px rgba(103, 232, 249, 0.1);
+    }
+
+    .metric-card summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 14px;
+    }
+
+    .metric-card summary::-webkit-details-marker { display: none; }
+
+    .metric-rail {
+      height: 4px;
+      background: linear-gradient(90deg, var(--metric-color, var(--dash-cyan)), color-mix(in srgb, var(--metric-color, var(--dash-cyan)) 35%, transparent));
+      box-shadow: 0 0 16px color-mix(in srgb, var(--metric-color, var(--dash-cyan)) 45%, transparent);
+    }
+
+    .metric-card__top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .metric-card__name {
+      color: var(--dash-text);
+      font-size: 0.94rem;
+      font-weight: 820;
+      line-height: 1.25;
+    }
+
+    .metric-card__value {
+      min-width: 64px;
+      color: var(--dash-cyan);
+      text-align: right;
+      font-size: 1rem;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .metric-card__desc {
+      margin-top: 8px;
+      color: var(--dash-muted);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .metric-card__update {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-top: 10px;
+      color: var(--dash-muted);
+      font-size: 0.72rem;
+      line-height: 1.35;
+    }
+
+    .metric-update-pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 4px 7px;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 999px;
+      color: var(--dash-text);
+      background: rgba(15, 23, 42, 0.52);
+      font-size: 0.66rem;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+      line-height: 1.15;
+      text-transform: uppercase;
+    }
+
+    .metric-update-pill[data-update-status="auto"] {
+      border-color: rgba(52, 211, 153, 0.46);
+      background: rgba(52, 211, 153, 0.12);
+    }
+
+    .metric-update-pill[data-update-status="manual"] {
+      border-color: rgba(167, 139, 250, 0.46);
+      background: rgba(167, 139, 250, 0.12);
+    }
+
+    .metric-update-pill[data-update-status="api"] {
+      border-color: rgba(103, 232, 249, 0.44);
+      background: rgba(103, 232, 249, 0.1);
+    }
+
+    .metric-update-pill[data-update-status="missing"] {
+      border-color: rgba(251, 191, 36, 0.4);
+      background: rgba(251, 191, 36, 0.1);
+    }
+
+    .metric-card__body {
+      padding: 0 14px 14px;
+      color: var(--dash-muted);
+      font-size: 0.82rem;
+    }
+
+    .metric-scale {
+      display: grid;
+      grid-template-columns: 74px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(148, 163, 184, 0.14);
+    }
+
+    .metric-scale--summary {
+      grid-template-columns: 66px minmax(0, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+      padding-top: 10px;
+    }
+
+    .metric-mini-gauge {
+      position: relative;
+      width: 74px;
+      aspect-ratio: 2 / 1;
+      overflow: hidden;
+      flex: 0 0 auto;
+    }
+
+    .metric-scale--summary .metric-mini-gauge {
+      width: 66px;
+    }
+
+    .metric-mini-gauge__arc {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px 999px 0 0;
+      background:
+        conic-gradient(from 270deg at 50% 100%,
+          var(--metric-color, var(--dash-cyan)) 0deg,
+          var(--dash-purple) var(--metric-angle, 0deg),
+          rgba(148, 163, 184, 0.18) var(--metric-angle, 0deg),
+          rgba(148, 163, 184, 0.18) 180deg,
+          transparent 180deg);
+    }
+
+    .metric-mini-gauge__arc::after {
+      content: "";
+      position: absolute;
+      left: 16%;
+      right: 16%;
+      bottom: 0;
+      height: 70%;
+      border-radius: 999px 999px 0 0;
+      background: #101826;
+    }
+
+    .metric-mini-gauge__needle {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 2px;
+      height: 80%;
+      border-radius: 999px;
+      background: #ffffff;
+      transform-origin: 50% 100%;
+      transform: translateX(-50%) rotate(var(--metric-needle, -90deg));
+      box-shadow: 0 0 10px rgba(103, 232, 249, 0.62);
+      z-index: 2;
+    }
+
+    .metric-mini-gauge__hub {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 9px;
+      height: 9px;
+      border: 1px solid color-mix(in srgb, var(--metric-color, var(--dash-cyan)) 80%, #ffffff);
+      border-radius: 50%;
+      background: #101826;
+      transform: translate(-50%, 50%);
+      z-index: 3;
+      box-shadow: 0 0 10px color-mix(in srgb, var(--metric-color, var(--dash-cyan)) 40%, transparent);
+    }
+
+    .metric-scale__content {
+      min-width: 0;
+    }
+
+    .metric-scale__facts {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .metric-scale__fact {
+      min-width: 0;
+      padding: 6px 7px;
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: 7px;
+      background: rgba(2, 6, 23, 0.28);
+    }
+
+    .metric-scale__fact-label {
+      overflow: hidden;
+      color: var(--dash-muted);
+      font-size: 0.58rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .metric-scale__fact-value {
+      overflow: hidden;
+      margin-top: 5px;
+      color: var(--dash-text);
+      font-size: 0.75rem;
+      font-weight: 900;
+      line-height: 1.1;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .metric-scale__fact-value--accent {
+      color: var(--metric-color, var(--dash-cyan));
+    }
+
+    .metric-scale__head,
+    .metric-history__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--dash-text);
+      font-size: 0.7rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .metric-scale__note,
+    .metric-history__note {
+      color: var(--dash-muted);
+      font-size: 0.66rem;
+      font-weight: 680;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .metric-scale__value {
+      margin-top: 6px;
+      color: var(--dash-text);
+      font-size: 1rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .metric-history {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(148, 163, 184, 0.14);
+    }
+
+    .metric-history__line {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 1fr;
+      align-items: end;
+      gap: 4px;
+      height: 34px;
+    }
+
+    .metric-history__bar {
+      min-width: 5px;
+      height: var(--bar-height, 18%);
+      border-radius: 999px 999px 2px 2px;
+      background: color-mix(in srgb, var(--metric-color, var(--dash-cyan)) 72%, rgba(255, 255, 255, 0.12));
+      box-shadow: 0 0 12px color-mix(in srgb, var(--metric-color, var(--dash-cyan)) 30%, transparent);
+    }
+
+    .metric-history__empty {
+      padding: 8px;
+      border: 1px dashed rgba(148, 163, 184, 0.24);
+      border-radius: 7px;
+      color: var(--dash-muted);
+      background: rgba(2, 6, 23, 0.18);
+      font-size: 0.72rem;
+      line-height: 1.35;
+    }
+
+    .metric-source {
+      display: inline-flex;
+      max-width: 100%;
+      margin-top: 10px;
+      padding: 6px 8px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 999px;
+      color: var(--dash-muted);
+      background: rgba(2, 6, 23, 0.24);
+      font-size: 0.72rem;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .metric-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .metric-chip {
+      display: inline-flex;
+      align-items: center;
+      max-width: 100%;
+      padding: 5px 7px;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 999px;
+      color: var(--dash-muted);
+      background: rgba(2, 6, 23, 0.24);
+      font-size: 0.74rem;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .metric-source-type {
+      display: inline-flex;
+      width: fit-content;
+      margin-top: 10px;
+      padding: 4px 7px;
+      border: 1px solid rgba(251, 191, 36, 0.32);
+      border-radius: 6px;
+      color: #fff;
+      background: rgba(251, 191, 36, 0.1);
+      font-size: 0.62rem;
+      font-weight: 850;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .metric-feed {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 10px;
+      border: 1px solid rgba(103, 232, 249, 0.16);
+      border-radius: 8px;
+      background: rgba(2, 6, 23, 0.22);
+    }
+
+    .metric-feed__head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .metric-feed__label {
+      color: var(--dash-cyan);
+      font-size: 0.68rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .metric-feed__pill {
+      display: inline-flex;
+      max-width: 100%;
+      padding: 4px 7px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 999px;
+      color: var(--dash-text);
+      background: rgba(15, 23, 42, 0.5);
+      font-size: 0.68rem;
+      font-weight: 760;
+      line-height: 1.2;
+      overflow-wrap: anywhere;
+    }
+
+    .metric-feed__text {
+      color: var(--dash-muted);
+      font-size: 0.74rem;
+      line-height: 1.4;
+    }
+
+    .metric-card[data-source-type="external-link"] { --metric-color: #67e8f9; }
+    .metric-card[data-source-type="file"] { --metric-color: #fbbf24; }
+    .metric-card[data-source-type="local-file"] { --metric-color: #fbbf24; }
+    .metric-card[data-source-type="manual-weekly-snapshot"] { --metric-color: #a78bfa; }
+    .metric-card[data-source-type="manual"] { --metric-color: #94a3b8; }
+
+    a.metric-source:hover {
+      color: var(--dash-text);
+      border-color: rgba(103, 232, 249, 0.42);
+      text-decoration: none;
+    }
+
+    a.metric-chip:hover {
+      color: var(--dash-text);
+      border-color: rgba(103, 232, 249, 0.42);
+      text-decoration: none;
+    }
+
+    .dashboard-note {
+      max-width: 860px;
+      margin: 28px auto 0;
+      color: var(--dash-muted);
+      text-align: center;
+      font-size: 0.84rem;
+      line-height: 1.55;
+    }
+
+    .agent-fab {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0;
+    }
+
+    .agent-fab-tip {
+      background: rgba(10, 14, 20, 0.92);
+      border: 1px solid rgba(103, 232, 249, 0.3);
+      color: #e6edf3;
+      font-family: Inter, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 14px;
+      border-radius: var(--dash-radius);
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateX(8px);
+      transition: all 0.25s ease;
+      pointer-events: none;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .agent-fab:hover .agent-fab-tip {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .agent-fab-btn {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(103, 232, 249, 0.25), rgba(167, 139, 250, 0.25));
+      border: 1px solid rgba(103, 232, 249, 0.45);
+      box-shadow: 0 0 24px rgba(103, 232, 249, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .agent-fab:hover .agent-fab-btn {
+      transform: scale(1.1);
+      box-shadow: 0 0 40px rgba(103, 232, 249, 0.4);
+    }
+
+    .agent-fab-btn img {
+      width: 32px;
+      height: 32px;
+      object-fit: contain;
+    }
+
+    .agent-fab-dot {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: #6b7280;
+      border: 2px solid #0b0f14;
+    }
+
+    .agent-fab-pulse {
+      position: absolute;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 1px solid rgba(103, 232, 249, 0.5);
+      animation: agent-radar 2.4s ease-out infinite;
+      pointer-events: none;
+    }
+
+    .agent-fab-pulse:nth-child(2) { animation-delay: 0.8s; }
+    .agent-fab-pulse:nth-child(3) { animation-delay: 1.6s; }
+
+    @keyframes agent-radar {
+      0% { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    .agent-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9050;
+      background: transparent;
+    }
+
+    .agent-backdrop.open { display: block; }
+
+    .agent-popup {
+      position: fixed;
+      bottom: 104px;
+      right: 32px;
+      z-index: 9100;
+      width: 390px;
+      height: min(680px, calc(100vh - 130px));
+      background: #101826;
+      border: 1px solid rgba(103, 232, 249, 0.3);
+      border-radius: 20px;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7), 0 0 40px rgba(103, 232, 249, 0.12);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px) scale(0.97);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+    }
+
+    .agent-popup.open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: all;
+    }
+
+    .agent-popup-header {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      flex-shrink: 0;
+    }
+
+    .agent-popup-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--dash-radius);
+      background: rgba(103, 232, 249, 0.08);
+      border: 1px solid rgba(103, 232, 249, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .agent-popup-logo img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+    }
+
+    .agent-popup-title { flex: 1; }
+
+    .agent-popup-title-main {
+      font-size: 13px;
+      font-weight: 700;
+      color: #e6edf3;
+      font-family: Inter, sans-serif;
+      letter-spacing: 0.03em;
+    }
+
+    .agent-popup-title-sub {
+      font-size: 11px;
+      color: #9fb0c0;
+      font-family: Inter, sans-serif;
+      margin-top: 1px;
+    }
+
+    .agent-popup-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: #9fb0c0;
+      font-family: Inter, sans-serif;
+      cursor: pointer;
+      padding: 5px 10px;
+      border-radius: 999px;
+      transition: background 0.2s;
+    }
+
+    .agent-popup-status:hover { background: rgba(255, 255, 255, 0.07); }
+
+    .agent-popup-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+    }
+
+    .agent-popup-disclaimer {
+      padding: 7px 16px;
+      background: rgba(251, 191, 36, 0.08);
+      border-bottom: 1px solid rgba(251, 191, 36, 0.25);
+      font-family: Inter, sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #fbbf24;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .agent-popup-body {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .agent-popup-body iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #101826;
+    }
+
+    .agent-popup-fallback {
+      display: none;
+      position: absolute;
+      inset: 0;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 32px;
+      text-align: center;
+      background: #101826;
+    }
+
+    .agent-popup-fallback.visible { display: flex; }
+
+    .agent-popup-fallback p {
+      font-family: Inter, sans-serif;
+      font-size: 14px;
+      color: #9fb0c0;
+      line-height: 1.6;
+    }
+
+    .agent-popup-fallback a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(103, 232, 249, 0.25), rgba(167, 139, 250, 0.25));
+      border: 1px solid rgba(103, 232, 249, 0.4);
+      color: #e6edf3;
+      font-family: Inter, sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .agent-popup-fallback a:hover { box-shadow: 0 0 20px rgba(103, 232, 249, 0.3); }
+
+    @media (max-width: 1120px) {
+      .dashboard-grid,
+      .global-gauge-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-category {
+        grid-template-rows: auto minmax(0, 1fr);
+      }
+
+      .metric-category__head {
+        min-height: 0;
+        margin-bottom: 18px;
+      }
+
+      .dashboard-feed-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+    }
+
+    @media (max-width: 760px) {
+      .dashboard-main {
+        width: min(100% - 20px, 1480px);
+        padding-top: calc(var(--site-header-h, 60px) + 22px);
+      }
+
+      .dashboard-filter-row {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-feed-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-hero {
+        margin-bottom: 52px;
+      }
+
+      .dashboard-title {
+        font-size: 42px;
+        letter-spacing: -0.03em;
+      }
+
+      .dashboard-lede {
+        font-size: 1rem;
+      }
+
+      .metric-scale {
+        grid-template-columns: 62px minmax(0, 1fr);
+      }
+
+      .metric-mini-gauge {
+        width: 62px;
+      }
+
+      .metric-scale__facts {
+        grid-template-columns: 1fr;
+      }
+
+      .agent-fab {
+        right: 20px;
+        bottom: 20px;
+      }
+
+      .agent-fab-tip { display: none; }
+
+      .agent-popup {
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        height: min(84vh, 720px);
+        border-radius: 20px 20px 0 0;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .dashboard-main {
+        width: min(100% - 16px, 1480px);
+      }
+
+      .dashboard-title {
+        font-size: clamp(2.05rem, 10vw, 2.55rem);
+      }
+
+      .metric-card__top {
+        flex-direction: column;
+      }
+
+      .metric-card__value {
+        min-width: 0;
+        text-align: left;
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+<body class="site-chrome-body deck-chrome-page">
+  <header class="site-chrome-header" role="banner">
+    <a class="site-chrome-header__brand" href="https://stablescouncil.org/">
+      <img class="site-chrome-header__mark" src="brand/assets/logo-symbol.png" width="48" height="48" alt="Stables">
+      <span class="site-chrome-header__titles">
+        <span class="site-chrome-header__name">Stables</span>
+        <span class="site-chrome-header__slogan">Be your bank</span>
+      </span>
+    </a>
+    <a class="site-chrome-header__pill" href="https://minima.global" target="_blank" rel="noopener noreferrer">Built on MINIMA</a>
+  </header>
+
+  <main class="dashboard-main">
+    <section class="dashboard-hero">
+      <div>
+        <div class="dashboard-kicker">Public Draft Dashboard</div>
+        <h1 class="dashboard-title">Dashboard</h1>
+        <p class="dashboard-version">Version 0.0.01 | <span>Community Draft</span></p>
+        <p class="dashboard-lede">A draft success measurement layer for Stables, tracking measurable outcomes behind user reach, community response, merchant-network traction, feedback, and StablesAgent interaction.</p>
+      </div>
+    </section>
+
+    <section class="global-indicators" aria-label="Global KPI indicators">
+      <div class="global-indicators__head">
+        <div class="global-indicators__title">Global Indicators</div>
+        <div class="global-indicators__text">Group-level gauges show conservative current success percentages. Individual cards keep the absolute measures and their update route underneath.</div>
+      </div>
+      <div class="global-gauge-grid" id="globalGaugeGrid"></div>
+      <div class="dashboard-feed-summary" id="dashboardFeedSummary" aria-label="Dashboard feed update status"></div>
+    </section>
+    <section class="dashboard-filters" aria-label="Dashboard metric filters">
+      <input class="dashboard-filter-search" id="metricSearch" type="search" placeholder="Search dashboard measures, sources, Navi links, or feed status" autocomplete="off">
+      <div class="dashboard-filter-row">
+        <div class="dashboard-filter-label">Dashboard Category</div>
+        <div class="dashboard-filter-options" id="categoryFilters"></div>
+      </div>
+      <div class="dashboard-filter-row">
+        <div class="dashboard-filter-label">Data Feed</div>
+        <div class="dashboard-filter-options" id="feedFilters"></div>
+      </div>
+      <div class="dashboard-filter-row">
+        <div class="dashboard-filter-label">Source Type</div>
+        <div class="dashboard-filter-options" id="sourceTypeFilters"></div>
+      </div>
+      <div class="dashboard-filter-footer">
+        <span id="filterResultCount">Loading measures...</span>
+        <button class="dashboard-filter-reset" id="filterReset" type="button">Clear filters</button>
+      </div>
+    </section>
+    <section class="dashboard-grid" id="dashboardGrid" aria-label="Dashboard indicator groups"></section>
+    <p class="dashboard-note">The Dashboard is intentionally separate from the Navigation System. Navi explains direction and progress. The Dashboard measures success signals that should live beyond the roadmap.</p>
+  </main>
+
+  <footer class="site-chrome-footer site-chrome-footer--minimal" role="contentinfo">
+    <div class="site-chrome-footerSocial">
+      <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" aria-label="Telegram community">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+      </a>
+      <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer" aria-label="Stables on X">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      </a>
+      <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--all-links" href="links.html">All links</a>
+    </div>
+    <p class="site-chrome-footerMeta">Stables | Built on Minima</p>
+  </footer>
+  <script src="assets/site-rail-controls.js" defer></script>
+
+  <script>
+    (() => {
+      const body = document.body;
+      const header = document.querySelector('.site-chrome-header');
+      const footer = document.querySelector('.site-chrome-footer');
+      if (!header || !footer) return;
+
+      const topZone = document.createElement('div');
+      const bottomZone = document.createElement('div');
+      topZone.className = 'chrome-hot-zone chrome-hot-zone--top';
+      bottomZone.className = 'chrome-hot-zone chrome-hot-zone--bottom';
+      topZone.setAttribute('aria-hidden', 'true');
+      bottomZone.setAttribute('aria-hidden', 'true');
+      document.body.append(topZone, bottomZone);
+
+      let hideTimer;
+      let pointerInChrome = false;
+      let lastPointerY = window.innerHeight / 2;
+
+      const clearHideTimer = () => {
+        window.clearTimeout(hideTimer);
+      };
+
+      const reveal = (edge) => {
+        clearHideTimer();
+        body.classList.remove('chrome-hidden');
+        body.classList.toggle('chrome-top-hot', edge === 'top');
+        body.classList.toggle('chrome-bottom-hot', edge === 'bottom');
+      };
+
+      const scheduleHide = (delay = 1800) => {
+        clearHideTimer();
+        hideTimer = window.setTimeout(() => {
+          if (pointerInChrome) return;
+          body.classList.add('chrome-hidden');
+          body.classList.remove('chrome-top-hot', 'chrome-bottom-hot');
+        }, delay);
+      };
+
+      const trackPointer = (event) => {
+        lastPointerY = event.clientY;
+        if (lastPointerY <= 42) {
+          reveal('top');
+          return;
+        }
+        if (lastPointerY >= window.innerHeight - 46) {
+          reveal('bottom');
+          return;
+        }
+        body.classList.remove('chrome-top-hot', 'chrome-bottom-hot');
+        scheduleHide(900);
+      };
+
+      [header, footer].forEach((element) => {
+        element.addEventListener('pointerenter', () => {
+          pointerInChrome = true;
+          reveal(element === header ? 'top' : 'bottom');
+        });
+        element.addEventListener('pointerleave', () => {
+          pointerInChrome = false;
+          scheduleHide(800);
+        });
+        element.addEventListener('focusin', () => reveal(element === header ? 'top' : 'bottom'));
+        element.addEventListener('focusout', () => scheduleHide(1200));
+      });
+
+      topZone.addEventListener('pointerenter', () => reveal('top'));
+      bottomZone.addEventListener('pointerenter', () => reveal('bottom'));
+      document.addEventListener('pointermove', trackPointer, { passive: true });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Tab') reveal(lastPointerY <= window.innerHeight / 2 ? 'top' : 'bottom');
+      });
+
+      body.classList.add('chrome-autohide-ready');
+      reveal('top');
+      scheduleHide(2400);
+    })();
+  </script>
+
+  <div class="agent-backdrop" id="agentBackdrop" onclick="closeAgent()"></div>
+  <div class="agent-popup" id="agentPopup">
+    <div class="agent-popup-header">
+      <div class="agent-popup-logo"><img src="stables_agent_avatar.png" alt="StablesAgent"></div>
+      <div class="agent-popup-title">
+        <div class="agent-popup-title-main">StablesAgent</div>
+        <div class="agent-popup-title-sub">Ask anything about Stables</div>
+      </div>
+      <div class="agent-popup-status" onclick="closeAgent()" title="Close"><span class="agent-popup-status-dot"></span><span>Online</span></div>
+    </div>
+    <div class="agent-popup-disclaimer">DO NOT SHARE PRIVATE OR SENSITIVE INFORMATION</div>
+    <div class="agent-popup-body">
+      <iframe id="agentFrame" title="StablesAgent Chat"></iframe>
+      <div class="agent-popup-fallback" id="agentFallback">
+        <img src="stables_agent_avatar.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;">
+        <p>The chat will load here directly once the secure connection is active.<br>For now, open it in a new tab:</p>
+        <a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer">Open StablesAgent in a new tab</a>
+      </div>
+    </div>
+  </div>
+  <button class="agent-fab" id="agentFab" onclick="toggleAgent()" aria-label="Chat with StablesAgent">
+    <span class="agent-fab-tip">Chat with StablesAgent</span>
+    <span class="agent-fab-btn">
+      <span class="agent-fab-pulse"></span>
+      <span class="agent-fab-pulse"></span>
+      <span class="agent-fab-pulse"></span>
+      <img src="stables_agent_avatar.png" alt="StablesAgent">
+      <span class="agent-fab-dot"></span>
+    </span>
+  </button>
+
+  <script>
+    const metricsUrl = `./dashboard_metrics.json?v=${Date.now()}`;
+    const stateUrl = `./dashboard_state.json?v=${Date.now()}`;
+    const feedPlanUrl = `./dashboard_feed_plan.json?v=${Date.now()}`;
+    const naviDataUrl = `./navi_items.json?v=${Date.now()}`;
+    let dashboardSourceData = null;
+    let naviItemLabels = {};
+    const dashboardFilters = {
+      query: '',
+      categories: new Set(),
+      dataPullStatuses: new Set(),
+      sourceTypes: new Set()
+    };
+
+    const escapeHtml = (value) => String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+
+    const displayValue = (value, unit) => {
+      if (value === null || value === undefined || value === '') return 'TBD';
+      if (unit === 'percent') return `${value}%`;
+      return String(value);
+    };
+
+    const displayChange = (value) => {
+      if (value === null || value === undefined || value === '') return 'TBD';
+      const prefix = Number(value) > 0 ? '+' : '';
+      return `${prefix}${value}`;
+    };
+
+    const numericValue = (value) => {
+      if (value === null || value === undefined || value === '') return null;
+      const number = Number(value);
+      return Number.isFinite(number) ? number : null;
+    };
+
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+    const scalePercent = (metric) => {
+      const value = numericValue(metric.latestValue);
+      if (value === null) return 0;
+      if (metric.unit === 'percent') return clamp(value, 0, 100);
+      if (metric._categoryMax && metric._categoryMax > 0) return clamp(Math.round((value / metric._categoryMax) * 100), 0, 100);
+      return value > 0 ? 100 : 0;
+    };
+
+    const scaleTemplate = (metric, variant = '') => {
+      const percent = scalePercent(metric);
+      const angle = Math.round((percent / 100) * 180);
+      const needle = -90 + angle;
+      const previous = displayValue(metric.previousValue, metric.unit);
+      const weekly = displayChange(metric.weeklyChange);
+      const measured = metric.lastMeasured || 'TBD';
+      return `
+        <div class="metric-scale${variant ? ` metric-scale--${variant}` : ''}">
+          <div class="metric-mini-gauge" style="--metric-angle:${angle}deg;--metric-needle:${needle}deg;" aria-label="${escapeHtml(percent)} percent illustrative scale">
+            <div class="metric-mini-gauge__arc"></div>
+            <div class="metric-mini-gauge__needle"></div>
+            <div class="metric-mini-gauge__hub"></div>
+          </div>
+          <div class="metric-scale__content">
+            <div class="metric-scale__facts">
+              <div class="metric-scale__fact">
+                <div class="metric-scale__fact-label">Previous</div>
+                <div class="metric-scale__fact-value metric-scale__fact-value--accent">${escapeHtml(previous)}</div>
+              </div>
+              <div class="metric-scale__fact">
+                <div class="metric-scale__fact-label">Weekly</div>
+                <div class="metric-scale__fact-value">${escapeHtml(weekly)}</div>
+              </div>
+              <div class="metric-scale__fact">
+                <div class="metric-scale__fact-label">Measured</div>
+                <div class="metric-scale__fact-value" title="${escapeHtml(measured)}">${escapeHtml(measured)}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    };
+
+    const historyTemplate = (metric) => {
+      const points = Array.isArray(metric.history) ? metric.history : [];
+      const values = points
+        .map((point) => numericValue(point.value ?? point.latestValue))
+        .filter((value) => value !== null);
+      if (!points.length || !values.length) {
+        return `
+          <div class="metric-history">
+            <div class="metric-history__head">
+              <span>Historical Evolution</span>
+              <span class="metric-history__note">Weekly snapshots</span>
+            </div>
+            <div class="metric-history__empty">No weekly snapshots yet. The first measured values will start the history line.</div>
+          </div>
+        `;
+      }
+      const max = Math.max(...values, 1);
+      return `
+        <div class="metric-history">
+          <div class="metric-history__head">
+            <span>Historical Evolution</span>
+            <span class="metric-history__note">${points.length} snapshots</span>
+          </div>
+          <div class="metric-history__line">
+            ${points.map((point) => {
+              const value = numericValue(point.value ?? point.latestValue) || 0;
+              const height = clamp(Math.round((value / max) * 100), 10, 100);
+              const label = `${point.date || point.measured || 'snapshot'}: ${displayValue(value, metric.unit)}`;
+              return `<span class="metric-history__bar" title="${escapeHtml(label)}" style="--bar-height:${height}%;"></span>`;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    };
+
+    const sourceTemplate = (source) => {
+      if (!source) return '<span class="metric-source">No source yet</span>';
+      if (String(source).startsWith('http')) {
+        return `<a class="metric-source" href="${escapeHtml(source)}" target="_blank" rel="noreferrer">${escapeHtml(source)}</a>`;
+      }
+      return `<span class="metric-source">${escapeHtml(source)}</span>`;
+    };
+
+    const naviChipList = (items) => {
+      if (!items || !items.length) return '<span class="metric-chip">No Navi item linked</span>';
+      return items.map((item) => (
+        `<a class="metric-chip" href="./council_navigation_system.html#navi-${escapeHtml(item)}" title="Open this Navi card">${escapeHtml(naviItemLabels[item] || item)}</a>`
+      )).join('');
+    };
+
+    const indicatorGroupChips = (metric) => {
+      const groups = metric.indicatorGroups || [metric.primaryIndicatorGroup].filter(Boolean);
+      if (!groups.length) return '<span class="metric-chip">Indicator group TBD</span>';
+      return groups.map((group) => {
+        const prefix = group === metric.primaryIndicatorGroup ? 'Primary: ' : 'Also: ';
+        return `<span class="metric-chip">${escapeHtml(prefix + group)}</span>`;
+      }).join('');
+    };
+
+    const metricUpdateState = (metric) => {
+      const hasValue = metric.latestValue !== null && metric.latestValue !== undefined && metric.latestValue !== '';
+      if (metric.valueMode === 'computed' || metric.valueMode === 'snapshot') {
+        return {
+          status: 'auto',
+          label: metric.dataPullStatus === 'public-snapshot' ? 'Public snapshot' : 'Auto',
+          text: metric.feedCadence || 'Updates when the dashboard pipeline runs.',
+        };
+      }
+      if (metric.valueMode === 'manual' && hasValue) {
+        return {
+          status: 'manual',
+          label: metric.manualQuality === 'public-mirror-baseline' ? 'Manual public baseline' : 'Manual baseline',
+          text: 'Held until a newer manual value or an API collector replaces it.',
+        };
+      }
+      if (metric.dataPullStatus === 'api-candidate') {
+        return {
+          status: 'api',
+          label: 'Needs API',
+          text: metric.feedNextStep || 'Add credentials before this figure updates automatically.',
+        };
+      }
+      return {
+        status: 'missing',
+        label: 'Awaiting baseline',
+        text: metric.feedNextStep || 'Enter a manual baseline or wire a collector.',
+      };
+    };
+
+    const metricUpdateTemplate = (metric) => {
+      const update = metricUpdateState(metric);
+      return `
+        <div class="metric-card__update">
+          <span class="metric-update-pill" data-update-status="${escapeHtml(update.status)}">${escapeHtml(update.label)}</span>
+          <span>${escapeHtml(update.text)}</span>
+        </div>
+      `;
+    };
+
+    const feedTemplate = (metric) => `
+      <div class="metric-feed">
+        <div class="metric-feed__head">
+          <span class="metric-feed__label">Data Feed</span>
+          <span class="metric-feed__pill">${escapeHtml(metric.feedMode || 'Manual review snapshot')}</span>
+          <span class="metric-feed__pill">${escapeHtml(metric.feedCadence || 'Cadence TBD')}</span>
+          <span class="metric-feed__pill">${escapeHtml(metric.dataPullStatus || 'manual-now')}</span>
+          ${metric.feedPlanStatus ? `<span class="metric-feed__pill">${escapeHtml(metric.feedPlanStatus)}</span>` : ''}
+        </div>
+        <div class="metric-feed__text">${escapeHtml(metric.sourceDetail || 'Source detail pending.')}</div>
+        <div class="metric-feed__text">${escapeHtml(metric.feedNextStep || 'Define the source and refresh method before using this as a decision-grade indicator.')}</div>
+        ${metric.feedPlanNextStep ? `<div class="metric-feed__text">${escapeHtml(metric.feedPlanNextStep)}</div>` : ''}
+      </div>
+    `;
+
+    const metricTemplate = (metric) => `
+      <details class="metric-card" id="metric-${escapeHtml(metric.id)}" data-source-type="${escapeHtml(metric.sourceType || 'manual')}" data-indicator-type="${escapeHtml(metric.indicatorType || 'KPI')}">
+        <div class="metric-rail"></div>
+        <summary>
+        <div class="metric-card__top">
+          <div class="metric-card__name">${escapeHtml(metric.name)}</div>
+          <div class="metric-card__value">${escapeHtml(displayValue(metric.latestValue, metric.unit))}</div>
+        </div>
+        <div class="metric-card__desc">${escapeHtml(metric.description)}</div>
+        ${metricUpdateTemplate(metric)}
+        ${scaleTemplate(metric, 'summary')}
+        </summary>
+        <div class="metric-card__body">
+        ${historyTemplate(metric)}
+        <div class="metric-source-type">${escapeHtml(metric.sourceType || 'manual')}</div>
+        <div class="metric-links">${indicatorGroupChips(metric)}</div>
+        <div class="metric-links">${naviChipList(metric.relatedNaviItems)}</div>
+        <div class="metric-source">${escapeHtml(metric.indicatorRule || '')}</div>
+        ${feedTemplate(metric)}
+        ${sourceTemplate(metric.source)}
+        </div>
+      </details>
+    `;
+
+    const groupBy = (items, key) => items.reduce((acc, item) => {
+      const group = item[key] || 'Other';
+      if (!acc[group]) acc[group] = [];
+      acc[group].push(item);
+      return acc;
+    }, {});
+
+    const uniqueValues = (items, getter) => [...new Set(items.map(getter).filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b)));
+
+    const metricSearchText = (metric) => [
+      metric.id,
+      metric.category,
+      metric.primaryIndicatorGroup,
+      ...(metric.indicatorGroups || []),
+      metric.name,
+      metric.description,
+      metric.source,
+      metric.sourceType,
+      metric.indicatorType,
+      metric.valueMode,
+      metric.manualQuality,
+      metric.snapshotQuality,
+      metric.dataPullStatus,
+      metric.feedMode,
+      metric.feedNextStep,
+      metric.feedPlanStatus,
+      metric.feedPlanNextStep,
+      metric.discoveredIdentifier,
+      ...(metric.relatedNaviItems || [])
+    ].join(' ').toLowerCase();
+
+    const metricMatchesFilters = (metric) => {
+      if (dashboardFilters.categories.size && !dashboardFilters.categories.has(metric.category || 'Uncategorized')) return false;
+      if (dashboardFilters.dataPullStatuses.size && !dashboardFilters.dataPullStatuses.has(metric.dataPullStatus || 'manual-now')) return false;
+      if (dashboardFilters.sourceTypes.size && !dashboardFilters.sourceTypes.has(metric.sourceType || 'manual-weekly-snapshot')) return false;
+      const query = dashboardFilters.query.trim().toLowerCase();
+      return !query || metricSearchText(metric).includes(query);
+    };
+
+    const filterChipTemplate = (type, value, activeSet) => `
+      <button class="dashboard-filter-chip" type="button" data-filter-type="${escapeHtml(type)}" data-filter-value="${escapeHtml(value)}" aria-pressed="${activeSet.has(value)}">${escapeHtml(value)}</button>
+    `;
+
+    const renderFilterGroup = (id, type, values, activeSet) => {
+      const target = document.getElementById(id);
+      target.innerHTML = values.map((value) => filterChipTemplate(type, value, activeSet)).join('');
+    };
+
+    const renderFilterControls = (data, filteredCount) => {
+      const metrics = data.metrics || [];
+      renderFilterGroup('categoryFilters', 'categories', uniqueValues(metrics, (metric) => metric.category || 'Uncategorized'), dashboardFilters.categories);
+      renderFilterGroup('feedFilters', 'dataPullStatuses', uniqueValues(metrics, (metric) => metric.dataPullStatus || 'manual-now'), dashboardFilters.dataPullStatuses);
+      renderFilterGroup('sourceTypeFilters', 'sourceTypes', uniqueValues(metrics, (metric) => metric.sourceType || 'manual-weekly-snapshot'), dashboardFilters.sourceTypes);
+      const result = document.getElementById('filterResultCount');
+      result.textContent = `${filteredCount} of ${metrics.length} measures shown`;
+      const search = document.getElementById('metricSearch');
+      if (search && search.value !== dashboardFilters.query) search.value = dashboardFilters.query;
+    };
+
+    const renderGlobalGauges = (groups, byGroup, data) => {
+      const grid = document.getElementById('globalGaugeGrid');
+      const baselines = data.groupSuccessBaselines || {};
+      grid.innerHTML = groups.map((group) => {
+        const metrics = byGroup[group] || [];
+        if (!metrics.length) return '';
+        const measured = metrics.filter((metric) => metric.latestValue !== null && metric.latestValue !== undefined).length;
+        const percent = Number.isFinite(Number(baselines[group])) ? clamp(Number(baselines[group]), 0, 100) : 0;
+        const angle = Math.round((percent / 100) * 180);
+        const needle = -90 + angle;
+        return `
+          <article class="global-gauge" style="--gauge-angle:${angle}deg;--needle-angle:${needle}deg;">
+            <div class="global-gauge__title">${escapeHtml(group)}</div>
+            <div class="global-gauge__dial" aria-label="${escapeHtml(group)} current success ${percent} percent">
+              <div class="global-gauge__arc"></div>
+              <div class="global-gauge__needle"></div>
+              <div class="global-gauge__hub"></div>
+            </div>
+            <div class="global-gauge__value">${percent}%</div>
+            <div class="global-gauge__meta">${metrics.length} success indicators | ${measured} baselines entered</div>
+          </article>
+        `;
+      }).join('');
+    };
+
+    const renderFeedSummary = (metrics) => {
+      const target = document.getElementById('dashboardFeedSummary');
+      if (!target) return;
+      const hasValue = (metric) => metric.latestValue !== null && metric.latestValue !== undefined && metric.latestValue !== '';
+      const automated = metrics.filter((metric) => metric.valueMode === 'computed' || metric.valueMode === 'snapshot').length;
+      const manual = metrics.filter((metric) => metric.valueMode === 'manual' && hasValue(metric)).length;
+      const apiReady = metrics.filter((metric) => metric.dataPullStatus === 'api-candidate' && !hasValue(metric)).length;
+      const missing = metrics.filter((metric) => !hasValue(metric)).length;
+      const items = [
+        [`${automated}`, 'automated or local figures'],
+        [`${manual}`, 'manual baseline figures'],
+        [`${apiReady}`, 'waiting for API credentials'],
+        [`${missing}`, 'values still TBD'],
+      ];
+      target.innerHTML = items.map(([value, label]) => `
+        <div class="dashboard-feed-summary__item">
+          <div class="dashboard-feed-summary__value">${escapeHtml(value)}</div>
+          <div class="dashboard-feed-summary__label">${escapeHtml(label)}</div>
+        </div>
+      `).join('');
+    };
+
+    const enrichMetricsWithFeedPlan = (metrics, feedPlan) => {
+      const planById = feedPlan?.metricPlan || {};
+      return metrics.map((metric) => {
+        const plan = planById[metric.id];
+        if (!plan) return metric;
+        return {
+          ...metric,
+          feedPlanStatus: plan.status,
+          feedPlanNextStep: plan.nextStep,
+          discoveredIdentifier: plan.discoveredIdentifier,
+        };
+      });
+    };
+
+    const revealMetricHashTarget = () => {
+      const hash = window.location.hash;
+      if (!hash || !hash.startsWith('#metric-')) return;
+      const target = document.getElementById(hash.slice(1));
+      if (!target) return;
+      target.open = true;
+      requestAnimationFrame(() => target.scrollIntoView({ block: 'start', behavior: 'smooth' }));
+    };
+
+    window.addEventListener('hashchange', revealMetricHashTarget);
+
+    const render = (data, feedPlan = null) => {
+      const allMetrics = data.metrics || [];
+      const enrichedMetrics = enrichMetricsWithFeedPlan(allMetrics, feedPlan);
+      const filteredMetrics = enrichedMetrics.filter(metricMatchesFilters);
+      renderFilterControls(data, filteredMetrics.length);
+      const allByGroup = groupBy(filteredMetrics, 'primaryIndicatorGroup');
+      const grid = document.getElementById('dashboardGrid');
+      const globalGroups = (data.indicatorGroups || Object.keys(allByGroup)).filter((group) => (allByGroup[group] || []).length);
+      renderGlobalGauges(globalGroups, allByGroup, data);
+      renderFeedSummary(enrichedMetrics);
+      const renderCategory = (category, metrics) => {
+        if (!metrics || !metrics.length) return '';
+        const categoryMax = Math.max(...metrics.map((metric) => numericValue(metric.latestValue) || 0), 0);
+        const displayMetrics = metrics.map((metric) => ({ ...metric, _categoryMax: categoryMax }));
+        const measured = metrics.filter((metric) => metric.latestValue !== null && metric.latestValue !== undefined).length;
+        return `
+          <section class="metric-category">
+            <div class="metric-category__head">
+              <div class="metric-category__title">${escapeHtml(category)}</div>
+              <div class="metric-category__meta">${metrics.length} success indicators | ${measured} baseline values entered</div>
+            </div>
+            <div class="metric-list">${displayMetrics.map(metricTemplate).join('')}</div>
+          </section>
+        `;
+      };
+
+      grid.innerHTML = globalGroups.map((category) => (
+        renderCategory(category, allByGroup[category] || [])
+      )).join('') || '<p class="dashboard-note">No indicators match the current filters.</p>';
+      revealMetricHashTarget();
+    };
+
+    document.getElementById('metricSearch').addEventListener('input', (event) => {
+      dashboardFilters.query = event.target.value || '';
+      if (dashboardSourceData) render(dashboardSourceData.metricsData, dashboardSourceData.feedPlanData);
+    });
+
+    document.querySelector('.dashboard-filters').addEventListener('click', (event) => {
+      const button = event.target.closest('[data-filter-type]');
+      if (!button) return;
+      const type = button.dataset.filterType;
+      const value = button.dataset.filterValue;
+      const activeSet = dashboardFilters[type];
+      if (!activeSet) return;
+      if (activeSet.has(value)) activeSet.delete(value);
+      else activeSet.add(value);
+      if (dashboardSourceData) render(dashboardSourceData.metricsData, dashboardSourceData.feedPlanData);
+    });
+
+    document.getElementById('filterReset').addEventListener('click', () => {
+      dashboardFilters.query = '';
+      dashboardFilters.categories.clear();
+      dashboardFilters.dataPullStatuses.clear();
+      dashboardFilters.sourceTypes.clear();
+      if (dashboardSourceData) render(dashboardSourceData.metricsData, dashboardSourceData.feedPlanData);
+    });
+
+    Promise.all([
+      fetch(metricsUrl).then((response) => response.ok ? response.json() : Promise.reject(new Error('Unable to load dashboard_metrics.json'))),
+      fetch(stateUrl).then((response) => response.ok ? response.json() : Promise.reject(new Error('Unable to load dashboard_state.json'))),
+      fetch(feedPlanUrl).then((response) => response.ok ? response.json() : null).catch(() => null),
+      fetch(naviDataUrl).then((response) => response.ok ? response.json() : null).catch(() => null)
+    ])
+      .then(([metricsData, stateData, feedPlanData, naviData]) => {
+        naviItemLabels = Object.fromEntries((naviData?.items || []).map((item) => [item.id, item.title || item.id]));
+        dashboardSourceData = { metricsData, stateData, feedPlanData };
+        render(metricsData, feedPlanData);
+      })
+      .catch((error) => {
+        document.getElementById('dashboardGrid').innerHTML = `<p class="dashboard-note">Dashboard data could not be loaded: ${escapeHtml(error.message)}</p>`;
+      });
+
+    (function(){
+      const AGENT_URL = 'https://agent.stablescouncil.org/chat?embed=1';
+      const HEALTH_URL = 'https://agent.stablescouncil.org/health';
+      let agentOpen = false;
+
+      function setStatus(online) {
+        const dot = document.querySelector('.agent-popup-status-dot');
+        const label = document.querySelector('.agent-popup-status span:last-child');
+        const fabDot = document.querySelector('.agent-fab-dot');
+        if (!dot || !label || !fabDot) return;
+        const color = online ? '#22c55e' : '#6b7280';
+        const glow = online ? 'rgba(34,197,94,0.2)' : 'transparent';
+        dot.style.background = color;
+        dot.style.boxShadow = `0 0 0 3px ${glow}`;
+        fabDot.style.background = color;
+        label.textContent = online ? 'Online' : 'Offline';
+      }
+
+      async function pingAgent() {
+        try {
+          const response = await fetch(HEALTH_URL, { method: 'GET', signal: AbortSignal.timeout(4000) });
+          setStatus(response.ok);
+        } catch {
+          setStatus(false);
+        }
+      }
+
+      function openAgent() {
+        const popup = document.getElementById('agentPopup');
+        const backdrop = document.getElementById('agentBackdrop');
+        const frame = document.getElementById('agentFrame');
+        const fallback = document.getElementById('agentFallback');
+        if (!frame.src || frame.src === window.location.href) {
+          const lang = (() => {
+            try { return localStorage.getItem('stables_lang'); } catch { return null; }
+          })() || 'en';
+          frame.src = `${AGENT_URL}&lang=${encodeURIComponent(lang)}`;
+          const timer = setTimeout(() => fallback.classList.add('visible'), 3000);
+          frame.onload = () => clearTimeout(timer);
+        }
+        popup.classList.add('open');
+        backdrop.classList.add('open');
+        agentOpen = true;
+      }
+
+      function closeAgent() {
+        document.getElementById('agentPopup').classList.remove('open');
+        document.getElementById('agentBackdrop').classList.remove('open');
+        agentOpen = false;
+      }
+
+      window.toggleAgent = function() { agentOpen ? closeAgent() : openAgent(); };
+      window.closeAgent = closeAgent;
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && agentOpen) closeAgent();
+      });
+      pingAgent();
+      setInterval(pingAgent, 30000);
+    })();
+  </script>
+</body>
+</html>

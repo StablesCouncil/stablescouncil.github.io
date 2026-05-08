@@ -1,6 +1,6 @@
 # Stables Demo MiniDapp — Charter traceability handout
 
-**Audience:** Agents and developers working on **`1_development/stream_1_app/dapp/2-demo/`** (demo channel).  
+**Audience:** Agents and developers working on **`1_development/stream_1_app/website/dapp/2-demo/`** (demo channel).  
 **Purpose:** One checklist so the **demo** visibly reflects the **Stables Charter** and handshake **protocol mechanics**, without inventing economics.
 
 **Authority order (never invert):**
@@ -11,7 +11,7 @@
 
 **Before you ship UI copy that explains mint, burn, fees, CR, Coverage Fund, or xMinima:** run **handshake Step 0b** (read `protocol_mechanics_spec.md` first).
 
-**Canonical demo tree:** `1_development/stream_1_app/dapp/2-demo/` — see **`0_handshake/minidapp_version.md`**. Log user-visible work in **`dapp/2-demo/CHANGELOG.md`**. Update **`1_development/stream_1_app/ui_inventory/app_ui_inventory.md`** when routes or major sections change.
+**Canonical demo tree:** `1_development/stream_1_app/website/dapp/2-demo/` — see **`0_handshake/minidapp_version.md`**. Log user-visible work in **`dapp/2-demo/CHANGELOG.md`**. Update **`1_development/stream_1_app/ui_inventory/app_ui_inventory.md`** when routes or major sections change.
 
 ---
 
@@ -173,7 +173,7 @@ Use this as the implementation brief for the coding agent.
 
 ### 14.1 Create payment intent and status contract
 
-- **Add:** `1_development/stream_1_app/dapp/2-demo/assets/x402/payment-intent.js`
+- **Add:** `1_development/stream_1_app/website/dapp/2-demo/assets/x402/payment-intent.js`
   - Export status constants:
     - `quoted`
     - `paid_submitted`
@@ -187,13 +187,13 @@ Use this as the implementation brief for the coding agent.
 
 ### 14.2 Add provider-agnostic adapter interface (stub only)
 
-- **Add:** `1_development/stream_1_app/dapp/2-demo/assets/x402/adapter.js`
+- **Add:** `1_development/stream_1_app/website/dapp/2-demo/assets/x402/adapter.js`
   - Interface:
     - `getQuote(resource, params)`
     - `submitProof(intent, proofPayload)`
     - `verifySettlement(intent)`
   - Return mocked deterministic responses for demo mode.
-- **Config flag:** `1_development/stream_1_app/dapp/2-demo/assets/config/runtime-config.js`
+- **Config flag:** `1_development/stream_1_app/website/dapp/2-demo/assets/config/runtime-config.js`
   - Add toggles such as:
     - `X402_ENABLED` (default `false`)
     - `X402_MODE` (`mock`)
@@ -201,7 +201,7 @@ Use this as the implementation brief for the coding agent.
 
 ### 14.3 Add x402 service orchestration and replay guards
 
-- **Add:** `1_development/stream_1_app/dapp/2-demo/assets/x402/service.js`
+- **Add:** `1_development/stream_1_app/website/dapp/2-demo/assets/x402/service.js`
   - Intent lifecycle orchestration.
   - Idempotency and replay guard checks using:
     - `payment_id`
@@ -215,7 +215,7 @@ Use this as the implementation brief for the coding agent.
 
 ### 14.4 Add user-facing status and finality-safe copy
 
-- **Update:** `1_development/stream_1_app/dapp/2-demo/index.html`
+- **Update:** `1_development/stream_1_app/website/dapp/2-demo/index.html`
   - Add reusable status badge component (or panel) for payment state.
   - Add explanatory text:
     - “Accepted” is not equal to “Globally settled.”
@@ -224,7 +224,7 @@ Use this as the implementation brief for the coding agent.
 
 ### 14.5 Add one visible demo page/module for machine payments
 
-- **Preferred route module:** `1_development/stream_1_app/dapp/2-demo/assets/routes/protocol.js`
+- **Preferred route module:** `1_development/stream_1_app/website/dapp/2-demo/assets/routes/protocol.js`
   - Add section: “Machine payments (x402 readiness)”
   - Show flow: `402 quote -> payment proof -> settlement check -> access`
   - Include disclaimer:
@@ -233,7 +233,7 @@ Use this as the implementation brief for the coding agent.
 
 ### 14.6 Add structured telemetry log (debug only)
 
-- **Add:** `1_development/stream_1_app/dapp/2-demo/assets/x402/log.js`
+- **Add:** `1_development/stream_1_app/website/dapp/2-demo/assets/x402/log.js`
   - Event types:
     - `quote_requested`
     - `quote_received`
@@ -253,7 +253,7 @@ Use this as the implementation brief for the coding agent.
 
 ### 14.8 Required documentation updates after code changes
 
-- **Update:** `1_development/stream_1_app/dapp/2-demo/CHANGELOG.md`
+- **Update:** `1_development/stream_1_app/website/dapp/2-demo/CHANGELOG.md`
   - Add user-visible lines for x402 readiness UI states and page/module changes.
 - **Update:** `1_development/stream_1_app/ui_inventory/app_ui_inventory.md`
   - If a new visible section/page is added.

@@ -1,0 +1,1298 @@
+{
+  "version": "0.1",
+  "updated": "2026-05-07",
+  "measurementWindow": "weekly",
+  "displayMode": "success-percentages-plus-absolute-values",
+  "groupSuccessBaselines": {
+    "Users": 2,
+    "Community / Council development": 1,
+    "Ambassadors / Merchant networks": 1
+  },
+  "deferred": {
+    "objectives": "Define after baseline weekly measurements exist.",
+    "targetThresholds": "Define after baseline weekly measurements exist.",
+    "normalizedGaugeFormulas": "Define after baseline weekly measurements exist."
+  },
+  "categories": [
+    "Community Reach",
+    "Group Readiness",
+    "Ambassador Momentum",
+    "App Demo Readiness",
+    "App UX Review",
+    "Protocol Copy Alignment",
+    "Public Feedback",
+    "StablesAgent Interaction",
+    "Navi Progress",
+    "Council Formation"
+  ],
+  "metrics": [
+    {
+      "id": "x_followers",
+      "category": "Community Reach",
+      "name": "X followers",
+      "description": "Current followers on @StablesCouncil.",
+      "unit": "count",
+      "latestValue": 117,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [
+        {
+          "date": "2026-05-07",
+          "value": 117
+        }
+      ],
+      "lastMeasured": "2026-05-07",
+      "source": "https://x.com/StablesCouncil",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-global-growth"
+      ],
+      "notes": "",
+      "sourceType": "external-link",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual",
+      "sourceDetail": "Manual public-mirror baseline from TwStalker search result: @StablesCouncil showed 117 followers, crawled 5 days before 2026-05-07. Replace with X API once X_BEARER_TOKEN is available.",
+      "feedMode": "X API candidate",
+      "feedCadence": "Daily or weekly API pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Add an X API bearer token to the server-side agent and pull user public_metrics plus recent post public_metrics into a local snapshot file.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "snapshotCollector": "manual-baselines",
+      "snapshotQuality": "public-mirror-baseline",
+      "manualQuality": "public-mirror-baseline"
+    },
+    {
+      "id": "x_engagement_actions",
+      "category": "Community Reach",
+      "name": "X engagement actions",
+      "description": "Likes, replies, and reposts on recent posts in the weekly measurement window.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "X analytics/manual",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-communication-plan"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Platform API candidate",
+      "feedCadence": "Weekly API or controlled manual pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm the platform credential and API access level, then replace dashboard_manual_inputs.json with a server-side snapshot file.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "instagram_followers",
+      "category": "Community Reach",
+      "name": "Instagram followers",
+      "description": "Current followers on @stablescouncil.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "https://www.instagram.com/stablescouncil",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-global-growth"
+      ],
+      "notes": "",
+      "sourceType": "external-link",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Meta Graph API candidate",
+      "feedCadence": "Daily or weekly API pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Connect the Instagram professional account through Meta Graph API permissions, then store follower and publication snapshots locally.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "instagram_engagement_actions",
+      "category": "Community Reach",
+      "name": "Instagram engagement actions",
+      "description": "Likes, comments, shares, and saves where available in the weekly measurement window.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "Instagram/manual",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-communication-plan"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Platform API candidate",
+      "feedCadence": "Weekly API or controlled manual pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm the platform credential and API access level, then replace dashboard_manual_inputs.json with a server-side snapshot file.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "telegram_community_members",
+      "category": "Community Reach",
+      "name": "Telegram community members",
+      "description": "Members in the public Telegram community.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "https://t.me/stablescommunity",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-global-growth"
+      ],
+      "notes": "",
+      "sourceType": "external-link",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Telegram API candidate",
+      "feedCadence": "Daily or weekly API pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Add a Telegram bot/admin credential where required and pull member/message snapshots into the dashboard feed file.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "telegram_community_messages",
+      "category": "Community Reach",
+      "name": "Telegram community messages",
+      "description": "Messages in the public Telegram community during the weekly measurement window.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "Telegram/manual",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-communication-plan"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Platform API candidate",
+      "feedCadence": "Weekly API or controlled manual pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm the platform credential and API access level, then replace dashboard_manual_inputs.json with a server-side snapshot file.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "telegram_council_members",
+      "category": "Community Reach",
+      "name": "Telegram Council Official members",
+      "description": "Members in the Council Official Telegram surface.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "https://t.me/StablesCouncilOfficial",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry"
+      ],
+      "notes": "",
+      "sourceType": "external-link",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Telegram API candidate",
+      "feedCadence": "Daily or weekly API pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Add a Telegram bot/admin credential where required and pull member/message snapshots into the dashboard feed file.",
+      "primaryIndicatorGroup": "Community / Council development",
+      "indicatorGroups": [
+        "Community / Council development"
+      ]
+    },
+    {
+      "category": "Council Formation",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "relatedNaviItems": [
+        "community-council-creation-charter",
+        "community-social-profiles-live-registry"
+      ],
+      "notes": "Council-specific measure collected only from dedicated Council channels or explicit voluntary submissions.",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Voluntary Council-channel interest or engagement signal, not passive website tracking.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "id": "telegram_council_post_views",
+      "name": "Telegram Council post views",
+      "description": "Views on Council Official Telegram posts during the weekly measurement window.",
+      "source": "Telegram Council Official post analytics/manual",
+      "primaryIndicatorGroup": "Community / Council development",
+      "indicatorGroups": [
+        "Community / Council development"
+      ],
+      "feedMode": "Platform API candidate",
+      "feedCadence": "Weekly API or controlled manual pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm the platform credential and API access level, then replace dashboard_manual_inputs.json with a server-side snapshot file."
+    },
+    {
+      "category": "Council Formation",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "relatedNaviItems": [
+        "community-council-creation-charter",
+        "community-social-profiles-live-registry"
+      ],
+      "notes": "Council-specific measure collected only from dedicated Council channels or explicit voluntary submissions.",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Voluntary Council-channel interest or engagement signal, not passive website tracking.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "id": "telegram_council_reactions",
+      "name": "Telegram Council reactions",
+      "description": "Reactions on Council Official Telegram posts during the weekly measurement window.",
+      "source": "Telegram Council Official reactions/manual",
+      "primaryIndicatorGroup": "Community / Council development",
+      "indicatorGroups": [
+        "Community / Council development"
+      ],
+      "feedMode": "Platform API candidate",
+      "feedCadence": "Weekly API or controlled manual pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm the platform credential and API access level, then replace dashboard_manual_inputs.json with a server-side snapshot file."
+    },
+    {
+      "category": "Council Formation",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "relatedNaviItems": [
+        "community-council-creation-charter",
+        "community-social-profiles-live-registry"
+      ],
+      "notes": "Council-specific measure collected only from dedicated Council channels or explicit voluntary submissions.",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Voluntary Council-channel interest or engagement signal, not passive website tracking.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "id": "telegram_council_comments_or_replies",
+      "name": "Telegram Council comments or replies",
+      "description": "Comments, replies, or questions linked to Council Official Telegram posts.",
+      "source": "Telegram Council Official replies/manual",
+      "primaryIndicatorGroup": "Community / Council development",
+      "indicatorGroups": [
+        "Community / Council development"
+      ],
+      "feedMode": "Platform API candidate",
+      "feedCadence": "Weekly API or controlled manual pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm the platform credential and API access level, then replace dashboard_manual_inputs.json with a server-side snapshot file."
+    },
+    {
+      "category": "Council Formation",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "relatedNaviItems": [
+        "community-council-creation-charter",
+        "community-social-profiles-live-registry"
+      ],
+      "notes": "Council-specific measure collected only from dedicated Council channels or explicit voluntary submissions.",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Voluntary Council-channel interest or engagement signal, not passive website tracking.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "id": "discord_council_thread_participants",
+      "name": "Discord Council thread participants",
+      "description": "Unique people participating in Council-specific Discord threads or channels.",
+      "source": "Discord Council channels/manual",
+      "primaryIndicatorGroup": "Community / Council development",
+      "indicatorGroups": [
+        "Community / Council development"
+      ],
+      "feedMode": "Platform API candidate",
+      "feedCadence": "Weekly API or controlled manual pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm the platform credential and API access level, then replace dashboard_manual_inputs.json with a server-side snapshot file."
+    },
+    {
+      "category": "Council Formation",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "relatedNaviItems": [
+        "community-council-creation-charter",
+        "community-social-profiles-live-registry"
+      ],
+      "notes": "Council-specific measure collected only from dedicated Council channels or explicit voluntary submissions.",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Voluntary Council-channel interest or engagement signal, not passive website tracking.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "id": "discord_council_messages",
+      "name": "Discord Council messages",
+      "description": "Messages posted in Council-specific Discord channels or threads during the weekly measurement window.",
+      "source": "Discord Council channels/manual",
+      "primaryIndicatorGroup": "Community / Council development",
+      "indicatorGroups": [
+        "Community / Council development"
+      ],
+      "feedMode": "Platform API candidate",
+      "feedCadence": "Weekly API or controlled manual pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm the platform credential and API access level, then replace dashboard_manual_inputs.json with a server-side snapshot file."
+    },
+    {
+      "category": "Council Formation",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "relatedNaviItems": [
+        "community-council-creation-charter",
+        "community-social-profiles-live-registry"
+      ],
+      "notes": "Council-specific measure collected only from dedicated Council channels or explicit voluntary submissions.",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Voluntary Council-channel interest or engagement signal, not passive website tracking.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "id": "council_questions_submitted",
+      "name": "Council questions submitted",
+      "description": "Questions specifically about Council role, governance, handover, identity, or responsibilities submitted through Council channels.",
+      "source": "Council dedicated channels/manual",
+      "primaryIndicatorGroup": "Community / Council development",
+      "indicatorGroups": [
+        "Community / Council development"
+      ],
+      "feedMode": "Manual review snapshot",
+      "feedCadence": "Weekly manual baseline",
+      "dataPullStatus": "manual-now",
+      "feedNextStep": "Record the reviewed value in dashboard_manual_inputs.json and replace with a structured source when the workstream produces one."
+    },
+    {
+      "category": "Council Formation",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "relatedNaviItems": [
+        "community-council-creation-charter",
+        "community-social-profiles-live-registry"
+      ],
+      "notes": "Council-specific measure collected only from dedicated Council channels or explicit voluntary submissions.",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Voluntary Council-channel interest or engagement signal, not passive website tracking.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "id": "council_role_interest_signals",
+      "name": "Council role interest signals",
+      "description": "Voluntary signals of interest in a Council role or responsibility area from dedicated Council channels.",
+      "source": "Council dedicated channels/manual",
+      "primaryIndicatorGroup": "Community / Council development",
+      "indicatorGroups": [
+        "Community / Council development"
+      ],
+      "feedMode": "Manual review snapshot",
+      "feedCadence": "Weekly manual baseline",
+      "dataPullStatus": "manual-now",
+      "feedNextStep": "Record the reviewed value in dashboard_manual_inputs.json and replace with a structured source when the workstream produces one."
+    },
+    {
+      "id": "facebook_page_followers",
+      "category": "Community Reach",
+      "name": "Facebook page followers",
+      "description": "Followers or likes on the official Facebook page.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "https://www.facebook.com/share/16nCLsLHkg/",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-global-growth"
+      ],
+      "notes": "",
+      "sourceType": "external-link",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Meta Graph API candidate",
+      "feedCadence": "Daily or weekly API pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Validate Page or Group API permissions, then pull public follower/member counts through a server-side token.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "facebook_group_members",
+      "category": "Community Reach",
+      "name": "Facebook group members",
+      "description": "Members in the Stables Community Facebook group.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "https://www.facebook.com/groups/stablescommunity",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-global-growth"
+      ],
+      "notes": "",
+      "sourceType": "external-link",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Meta Graph API candidate",
+      "feedCadence": "Daily or weekly API pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Validate Page or Group API permissions, then pull public follower/member counts through a server-side token.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "youtube_subscribers",
+      "category": "Community Reach",
+      "name": "YouTube subscribers",
+      "description": "Subscribers on @StablesCouncil.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "https://www.youtube.com/@StablesCouncil",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-global-growth"
+      ],
+      "notes": "",
+      "sourceType": "external-link",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "YouTube Data API candidate",
+      "feedCadence": "Daily or weekly API pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Add a YouTube Data API key server-side and pull channel statistics plus recent upload/view snapshots.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "youtube_recent_views",
+      "category": "Community Reach",
+      "name": "YouTube recent views",
+      "description": "Views on recent videos in the weekly measurement window.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "YouTube/manual",
+      "relatedNaviItems": [
+        "community-communication-plan"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Platform API candidate",
+      "feedCadence": "Weekly API or controlled manual pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm the platform credential and API access level, then replace dashboard_manual_inputs.json with a server-side snapshot file.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "tiktok_followers",
+      "category": "Community Reach",
+      "name": "TikTok followers",
+      "description": "Followers on @stablescouncil.",
+      "unit": "count",
+      "latestValue": 1,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [
+        {
+          "date": "2026-05-08",
+          "value": 1
+        }
+      ],
+      "lastMeasured": "2026-05-08",
+      "source": "https://www.tiktok.com/@stablescouncil",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-global-growth"
+      ],
+      "notes": "",
+      "sourceType": "external-link",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "snapshot",
+      "sourceDetail": "Public TikTok profile follower count parsed from profile HTML.",
+      "feedMode": "Public profile snapshot",
+      "feedCadence": "When tools/collect-dashboard-snapshots.mjs runs",
+      "dataPullStatus": "public-snapshot",
+      "feedNextStep": "Replace this public-page parser with the official platform API when credentials and permissions are available.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "snapshotCollector": "public-profiles",
+      "snapshotQuality": "public-page-snapshot"
+    },
+    {
+      "id": "twitch_followers",
+      "category": "Community Reach",
+      "name": "Twitch followers",
+      "description": "Followers on stablescouncil.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "https://www.twitch.tv/stablescouncil",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry"
+      ],
+      "notes": "",
+      "sourceType": "external-link",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Platform API candidate",
+      "feedCadence": "Weekly API or controlled manual pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm the current platform API access level for this account, then wire the allowed public count fields or keep a controlled manual snapshot.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "moltbook_followers",
+      "category": "Community Reach",
+      "name": "Moltbook followers",
+      "description": "Followers on the StablesAgent Moltbook profile.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "https://www.moltbook.com/u/stablesagent",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry"
+      ],
+      "notes": "",
+      "sourceType": "external-link",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Public profile fetch candidate",
+      "feedCadence": "Weekly API or controlled public-page pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm whether Moltbook exposes a stable API or public follower field, then pull it server-side into the dashboard snapshot file.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "discord_members",
+      "category": "Community Reach",
+      "name": "Discord members",
+      "description": "Members in the Discord server, if active.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "https://discord.gg/rTdqwRGPXR",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-global-growth"
+      ],
+      "notes": "Use if Discord is active.",
+      "sourceType": "external-link",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Discord API candidate",
+      "feedCadence": "Daily or weekly API pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Use the Discord invite or guild endpoint with counts enabled, then persist approximate member snapshots locally.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "interested_ambassadors",
+      "category": "Ambassador Momentum",
+      "name": "Interested ambassadors",
+      "description": "Emoji reactions on the first or pinned ambassador topic message.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "Telegram ambassador topic/manual",
+      "relatedNaviItems": [
+        "community-ambassador-network"
+      ],
+      "notes": "Any clear emoji can be used for the first signal.",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Platform API candidate",
+      "feedCadence": "Weekly API or controlled manual pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm the platform credential and API access level, then replace dashboard_manual_inputs.json with a server-side snapshot file.",
+      "primaryIndicatorGroup": "Ambassadors / Merchant networks",
+      "indicatorGroups": [
+        "Ambassadors / Merchant networks"
+      ]
+    },
+    {
+      "id": "ambassador_topic_activity",
+      "category": "Ambassador Momentum",
+      "name": "Ambassador topic activity",
+      "description": "Replies or questions in the ambassador topic during the weekly measurement window.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "Telegram/manual",
+      "relatedNaviItems": [
+        "community-ambassador-network"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Platform API candidate",
+      "feedCadence": "Weekly API or controlled manual pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm the platform credential and API access level, then replace dashboard_manual_inputs.json with a server-side snapshot file.",
+      "primaryIndicatorGroup": "Ambassadors / Merchant networks",
+      "indicatorGroups": [
+        "Ambassadors / Merchant networks"
+      ]
+    },
+    {
+      "id": "ambassador_questions_collected",
+      "category": "Ambassador Momentum",
+      "name": "Ambassador questions collected",
+      "description": "Questions or objections collected from interested ambassadors.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "Telegram/manual",
+      "relatedNaviItems": [
+        "community-ambassador-network",
+        "community-council-creation-charter"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Platform API candidate",
+      "feedCadence": "Weekly API or controlled manual pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm the platform credential and API access level, then replace dashboard_manual_inputs.json with a server-side snapshot file.",
+      "primaryIndicatorGroup": "Ambassadors / Merchant networks",
+      "indicatorGroups": [
+        "Ambassadors / Merchant networks"
+      ]
+    },
+    {
+      "id": "showcase_feedback_total",
+      "category": "Public Feedback",
+      "name": "Showcase feedback total",
+      "description": "Total Showcase feedback submissions.",
+      "unit": "count",
+      "latestValue": 2,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [
+        {
+          "date": "2026-05-07",
+          "value": 2
+        }
+      ],
+      "lastMeasured": "2026-05-07",
+      "source": "GitHub/API/manual",
+      "relatedNaviItems": [
+        "community-public-feedback-intake"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "feedMode": "Computed from local tracker",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Move the underlying tracker or ledger data into a structured source when weekly review starts.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "showcase_feedback_new",
+      "category": "Public Feedback",
+      "name": "Showcase feedback new",
+      "description": "New Showcase feedback since previous weekly measurement.",
+      "unit": "count",
+      "latestValue": 2,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [
+        {
+          "date": "2026-05-07",
+          "value": 2
+        }
+      ],
+      "lastMeasured": "2026-05-07",
+      "source": "GitHub/API/manual",
+      "relatedNaviItems": [
+        "community-public-feedback-intake"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "feedMode": "Computed from local tracker",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Move the underlying tracker or ledger data into a structured source when weekly review starts.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "github_feedback_total",
+      "category": "Public Feedback",
+      "name": "GitHub feedback total",
+      "description": "Total GitHub feedback or issue items.",
+      "unit": "count",
+      "latestValue": 2,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [
+        {
+          "date": "2026-05-07",
+          "value": 2
+        }
+      ],
+      "lastMeasured": "2026-05-07",
+      "source": "GitHub/manual",
+      "relatedNaviItems": [
+        "community-public-feedback-intake"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "feedMode": "Computed from local tracker",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Move the underlying tracker or ledger data into a structured source when weekly review starts.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "github_feedback_open",
+      "category": "Public Feedback",
+      "name": "GitHub feedback open",
+      "description": "Open GitHub feedback or issue items.",
+      "unit": "count",
+      "latestValue": 2,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [
+        {
+          "date": "2026-05-07",
+          "value": 2
+        }
+      ],
+      "lastMeasured": "2026-05-07",
+      "source": "GitHub/manual",
+      "relatedNaviItems": [
+        "community-public-feedback-intake"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "feedMode": "Computed from local tracker",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Move the underlying tracker or ledger data into a structured source when weekly review starts.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "agent_telegram_questions",
+      "category": "StablesAgent Interaction",
+      "name": "Telegram agent questions",
+      "description": "Questions asked to StablesAgent in Telegram during the weekly measurement window.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "agent logs/manual",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Agent log snapshot",
+      "feedCadence": "Weekly manual baseline",
+      "dataPullStatus": "semi-structured",
+      "feedNextStep": "Define the agent log export schema, then compute the count from the exported log file.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "agent_web_questions",
+      "category": "StablesAgent Interaction",
+      "name": "Web agent questions",
+      "description": "Questions asked through the web chat during the weekly measurement window.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "agent logs/manual",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Agent log snapshot",
+      "feedCadence": "Weekly manual baseline",
+      "dataPullStatus": "semi-structured",
+      "feedNextStep": "Define the agent log export schema, then compute the count from the exported log file.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "agent_total_questions",
+      "category": "StablesAgent Interaction",
+      "name": "Agent total questions",
+      "description": "Telegram plus web questions in the weekly measurement window.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "agent logs/manual",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-communication-plan"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Agent log snapshot",
+      "feedCadence": "Weekly manual baseline",
+      "dataPullStatus": "semi-structured",
+      "feedNextStep": "Define the agent log export schema, then compute the count from the exported log file.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "agent_answer_gaps",
+      "category": "StablesAgent Interaction",
+      "name": "Agent answer gaps",
+      "description": "Known questions requiring knowledge base or documentation updates.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "manual review",
+      "relatedNaviItems": [
+        "community-communication-plan",
+        "community-council-creation-charter"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Manual review snapshot",
+      "feedCadence": "Weekly manual baseline",
+      "dataPullStatus": "manual-now",
+      "feedNextStep": "Record the reviewed value in dashboard_manual_inputs.json and replace with a structured source when the workstream produces one.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "agent_feedback_items",
+      "category": "StablesAgent Interaction",
+      "name": "Agent feedback items",
+      "description": "Reported agent answer issues.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "manual review",
+      "relatedNaviItems": [
+        "community-communication-plan"
+      ],
+      "notes": "",
+      "sourceType": "manual-weekly-snapshot",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Manual review snapshot",
+      "feedCadence": "Weekly manual baseline",
+      "dataPullStatus": "manual-now",
+      "feedNextStep": "Record the reviewed value in dashboard_manual_inputs.json and replace with a structured source when the workstream produces one.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
+      "id": "merchant_directory_listings",
+      "category": "Merchant Network",
+      "name": "Merchant directory listings",
+      "description": "Number of merchant profiles/listings currently available in the Demo merchant directory source.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "1_development/stream_1_app/website/dapp/2-demo/assets/routes/activity-contacts.js",
+      "sourceType": "file",
+      "relatedNaviItems": [
+        "technical-shops-directory-surface",
+        "technical-my-shop-merchant-tools-surface",
+        "community-merchant-preparation"
+      ],
+      "notes": "",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "primaryIndicatorGroup": "Ambassadors / Merchant networks",
+      "indicatorGroups": [
+        "Ambassadors / Merchant networks"
+      ],
+      "feedMode": "Manual review snapshot",
+      "feedCadence": "Weekly manual baseline",
+      "dataPullStatus": "manual-now",
+      "feedNextStep": "Record the reviewed value in dashboard_manual_inputs.json and replace with a structured source when the workstream produces one."
+    },
+    {
+      "id": "merchant_payment_requests_created",
+      "category": "Merchant Network",
+      "name": "Merchant payment requests created",
+      "description": "Number of merchant invoice/payment-request events created during the measurement window.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "merchant activity ledger/manual",
+      "sourceType": "manual-weekly-snapshot",
+      "relatedNaviItems": [
+        "technical-demo-invoice-merchant-qr",
+        "technical-merchant-pos-path",
+        "technical-my-shop-merchant-tools-surface"
+      ],
+      "notes": "",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "primaryIndicatorGroup": "Ambassadors / Merchant networks",
+      "indicatorGroups": [
+        "Ambassadors / Merchant networks"
+      ],
+      "feedMode": "Manual review snapshot",
+      "feedCadence": "Weekly manual baseline",
+      "dataPullStatus": "manual-now",
+      "feedNextStep": "Record the reviewed value in dashboard_manual_inputs.json and replace with a structured source when the workstream produces one."
+    },
+    {
+      "id": "merchant_validations_issued",
+      "category": "Merchant Network",
+      "name": "Merchant validations issued",
+      "description": "Number of merchant-user validation records issued during the measurement window.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "merchant validation ledger/manual",
+      "sourceType": "manual-weekly-snapshot",
+      "relatedNaviItems": [
+        "technical-merchant-wallet-validation-ux",
+        "community-merchant-preparation"
+      ],
+      "notes": "",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "primaryIndicatorGroup": "Ambassadors / Merchant networks",
+      "indicatorGroups": [
+        "Ambassadors / Merchant networks"
+      ],
+      "feedMode": "Manual review snapshot",
+      "feedCadence": "Weekly manual baseline",
+      "dataPullStatus": "manual-now",
+      "feedNextStep": "Record the reviewed value in dashboard_manual_inputs.json and replace with a structured source when the workstream produces one."
+    },
+    {
+      "id": "merchant_reviews_submitted",
+      "category": "Merchant Network",
+      "name": "Merchant reviews submitted",
+      "description": "Number of signed merchant rating/review rows submitted during the measurement window.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "merchant review ledger/manual",
+      "sourceType": "manual-weekly-snapshot",
+      "relatedNaviItems": [
+        "technical-merchant-wallet-validation-ux",
+        "technical-shops-directory-surface"
+      ],
+      "notes": "",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "primaryIndicatorGroup": "Ambassadors / Merchant networks",
+      "indicatorGroups": [
+        "Ambassadors / Merchant networks"
+      ],
+      "feedMode": "Manual review snapshot",
+      "feedCadence": "Weekly manual baseline",
+      "dataPullStatus": "manual-now",
+      "feedNextStep": "Record the reviewed value in dashboard_manual_inputs.json and replace with a structured source when the workstream produces one."
+    },
+    {
+      "id": "feedback_items_routed_to_tracker",
+      "category": "Public Feedback",
+      "name": "Feedback items routed to tracker",
+      "description": "Number of feedback items that have been routed into tracker items or follow-up notes.",
+      "unit": "count",
+      "latestValue": 0,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [
+        {
+          "date": "2026-05-07",
+          "value": 0
+        }
+      ],
+      "lastMeasured": "2026-05-07",
+      "source": "feedback ledger/manual",
+      "sourceType": "manual-weekly-snapshot",
+      "relatedNaviItems": [
+        "community-public-feedback-intake",
+        "technical-next-demo-cycle"
+      ],
+      "notes": "",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "feedMode": "Computed from local tracker",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Move the underlying tracker or ledger data into a structured source when weekly review starts.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    }
+  ],
+  "framework": {
+    "source": "1_development/stream_1_app/website/council_dashboard_framework.md",
+    "linkingRule": "Navi item metrics[] must reference Dashboard metric ids; Dashboard relatedNaviItems[] must reference Navi item ids.",
+    "firstReleaseMode": "manual weekly baseline values with concrete sources",
+    "indicatorRule": "KPIs are outcome signals that Stables does not fully control. Controlled work items remain on the Dashboard as Operational Signals, not KPIs.",
+    "indicatorTypes": [
+      "KPI",
+      "Operational Signal"
+    ]
+  },
+  "generatedBy": "tools/generate-dashboard-state.mjs",
+  "valueModes": {
+    "computed": "Derived from local website files, Navi data, Dapp tracker, version docs, or feedback files.",
+    "snapshot": "Collected by tools/collect-dashboard-snapshots.mjs from platform APIs, public endpoints, or structured local ledgers.",
+    "manual": "Entered in dashboard_manual_inputs.json because no local automatic source exists.",
+    "manual-missing": "Manual-only value intentionally not entered yet."
+  },
+  "dataPullStatuses": {
+    "wired-local": "Already computed from local project files by the dashboard generator.",
+    "live-api": "Collected into a sanitized local snapshot by an authenticated or approved platform collector.",
+    "public-snapshot": "Collected from a public profile page; useful as an interim feed but lower confidence than an official API.",
+    "api-candidate": "Can likely be automated through a platform API or authenticated server-side fetch once credentials and permissions are configured.",
+    "semi-structured": "Has a recognizable source but still needs a stable parser or API pull.",
+    "manual-now": "Requires a weekly manual value until a stable external or internal feed exists."
+  },
+  "indicatorGroups": [
+    "Users",
+    "Community / Council development",
+    "Ambassadors / Merchant networks"
+  ]
+}

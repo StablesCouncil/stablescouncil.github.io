@@ -4507,7 +4507,6 @@
                 <button class="tab-btn active" id="iTabMI" onclick="setInvestTab('mi')">My investment</button>
                 <button class="tab-btn" id="iTabCF" onclick="setInvestTab('cf')">Coverage fund</button>
                 <button class="tab-btn" id="iTabLP" onclick="setInvestTab('lp')">Liquidity funds</button>
-                <button class="tab-btn" id="iTabMX" onclick="setInvestTab('mx')">Maximize</button>
             </div>
 
             <!-- MY INVESTMENT: summary + balances (moved from Coverage fund) -->
@@ -4552,29 +4551,6 @@
                         </div>
                     </div>
                 </div>
-                </div>
-            </div>
-
-            <!-- STAKE MINIMA: Maximize (official Minima MiniDapp) -->
-            <div id="panelMX" style="display:none">
-                <div class="app-section app-section--caption-bottom">
-                    <div class="stitle-row">
-                        <div class="pool-section-title">Stake MINIMA</div>
-                        <button type="button" class="agent-mini-btn" onclick="openAgentExplain('Maximize MiniDapp: stake MINIMA on your Minima node')" title="StablesAgent">
-                            <img src="../agent.png" alt="StablesAgent">
-                        </button>
-                    </div>
-                    <div class="cp-card app-section-card">
-                        <div style="background:rgba(16,24,38,.5);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:14px">
-                            <div class="xs mu" style="font-weight:800;margin-bottom:8px;color:var(--t)">Maximize</div>
-                            <p class="xs mu" style="margin:0 0 14px;line-height:1.5;color:var(--m)">Official Minima MiniDapp to <strong style="color:var(--t)">stake MINIMA</strong> from your node. Open <strong style="color:var(--t)">Maximize</strong> in the MiniDapp list on your Minima app (write mode if prompted), pick a lock period, and confirm on-chain. This Showcase screen only links out; staking happens in Minima.</p>
-                            <div style="display:flex;flex-direction:column;gap:10px">
-                                <a class="btn btn-primary" href="https://minima.global/ecosystem/minidapps" target="_blank" rel="noopener noreferrer" style="width:100%;max-width:100%;text-align:center;text-decoration:none;box-sizing:border-box">MiniDapps hub (Minima)</a>
-                                <a class="btn btn-secondary" href="https://docs.minima.global/docs/development/basic-minidapp" target="_blank" rel="noopener noreferrer" style="width:100%;max-width:100%;text-align:center;text-decoration:none;box-sizing:border-box">MiniDapp docs</a>
-                            </div>
-                            <p class="xs mu" style="margin:14px 0 0;line-height:1.45;color:var(--m)">If Maximize is not installed, add it from your node&apos;s MiniDapp store or the hub above. Rewards and terms are set by the Minima Maximize MiniDapp, not Stables.</p>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -7078,7 +7054,7 @@
                         The other main mistake is sharing personal information. Please never communicate any type of personal information. In the Stables framework, no personal information will ever be required, not even your name.
                     </p>
                     <p class="sec-body" style="margin:0 0 12px;line-height:1.55;color:var(--m)">
-                        The other big threat is computer viruses and malware. Run your Stables app on a safe device with minimal usage (fewer apps and risks).
+                        The other big threat is computer viruses and malware. Run your Stables Dapp on a safe device with minimal usage (fewer apps and risks).
                     </p>
                     <p class="sec-body" style="margin:0 0 12px;line-height:1.55;color:var(--m)">
                         In the blockchain world, there is no guaranteed way to catch scammers, and recovering stolen funds is practically impossible.
@@ -9452,22 +9428,20 @@
         }
 
         function setInvestTab(t) {
-            const tab = t === 'cf' ? 'cf' : (t === 'lp' ? 'lp' : (t === 'mx' ? 'mx' : 'mi'));
+            const tab = t === 'cf' ? 'cf' : (t === 'lp' ? 'lp' : 'mi');
             try {
                 localStorage.setItem(INVEST_TAB_STORAGE_KEY, tab);
             } catch (_) { /* ignore */ }
-            ['iTabMI', 'iTabCF', 'iTabLP', 'iTabMX'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active'); });
-            const tabId = tab === 'cf' ? 'iTabCF' : (tab === 'lp' ? 'iTabLP' : (tab === 'mx' ? 'iTabMX' : 'iTabMI'));
+            ['iTabMI', 'iTabCF', 'iTabLP'].forEach(id => { const el = document.getElementById(id); if (el) el.classList.remove('active'); });
+            const tabId = tab === 'cf' ? 'iTabCF' : (tab === 'lp' ? 'iTabLP' : 'iTabMI');
             const active = document.getElementById(tabId);
             if (active) active.classList.add('active');
             const panMi = document.getElementById('panelMI');
             const panCf = document.getElementById('panelCF');
             const panLp = document.getElementById('panelLP');
-            const panMx = document.getElementById('panelMX');
             if (panMi) panMi.style.display = tab === 'mi' ? '' : 'none';
             if (panCf) panCf.style.display = tab === 'cf' ? '' : 'none';
             if (panLp) panLp.style.display = tab === 'lp' ? '' : 'none';
-            if (panMx) panMx.style.display = tab === 'mx' ? '' : 'none';
             if (tab === 'lp') {
                 renderLpLiveBins();
                 renderHeatmap();

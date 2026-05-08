@@ -1,7 +1,7 @@
 # Stables MiniDapp - Community Demo Development Plan
 
 **Status:** Active working document  
-**Scope:** `1_development/stream_1_app/dapp/`  
+**Scope:** `1_development/stream_1_app/website/dapp/`  
 **Primary target:** `dapp/2-demo/`  
 **Purpose:** Keep the MiniDapp moving toward a community-built product, with a clear release bar, visible roadmap, and a shared reference for ongoing work.
 
@@ -142,7 +142,7 @@ The items below are the current reference backlog for the next public demo cycle
 
 The demo plan must stay aligned with:
 
-- `1_development/stream_1_app/dapp/2-demo/CHARTER_DEMO_TRACEABILITY.md`
+- `1_development/stream_1_app/website/dapp/2-demo/CHARTER_DEMO_TRACEABILITY.md`
 - `0_handshake/protocol_mechanics_spec.md`
 
 Where the Charter handout expresses intent, the demo should translate that into visible product surfaces without inventing protocol mechanics.

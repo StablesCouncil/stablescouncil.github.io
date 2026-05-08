@@ -27,7 +27,7 @@ Build the zip from a **staging folder**: copy **only** the allowlisted **files**
 ## Build the zip (PowerShell, from repo root)
 
 ```powershell
-$root = "1_development/stream_1_app/dapp"
+$root = "1_development/stream_1_app/website/dapp"
 $stage = Join-Path $env:TEMP ("stables_showcase_zip_" + [guid]::NewGuid().ToString("n"))
 New-Item -ItemType Directory -Path $stage -Force | Out-Null
 $includeFiles = @(
