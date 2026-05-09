@@ -1,0 +1,13 @@
+Stables verification quick reference
+
+1. Download the MiniDapp package.
+2. Compute the SHA256 hash locally.
+3. Compare it with downloads/SHA256SUMS.txt.
+4. Check downloads/MANIFEST.json for source paths and generated time.
+5. Check downloads/INTEGRITAS_VERIFY.txt when Integritas proof references are available.
+
+Current approved MiniDapp artifact:
+Stables_v00.00.00.00.03.mds.zip
+
+Expected SHA256:
+FE7294891466E877F7DEABE7DCA972A6DF808D54B8F91AC9E79546C2476B855D

@@ -1,0 +1,99 @@
+{
+  "version": "0.1",
+  "generatedAt": "2026-05-08T09:46:17.071Z",
+  "measurementDate": "2026-05-08",
+  "generatedBy": "tools/collect-dashboard-snapshots.mjs",
+  "metrics": {
+    "x_followers": {
+      "value": 117,
+      "measuredAt": "2026-05-07",
+      "source": "https://twstalker.com/StablesCouncil",
+      "sourceDetail": "Manual public-mirror baseline from TwStalker search result: @StablesCouncil showed 117 followers, crawled 5 days before 2026-05-07. Replace with X API once X_BEARER_TOKEN is available.",
+      "collector": "manual-baselines",
+      "quality": "public-mirror-baseline"
+    },
+    "tiktok_followers": {
+      "value": 1,
+      "measuredAt": "2026-05-08",
+      "source": "https://www.tiktok.com/@stablescouncil",
+      "sourceDetail": "Public TikTok profile follower count parsed from profile HTML.",
+      "collector": "public-profiles",
+      "quality": "public-page-snapshot"
+    }
+  },
+  "collectors": [
+    {
+      "name": "local-ledgers",
+      "status": "ok",
+      "metricCount": 0,
+      "notes": [
+        "No production merchant directory ledger is wired yet. Demo merchant profiles are intentionally excluded from success metrics."
+      ],
+      "errors": []
+    },
+    {
+      "name": "manual-baselines",
+      "status": "ok",
+      "metricCount": 1,
+      "notes": [
+        "Mirrors non-empty manual baselines into the latest snapshot so the dashboard pull state shows every current figure."
+      ],
+      "errors": []
+    },
+    {
+      "name": "x",
+      "status": "skipped",
+      "metricCount": 0,
+      "notes": [
+        "Set X_BEARER_TOKEN to collect X follower and engagement metrics."
+      ],
+      "errors": []
+    },
+    {
+      "name": "meta",
+      "status": "skipped",
+      "metricCount": 0,
+      "notes": [
+        "Set META_ACCESS_TOKEN plus INSTAGRAM_BUSINESS_ACCOUNT_ID and/or FACEBOOK_PAGE_ID to collect Meta metrics."
+      ],
+      "errors": []
+    },
+    {
+      "name": "youtube",
+      "status": "skipped",
+      "metricCount": 0,
+      "notes": [
+        "Set YOUTUBE_API_KEY to collect YouTube metrics. Discovered channel id: UCM5BEZunwtgndfB9f8R-2rw."
+      ],
+      "errors": []
+    },
+    {
+      "name": "telegram",
+      "status": "skipped",
+      "metricCount": 0,
+      "notes": [
+        "Set TELEGRAM_BOT_TOKEN plus chat ids to collect Telegram counts."
+      ],
+      "errors": []
+    },
+    {
+      "name": "discord",
+      "status": "failed",
+      "metricCount": 0,
+      "notes": [],
+      "errors": [
+        "fetch failed"
+      ]
+    },
+    {
+      "name": "public-profiles",
+      "status": "ok",
+      "metricCount": 1,
+      "notes": [
+        "moltbook_followers: no stable public count found.",
+        "twitch_followers: no stable public count found."
+      ],
+      "errors": []
+    }
+  ]
+}

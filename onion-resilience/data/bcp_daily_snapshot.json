@@ -1,0 +1,44 @@
+{
+  "version": "0.1",
+  "generatedAt": "2026-05-09",
+  "bcpStatus": {
+    "status": "normal-standby",
+    "source": "notices/index.json",
+    "latestNotice": "notices/standby-2026-05-09.txt"
+  },
+  "simplexBackupGroup": {
+    "status": "active-invite-published",
+    "createdAt": "2026-05-09",
+    "invite": "https://smp10.simplex.im/g#CvfHpEnr6FFmmiP37avJI_WzE3a8sfBz0ptZ-s5q7jc",
+    "recommendedFirstStep": "Create group",
+    "optionalLater": "Create public channel for one-way BCP announcements if needed.",
+    "purpose": "Public continuity coordination when normal public routes are unreliable."
+  },
+  "dashboardEvolution": [
+    {
+      "date": "2026-05-06",
+      "snapshot": "data/dashboard_snapshots/2026-05-06.json",
+      "indicators": {
+        "merchant_directory_listings": 3
+      },
+      "collectorState": "local-ledgers ok"
+    },
+    {
+      "date": "2026-05-07",
+      "snapshot": "data/dashboard_snapshots/2026-05-07.json",
+      "indicators": {
+        "x_followers": 117
+      },
+      "collectorState": "manual-baselines ok, discord failed, other APIs skipped"
+    },
+    {
+      "date": "2026-05-08",
+      "snapshot": "data/dashboard_snapshots/latest.json",
+      "indicators": {
+        "x_followers": 117,
+        "tiktok_followers": 1
+      },
+      "collectorState": "manual-baselines ok, public-profiles ok, discord failed, other APIs skipped"
+    }
+  ]
+}

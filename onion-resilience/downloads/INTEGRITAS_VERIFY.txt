@@ -1,0 +1,16 @@
+Integritas verification placeholder
+
+Purpose:
+Use Integritas as an additional authenticity layer for Stables public release artifacts.
+
+Target artifacts:
+- Stables_v00.00.00.00.03.mds.zip
+- Stables_essentials_2026-05-09.zip
+- MANIFEST.json
+- signed BCP continuity notices
+
+Current status:
+The first static onion build includes SHA256 hashes and a manifest. Integritas proof references will be added after the Council selects the first proof format and verification path.
+
+Current local check:
+Compare each downloaded file against downloads/SHA256SUMS.txt and downloads/MANIFEST.json.
