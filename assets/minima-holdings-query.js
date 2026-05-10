@@ -174,7 +174,6 @@
           } else if (p.block != null && Number.isFinite(Number(p.block))) {
             out.block_db_snapshot = Number(p.block);
           }
-          if (p.live === true) out.live = true;
           return out;
         }
         if (typeof p.balance === "number" && p.block != null) {
@@ -193,9 +192,7 @@
         .map(function (p) {
           if (p == null) return null;
           if (typeof p.y === "number" && (typeof p.x === "string" || typeof p.x === "number")) {
-            var out = { x: String(p.x), y: p.y };
-            if (p.live === true) out.live = true;
-            return out;
+            return { x: String(p.x), y: p.y };
           }
           return null;
         })
@@ -364,13 +361,7 @@
     destroyChart();
     if (!canvas || typeof Chart === "undefined") return;
     var labels = balanceSeries.map(function (p) { return p.x; });
-    var hasLivePoint = balanceSeries.some(function (p) { return p.live === true; });
-    var balanceData = balanceSeries.map(function (p) {
-      return hasLivePoint && p.live === true ? null : p.y;
-    });
-    var liveBalanceData = balanceSeries.map(function (p) {
-      return p.live === true ? p.y : null;
-    });
+    var balanceData = balanceSeries.map(function (p) { return p.y; });
     var blockData = balanceSeries.map(function (p) {
       return p.block_db_snapshot != null ? p.block_db_snapshot : null;
     });
@@ -389,21 +380,6 @@
       },
     ];
 
-    if (hasLivePoint) {
-      datasets.push({
-        label: "Live Minima balance",
-        data: liveBalanceData,
-        borderColor: "rgba(103, 232, 249, 0.95)",
-        backgroundColor: "rgba(103, 232, 249, 0.95)",
-        fill: false,
-        tension: 0,
-        pointRadius: 4,
-        pointHoverRadius: 6,
-        showLine: false,
-        yAxisID: "y",
-      });
-    }
-
     var scales = {
       x: {
         ticks: { color: "#9fb0c0", maxRotation: 45, autoSkip: true, maxTicksLimit: 12 },
@@ -419,15 +395,9 @@
 
     if (utxoSeries && utxoSeries.length) {
       var utxoMap = {};
-      var utxoLiveMap = {};
       utxoSeries.forEach(function (p) { utxoMap[p.x] = p.y; });
-      utxoSeries.forEach(function (p) { if (p.live === true) utxoLiveMap[p.x] = p.y; });
       var utxoAligned = labels.map(function (x) {
-        if (utxoLiveMap[x] != null) return null;
         return utxoMap[x] != null ? utxoMap[x] : null;
-      });
-      var utxoLiveAligned = labels.map(function (x) {
-        return utxoLiveMap[x] != null ? utxoLiveMap[x] : null;
       });
       datasets.push({
         label: "UTXO count",
@@ -439,20 +409,6 @@
         pointRadius: 2,
         yAxisID: "y1",
       });
-      if (Object.keys(utxoLiveMap).length) {
-        datasets.push({
-          label: "Live UTXO count",
-          data: utxoLiveAligned,
-          borderColor: "rgba(167, 139, 250, 0.9)",
-          backgroundColor: "rgba(167, 139, 250, 0.9)",
-          fill: false,
-          tension: 0,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          showLine: false,
-          yAxisID: "y1",
-        });
-      }
       scales.y1 = {
         position: "right",
         ticks: {
