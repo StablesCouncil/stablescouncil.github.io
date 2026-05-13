@@ -231,6 +231,16 @@
                 </div>
             </div>
 
+            <div class="devtools-panel devtools-peer-panel">
+                <h2 class="devtools-panel-heading">Optional peer sync</h2>
+                <div class="devtools-archive-peer">
+                    <div>
+                        <p>Add the Council archive node as a direct Minima peer from any node. Use it alongside auto-connect or other peers.</p>
+                    </div>
+                    <code>70.34.244.170:9001</code>
+                </div>
+            </div>
+
             <div class="devtools-panel devtools-discord-panel">
                 <h2 class="devtools-panel-heading">Discord channel</h2>
                 <p>This Discord channel is for everyone who wants to discuss and share on-chain analysis, including holdings views like this page and other Minima tooling.</p>
@@ -346,6 +356,11 @@
         .devtools-archive-meta-pill { display: flex; flex-direction: column; gap: 2px; background: rgba(15,23,42,0.7); border: 1px solid rgba(103,232,249,0.2); border-radius: 10px; padding: 6px 12px; min-width: 100px; }
         .devtools-archive-meta-label { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #9fb0c0; font-family: 'Inter', sans-serif; }
         .devtools-archive-meta-value { font-size: 13px; font-weight: 700; color: #67e8f9; font-family: 'Inter', sans-serif; font-variant-numeric: tabular-nums; }
+        .devtools-archive-peer { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center; margin-top: 14px; padding: 14px 16px; border: 1px solid rgba(103,232,249,0.18); border-radius: 14px; background: rgba(15,23,42,0.55); }
+        .devtools-archive-peer h3 { margin: 0 0 4px; font-size: 14px; line-height: 1.2; font-weight: 800; color: #e6edf3; font-family: 'Inter', sans-serif; }
+        .devtools-archive-peer p { margin: 0; font-size: 13px; line-height: 1.45; color: #9fb0c0; font-family: 'Inter', sans-serif; }
+        .devtools-archive-peer code { display: inline-flex; align-items: center; min-height: 38px; padding: 0 12px; border: 1px solid rgba(103,232,249,0.28); border-radius: 10px; background: rgba(103,232,249,0.08); color: #67e8f9; font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 13px; font-weight: 700; white-space: nowrap; }
+        @media (max-width: 620px) { .devtools-archive-peer { grid-template-columns: 1fr; align-items: stretch; } .devtools-archive-peer code { justify-content: center; white-space: normal; word-break: break-word; } }
         .devtools-discord-buttons { margin-top: 0.75rem; }
         /* --- combined address input + saved picker --- */
         .devtools-address-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 0.35rem; }
