@@ -18,7 +18,8 @@
         "twitch_followers",
         "moltbook_followers",
         "discord_members",
-        "telegram_community_members"
+        "telegram_community_members",
+        "simplex_group_support_members"
       ],
       "nextStep": "Keep x_followers as the first public baseline, then manually add only counts that can be verified from the official public profile or a clearly recorded mirror/source."
     },
@@ -48,6 +49,7 @@
         "youtube_subscribers",
         "youtube_recent_views",
         "telegram_community_members",
+        "simplex_group_support_members",
         "telegram_council_members",
         "discord_members"
       ],
@@ -131,6 +133,12 @@
       "currentValue": null,
       "currentSource": "https://t.me/stablescommunity",
       "nextStep": "Set TELEGRAM_BOT_TOKEN and confirm the bot can read member count for @stablescommunity."
+    },
+    "simplex_group_support_members": {
+      "status": "manual-first",
+      "currentValue": null,
+      "currentSource": "https://smp10.simplex.im/g#CvfHpEnr6FFmmiP37avJI_WzE3a8sfBz0ptZ-s5q7jc",
+      "nextStep": "Enter the SimpleX group member count manually until an approved SimpleX export or collector exists."
     },
     "telegram_council_members": {
       "status": "needs-token",

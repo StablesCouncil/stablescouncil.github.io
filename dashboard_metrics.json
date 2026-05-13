@@ -190,6 +190,37 @@
       ]
     },
     {
+      "id": "simplex_group_support_members",
+      "category": "Community Reach",
+      "name": "SimpleX Group Support members",
+      "description": "Members in the Stables SimpleX Group Support backup coordination group.",
+      "unit": "count",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "https://smp10.simplex.im/g#CvfHpEnr6FFmmiP37avJI_WzE3a8sfBz0ptZ-s5q7jc",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-global-growth"
+      ],
+      "notes": "Backup coordination group linked from the onion resilience page.",
+      "sourceType": "external-link",
+      "indicatorType": "KPI",
+      "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "SimpleX manual snapshot",
+      "feedCadence": "Weekly manual baseline",
+      "dataPullStatus": "manual-now",
+      "feedNextStep": "Enter the SimpleX group member count manually until an approved SimpleX export or collector exists.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ]
+    },
+    {
       "id": "telegram_community_messages",
       "category": "Community Reach",
       "name": "Telegram community messages",
