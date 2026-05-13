@@ -8998,7 +8998,8 @@
         "tiktok_followers",
         "twitch_followers",
         "moltbook_followers",
-        "discord_members"
+        "discord_members",
+        "simplex_group_support_members"
       ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
@@ -11684,6 +11685,7 @@
       ],
       "metrics": [
         "telegram_community_members",
+        "simplex_group_support_members",
         "x_followers",
         "instagram_followers"
       ],

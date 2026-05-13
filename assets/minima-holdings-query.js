@@ -438,12 +438,15 @@
             },
           },
           tooltip: {
-            displayColors: false,
+            displayColors: true,
+            usePointStyle: true,
+            boxWidth: 18,
+            boxHeight: 3,
             callbacks: {
               label: function (ctx) {
                 var v = ctx.parsed && ctx.parsed.y != null ? ctx.parsed.y : null;
                 var n = v == null ? "—" : Number(v).toLocaleString("en-GB");
-                return "━ " + String(ctx.dataset && ctx.dataset.label ? ctx.dataset.label : "") + ": " + n;
+                return String(ctx.dataset && ctx.dataset.label ? ctx.dataset.label : "") + ": " + n;
               },
               afterBody: function (tooltipItems) {
                 if (!tooltipItems || !tooltipItems.length) return [];
@@ -1031,12 +1034,15 @@
             },
           },
           tooltip: {
-            displayColors: false,
+            displayColors: true,
+            usePointStyle: true,
+            boxWidth: 18,
+            boxHeight: 3,
             callbacks: {
               label: function (ctx) {
                 var v = ctx.parsed && ctx.parsed.y != null ? ctx.parsed.y : null;
                 var n = v == null ? "—" : Number(v).toLocaleString("en-GB");
-                return "━ " + String(ctx.dataset && ctx.dataset.label ? ctx.dataset.label : "") + ": " + n;
+                return String(ctx.dataset && ctx.dataset.label ? ctx.dataset.label : "") + ": " + n;
               },
             },
           },

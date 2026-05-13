@@ -31,6 +31,7 @@ const SUCCESS_METRIC_IDS = new Set([
   "instagram_followers",
   "instagram_engagement_actions",
   "telegram_community_members",
+  "simplex_group_support_members",
   "telegram_community_messages",
   "telegram_council_members",
   "telegram_council_post_views",
@@ -280,6 +281,14 @@ function feedPlan(metric) {
         feedNextStep: "Add a Telegram bot/admin credential where required and pull member/message snapshots into the dashboard feed file.",
       };
     }
+    if (/simplex\.im/i.test(source)) {
+      return {
+        feedMode: "SimpleX manual snapshot",
+        feedCadence: "Weekly manual baseline",
+        dataPullStatus: "manual-now",
+        feedNextStep: "Enter the SimpleX group member count manually until an approved SimpleX export or collector exists.",
+      };
+    }
     if (/tiktok\.com|twitch\.tv/i.test(source)) {
       return {
         feedMode: "Platform API candidate",
@@ -357,7 +366,7 @@ function classifyMetricGroups(metric) {
     addGroup(groups, "Community / Council development");
   }
 
-  if (!councilSpecific && !/ambassador|merchant/i.test(id) && (/^(x|instagram|facebook_page|facebook_group|telegram_community|youtube|tiktok|twitch|moltbook|discord_members)_|recent_posts|recent_views|engagement_actions/i.test(id) || /demo|channel|wallet|activity|amount|coverage|token|feedback|github_feedback|showcase|agent|stablesagent|send_|fx_/i.test(id) || /App |Protocol Copy|Public Feedback|StablesAgent|Community Reach/i.test(category))) {
+  if (!councilSpecific && !/ambassador|merchant/i.test(id) && (/^(x|instagram|facebook_page|facebook_group|telegram_community|simplex_group_support|youtube|tiktok|twitch|moltbook|discord_members)_|recent_posts|recent_views|engagement_actions/i.test(id) || /demo|channel|wallet|activity|amount|coverage|token|feedback|github_feedback|showcase|agent|stablesagent|send_|fx_/i.test(id) || /App |Protocol Copy|Public Feedback|StablesAgent|Community Reach/i.test(category))) {
     addGroup(groups, "Users");
   }
 
