@@ -296,13 +296,13 @@
             <div class="addr-modal-divider">
                 <span class="addr-modal-divider__label">Share with community</span>
             </div>
-            <p class="addr-modal-desc">Contribute a shared label visible to everyone via a GitHub pull request.</p>
+            <p class="addr-modal-desc">Share this address by opening a GitHub submission. The Council reviews community entries before they appear on the public list.</p>
             <label class="addr-modal-label" for="modal-notes">Notes (optional)</label>
             <textarea id="modal-notes" class="addr-modal-textarea" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Operator context, no secrets"></textarea>
-            <p class="addr-modal-hint">Share flow: fill fields, click Share with community. A pre-filled GitHub issue opens — submit it and the Council admin is notified for review.</p>
+            <p class="addr-modal-hint">Share flow: fill fields, click Share with community. The JSON entry is copied, then GitHub opens the public address file so you can paste it and open a pull request.</p>
             <div class="addr-modal-actions">
                 <button type="button" class="btn btn-primary" id="modal-save-btn" onclick="modalSaveLocal()">Save for me</button>
-                <button type="button" class="btn btn-secondary" id="modal-share-btn" onclick="shareCommunityAddress()">Share with community ↗</button>
+                <button type="button" class="btn btn-secondary" id="modal-share-btn" onclick="shareCommunityAddress()">Open GitHub submission ↗</button>
             </div>
         </div>
     </div>
@@ -514,19 +514,27 @@
                 '  "notes": "' + esc(notes) + '",\n' +
                 '  "added": "' + today + '"\n' +
                 '}';
-            var issueTitle = 'Community address: ' + label;
-            var issueBody =
-                '### Address submission\n\n' +
-                '**Address:** `' + addr + '`\n' +
-                '**Label:** ' + label + '\n' +
-                '**Date:** ' + today + '\n\n' +
-                '### JSON entry\n\n' +
-                '```json\n' + snippet + '\n```\n\n' +
-                '_Submitted from [onchain-watch](https://stablescouncil.org/onchain-watch.html)_';
-            var issueUrl = 'https://github.com/StablesCouncil/stablescouncil.github.io/issues/new' +
-                '?title=' + encodeURIComponent(issueTitle) +
-                '&body=' + encodeURIComponent(issueBody);
-            window.open(issueUrl, '_blank', 'noopener,noreferrer');
+            function openSubmission() {
+                window.open(
+                    'https://github.com/StablesCouncil/stablescouncil.github.io/edit/main/github/community-addresses.json',
+                    '_blank',
+                    'noopener,noreferrer'
+                );
+            }
+            var message =
+                'JSON entry copied. On GitHub, paste it into the array, commit it to a new branch, and open a pull request for Council review.';
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(snippet).then(function() {
+                    alert(message);
+                    openSubmission();
+                }).catch(function() {
+                    prompt('Copy this JSON entry, then GitHub will open for a pull request:', snippet);
+                    openSubmission();
+                });
+            } else {
+                prompt('Copy this JSON entry, then GitHub will open for a pull request:', snippet);
+                openSubmission();
+            }
         }
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeAddrModal();
