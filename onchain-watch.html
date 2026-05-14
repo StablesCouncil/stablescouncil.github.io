@@ -513,27 +513,16 @@
                 '  "notes": "' + esc(notes) + '",\n' +
                 '  "added": "' + today + '"\n' +
                 '}';
-            function openSubmission() {
-                window.open(
-                    'https://github.com/StablesCouncil/stablescouncil.github.io/edit/main/github/community-addresses.json',
-                    '_blank',
-                    'noopener,noreferrer'
-                );
-            }
-            var message =
-                'JSON entry copied. On GitHub, paste it into the array, commit it to a new branch, and open a pull request for Council review.';
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(snippet).then(function() {
-                    alert(message);
-                    openSubmission();
-                }).catch(function() {
-                    prompt('Copy this JSON entry, then GitHub will open for a pull request:', snippet);
-                    openSubmission();
-                });
-            } else {
-                prompt('Copy this JSON entry, then GitHub will open for a pull request:', snippet);
-                openSubmission();
-            }
+            var issueTitle = 'Community address: ' + label;
+            var issueBody =
+                '### Community address submission\n\n' +
+                'Submit this issue to ask GitHub to prepare a pull request for Council review. Do not add secrets or private identity details.\n\n' +
+                '```json\n' + snippet + '\n```\n\n' +
+                '_Submitted from [Onchain Watch](https://stablescouncil.org/onchain-watch.html)._';
+            var issueUrl = 'https://github.com/StablesCouncil/stablescouncil.github.io/issues/new' +
+                '?title=' + encodeURIComponent(issueTitle) +
+                '&body=' + encodeURIComponent(issueBody);
+            window.open(issueUrl, '_blank', 'noopener,noreferrer');
         }
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeAddrModal();

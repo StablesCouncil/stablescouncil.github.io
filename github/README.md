@@ -3,8 +3,9 @@
 This folder documents how **address labels** and **operator notes** on the [Minima Onchain Watch](https://stablescouncil.org/onchain-watch.html) page relate to **GitHub**.
 
 - The on-page **Save address** modal can save an address locally on the user's device.
-- The **Share with community** flow copies a JSON entry and opens this repository's public address file for a GitHub pull request.
-- Community submissions become visible on the live website only after the Council reviews and merges the pull request.
+- The **Share with community** flow opens a prefilled GitHub submission.
+- GitHub Actions reads that submission, prepares a pull request that updates `github/community-addresses.json`, and comments on the submission with the PR link.
+- Community submissions become visible on the live website only after the Council reviews and merges the prepared pull request.
 - Use your **normal GitHub identity** for attribution. Do not put secrets, keys, or session tokens in pull requests.
 
 ## Public list
@@ -27,7 +28,7 @@ Each entry must use this shape:
 
 ## Control model
 
-- Users may propose additions by pull request.
+- Users may propose additions through the Onchain Watch GitHub submission flow.
 - Users may not push directly to `main`.
 - Council maintainers review and merge additions.
 - Council maintainers are the only party that should correct or remove published addresses.

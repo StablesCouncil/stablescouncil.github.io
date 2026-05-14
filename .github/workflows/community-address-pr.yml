@@ -1,0 +1,183 @@
+name: Prepare community address PR
+
+on:
+  issues:
+    types: [opened, edited]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: Issue number to process
+        required: true
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare pull request from community address issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issueNumber = context.eventName === "workflow_dispatch"
+              ? Number(core.getInput("issue_number"))
+              : context.payload.issue.number;
+
+            const { data: issue } = await github.rest.issues.get({
+              owner,
+              repo,
+              issue_number: issueNumber
+            });
+
+            if (issue.pull_request) {
+              core.info("Issue is a pull request, skipping.");
+              return;
+            }
+
+            if (!/^Community address:/i.test(issue.title || "")) {
+              core.info("Issue title does not match community address submission, skipping.");
+              return;
+            }
+
+            const body = issue.body || "";
+            const match = body.match(/```json\s*([\s\S]*?)```/i);
+            if (!match) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body: "Could not find a JSON block in this submission. Please resubmit from Onchain Watch."
+              });
+              return;
+            }
+
+            let entry;
+            try {
+              entry = JSON.parse(match[1]);
+            } catch (error) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body: "The JSON block could not be parsed. Please resubmit from Onchain Watch."
+              });
+              return;
+            }
+
+            const clean = {
+              label: String(entry.label || "").trim().slice(0, 80),
+              address: String(entry.address || "").trim(),
+              contributor: issue.user.login,
+              notes: String(entry.notes || "").trim().slice(0, 240),
+              added: String(entry.added || new Date().toISOString().slice(0, 10)).trim()
+            };
+
+            if (!clean.label || !clean.address || !/^(0x[a-fA-F0-9]{64}|Mx[A-Z0-9]+)$/.test(clean.address)) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body: "The submission needs a valid label and Minima address. Please resubmit from Onchain Watch."
+              });
+              return;
+            }
+
+            if (!clean.notes) clean.notes = "Community-submitted address.";
+
+            const path = "github/community-addresses.json";
+            const baseBranch = "main";
+            const branch = `community-address/issue-${issueNumber}`;
+
+            const { data: baseRef } = await github.rest.git.getRef({
+              owner,
+              repo,
+              ref: `heads/${baseBranch}`
+            });
+
+            try {
+              await github.rest.git.createRef({
+                owner,
+                repo,
+                ref: `refs/heads/${branch}`,
+                sha: baseRef.object.sha
+              });
+            } catch (error) {
+              if (error.status !== 422) throw error;
+            }
+
+            const { data: file } = await github.rest.repos.getContent({
+              owner,
+              repo,
+              path,
+              ref: branch
+            });
+
+            const current = JSON.parse(Buffer.from(file.content, "base64").toString("utf8"));
+            if (!Array.isArray(current)) throw new Error(`${path} must contain a JSON array.`);
+
+            const duplicate = current.some((item) =>
+              item && String(item.address || "").toLowerCase() === clean.address.toLowerCase()
+            );
+
+            if (duplicate) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body: `This address already exists in \`${path}\`. No pull request was created.`
+              });
+              return;
+            }
+
+            current.push(clean);
+
+            const nextContent = `${JSON.stringify(current, null, 2)}\n`;
+            await github.rest.repos.createOrUpdateFileContents({
+              owner,
+              repo,
+              path,
+              branch,
+              sha: file.sha,
+              message: `Add community address: ${clean.label}`,
+              content: Buffer.from(nextContent, "utf8").toString("base64")
+            });
+
+            let pr;
+            const existing = await github.rest.pulls.list({
+              owner,
+              repo,
+              state: "open",
+              head: `${owner}:${branch}`,
+              base: baseBranch
+            });
+
+            if (existing.data.length) {
+              pr = existing.data[0];
+            } else {
+              const created = await github.rest.pulls.create({
+                owner,
+                repo,
+                title: `Add community address: ${clean.label}`,
+                head: branch,
+                base: baseBranch,
+                body:
+                  `Prepared automatically from #${issueNumber}.\n\n` +
+                  `Council review required before this appears on the live public list.\n\n` +
+                  `Address: \`${clean.address}\`\n` +
+                  `Label: ${clean.label}\n` +
+                  `Contributor: @${issue.user.login}`
+              });
+              pr = created.data;
+            }
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body: `GitHub prepared a pull request for Council review: #${pr.number}`
+            });
