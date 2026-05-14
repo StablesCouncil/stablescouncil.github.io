@@ -1,14 +1,38 @@
-# Minima holdings query — GitHub-side naming
+# Minima holdings query - community address submissions
 
 This folder documents how **address labels** and **operator notes** on the [Minima Onchain Watch](https://stablescouncil.org/onchain-watch.html) page relate to **GitHub**.
 
-- The on-page **Address naming** box collects a **public GitHub username**, an optional **label** for the Minima address shown in the chart panel, and optional **notes**. Nothing here is submitted automatically from static Pages; wire-up belongs on the Council API when ready.
-- Use your **normal GitHub identity** for attribution. Do not put secrets, keys, or session tokens in issues or PRs.
+- The on-page **Save address** modal can save an address locally on the user's device.
+- The **Share with community** flow copies a JSON entry and opens this repository's public address file for a GitHub pull request.
+- Community submissions become visible on the live website only after the Council reviews and merges the pull request.
+- Use your **normal GitHub identity** for attribution. Do not put secrets, keys, or session tokens in pull requests.
 
-When the Council publishes a concrete workflow (issue template, JSON schema, or PR path), add a short link here so operators have one place to look.
+## Public list
 
-**Exchange presets:** The three **Saved address** options on the page are defined in **`assets/minima-holdings-query.js`** (`DEFAULT_PRESETS` or override `window.STABLES_MINIMA_HOLDINGS_PRESETS`). Replace the placeholder Exchange 2 and Exchange 3 hex with real hot-wallet addresses when known.
+The live Onchain Watch page reads:
+
+`/github/community-addresses.json`
+
+Each entry must use this shape:
+
+```json
+{
+  "label": "Example label",
+  "address": "0x...",
+  "contributor": "github-username",
+  "notes": "Public operator context. No secrets.",
+  "added": "YYYY-MM-DD"
+}
+```
+
+## Control model
+
+- Users may propose additions by pull request.
+- Users may not push directly to `main`.
+- Council maintainers review and merge additions.
+- Council maintainers are the only party that should correct or remove published addresses.
+- If an address is wrong, stale, spammy, or sensitive, Council can edit or remove it from `community-addresses.json` and commit the correction.
 
 **Query string (holdings API):** `address`, optional `date_from` / `date_to` (YYYY-MM-DD, omitted when range is **All**), and `interval_type` one of `DAY`, `WEEK`, `MONTH`, `QUARTER`, `YEAR`.
 
-**Repo:** [stablescouncil.github.io](https://github.com/StablesCouncil/stablescouncil.github.io) — path `onchain-watch.html`.
+**Repo:** [stablescouncil.github.io](https://github.com/StablesCouncil/stablescouncil.github.io), path `onchain-watch.html`.
