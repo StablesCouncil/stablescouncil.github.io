@@ -1,0 +1,144 @@
+name: Accept community address
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: Issue number to accept
+        required: true
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  accept:
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.issue.pull_request == null &&
+        contains(github.event.comment.body, '/accept') &&
+        startsWith(github.event.issue.title, 'Community address:')
+      )
+    steps:
+      - name: Accept community address submission
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.STABLES_COUNCIL_PAT }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const issueNumber = context.eventName === "workflow_dispatch"
+              ? Number(core.getInput("issue_number"))
+              : context.payload.issue.number;
+
+            if (context.eventName === "issue_comment") {
+              const allowed = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
+              if (!allowed.has(context.payload.comment.author_association)) {
+                core.info(`Ignoring /accept from ${context.payload.comment.author_association}.`);
+                return;
+              }
+            }
+
+            const { data: issue } = await github.rest.issues.get({
+              owner,
+              repo,
+              issue_number: issueNumber
+            });
+
+            if (!/^Community address:/i.test(issue.title || "")) {
+              core.info("Issue title does not match community address submission, skipping.");
+              return;
+            }
+
+            const match = String(issue.body || "").match(/```json\s*([\s\S]*?)```/i);
+            if (!match) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body: "Could not find a JSON block in this submission. Please resubmit from Onchain Watch."
+              });
+              return;
+            }
+
+            let entry;
+            try {
+              entry = JSON.parse(match[1]);
+            } catch (error) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body: "The JSON block could not be parsed. Please resubmit from Onchain Watch."
+              });
+              return;
+            }
+
+            const clean = {
+              label: String(entry.label || "").trim().slice(0, 80),
+              address: String(entry.address || "").trim(),
+              contributor: String(entry.contributor || issue.user.login || "").trim(),
+              notes: String(entry.notes || "").trim().slice(0, 240),
+              added: String(entry.added || new Date().toISOString().slice(0, 10)).trim()
+            };
+
+            if (!clean.label || !clean.address || !/^(0x[a-fA-F0-9]{64}|Mx[A-Z0-9]+)$/.test(clean.address)) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body: "The submission needs a valid label and Minima address. Please resubmit from Onchain Watch."
+              });
+              return;
+            }
+
+            if (!clean.notes) clean.notes = "Community-submitted address.";
+
+            const path = "github/community-addresses.json";
+            const { data: file } = await github.rest.repos.getContent({
+              owner,
+              repo,
+              path,
+              ref: "main"
+            });
+
+            const current = JSON.parse(Buffer.from(file.content, "base64").toString("utf8"));
+            if (!Array.isArray(current)) throw new Error(`${path} must contain a JSON array.`);
+
+            const duplicate = current.some((item) =>
+              item && String(item.address || "").toLowerCase() === clean.address.toLowerCase()
+            );
+
+            if (!duplicate) {
+              current.push(clean);
+              const nextContent = `${JSON.stringify(current, null, 2)}\n`;
+              await github.rest.repos.createOrUpdateFileContents({
+                owner,
+                repo,
+                path,
+                branch: "main",
+                sha: file.sha,
+                message: `Add community address: ${clean.label}`,
+                content: Buffer.from(nextContent, "utf8").toString("base64")
+              });
+            }
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body: duplicate
+                ? `Address already exists in \`${path}\`. Closing this submission.`
+                : `Accepted and published to \`${path}\`.`
+            });
+
+            await github.rest.issues.update({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              state: "closed"
+            });
