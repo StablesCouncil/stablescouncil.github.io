@@ -159,20 +159,34 @@ jobs:
             if (existing.data.length) {
               pr = existing.data[0];
             } else {
-              const created = await github.rest.pulls.create({
-                owner,
-                repo,
-                title: `Add community address: ${clean.label}`,
-                head: branch,
-                base: baseBranch,
-                body:
-                  `Prepared automatically from #${issueNumber}.\n\n` +
-                  `Council review required before this appears on the live public list.\n\n` +
-                  `Address: \`${clean.address}\`\n` +
-                  `Label: ${clean.label}\n` +
-                  `Contributor: @${issue.user.login}`
-              });
-              pr = created.data;
+              try {
+                const created = await github.rest.pulls.create({
+                  owner,
+                  repo,
+                  title: `Add community address: ${clean.label}`,
+                  head: branch,
+                  base: baseBranch,
+                  body:
+                    `Prepared automatically from #${issueNumber}.\n\n` +
+                    `Council review required before this appears on the live public list.\n\n` +
+                    `Address: \`${clean.address}\`\n` +
+                    `Label: ${clean.label}\n` +
+                    `Contributor: @${issue.user.login}`
+                });
+                pr = created.data;
+              } catch (error) {
+                if (error.status !== 403) throw error;
+                const compareUrl = `https://github.com/${owner}/${repo}/compare/${baseBranch}...${branch}?expand=1`;
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  body:
+                    `GitHub prepared a review branch for Council, but this organization currently blocks Actions from opening pull requests.\n\n` +
+                    `Council review link: ${compareUrl}`
+                });
+                return;
+              }
             }
 
             await github.rest.issues.createComment({
