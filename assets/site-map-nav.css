@@ -1,5 +1,5 @@
 /*
- * site-map-nav.css — Previous / Next strip (site map order from links.html / All links hub).
+ * site-map-nav.css  -  Previous / Next strip (site map order from links.html / All links hub).
  * Depends on stables.css (.btn) loaded first.
  */
 
@@ -13,6 +13,12 @@
 /* When the page has a fixed minimal footer, keep the nav above it */
 body:has(.site-chrome-footer--minimal) .site-map-nav {
   margin-bottom: calc(var(--site-footer-minimal-h, 96px) + 28px);
+}
+
+/* Pages where site-map-nav sits outside <main>: the nav handles footer clearance,
+   so <main> doesn't need its own large padding-bottom (specificity 0,4,1 overrides site-chrome 0,3,1). */
+body.links-page-body.deck-chrome-page:has(> .site-map-nav) .site-chrome-main--document {
+  padding-bottom: 0;
 }
 
 .site-map-nav .buttons.site-map-nav__buttons {

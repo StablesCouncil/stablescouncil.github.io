@@ -124,13 +124,16 @@
                 <div class="devtools-chart-toprow">
                     <p class="devtools-block-inline" aria-live="polite">
                         <span class="devtools-block-inline__label">Block live:</span>
-                        <span class="devtools-block-inline__value" id="holdings-block-live">—</span>
+                        <span class="devtools-block-inline__value" id="holdings-block-live"> - </span>
                         <span class="devtools-block-inline__sep" aria-hidden="true">·</span>
                         <span class="devtools-block-inline__label">DB:</span>
-                        <span class="devtools-block-inline__value" id="holdings-block-db">—</span>
+                        <span class="devtools-block-inline__value" id="holdings-block-db"> - </span>
                         <span class="devtools-block-behind" id="holdings-block-behind" hidden></span>
                     </p>
-                    <button type="button" class="devtools-csv-link" id="export-csv-btn">↓ Download CSV</button>
+                    <div class="devtools-chart-toprow-actions">
+                        <a id="explorer-addr-link" class="devtools-csv-link" target="_blank" rel="noopener noreferrer" aria-label="View address in Minima explorer">↗ Explorer</a>
+                        <button type="button" class="devtools-csv-link" id="export-csv-btn">↓ Download CSV</button>
+                    </div>
                 </div>
 
                 <div class="devtools-chart-frame">
@@ -142,7 +145,7 @@
                 </div>
 
                 <p id="holdings-file-warn" class="devtools-holdings-status devtools-holdings-status--warn" role="status" hidden>
-                    Opened from a local file — live data requires a web server. Open from
+                    Opened from a local file  -  live data requires a web server. Open from
                     <a href="/onchain-watch.html" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">stablescouncil.org</a>
                     to query the API.
                 </p>
@@ -211,15 +214,15 @@
                 <div class="devtools-archive-meta-row" id="archive-meta-row" aria-live="polite">
                     <span class="devtools-archive-meta-pill">
                         <span class="devtools-archive-meta-label">Latest block</span>
-                        <span class="devtools-archive-meta-value" id="archive-latest-block">—</span>
+                        <span class="devtools-archive-meta-value" id="archive-latest-block"> - </span>
                     </span>
                     <span class="devtools-archive-meta-pill">
                         <span class="devtools-archive-meta-label">Exported</span>
-                        <span class="devtools-archive-meta-value" id="archive-exported-at">—</span>
+                        <span class="devtools-archive-meta-value" id="archive-exported-at"> - </span>
                     </span>
                     <span class="devtools-archive-meta-pill">
                         <span class="devtools-archive-meta-label">Size</span>
-                        <span class="devtools-archive-meta-value" id="archive-file-size">—</span>
+                        <span class="devtools-archive-meta-value" id="archive-file-size"> - </span>
                     </span>
                 </div>
                 <p class="devtools-archive-lede">Updated on a daily basis by the StablesCouncil VPS.</p>
@@ -307,8 +310,9 @@
     </div>
 
     <style>
-        /* --- chart top row: block info left, csv right --- */
+        /* --- chart top row: block info left, actions right --- */
         .devtools-chart-toprow { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+        .devtools-chart-toprow-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
         /* --- compact block row --- */
         .devtools-block-inline { font-size: 12px; color: #9fb0c0; margin: 0; display: flex; gap: 5px; align-items: center; flex-wrap: wrap; font-family: 'Inter', sans-serif; }
         .devtools-block-inline__label { color: #9fb0c0; }
@@ -318,6 +322,7 @@
         /* --- csv download link --- */
         .devtools-csv-link { background: none; border: none; color: #67e8f9; font-size: 12px; font-family: 'Inter', sans-serif; cursor: pointer; padding: 2px 0; opacity: 0.65; display: inline-block; transition: opacity 0.15s; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
         .devtools-csv-link:hover { opacity: 1; text-decoration: underline; }
+        #explorer-addr-link:not([href]) { opacity: 0.2; cursor: default; pointer-events: none; }
         /* --- chart loading overlay --- */
         .devtools-chart-frame { position: relative; }
         .devtools-chart-loading {
@@ -481,7 +486,7 @@
             document.getElementById('addrModalBackdrop').classList.add('open');
             var addr = (document.getElementById('minima-addr') || {}).value || '';
             var display = document.getElementById('modal-addr-display');
-            if (display) display.textContent = addr.trim() || '—';
+            if (display) display.textContent = addr.trim() || ' - ';
             var savedName = document.getElementById('modal-saved-name');
             if (savedName) { savedName.value = ''; setTimeout(function(){ savedName.focus(); }, 50); }
         }
@@ -502,7 +507,7 @@
             var addr = ((document.getElementById('modal-addr-display') || {}).textContent || '').trim();
             var label = ((document.getElementById('modal-saved-name') || {}).value || '').trim() || 'Address label';
             var notes = ((document.getElementById('modal-notes') || {}).value || '').trim() || 'Context note.';
-            if (!addr || addr === '—') return;
+            if (!addr || addr === ' - ') return;
             var today = new Date().toISOString().slice(0, 10);
             function esc(s) { return String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"'); }
             var snippet =
@@ -531,6 +536,39 @@
             if (e.key === 'Enter') document.getElementById('run-query-btn').click();
         });
 
+        /* --- Explorer link: update href when address field changes --- */
+        (function() {
+            var EXPLORER_BASE = 'https://explorer.minima.global/search?q=';
+            var link = document.getElementById('explorer-addr-link');
+            var addrInput = document.getElementById('minima-addr');
+            if (!link || !addrInput) return;
+            function isValidAddress(s) {
+                var t = String(s || '').trim();
+                if (t.length < 16) return false;
+                return /^0x[0-9A-Fa-f]+$/.test(t) || /^[0-9A-Fa-f]+$/.test(t) || /^Mx[0-9A-Za-z]+$/.test(t);
+            }
+            function update() {
+                /* Prefer data-selected-address (full clean address set by the dropdown picker),
+                   fall back to raw input value when the user has typed an address manually. */
+                var val = (addrInput.getAttribute('data-selected-address') || '').trim()
+                       || addrInput.value.trim();
+                if (isValidAddress(val)) {
+                    link.setAttribute('href', EXPLORER_BASE + encodeURIComponent(val));
+                } else {
+                    link.removeAttribute('href');
+                }
+            }
+            addrInput.addEventListener('input', update);
+            var runBtn = document.getElementById('run-query-btn');
+            if (runBtn) runBtn.addEventListener('click', update);
+            var presetMenu = document.getElementById('minima-addr-preset');
+            if (presetMenu) presetMenu.addEventListener('click', function(e) {
+                if (e.target.closest('.devtools-address-option')) setTimeout(update, 20);
+            });
+            window.__updateExplorerLink = update;
+            update();
+        })();
+
         /* --- Clear all locally saved addresses --- */
         (function() {
             var btn = document.getElementById('clear-saved-btn');
@@ -538,7 +576,7 @@
             btn.addEventListener('click', function() {
                 if (!confirm('Remove all locally saved addresses from this device?')) return;
                 try { localStorage.removeItem('stables_minima_holdings_saved_v1'); } catch(e) {}
-                /* repopulate the dropdown — reuse the function exposed by minima-holdings-query.js */
+                /* repopulate the dropdown  -  reuse the function exposed by minima-holdings-query.js */
                 if (typeof window.__repopulatePresets === 'function') window.__repopulatePresets();
                 else {
                     /* fallback: reload just the select */
@@ -574,7 +612,7 @@
             }
             window.setBlockBehind = setBlockBehind;
             function fmtDate(iso) {
-                if (!iso) return '—';
+                if (!iso) return ' - ';
                 try {
                     var d = new Date(iso);
                     return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
@@ -582,7 +620,7 @@
                 } catch(e) { return iso; }
             }
             function fmtSize(mb) {
-                if (mb == null) return '—';
+                if (mb == null) return ' - ';
                 return Number(mb).toFixed(1) + ' MB';
             }
             async function fetchArchiveMeta() {
@@ -592,17 +630,17 @@
                     var r = await fetch(url, { method: 'GET', signal: AbortSignal.timeout(8000), headers: { Accept: 'application/json' } });
                     if (!r.ok) throw new Error('HTTP ' + r.status);
                     var d = await r.json();
-                    setText('archive-latest-block', d.latest_block != null ? String(d.latest_block) : '—');
+                    setText('archive-latest-block', d.latest_block != null ? String(d.latest_block) : ' - ');
                     setText('archive-exported-at',  fmtDate(d.exported_at));
                     setText('archive-file-size',    fmtSize(d.file_size_mb));
-                    /* Pre-populate chart block info from archive meta — holdings query will update once run */
+                    /* Pre-populate chart block info from archive meta  -  holdings query will update once run */
                     var dbBlock = d.block_db != null ? d.block_db : d.latest_block;
                     var liveBlock = d.block_live != null ? d.block_live : dbBlock;
-                    setText('holdings-block-db',   dbBlock != null ? String(dbBlock) : '—');
-                    setText('holdings-block-live', liveBlock != null ? String(liveBlock) : '—');
+                    setText('holdings-block-db',   dbBlock != null ? String(dbBlock) : ' - ');
+                    setText('holdings-block-live', liveBlock != null ? String(liveBlock) : ' - ');
                     setBlockBehind(d.block_behind);
                 } catch(e) {
-                    /* silent — values stay at — (common when opened from file://) */
+                    /* silent  -  values stay at  -  (common when opened from file://) */
                 }
             }
             fetchArchiveMeta();
@@ -635,7 +673,7 @@
                         }
                     });
                     if (typeof window.__repopulatePresets === 'function') window.__repopulatePresets();
-                } catch(e) { /* file not yet in repo — silent */ }
+                } catch(e) { /* file not yet in repo  -  silent */ }
             }
             loadCommunityAddresses();
         })();

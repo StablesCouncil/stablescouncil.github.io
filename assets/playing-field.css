@@ -1,5 +1,5 @@
 /*
- * playing-field.css — The Playing Field long-form page only.
+ * playing-field.css  -  The Playing Field long-form page only.
  * Load after stables.css, site-chrome.css, site-rail.css.
  */
 
@@ -22,7 +22,7 @@ body.has-site-rail .lang-menu::-webkit-scrollbar {
 .playing-field-inner {
   width: 100%;
   padding-top: 0;
-  padding-bottom: 1.5rem;
+  padding-bottom: 0;
 }
 
 /* Nested title stack: center the block (inner is not a flex parent of main). */
