@@ -311,16 +311,18 @@
         @media (max-width: 768px) {
             section#hero {
                 padding-top: clamp(16px, 3.5vh, 28px);
-                padding-bottom: 0.5rem;
+                padding-bottom: clamp(16px, 3.5vh, 28px);
                 padding-left: clamp(10px, 3vw, 14px);
                 padding-right: clamp(10px, 3vw, 14px);
                 width: 100vw;
                 margin-left: calc(50% - 50vw);
                 margin-right: calc(50% - 50vw);
                 min-height: 100vh;
+                min-height: 100dvh; /* center within the visible viewport (accounts for the mobile address bar) */
                 display: flex;
+                flex-direction: column;
                 align-items: center;
-                justify-content: flex-start;
+                justify-content: center; /* vertically centre the hero content instead of riding the top */
             }
 
             section#hero > .container {

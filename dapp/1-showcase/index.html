@@ -58,7 +58,7 @@
             --lh-subtitle: 1.5;
             --fz-body: 15px;
             --lh-body: 1.55;
-            /* Welcome step 0 — showcase preview notice (amber, slightly above body) */
+            /* Welcome step 0  -  showcase preview notice (amber, slightly above body) */
             --fz-showcase-intro: calc(var(--fz-body) + 1px);
             --lh-showcase-intro: 1.55;
             --fz-caption: 13px;
@@ -471,6 +471,21 @@
 
         .topbar-channel-menu[hidden] {
             display: none;
+        }
+
+        .topbar-channel-truth {
+            margin: 8px 4px 2px;
+            padding: 9px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(103, 232, 249, .16);
+            background: rgba(103, 232, 249, .06);
+            font-size: 11px;
+            line-height: 1.45;
+            color: var(--m);
+        }
+
+        .topbar-channel-truth strong {
+            color: var(--t);
         }
 
         .topbar-channel-option {
@@ -1030,7 +1045,7 @@
             justify-content: space-between
         }
 
-        /* On/Off Ramp — At a glance diagram (tap step to scroll to detail row) */
+        /* On/Off Ramp  -  At a glance diagram (tap step to scroll to detail row) */
         .ramp-diagram-step {
             flex: 1;
             min-width: 0;
@@ -1070,7 +1085,7 @@
             color: var(--pu);
         }
 
-        /* On/Off Ramp — circular diagram (single fiat / Stables; top = on-ramp, bottom = off-ramp) */
+        /* On/Off Ramp  -  circular diagram (single fiat / Stables; top = on-ramp, bottom = off-ramp) */
         .ramp-circle-stage {
             position: relative;
             width: 100%;
@@ -2529,7 +2544,7 @@
         }
 
         /*
-         * Welcome modal — showcase preview notice (step 0). Standard format for this copy:
+         * Welcome modal  -  showcase preview notice (step 0). Standard format for this copy:
          * slightly larger than body, amber (#fbbf24, same family as Vault-key safety cards).
          */
         .welcome-modal-showcase-intro {
@@ -3885,7 +3900,7 @@
             min-height: 200px;
         }
 
-        /* Agent micro affordance (official icon only) — sits in .stitle-row beside the section title */
+        /* Agent micro affordance (official icon only)  -  sits in .stitle-row beside the section title */
         .agent-mini-btn {
             position: static;
             width: 34px;
@@ -4107,7 +4122,7 @@
             onclick="toggleTopbarChannelMenu(event)" aria-haspopup="menu" aria-expanded="false"
             title="Switch between Showcase and Demo">
             <span class="test-pill-title" id="topbarShowcasePillTitle">Showcase</span>
-            <span class="test-pill-sub" id="topbarShowcasePillSub">v00.00.00.00.03</span>
+            <span class="test-pill-sub" id="topbarShowcasePillSub">v0.0.0.0.3</span>
             <span class="test-pill-caret" aria-hidden="true">▾</span>
         </button>
         <div class="topbar-channel-menu" id="topbarChannelMenu" role="menu" hidden>
@@ -4121,9 +4136,13 @@
                 <span class="topbar-channel-option-title">Demo</span>
                 <span class="topbar-channel-option-sub">Node-linked MINIMA flows plus demo-only Winiwa and Wables</span>
             </button>
+            <div class="topbar-channel-truth">
+                <strong>Channel truth:</strong> Showcase is synthetic. Demo uses your node only where the UI says native
+                MINIMA and live wallet paths; Winiwa, Wables, and other Stables balances are illustrative and not on the blockchain.
+            </div>
         </div>
     </div>
-    <!-- Column 3: single pill — status dot + block height (or connect / MDS state); tap opens Connect -->
+    <!-- Column 3: single pill  -  status dot + block height (or connect / MDS state); tap opens Connect -->
     <div class="topbar-node-cluster">
         <button type="button" class="sync-pill sync-pill--placeholder stables-node-cluster-pill" id="stablesSyncPill"
             onclick="openStablesNodeConnectModal()"
@@ -4521,7 +4540,7 @@
                 <div class="cp-card app-section-card">
                     <div style="background:rgba(16,24,38,.5);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:14px;margin-bottom:12px">
                         <div class="xs mu" style="font-weight:800;margin-bottom:6px">Portfolio summary</div>
-                        <p class="xs mu" style="margin:0 0 12px;line-height:1.5;color:var(--m)">Wallet and fund positions. Values are approximate, in your principal currency (<strong style="color:var(--t)" id="investSummaryBaseLabel">—</strong>). Liquidity fund deposits are demo-only until positions are tracked on-chain.</p>
+                        <p class="xs mu" style="margin:0 0 12px;line-height:1.5;color:var(--m)">Wallet and fund positions. Values are approximate, in your principal currency (<strong style="color:var(--t)" id="investSummaryBaseLabel"> - </strong>). Liquidity fund deposits are demo-only until positions are tracked on-chain.</p>
                         <div style="overflow-x:auto">
                             <table style="width:100%;border-collapse:collapse;font-size:13px;color:var(--m)">
                                 <thead>
@@ -4587,7 +4606,7 @@
                         </div>
                         <div class="fbet xs mu" style="margin-bottom:8px">
                             <span>Daily detail (within last 30 days)</span>
-                            <span id="cfDayLabel">—</span>
+                            <span id="cfDayLabel"> - </span>
                         </div>
                         <div class="fbet xs mu" style="margin-bottom:8px;gap:12px;flex-wrap:wrap">
                             <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:rgba(103,232,249,.9);margin-right:6px;vertical-align:middle"></span>Fees</span>
@@ -4606,7 +4625,7 @@
                     </div>
                     <div style="background:rgba(16,24,38,.5);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:14px;margin-bottom:12px">
                         <div class="xs mu" style="font-weight:800;margin-bottom:6px">Historical performance</div>
-                        <p class="xs mu" style="margin:0 0 12px;line-height:1.5;color:var(--m)"><strong style="color:var(--t)">Full historical evolution</strong> (demo): weekly buckets over about 18 months — wider context than the last-30-days view above. No scrubber; the series runs from past to present left to right.</p>
+                        <p class="xs mu" style="margin:0 0 12px;line-height:1.5;color:var(--m)"><strong style="color:var(--t)">Full historical evolution</strong> (demo): weekly buckets over about 18 months  -  wider context than the last-30-days view above. No scrubber; the series runs from past to present left to right.</p>
                         <div class="fbet xs mu" style="margin-bottom:8px;gap:12px;flex-wrap:wrap">
                             <span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:rgba(103,232,249,.9);margin-right:6px;vertical-align:middle"></span>Fees</span>
                             <span><span style="display:inline-block;width:14px;height:0;border-top:2px solid rgba(230,237,243,.85);margin-right:6px;vertical-align:middle"></span>Funds asset</span>
@@ -4616,7 +4635,7 @@
                             <div id="cfHistChart" style="display:flex;align-items:flex-end;justify-content:space-between;height:100%;gap:1px;position:relative;z-index:1"></div>
                             <svg id="cfHistNavOverlay" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:2;overflow:visible"></svg>
                         </div>
-                        <div class="xs mu" style="margin-top:6px;line-height:1.4;color:var(--m)" id="cfHistFoot">—</div>
+                        <div class="xs mu" style="margin-top:6px;line-height:1.4;color:var(--m)" id="cfHistFoot"> - </div>
                     </div>
                     <div style="background:rgba(16,24,38,.5);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:12px;margin-bottom:12px">
                         <div class="xs mu" style="font-weight:800;margin-bottom:8px">Fund composition</div>
@@ -4645,7 +4664,7 @@
                                 <div class="ex-ccy-dd__panel" id="cfAssetCcyVaultDdPanel" role="listbox" aria-labelledby="cfAssetCcyVaultDdBtn" hidden></div>
                             </div>
                         </div>
-                        <div class="xs mu" id="cfDepositAvail" style="margin-bottom:6px;color:var(--m)">Available: —</div>
+                        <div class="xs mu" id="cfDepositAvail" style="margin-bottom:6px;color:var(--m)">Available:  - </div>
                         <div class="fbet" style="gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
                             <input class="finput" id="cfAmount" type="number" min="0" step="0.01" placeholder="Amount" style="min-width:0;flex:1">
                             <button type="button" class="btn btn-g" style="height:42px;min-width:72px;padding:0 12px;font-size:11px;font-weight:800"
@@ -4969,7 +4988,7 @@
                                         <div class="mu">Available Wables</div>
                                         <div id="availWablesBurn">&mdash;</div>
                                     </div>
-                                    <div class="xs mu" id="reclaimSelAvail" style="margin-bottom:6px;color:var(--m)">Available: —</div>
+                                    <div class="xs mu" id="reclaimSelAvail" style="margin-bottom:6px;color:var(--m)">Available:  - </div>
                                     <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center">
                                         <input class="finput" type="text" id="reclaimAmt" placeholder="0.00"
                                             oninput="calcReclaim()" inputmode="decimal" autocomplete="off" style="min-width:0">
@@ -5038,7 +5057,7 @@
                     Send
                 </div>
                 <div class="fbet xs mu" style="margin-bottom:6px;align-items:center">
-                    <span id="exSendAvailLine" style="color:var(--m)">Available: —</span>
+                    <span id="exSendAvailLine" style="color:var(--m)">Available:  - </span>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center">
                     <input class="ex-input" type="number" id="exFrom" value="" placeholder="0" oninput="calcRate()"
@@ -5065,7 +5084,7 @@
                     Receive
                 </div>
                 <div class="fbet xs mu" style="margin-bottom:6px;align-items:center">
-                    <span id="exRecvAvailLine" style="color:var(--m)">Balance: —</span>
+                    <span id="exRecvAvailLine" style="color:var(--m)">Balance:  - </span>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
                     <input class="ex-input" type="number" id="exTo" value="" readonly placeholder="0"
@@ -5220,7 +5239,7 @@
             </div>
         </div>
 
-        <!-- AMBASSADOR (More → Merchants & Exchange) — aligned with stablescouncil.org/ambassadorsprogramdesc.html -->
+        <!-- AMBASSADOR (More → Merchants & Exchange)  -  aligned with stablescouncil.org/ambassadorsprogramdesc.html -->
         <div class="page" id="page-ambassador">
             <header class="app-page-header">
                 <div class="dic" aria-hidden="true">&#x1F91D;</div>
@@ -5242,35 +5261,35 @@
                 <div class="card app-section-card" style="padding:18px 16px">
                     <p class="sec-body" style="margin:0 0 14px;line-height:1.55">
                         The <strong style="color:var(--t)">Ambassador program</strong> is a fair, global layer that helps merchants join the Stables directory and grow spending.
-                        <strong style="color:var(--c)">Permissionless entry:</strong> no gatekeeper—once you register in the protocol you can act as an Ambassador.
+                        <strong style="color:var(--c)">Permissionless entry:</strong> no gatekeeper - once you register in the protocol you can act as an Ambassador.
                         Ambassadors are the human layer for onboarding, support, and quality listings (see the
             <a href="/ambassadorsprogramdesc.html" target="_blank" rel="noopener noreferrer" style="color:var(--c);font-weight:800;text-decoration:underline">full specification</a>).
                     </p>
                     <p class="sec-body" style="margin:0 0 12px;line-height:1.55;color:var(--m)">
                         <strong style="color:var(--c)">Fees (Big Mac® index, ~12‑month listing):</strong>
                         <strong style="color:var(--t)">16 BM</strong> universal anchor if you list independently (goes to Council Treasury).
-                        <strong style="color:var(--t)">15 BM</strong> if you are mentored in—<strong style="color:var(--t)">1 BM</strong> discount vs self-serve.
+                        <strong style="color:var(--t)">15 BM</strong> if you are mentored in - <strong style="color:var(--t)">1 BM</strong> discount vs self-serve.
                     </p>
                     <p class="sec-body" style="margin:0 0 12px;line-height:1.55;color:var(--m)">
                         <strong style="color:var(--c)">On a mentored onboarding (15 BM):</strong> the <strong style="color:var(--t)">Direct Ambassador</strong> earns
                         <strong style="color:var(--t)">8 BM</strong>. The <strong style="color:var(--t)">Council</strong> receives
-                        <strong style="color:var(--t)">6 BM</strong> (or <strong style="color:var(--t)">7 BM</strong> if the Ambassador has no mentor—the extra BM stays with Treasury).
+                        <strong style="color:var(--t)">6 BM</strong> (or <strong style="color:var(--t)">7 BM</strong> if the Ambassador has no mentor - the extra BM stays with Treasury).
                         If the Ambassador was mentored, the <strong style="color:var(--t)">Mentor</strong> earns <strong style="color:var(--t)">1 BM</strong>.
                     </p>
                     <p class="sec-body" style="margin:0 0 14px;line-height:1.55;color:var(--m)">
-                        <strong style="color:var(--c)">Shield principle:</strong> it is always cheaper for a merchant to use an Ambassador (15 vs 16 BM) and economically irrational to “self-capture” rewards in ways that bypass the protocol’s mentorship rules—see scenarios in the spec.
+                        <strong style="color:var(--c)">Shield principle:</strong> it is always cheaper for a merchant to use an Ambassador (15 vs 16 BM) and economically irrational to “self-capture” rewards in ways that bypass the protocol’s mentorship rules - see scenarios in the spec.
                     </p>
                     <p class="sec-body" style="margin:0 0 14px;line-height:1.55;color:var(--m)">
-                        The program also covers <strong style="color:var(--t)">renewals</strong>, <strong style="color:var(--t)">hub tools</strong>, <strong style="color:var(--t)">campaigns</strong>, and <strong style="color:var(--t)">reviews</strong> tied to real spend—governance and implementation evolve with the community.
+                        The program also covers <strong style="color:var(--t)">renewals</strong>, <strong style="color:var(--t)">hub tools</strong>, <strong style="color:var(--t)">campaigns</strong>, and <strong style="color:var(--t)">reviews</strong> tied to real spend - governance and implementation evolve with the community.
                     </p>
                     <div class="buttons" style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
             <a class="btn btn-w btn-primary" href="/ambassadorsprogramdesc.html" target="_blank" rel="noopener noreferrer"
                             style="text-align:center;text-decoration:none;box-sizing:border-box">Full specification (web)</a>
                         <a class="btn btn-w btn-secondary" href="https://t.me/stablescommunity/358" target="_blank" rel="noopener noreferrer"
-                            style="text-align:center;text-decoration:none;box-sizing:border-box">Ambassador topic — Telegram</a>
+                            style="text-align:center;text-decoration:none;box-sizing:border-box">Ambassador topic  -  Telegram</a>
                     </div>
                     <button type="button" class="btn btn-w btn-g" disabled style="width:100%;margin-top:14px;cursor:not-allowed;opacity:.72"
-                        aria-disabled="true" title="Sign-up flow not live yet">Become an ambassador — coming soon</button>
+                        aria-disabled="true" title="Sign-up flow not live yet">Become an ambassador  -  coming soon</button>
                 </div>
             </div>
         </div>
@@ -5288,7 +5307,7 @@
             <div id="myShopRoleNotice" class="card app-section-card" style="padding:14px 16px;margin-bottom:12px;display:none;background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.28)">
                 <div class="xs mu" style="line-height:1.55;color:var(--am)">
                     <strong style="color:var(--t)">My shop</strong> is locked. Go to <strong style="color:var(--t)">Settings → Appearance &amp; behaviour</strong> and turn <strong style="color:var(--t)">Merchant</strong> on.
-                    Your wallet stays a normal Participant account—this toggle only unlocks shop tools in More → My shop. Browse shops and <strong style="color:var(--t)">Promotions</strong> on the <strong style="color:var(--t)">Merchants</strong> tab.
+                    Your wallet stays a normal Participant account - this toggle only unlocks shop tools in More → My shop. Browse shops and <strong style="color:var(--t)">Promotions</strong> on the <strong style="color:var(--t)">Merchants</strong> tab.
                 </div>
             </div>
             <div id="myShopMerchantBody">
@@ -5304,7 +5323,7 @@
                 </div>
                 <div class="card app-section-card" style="padding:16px">
                     <p class="xs mu" style="margin:0 0 14px;line-height:1.55;color:var(--m)">
-                        Draft a promotion for your shop. Production will use Council rules, budgets, and on-chain or indexed settlement—this build keeps a local preview only.
+                        Draft a promotion for your shop. Production will use Council rules, budgets, and on-chain or indexed settlement - this build keeps a local preview only.
                     </p>
                     <label class="flabel" for="merchantCampaignTitle">Campaign title</label>
                     <input class="finput" id="merchantCampaignTitle" placeholder="e.g. Spring lunch menu" style="margin-bottom:10px">
@@ -5335,7 +5354,7 @@
                     <p class="sec-body" style="margin:0 0 14px;line-height:1.55;color:var(--m)">
                         <strong style="color:var(--c)">Need help getting listed?</strong> Work with
                         <strong style="color:var(--t)">Ambassadors</strong> in <strong style="color:var(--t)">your
-                            region</strong>—open <strong style="color:var(--t)">Ambassadors</strong> under
+                            region</strong> - open <strong style="color:var(--t)">Ambassadors</strong> under
                         <strong style="color:var(--t)">Merchants &amp; Exchange</strong> in More so a local onboarding contact
                         can guide you.
                     </p>
@@ -5417,7 +5436,7 @@
                         <strong style="color:var(--t)">receive address</strong>, <strong style="color:var(--t)">amount</strong>,
                         <strong style="color:var(--t)">currency</strong>, and an <strong style="color:var(--t)">order or
                             invoice reference</strong>. Scanning or opening the link starts (or deep-links) the Stables
-                        MiniDapp so the payer confirms in one flow—mirroring what you build in
+                        MiniDapp so the payer confirms in one flow - mirroring what you build in
                         <strong style="color:var(--t)">Create Invoice</strong>.
                     </p>
                     <div
@@ -5491,7 +5510,7 @@
                         is an <strong style="color:var(--t)">HTTPS endpoint you host</strong> that Stables (or a Council
                         notifier) can <strong style="color:var(--t)">POST</strong> to when a payment is
                         <strong style="color:var(--t)">confirmed</strong>, so your webshop can mark an order paid, send email,
-                        or restock—without polling the chain. The same idea is often called a
+                        or restock - without polling the chain. The same idea is often called a
                         <strong style="color:var(--t)">callback URL</strong> or <strong style="color:var(--t)">IPN</strong>
                         (instant payment notification) in other gateways.
                     </p>
@@ -5499,7 +5518,7 @@
                         You will register the URL in merchant settings, verify signatures with a <strong style="color:var(--t)">shared secret</strong> or public key, and respond quickly with <code style="font-size:11px">200 OK</code>.
                         Exact payload and headers will ship with the API kit.
                     </p>
-                    <label class="flabel" for="merchantWebhookPreview">Webhook URL (preview — not saved)</label>
+                    <label class="flabel" for="merchantWebhookPreview">Webhook URL (preview  -  not saved)</label>
                     <input class="finput" id="merchantWebhookPreview" readonly
                         value="https://your-store.example/stables/payment-notify"
                         style="margin-bottom:10px;font-size:12px;opacity:.95;cursor:default">
@@ -5560,7 +5579,7 @@
                         <div class="merchant-promo-card" data-promo-my="1"
                             style="padding:14px;border-radius:16px;border:1px solid rgba(167,139,250,.22);background:rgba(11,15,20,.5)">
                             <div style="font-size:11px;font-weight:800;color:var(--pu, #a78bfa);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Spotlight</div>
-                            <div class="sec-body" style="margin:0 0 6px;font-weight:800;color:var(--t)">New fiction table — pay with Wables</div>
+                            <div class="sec-body" style="margin:0 0 6px;font-weight:800;color:var(--t)">New fiction table  -  pay with Wables</div>
                             <div class="xs mu" style="margin:0 0 10px;line-height:1.45">Open Pages Bookshop · London</div>
                             <button type="button" class="btn btn-w" style="width:100%;min-height:48px"
                                 onclick="openShopProfile('Open Pages Bookshop')">View merchant</button>
@@ -5995,33 +6014,33 @@
                     </p>
                     <div class="xs mu" style="font-weight:800;margin:0 0 8px;color:var(--t)">Domains &amp; sites</div>
                     <ul style="margin:0 0 14px;padding-left:1.15em;line-height:1.55;font-size:13px;color:var(--m)">
-        <li><a href="/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.org</a> — public site · By Stables on Minima</li>
-                        <li><a href="https://stablescouncil.github.io/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.github.io</a> — GitHub Pages presentation &amp; resources</li>
-                        <li><a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer" style="color:var(--c)">agent.stablescouncil.org</a> — StablesAgent web chat</li>
+        <li><a href="/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.org</a>  -  public site · By Stables on Minima</li>
+                        <li><a href="https://stablescouncil.github.io/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.github.io</a>  -  GitHub Pages presentation &amp; resources</li>
+                        <li><a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer" style="color:var(--c)">agent.stablescouncil.org</a>  -  StablesAgent web chat</li>
                     </ul>
                     <div class="xs mu" style="font-weight:800;margin:0 0 8px;color:var(--t)">Code &amp; email</div>
                     <ul style="margin:0 0 14px;padding-left:1.15em;line-height:1.55;font-size:13px;color:var(--m)">
-                        <li><a href="https://github.com/StablesCouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">github.com/StablesCouncil</a> — public organisation</li>
-                        <li><a href="https://github.com/StablesCouncilExec" target="_blank" rel="noopener noreferrer" style="color:var(--c)">github.com/StablesCouncilExec</a> — Council admin account</li>
+                        <li><a href="https://github.com/StablesCouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">github.com/StablesCouncil</a>  -  public organisation</li>
+                        <li><a href="https://github.com/StablesCouncilExec" target="_blank" rel="noopener noreferrer" style="color:var(--c)">github.com/StablesCouncilExec</a>  -  Council admin account</li>
                         <li><a href="mailto:StablesCouncil@protonmail.com" style="color:var(--c)">StablesCouncil@protonmail.com</a></li>
                         <li><a href="mailto:StablesCouncil@gmail.com" style="color:var(--c)">StablesCouncil@gmail.com</a></li>
                     </ul>
                     <div class="xs mu" style="font-weight:800;margin:0 0 8px;color:var(--t)">Social &amp; community (handles)</div>
                     <ul style="margin:0;padding-left:1.15em;line-height:1.55;font-size:13px;color:var(--m)">
-                        <li><a href="https://discord.gg/rTdqwRGPXR" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Discord — Stables server</a></li>
-                        <li><a href="https://www.facebook.com/groups/stablescommunity" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Facebook — Stables Community group</a></li>
-                        <li><a href="https://www.facebook.com/share/16nCLsLHkg/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Facebook — Stables official page</a></li>
-                        <li><a href="https://www.instagram.com/stablescouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Instagram — @stablescouncil</a></li>
-                        <li><a href="https://www.moltbook.com/u/stablesagent" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Moltbook — u/stablesagent</a> (StablesAgent)</li>
-                        <li><a href="https://rumble.com/user/stablescouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Rumble — @stablescouncil</a></li>
-                        <li><a href="https://t.me/StablesAgentBot" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Telegram — @StablesAgentBot</a></li>
-                        <li><a href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Telegram — @stablescommunity</a> (community)</li>
-                        <li><a href="https://t.me/StablesCouncilOfficial" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Telegram — StablesCouncilOfficial</a> (announcements)</li>
-                        <li><a href="https://t.me/StablesSecuritySupport" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Telegram — StablesSecuritySupport</a> (Vault key / security)</li>
-                        <li><a href="https://www.tiktok.com/@stablescouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">TikTok — @stablescouncil</a></li>
-                        <li><a href="https://www.twitch.tv/stablescouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Twitch — stablescouncil</a></li>
-                        <li><a href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">X / Twitter — @StablesCouncil</a></li>
-                        <li><a href="https://www.youtube.com/@StablesCouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">YouTube — @StablesCouncil</a></li>
+                        <li><a href="https://discord.gg/rTdqwRGPXR" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Discord  -  Stables server</a></li>
+                        <li><a href="https://www.facebook.com/groups/stablescommunity" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Facebook  -  Stables Community group</a></li>
+                        <li><a href="https://www.facebook.com/share/16nCLsLHkg/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Facebook  -  Stables official page</a></li>
+                        <li><a href="https://www.instagram.com/stablescouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Instagram  -  @stablescouncil</a></li>
+                        <li><a href="https://www.moltbook.com/u/stablesagent" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Moltbook  -  u/stablesagent</a> (StablesAgent)</li>
+                        <li><a href="https://rumble.com/user/stablescouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Rumble  -  @stablescouncil</a></li>
+                        <li><a href="https://t.me/StablesAgentBot" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Telegram  -  @StablesAgentBot</a></li>
+                        <li><a href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Telegram  -  @stablescommunity</a> (community)</li>
+                        <li><a href="https://t.me/StablesCouncilOfficial" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Telegram  -  StablesCouncilOfficial</a> (announcements)</li>
+                        <li><a href="https://t.me/StablesSecuritySupport" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Telegram  -  StablesSecuritySupport</a> (Vault key / security)</li>
+                        <li><a href="https://www.tiktok.com/@stablescouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">TikTok  -  @stablescouncil</a></li>
+                        <li><a href="https://www.twitch.tv/stablescouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Twitch  -  stablescouncil</a></li>
+                        <li><a href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">X / Twitter  -  @StablesCouncil</a></li>
+                        <li><a href="https://www.youtube.com/@StablesCouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">YouTube  -  @StablesCouncil</a></li>
                     </ul>
                 </div>
             </div>
@@ -6541,7 +6560,7 @@
                             <span style="opacity:.55">→</span>
                             <span id="minimaPriceSim">-</span>
                         </div>
-                        <div id="winiwaSpotPriceSource" class="xs mu" style="margin-top:6px;color:var(--m)">—</div>
+                        <div id="winiwaSpotPriceSource" class="xs mu" style="margin-top:6px;color:var(--m)"> - </div>
                     </div>
                     <div class="xs mu" style="margin-bottom:8px;font-weight:800;color:var(--m)">Price change (slider)</div>
                     <div class="treasury-slider-price-row" aria-hidden="false">
@@ -6757,7 +6776,7 @@
                     Release notes and new prototype drops will show up here as we ship. For now, use the link below to download the latest Stables MiniDapp package for my Minima node (MDS zip on GitHub).
                 </div>
                 <a id="settingsMdsZipLink" class="btn btn-w" style="flex:1;min-width:220px;font-size:14px;font-weight:900;display:block;text-align:center;width:100%;text-decoration:none;box-sizing:border-box"
-                    href="#" target="_blank" rel="noopener">Download Stables_v0.01.01.mds.zip</a>
+                    href="#" target="_blank" rel="noopener">Download Stables_v0.0.0.0.3.mds.zip</a>
                 <div class="xs mu" id="settingsMdsZipUrlLabel" style="margin-top:10px;word-break:break-all;line-height:1.45;opacity:.9"></div>
             </div>
             </div>
@@ -7157,8 +7176,8 @@
                         <code style="font-size:12px">COINGECKO_MINIMA_URL</code>).
                     </p>
                     <ul style="margin:0 0 14px;padding-left:1.15em;line-height:1.55;font-size:13px;color:var(--m)">
-                        <li><a href="https://api.mexc.com/api/v3/ticker/24hr?symbol=MINIMAUSDT" target="_blank" rel="noopener noreferrer" style="color:var(--c)">MEXC — MINIMA/USDT 24h ticker (example)</a></li>
-                        <li><a href="https://api.coingecko.com/api/v3/simple/price?ids=minima&amp;vs_currencies=usd" target="_blank" rel="noopener noreferrer" style="color:var(--c)">CoinGecko — MINIMA in USD (example)</a></li>
+                        <li><a href="https://api.mexc.com/api/v3/ticker/24hr?symbol=MINIMAUSDT" target="_blank" rel="noopener noreferrer" style="color:var(--c)">MEXC  -  MINIMA/USDT 24h ticker (example)</a></li>
+                        <li><a href="https://api.coingecko.com/api/v3/simple/price?ids=minima&amp;vs_currencies=usd" target="_blank" rel="noopener noreferrer" style="color:var(--c)">CoinGecko  -  MINIMA in USD (example)</a></li>
                     </ul>
                     <div class="xs mu" style="font-weight:800;margin:0 0 6px;color:var(--t)">Wables (synthetic stables in this demo)</div>
                     <p class="sec-body" style="margin:0;line-height:1.55;color:var(--m)">
@@ -7235,7 +7254,7 @@
                 <div class="cb">
                     <label class="flabel">Amount</label>
                     <div class="fbet xs mu" style="margin-bottom:6px;align-items:center">
-                        <span id="invAvailLine" style="color:var(--m)">Available: —</span>
+                        <span id="invAvailLine" style="color:var(--m)">Available:  - </span>
                         <button type="button" class="btn btn-g" style="width:auto;padding:6px 12px;font-size:11px;font-weight:800"
                             onclick="setInvAmtMax()">MAX</button>
                     </div>
@@ -7582,7 +7601,7 @@
             <div id="sendContactChips" style="display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 12px 0"></div>
             <label class="flabel">Amount</label>
             <div class="fbet xs mu" style="margin-bottom:6px;align-items:center">
-                <span id="sendAvailLine" style="color:var(--m)">Available: —</span>
+                <span id="sendAvailLine" style="color:var(--m)">Available:  - </span>
                 <button type="button" class="btn btn-g" style="width:auto;padding:6px 12px;font-size:11px;font-weight:800"
                     onclick="setSendAmtMax()">MAX</button>
             </div>
@@ -7600,7 +7619,7 @@
                     <div class="ex-ccy-dd__panel" id="sendCcyVaultDdPanel" role="listbox" aria-labelledby="sendCcyVaultDdBtn" hidden></div>
                 </div>
             </div>
-            <div class="xs mu" id="sendFavEq" style="margin:-6px 0 14px 0;color:var(--m)">—</div>
+            <div class="xs mu" id="sendFavEq" style="margin:-6px 0 14px 0;color:var(--m)"> - </div>
             <div class="hint" style="margin-bottom:14px">On-chain <strong style="color:var(--t)">Minima</strong> uses your node&apos;s normal fees. <strong style="color:var(--t)">Winiwa</strong> send is showcase-only. Other stables stay demo unless noted.</div>
             <button type="button" class="btn btn-w btn-lg"
                 onclick="stablesConfirmSendFromModal()">Confirm Send</button>
@@ -7617,7 +7636,7 @@
             </div>
             <div class="msub">Personal receive request (address + optional amount). For <strong style="color:var(--t)">native MINIMA</strong>, pick <strong style="color:var(--t)">Minima</strong> here when <strong style="color:var(--t)">Node live</strong>; other currencies show a <strong style="color:var(--t)">showcase Mx</strong> that is not a real on-chain receive address.</div>
             <div class="fbet xs mu" style="margin-bottom:6px;align-items:center">
-                <span id="recvAvailLine" style="color:var(--m)">Available: —</span>
+                <span id="recvAvailLine" style="color:var(--m)">Available:  - </span>
                 <button type="button" class="btn btn-g" style="width:auto;padding:6px 12px;font-size:11px;font-weight:800"
                     onclick="setRecvReqAmtMax()">MAX</button>
             </div>
@@ -7636,7 +7655,7 @@
                     <div class="ex-ccy-dd__panel" id="reqCcyVaultDdPanel" role="listbox" aria-labelledby="reqCcyVaultDdBtn" hidden></div>
                 </div>
             </div>
-            <div class="xs mu" id="recvFavEq" style="margin:-4px 0 10px 0;color:var(--m)">—</div>
+            <div class="xs mu" id="recvFavEq" style="margin:-4px 0 10px 0;color:var(--m)"> - </div>
             <label class="flabel">Sender (optional)</label>
             <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:10px">
                 <input class="finput" id="reqFromInput" placeholder="Name or account ID..." style="min-width:0;margin-bottom:0">
@@ -8830,7 +8849,7 @@
             const buildVersion = window.STABLES_CONFIG && window.STABLES_CONFIG.APP_BUILD_VERSION;
             const link = document.getElementById('settingsMdsZipLink');
             const label = document.getElementById('settingsMdsZipUrlLabel');
-            const zipLabel = buildVersion ? ('Download Stables_v' + String(buildVersion).trim() + '.mds.zip') : 'Download Stables package (.mds.zip)';
+            const zipLabel = buildVersion ? ('Download Stables_' + stablesFormatDisplayVersion(buildVersion) + '.mds.zip') : 'Download Stables package (.mds.zip)';
             if (link) {
                 link.textContent = zipLabel;
                 if (url) {
@@ -8845,9 +8864,9 @@
                     };
                 }
             }
-            if (label) label.textContent = buildVersion ? `App version: ${buildVersion}` : '';
+            if (label) label.textContent = buildVersion ? `App version: ${stablesFormatDisplayVersion(buildVersion)}` : '';
             const hint = document.getElementById('settingsAppVersionHint');
-            if (hint) hint.textContent = buildVersion ? `App version: ${buildVersion}` : '';
+            if (hint) hint.textContent = buildVersion ? `App version: ${stablesFormatDisplayVersion(buildVersion)}` : '';
             const showcasePill = document.getElementById('topbarShowcasePill');
             if (showcasePill && buildVersion) {
                 const stageRaw = window.STABLES_CONFIG && window.STABLES_CONFIG.APP_STAGE;
@@ -9471,7 +9490,7 @@
 
         function fmtCfMMDDYYYY(d) {
             const x = d instanceof Date ? d : new Date(d);
-            if (Number.isNaN(x.getTime())) return '—';
+            if (Number.isNaN(x.getTime())) return ' - ';
             const mm = String(x.getMonth() + 1).padStart(2, '0');
             const dd = String(x.getDate()).padStart(2, '0');
             const yyyy = x.getFullYear();
@@ -9532,7 +9551,7 @@
                 } else {
                     sel.innerHTML = codes.map((c) => {
                         const b = getCfAssetBalance(c);
-                        return `<option value="${c}">${c} — ${fmtCfWalletQty(b, c)}</option>`;
+                        return `<option value="${c}">${c}  -  ${fmtCfWalletQty(b, c)}</option>`;
                     }).join('');
                     sel.value = prev;
                 }
@@ -11569,12 +11588,12 @@
             const outEl = document.getElementById('sendFavEq');
             if (!amtEl || !ccyEl || !outEl) return;
             const amount = parseFloat(String(amtEl.value || '').replace(/,/g, '')) || 0;
-            if (!(amount > 0)) { outEl.textContent = '—'; return; }
+            if (!(amount > 0)) { outEl.textContent = ' - '; return; }
             const base = (typeof BASE_CCY !== 'undefined' && BASE_CCY) ? BASE_CCY : 'USDw';
             const ccyCode = typeof walletParseCcySel === 'function' ? walletParseCcySel('sendCcy') : String(ccyEl.value || '').split(/\s+/)[0].trim();
             const eq = convertFromCcyToBaseEq(amount, ccyCode, base);
             const baseKey = ratesKeyForCcy(base);
-            if (!Number.isFinite(eq)) { outEl.textContent = '—'; return; }
+            if (!Number.isFinite(eq)) { outEl.textContent = ' - '; return; }
             const dec = decimalsForCcyForUI(baseKey);
             outEl.textContent = `≈ ${eq.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec })} ${displayCcyCodeForUI(baseKey)}`;
             if (typeof updateSendAvailLine === 'function') updateSendAvailLine();
@@ -11586,13 +11605,13 @@
             const outEl = document.getElementById('recvFavEq');
             if (!amtEl || !ccyEl || !outEl) return;
             const amount = parseFloat(String(amtEl.value || '').replace(/,/g, '')) || 0;
-            if (!(amount > 0)) { outEl.textContent = '—'; }
+            if (!(amount > 0)) { outEl.textContent = ' - '; }
             else {
                 const base = (typeof BASE_CCY !== 'undefined' && BASE_CCY) ? BASE_CCY : 'USDw';
                 const ccyCode = typeof walletParseCcySel === 'function' ? walletParseCcySel('reqCcy') : String(ccyEl.value || '').split(/\s+/)[0].trim();
                 const eq = convertFromCcyToBaseEq(amount, ccyCode, base);
                 const baseKey = ratesKeyForCcy(base);
-                if (!Number.isFinite(eq)) { outEl.textContent = '—'; }
+                if (!Number.isFinite(eq)) { outEl.textContent = ' - '; }
                 else {
                     const dec = decimalsForCcyForUI(baseKey);
                     outEl.textContent = `≈ ${eq.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec })} ${displayCcyCodeForUI(baseKey)}`;
@@ -11848,7 +11867,7 @@
             }
         }
 
-        // Mint: xWiniwa chart — Winiwa USD, xWiniwa USD (Winiwa×leverage), Leverage (right axis, CR-derived); CoinGecko minima ~365d as Winiwa spot
+        // Mint: xWiniwa chart  -  Winiwa USD, xWiniwa USD (Winiwa×leverage), Leverage (right axis, CR-derived); CoinGecko minima ~365d as Winiwa spot
         const XWM_LEVERAGE_CHART_URL = 'https://api.coingecko.com/api/v3/coins/minima/market_chart?vs_currency=usd&days=365';
         let _xwmLeverageChartDone = false;
         let _xwmLeverageChartPromise = null;
@@ -12730,7 +12749,7 @@
             });
         }
 
-        /** mds.js sets mainhost = https:// + DEBUG_HOST + : + DEBUG_PORT + /mdscommand_/ — host must be hostname/IP only. */
+        /** mds.js sets mainhost = https:// + DEBUG_HOST + : + DEBUG_PORT + /mdscommand_/  -  host must be hostname/IP only. */
         function stablesNormalizeMdsHostAndPort(hostRaw, portRaw) {
             let h = String(hostRaw == null ? '' : hostRaw).trim();
             let p = parseInt(String(portRaw == null ? '9003' : portRaw), 10);
@@ -13224,7 +13243,7 @@
                 id: 'ttx-001',
                 date: '2026-03-22 09:41',
                 txId: '0x8f2a1c9d4e7b003344556677889900aabbccddeeff00112233445566778899',
-                title: 'Ambassador listing fee — treasury share',
+                title: 'Ambassador listing fee  -  treasury share',
                 explanation: 'When a new ambassador is listed, half of the listing fee is sent to the Council treasury by protocol rules. No manual note is required.',
                 source: 'auto',
                 councilNote: '',
@@ -13236,7 +13255,7 @@
                 id: 'ttx-002',
                 date: '2026-03-21 16:05',
                 txId: '0x7e1b0b8c3d6a0022334455667788990011223344556677889900aabbccddee',
-                title: 'Mint corridor — backing top-up',
+                title: 'Mint corridor  -  backing top-up',
                 explanation: 'Automatic movement when circulating Stables increased and the vault added Winiwa backing to keep coverage inside policy.',
                 source: 'auto',
                 councilNote: '',
@@ -13248,7 +13267,7 @@
                 id: 'ttx-003',
                 date: '2026-03-18 11:20',
                 txId: '0x6d0a9a7b2c5d11223344556677889900112233445566778899aabbccddeeff',
-                title: 'Legal counsel — Q1 retainer',
+                title: 'Legal counsel  -  Q1 retainer',
                 explanation: 'Council-approved operational spend. The line below is the public note published with the payment.',
                 source: 'council',
                 councilNote: 'Retainer for external counsel covering governance documents and exchange listings review (invoice INV-2026-0142).',
@@ -13260,7 +13279,7 @@
                 id: 'ttx-004',
                 date: '2026-03-15 08:55',
                 txId: '0x5c099681b4a0011223344556677889900112233445566778899aabbccddee',
-                title: 'Infrastructure — hosting & RPC',
+                title: 'Infrastructure  -  hosting & RPC',
                 explanation: 'Recurring infrastructure billed monthly; council note summarises scope for transparency.',
                 source: 'council',
                 councilNote: 'March hosting, archive nodes, and read-only RPC endpoints used by the app demo (invoice INV-2026-0098).',
@@ -13272,7 +13291,7 @@
                 id: 'ttx-005',
                 date: '2026-03-12 14:33',
                 txId: '0x4b088570a390011223344556677889900112233445566778899aabbccddee',
-                title: 'Protocol fee — merchant spotlight',
+                title: 'Protocol fee  -  merchant spotlight',
                 explanation: 'Share of a merchant campaign fee routed to treasury automatically when the campaign was activated.',
                 source: 'auto',
                 councilNote: '',
@@ -13636,7 +13655,7 @@
         /**
          * Amount in the field: prefer parsed .value whenever the user entered non-whitespace.
          * type=number can set validity.badInput or odd valueAsNumber on file:// / paste / locale quirks
-         * while calcXwm still ran from oninput — parsing the string keeps mint in sync with the preview.
+         * while calcXwm still ran from oninput  -  parsing the string keeps mint in sync with the preview.
          */
         function readVaultAmountFromInput(el) {
             if (!el) return 0;
@@ -13725,7 +13744,7 @@
 
         function formatAvailableLineForVaultCcy(ccy) {
             const c = String(ccy || '').trim();
-            if (!c) return 'Available: —';
+            if (!c) return 'Available:  - ';
             const b = getVaultBalance(c);
             if (c === 'Winiwa' || c === 'WINIMA') return 'Available: ' + fmtAvailVaultQty(b) + ' Winiwa (test)';
             if (c === 'MINIMA') return 'Available: ' + fmtAvailVaultQty(b) + ' Minima';
@@ -13735,7 +13754,7 @@
 
         function formatBalanceAmountForVaultCcy(ccy) {
             const c = String(ccy || '').trim();
-            if (!c) return '—';
+            if (!c) return ' - ';
             const b = getVaultBalance(c);
             if (c === 'Winiwa' || c === 'WINIMA') return fmtAvailVaultQty(b) + ' Winiwa (test)';
             if (c === 'MINIMA') return fmtAvailVaultQty(b) + ' Minima';
@@ -14095,7 +14114,7 @@
             const el = document.getElementById('cfDepositAvail');
             if (!el) return;
             if (!sel || !sel.value) {
-                el.textContent = 'Available: —';
+                el.textContent = 'Available:  - ';
                 return;
             }
             const asset = String(sel.value || '').split(/\s+/)[0].trim();
@@ -14107,7 +14126,7 @@
             const el = document.getElementById('sendAvailLine');
             const sel = document.getElementById('sendCcy');
             if (!el || !sel) return;
-            if (!sel.value) { el.textContent = 'Available: —'; return; }
+            if (!sel.value) { el.textContent = 'Available:  - '; return; }
             const code = typeof walletParseCcySel === 'function' ? walletParseCcySel('sendCcy') : String(sel.value || '').split(/\s+/)[0].trim();
             el.textContent = formatAvailableLineForVaultCcy(vaultCcyFromSelectValue(code));
         }
@@ -14275,7 +14294,7 @@
                 return t;
             }
 
-            let t = 'Stables — receive request';
+            let t = 'Stables  -  receive request';
             if (label) t += '\n' + label;
             if (amt > 0) t += '\nAmount: ' + String(amt).replace(/,/g, '');
             if (addr && /^0x[0-9A-Fa-f]{40,128}$/i.test(addr)) t += '\n' + addr;
@@ -14492,7 +14511,7 @@
             const el = document.getElementById('recvAvailLine');
             const sel = document.getElementById('reqCcy');
             if (!el || !sel) return;
-            if (!sel.value) { el.textContent = 'Available: —'; return; }
+            if (!sel.value) { el.textContent = 'Available:  - '; return; }
             const code = typeof walletParseCcySel === 'function' ? walletParseCcySel('reqCcy') : String(sel.value || '').split(/\s+/)[0].trim();
             el.textContent = formatAvailableLineForVaultCcy(vaultCcyFromSelectValue(code));
         }
@@ -14501,7 +14520,7 @@
             const el = document.getElementById('invAvailLine');
             const sel = document.getElementById('invCcy');
             if (!el || !sel) return;
-            if (!sel.value) { el.textContent = 'Available: —'; return; }
+            if (!sel.value) { el.textContent = 'Available:  - '; return; }
             el.textContent = formatAvailableLineForVaultCcy(String(sel.value || '').trim());
         }
 
@@ -14715,7 +14734,7 @@
                 const ccy = PRICE_DISPLAY_CCY_EFFECTIVE || 'USDw';
                 const key = (ccy === 'MINIMA' || ccy === 'WINIMA') ? 'Winiwa' : ccy;
                 const price = (RATES && RATES.xWiniwa && typeof RATES.xWiniwa[key] === 'number') ? RATES.xWiniwa[key] : SIM_XWM_PRICE;
-                const s = Number.isFinite(price) ? price.toFixed(5) : '—';
+                const s = Number.isFinite(price) ? price.toFixed(5) : ' - ';
                 const label = (ccy === 'MINIMA' || ccy === 'WINIMA') ? 'Winiwa' : ccy;
                 const out = (key === 'USDw') ? ('$' + s) : (s + ' ' + label);
                 const bEl = document.getElementById('xwmPriceDisplay');
@@ -14919,7 +14938,7 @@
 
         function treasuryFmtUsdCompact(n) {
             const v = Number(n) || 0;
-            if (!Number.isFinite(v) || v <= 0) return '—';
+            if (!Number.isFinite(v) || v <= 0) return ' - ';
             if (v >= 1e9) return '$' + (v / 1e9).toFixed(2) + 'B';
             if (v >= 1e6) return '$' + (v / 1e6).toFixed(2) + 'M';
             if (v >= 1e3) return '$' + (v / 1e3).toFixed(1) + 'k';
@@ -14973,15 +14992,15 @@
 
             set('treasuryConcXwmTop1', x.top1.toFixed(1) + '%');
             set('treasuryConcXwmTop10', x.top10.toFixed(1) + '%');
-            set('treasuryConcXwmVsStables', liabRaw > 0 ? (vsStablesPct.toFixed(1) + '% of circulating Stables (USD)') : '—');
-            set('treasuryConcXwmNote', 'Concentrated xWiniwa means fewer addresses could unwind equity (burn) and recycle through Winiwa paths — compare the top-10 share to outstanding Stables when judging how much could exit the system in stress.');
+            set('treasuryConcXwmVsStables', liabRaw > 0 ? (vsStablesPct.toFixed(1) + '% of circulating Stables (USD)') : ' - ');
+            set('treasuryConcXwmNote', 'Concentrated xWiniwa means fewer addresses could unwind equity (burn) and recycle through Winiwa paths  -  compare the top-10 share to outstanding Stables when judging how much could exit the system in stress.');
 
             set('treasuryConcWTop1', w.top1.toFixed(1) + '%');
             set('treasuryConcWTop10', w.top10.toFixed(1) + '%');
             set('treasuryConcWWhaleUsd', treasuryFmtUsdCompact(top10WiniwaUsd) + (stressPct !== 0 ? ' (stress price)' : ''));
 
             let vsVolColor = 'var(--m)';
-            let vsVolText = '—';
+            let vsVolText = ' - ';
             if (mult != null && Number.isFinite(mult)) {
                 vsVolText = mult.toFixed(2) + '× 24h volume';
                 vsVolColor = mult >= 5 ? 'var(--rd)' : mult >= 2 ? 'var(--am)' : 'var(--gr)';
@@ -15004,12 +15023,12 @@
                     const chgEl = document.getElementById('treasuryVol24hChg');
                     if (chgEl) chgEl.style.color = chg >= 0 ? 'var(--gr)' : 'var(--rd)';
                 } else {
-                    set('treasuryVol24hChg', '—');
+                    set('treasuryVol24hChg', ' - ');
                 }
                 set('treasuryVolFoot', 'Volume is MINIMA/USDT quote turnover on MEXC (USDT). Use it as a rough depth gauge vs whale notional, not a guarantee of absorbable size.');
             } else {
-                set('treasuryVol24hUsd', '—');
-                set('treasuryVol24hChg', '—');
+                set('treasuryVol24hUsd', ' - ');
+                set('treasuryVol24hChg', ' - ');
                 set('treasuryVolFoot', '24h volume appears when the MEXC ticker response includes quoteVolume (use the 24h ticker URL in runtime config). CoinGecko fallback supplies price only.');
             }
         }
@@ -15474,7 +15493,7 @@
         function executeMintXwm() {
             if (!vaultExecutionAllowed()) return showToast('Council execution locked - only Executive (Multisig) can execute council decisions.');
             const amtEl = document.getElementById('xwmAmt');
-            if (!amtEl) return showToast('Mint form not ready — try again');
+            if (!amtEl) return showToast('Mint form not ready  -  try again');
             WALLET_WINIWA = vaultNumericBalance(WALLET_WINIWA);
             const bal = WALLET_WINIWA;
             const mintRaw = readVaultAmountFromInput(amtEl);
@@ -15499,7 +15518,7 @@
         function executeBurnXwm() {
             if (!vaultExecutionAllowed()) return showToast('Council execution locked - only Executive (Multisig) can execute council decisions.');
             const burnEl = document.getElementById('xwmBurnAmt');
-            if (!burnEl) return showToast('Burn form not ready — try again');
+            if (!burnEl) return showToast('Burn form not ready  -  try again');
             WALLET_XWM = vaultNumericBalance(WALLET_XWM);
             const xBal = WALLET_XWM;
             const burnRaw = readVaultAmountFromInput(burnEl);
@@ -15523,7 +15542,7 @@
         function executeMintWables() {
             if (!vaultExecutionAllowed()) return showToast('Council execution locked - only Executive (Multisig) can execute council decisions.');
             const amtEl = document.getElementById('issueAmt');
-            if (!amtEl) return showToast('Mint form not ready — try again');
+            if (!amtEl) return showToast('Mint form not ready  -  try again');
             const mintAmt = readVaultAmountFromInput(amtEl);
             if (!(mintAmt > 0)) return showToast('Enter valid amount');
             const issueCcy = walletParseCcySel('issueCcy');
@@ -15553,7 +15572,7 @@
         function executeBurnWables() {
             if (!vaultExecutionAllowed()) return showToast('Council execution locked - only Executive (Multisig) can execute council decisions.');
             const amtEl = document.getElementById('reclaimAmt');
-            if (!amtEl) return showToast('Burn form not ready — try again');
+            if (!amtEl) return showToast('Burn form not ready  -  try again');
             const burnAmt = readVaultAmountFromInput(amtEl);
             const reclaimCcy = walletParseCcySel('reclaimCcy');
             const reclaimUsdPU = walletStableUsdPerUnit(reclaimCcy);
@@ -16135,7 +16154,7 @@
             localStorage.setItem(MERCHANT_MODE_KEY, merchantMode ? '1' : '0');
             const tog = document.getElementById('merchantToggle');
             if (tog) tog.classList.toggle('on', merchantMode);
-            showToast(merchantMode ? 'Merchant on — My shop unlocked in More' : 'Merchant off — My shop locked in More');
+            showToast(merchantMode ? 'Merchant on  -  My shop unlocked in More' : 'Merchant off  -  My shop locked in More');
             applyMerchantRoleUI();
             renderMyShopDashboard();
             refreshInvoiceRecognitionAvailability();
@@ -16353,7 +16372,7 @@ const APP_TAB_TITLE = 'Showcase · Stables';
                 settingsPh.style.display = src ? 'none' : 'block';
             }
 
-            // Execution button lock (demo) — skipped when DEMO_VAULT_UNLOCK is true (see runtime-config.js)
+            // Execution button lock (demo)  -  skipped when DEMO_VAULT_UNLOCK is true (see runtime-config.js)
             const cfg = window.STABLES_CONFIG || {};
             const vaultUnlock = cfg.DEMO_VAULT_UNLOCK !== false;
             const disable = !vaultUnlock && role !== 'Executor';
