@@ -1,3 +1,5 @@
 node_modules/
 # When this tree is copied into the archived Pages checkout, never stage embedded git metadata
 _embedded_git/
+# MiniDapp build artifacts: the published download is dapp/<channel>/latest-version/, not the build/ subdir
+dapp/**/build/*.zip
