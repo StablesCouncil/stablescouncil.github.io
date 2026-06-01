@@ -76,6 +76,10 @@ var MDS = {
 			if(suv){
 				var um = suv.match(/[?&]uid=(0x[0-9a-fA-F]+)/);
 				if(um){ suv = um[1]; }
+				if(!/^0x[0-9a-fA-F]{16,}$/.test(suv)){
+					var pm = suv.match(/(?:^|[\/?#&=])(0x[0-9a-fA-F]{16,})/);
+					if(pm){ suv = pm[1]; }
+				}
 				if(/^0x[0-9a-fA-F]{16,}$/.test(suv)){
 					MDS.minidappuid = suv;
 				}

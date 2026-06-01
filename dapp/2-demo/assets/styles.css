@@ -77,11 +77,6 @@
     /* Sidebar */
     .sidebar{
       position:sticky; top:78px;
-      border:1px solid rgba(34,48,68,.85);
-      background:rgba(16,24,38,.55);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow:hidden;
     }
     .nav{display:flex; flex-direction:column; padding:8px; gap:4px}
     .nav a{
@@ -99,20 +94,16 @@
 
     /* Main */
     .main{
-      border:1px solid rgba(34,48,68,.85);
-      background:rgba(16,24,38,.55);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
       overflow:hidden;
     }
-    .main-head{padding:18px; border-bottom:1px solid rgba(34,48,68,.6); display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
+    .main-head{padding:18px; display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
     h1{font-size:20px; margin:0}
     .desc{color:var(--muted); font-size:13px; max-width:760px}
     .content{padding:18px}
 
     .stack{display:grid; gap:14px}
 
-    .card{border:1px solid rgba(34,48,68,.85); background:rgba(11,15,20,.28); border-radius:16px; padding:16px}
+    .card{padding:16px}
     .card h3{margin:0 0 8px; font-size:14px}
     .muted{color:var(--muted); font-size:12px}
 
@@ -194,7 +185,7 @@
 
     /* Sliders */
     .slider-wrap{display:grid; gap:10px}
-    .asset-row{border:1px solid rgba(34,48,68,.75); background:rgba(11,15,20,.20); border-radius:14px; padding:12px}
+    .asset-row{padding:12px}
     .asset-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
     .asset-name{font-weight:900}
     .asset-name .em{color:var(--accent)}
@@ -208,7 +199,7 @@
     .asset-sub{color:var(--muted); font-size:13px; margin-top:6px}
 
     /* Collapsible */
-    details{border:1px solid rgba(34,48,68,.75); background:rgba(11,15,20,.18); border-radius:16px; padding:12px}
+    details{padding:12px}
     summary{cursor:pointer; font-weight:850}
 
     /* Modal */

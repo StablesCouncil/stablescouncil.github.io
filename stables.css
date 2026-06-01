@@ -1,5 +1,5 @@
 /*
- * stables.css — Shared Design System
+ * stables.css  -  Shared Design System
  * Source of truth: live site https://stablescouncil.github.io/ (fetched 2026-03-11)
  * All tokens and component styles are extracted verbatim from the live site CSS.
  * Never override these values locally. Never duplicate these rules.
@@ -59,7 +59,7 @@ body {
    5. BUTTONS  ← exact from live site
    Source: stablescouncil.github.io CSS lines 297–340
 ───────────────────────────────────────── */
-/* .buttons is the HTML alias; .btn-group is the canonical class — both work */
+/* .buttons is the HTML alias; .btn-group is the canonical class  -  both work */
 .btn-group,
 .buttons {
   display: flex;
@@ -103,6 +103,17 @@ body {
   background: linear-gradient(135deg, rgba(103, 232, 249, 0.4), rgba(167, 139, 250, 0.4)) !important;
 }
 
+/* Choice: neutral peer option, same weight for every option in the group */
+.btn-choice {
+  background: rgba(15, 23, 42, 0.6) !important;
+  color: #e6edf3 !important;
+  border: 1px solid rgba(103, 232, 249, 0.3) !important;
+}
+.btn-choice:hover {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border-color: rgba(103, 232, 249, 0.5) !important;
+}
+
 /* Secondary: dark semi-transparent, cyan border, light text */
 .btn-secondary {
   background: rgba(15, 23, 42, 0.6) !important;
@@ -112,6 +123,34 @@ body {
 .btn-secondary:hover {
   background: rgba(15, 23, 42, 0.8) !important;
   border-color: rgba(103, 232, 249, 0.5) !important;
+}
+
+/* Danger: destructive or risk action */
+.btn-danger {
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #e6edf3 !important;
+  border: 1px solid rgba(239, 68, 68, 0.34) !important;
+}
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.18) !important;
+  border-color: rgba(239, 68, 68, 0.52) !important;
+}
+
+/* Disabled / soon: unavailable action */
+.btn-disabled,
+.btn[aria-disabled="true"] {
+  background: rgba(24, 34, 52, 0.52) !important;
+  color: rgba(159, 176, 192, 0.68) !important;
+  border: 1px solid rgba(148, 163, 184, 0.16) !important;
+  cursor: not-allowed !important;
+  opacity: 0.72;
+}
+
+/* Link action: opens a page, document, or reference */
+.btn-link-action {
+  background: rgba(103, 232, 249, 0.08) !important;
+  color: #67e8f9 !important;
+  border: 1px solid rgba(103, 232, 249, 0.28) !important;
 }
 
 .btn-label {
@@ -162,4 +201,132 @@ body {
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 24px;
   box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+}
+
+/* ─────────────────────────────────────────
+   9. DEMO LAUNCH DISCLAIMER MODAL  (homepage + links page)
+   Shared so the two pages cannot drift; spacing follows the rhythm.
+───────────────────────────────────────── */
+.demo-launch-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.74);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.demo-launch-overlay.open { display: flex; }
+.demo-launch-card {
+  max-width: 560px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px 22px;
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(251, 191, 36, 0.08), rgba(11, 15, 20, 0.98));
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.65);
+}
+.demo-launch-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.demo-launch-title {
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1.25;
+  color: #fff;
+}
+.demo-launch-close {
+  flex-shrink: 0;
+  padding: 0 2px;
+  border: none;
+  background: none;
+  color: var(--accent-amber);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+.demo-launch-warn {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: 12px;
+  background: rgba(251, 191, 36, 0.06);
+}
+.demo-launch-warn-label {
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: var(--accent-amber);
+}
+.demo-launch-warn p {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+.demo-launch-warn p:last-child { margin-bottom: 0; }
+.demo-launch-warn p.muted {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+}
+.demo-launch-warn strong { color: #fff; }
+.demo-launch-warn a {
+  color: var(--accent-cyan);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.demo-launch-lead {
+  margin: 0 0 16px;
+  font-weight: 800;
+  text-align: center;
+  color: #fff;
+}
+.demo-launch-options {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.demo-launch-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+}
+.demo-launch-option p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--text-secondary);
+}
+.demo-launch-option p strong { color: var(--text-primary); }
+.demo-launch-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border: 1px solid rgba(103, 232, 249, 0.4);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: var(--accent-cyan);
+  vertical-align: 1px;
+}
+.demo-launch-option .btn {
+  width: auto;
+  min-width: 240px;
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+  text-decoration: none;
 }

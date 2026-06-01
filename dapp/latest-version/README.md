@@ -1,19 +1,23 @@
 # Latest MiniDapp package
 
-This folder contains the current Stables MiniDapp release for node installs. **Current file:** **`Stables_v00.00.00.00.03.mds.zip`** (showcase, full label **`v00.00.00.00.03`**; short **`v00.00.03`**).
+This folder mirrors the current public MiniDapp package for direct node installs.
 
-**How version numbers and stages work (showcase / demo / test / prod):** see **[MINIDAPP_VERSIONING.md](../MINIDAPP_VERSIONING.md)** in this repo.
+**Current file:** **`Stables_v0.0.0.1.0.mds.zip`**  
+**Stage:** demo  
+**Display version:** `v0.0.0.1.0`  
+**Internal canonical version:** `v00.00.00.01.00`
 
-**Zip layout (hub = Pages):** The installable archive matches **`dapp/`** on the site: **`dapp.conf`** with **`web`** = **`showcase/index.html`**, folder **`showcase/`** (main HTML), sibling **`assets/`**, and root images (**`agent.png`**, **`stables_icon.png`**, …). See **`../MINIDAPP_VERSIONING.md`** (section *Zip contents*) and **`../../../prod_stables_app_v00.00.00.00.03/build/README.md`** (from this folder: up to `stream_1_app/`, then into the showcase prod tree).
+The public filename uses the short human-facing version style agreed for the app. Internal app config and `dapp.conf` keep the canonical two-digit version for comparisons and release bookkeeping.
 
-## Version policy
+Direct download (raw):
 
-- `dapp/latest-version/` always contains the newest published build.
-- `dapp/previous-versions/` stores all historical builds and is never pruned.
-- When a new version is published, move the outgoing `latest-version` package into `previous-versions` and then publish the new `latest-version`.
+`https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.1.0.mds.zip`
 
-Direct download (raw):  
-`https://github.com/StablesCouncil/stablescouncil.github.io/raw/main/dapp/latest-version/Stables_v00.00.00.00.03.mds.zip`
+Per-channel source:
 
-Release history (easy view, with author):  
+- Demo build source: [`../2-demo/build/`](../2-demo/build/)
+- Showcase latest package: [`../1-showcase/latest-version/`](../1-showcase/latest-version/)
+
+Release history:
+
 `https://github.com/StablesCouncil/stablescouncil.github.io/blob/main/dapp/latest-version/VERSION_HISTORY.md`

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>On/Off-Ramp Page Redesign Draft</title>
+    <link rel="stylesheet" href="../../stables.css">
+    <style>
+        body {
+            padding: 40px 20px;
+            background-color: var(--bg);
+        }
+        .draft-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* App Page Header Mockup */
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .page-header-icon {
+            font-size: 32px;
+        }
+        .page-header-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--text-primary);
+        }
+
+        /* Section Styling */
+        .app-section {
+            margin-bottom: 48px;
+        }
+        .section-title {
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-weight: 800;
+        }
+
+        /* Refined Circular Diagram */
+        .circle-stage {
+            position: relative;
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto 48px;
+            aspect-ratio: 1 / 1;
+        }
+        .circle-svg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            overflow: visible;
+        }
+        .circle-orb {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            margin-top: -18px;
+            margin-left: -18px;
+            border-radius: 50%;
+            background: rgba(11, 15, 20, 0.8);
+            border: 1px solid rgba(103, 232, 249, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--text-primary);
+            backdrop-filter: blur(8px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            text-decoration: none;
+        }
+        .circle-orb:hover {
+            transform: scale(1.15);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 16px rgba(103, 232, 249, 0.4);
+            z-index: 10;
+        }
+        .circle-orb--off {
+            border-color: rgba(167, 139, 250, 0.3);
+        }
+        .circle-orb--off:hover {
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 16px rgba(167, 139, 250, 0.4);
+        }
+        .circle-orb--opt {
+            border-style: dashed;
+            opacity: 0.7;
+        }
+        .circle-orb--opt:hover {
+            opacity: 1;
+            border-style: solid;
+        }
+        .circle-anchor {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 18px;
+            border-radius: 999px;
+            font-weight: 900;
+            font-size: 14px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            z-index: 5;
+        }
+
+        .orb-label {
+            position: absolute;
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+            opacity: 0.7;
+            pointer-events: none;
+            transition: all 0.3s;
+            color: var(--text-secondary);
+        }
+        .circle-orb:hover .orb-label {
+            opacity: 1;
+            color: var(--accent-cyan);
+            transform: translateY(-50%) scale(1.05);
+        }
+        .circle-orb--off:hover .orb-label {
+            color: var(--accent-purple);
+        }
+        .orb-label--top:hover, .circle-orb:hover .orb-label--top {
+            transform: translateX(-50%) scale(1.05);
+        }
+        .orb-label--bottom:hover, .circle-orb:hover .orb-label--bottom {
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .orb-label--left {
+            right: 44px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: right;
+        }
+        .orb-label--right {
+            left: 44px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: left;
+        }
+        .orb-label--top {
+            bottom: 44px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+        .orb-label--bottom {
+            top: 44px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+        
+        /* Linear Flow CSS */
+        .route-flow {
+            position: relative;
+            margin-top: 24px;
+            padding-left: 24px;
+            border-left: 2px dashed rgba(103, 232, 249, 0.3);
+            margin-bottom: 48px;
+        }
+        .route-flow--offramp {
+            border-left-color: rgba(167, 139, 250, 0.3);
+        }
+        
+        .route-step {
+            position: relative;
+            margin-bottom: 24px;
+            background: rgba(11, 15, 20, 0.6);
+            border: 1px solid rgba(103, 232, 249, 0.15);
+            border-radius: 16px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+            transition: border-color 0.2s ease;
+        }
+        .route-step:hover {
+            border-color: rgba(103, 232, 249, 0.4);
+        }
+        .route-flow--offramp .route-step {
+            border-color: rgba(167, 139, 250, 0.15);
+        }
+        .route-flow--offramp .route-step:hover {
+            border-color: rgba(167, 139, 250, 0.4);
+        }
+        .route-step:last-child { margin-bottom: 0; }
+
+        .route-step::before {
+            content: '';
+            position: absolute;
+            left: -33px; 
+            top: 20px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 2px solid var(--accent-cyan);
+            z-index: 2;
+        }
+        .route-flow--offramp .route-step::before {
+            border-color: var(--accent-purple);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .step-num {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: rgba(103, 232, 249, 0.15);
+            color: var(--accent-cyan);
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .route-flow--offramp .step-num {
+            background: rgba(167, 139, 250, 0.15);
+            color: var(--accent-purple);
+        }
+
+        .step-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .step-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            padding-left: 36px;
+        }
+
+        .step-action-link {
+            color: var(--accent-cyan);
+            text-decoration: underline;
+            font-weight: 600;
+        }
+        .route-flow--offramp .step-action-link {
+            color: var(--accent-purple);
+        }
+        
+        .step-action-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: rgba(103, 232, 249, 0.1);
+            border: 1px solid rgba(103, 232, 249, 0.3);
+            border-radius: 8px;
+            color: var(--accent-cyan);
+            font-weight: 800;
+            font-size: 12px;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .step-action-btn:hover {
+            background: rgba(103, 232, 249, 0.2);
+            border-color: var(--accent-cyan);
+        }
+        .route-flow--offramp .step-action-btn {
+            background: rgba(167, 139, 250, 0.1);
+            border-color: rgba(167, 139, 250, 0.3);
+            color: var(--accent-purple);
+        }
+        .route-flow--offramp .step-action-btn:hover {
+            background: rgba(167, 139, 250, 0.2);
+            border-color: var(--accent-purple);
+        }
+
+        /* Exchange Cards CSS */
+        .exchange-grid {
+            display: grid;
+            gap: 16px;
+        }
+        .exchange-card {
+            background: rgba(11, 15, 20, 0.6);
+            border: 1px solid rgba(103, 232, 249, 0.15);
+            border-radius: 16px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+            transition: border-color 0.2s ease;
+        }
+        .exchange-card:hover {
+            border-color: rgba(103, 232, 249, 0.4);
+        }
+        .exchange-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .exchange-name {
+            font-size: 16px;
+            font-weight: 900;
+            color: var(--text-primary);
+        }
+        .exchange-link {
+            font-size: 13px;
+            color: var(--accent-cyan);
+            font-weight: 800;
+            text-decoration: underline;
+        }
+        .exchange-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+<div class="draft-container">
+    
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <div class="page-header-icon">💵</div>
+        <div>
+            <div class="page-header-title">On/off ramp</div>
+            <div style="font-size:14px;color:var(--text-secondary);margin-top:4px;font-weight:800;">Paper money to Stables, and back</div>
+        </div>
+    </div>
+
+    <!-- SECTION: MERCHANT CASH EXCHANGE -->
+    <div class="app-section">
+        <div class="section-title">Merchant Cash Exchange</div>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; line-height: 1.5;">
+            First path: find a nearby trusted merchant who accepts exchanging Stables balances for paper money, and back.
+        </p>
+
+        <div class="exchange-grid">
+            <div class="exchange-card" style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+                <div>
+                    <div style="font-size:15px; font-weight:800; color:var(--text-primary); margin-bottom:4px;">📍 Find near me</div>
+                    <div class="exchange-desc" style="line-height:1.6;">Discover local merchants who accept Stables ↔ paper-money exchange. Public discovery will be gated by merchant validation, ratings, and strict safety checks.</div>
+                </div>
+                <div style="font-weight:800; color:var(--am, #fbbf24); font-size:12px; white-space:nowrap; padding-top:2px;">Coming soon</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION: CURRENT TECHNICAL ROUTE -->
+    <div class="app-section">
+        <div class="section-title">Current Technical Route</div>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 32px; line-height: 1.5;">
+            Use the currently available venue route around MINIMA, exchanges, bridges, and mint/burn UI while merchant discovery is still being built.
+        </p>
+
+        <!-- REFINED CIRCULAR DIAGRAM -->
+        <div class="circle-stage">
+            <svg class="circle-svg" viewBox="0 0 380 380">
+                <!-- Glow Filters -->
+                <defs>
+                    <filter id="glowCyan" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="8" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                    <filter id="glowPurple" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="8" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+
+                <!-- On-Ramp Arc (Top) -->
+                <path d="M 60 190 A 130 130 0 0 1 320 190" fill="none" stroke="rgba(103,232,249,0.15)" stroke-width="4" stroke-dasharray="8 6"/>
+                <!-- Off-Ramp Arc (Bottom) -->
+                <path d="M 320 190 A 130 130 0 0 1 60 190" fill="none" stroke="rgba(167,139,250,0.15)" stroke-width="4" stroke-dasharray="8 6"/>
+
+                <!-- Direction Arrows -->
+                <path d="M 320 190 L 314 178 L 326 178 Z" fill="rgba(103,232,249,0.6)" />
+                <path d="M 60 190 L 54 202 L 66 202 Z" fill="rgba(167,139,250,0.6)" />
+            </svg>
+
+            <!-- Anchors -->
+            <div class="circle-anchor" style="left: 15.8%; color: var(--accent-cyan);">💵 Paper</div>
+            <div class="circle-anchor" style="left: 84.2%; color: var(--text-primary);">Stables</div>
+
+            <!-- On-Ramp Nodes (Clockwise top half) -->
+            <a href="#on-step-1" class="circle-orb" style="left: 19.2%; top: 35.2%;" title="1. Deposit Fiat">
+                🏦 <span class="orb-label orb-label--left">Deposit Fiat</span>
+            </a>
+            <a href="#on-step-2" class="circle-orb" style="left: 28.7%; top: 23.3%;" title="2. Buy USDT">
+                💳 <span class="orb-label orb-label--left">Buy USDT</span>
+            </a>
+            <a href="#on-step-3" class="circle-orb circle-orb--opt" style="left: 42.4%; top: 16.6%;" title="3. Optional Bridge">
+                🌉 <span class="orb-label orb-label--left">Bridge</span>
+            </a>
+            <a href="#on-step-4" class="circle-orb" style="left: 57.6%; top: 16.6%;" title="4. Buy MINIMA">
+                ⚡ <span class="orb-label orb-label--right">Buy MINIMA</span>
+            </a>
+            <a href="#on-step-5" class="circle-orb" style="left: 71.3%; top: 23.3%;" title="5. Withdraw">
+                📱 <span class="orb-label orb-label--right">Withdraw</span>
+            </a>
+            <a href="#on-step-6" class="circle-orb" style="left: 80.8%; top: 35.2%; border-color: var(--accent-cyan); box-shadow: 0 0 12px rgba(103,232,249,0.3);" title="6. Mint Stables">
+                ✨ <span class="orb-label orb-label--right" style="color: var(--accent-cyan); opacity: 1;">Mint Stables</span>
+            </a>
+
+            <!-- Off-Ramp Nodes (Counter-Clockwise bottom half) -->
+            <a href="#off-step-1" class="circle-orb circle-orb--off" style="left: 80.8%; top: 64.8%; border-color: var(--accent-purple); box-shadow: 0 0 12px rgba(167,139,250,0.3);" title="1. Burn Stables">
+                🔥 <span class="orb-label orb-label--right" style="color: var(--accent-purple); opacity: 1;">Burn Stables</span>
+            </a>
+            <a href="#off-step-2" class="circle-orb circle-orb--off" style="left: 71.3%; top: 76.7%;" title="2. CEX/DEX">
+                📥 <span class="orb-label orb-label--right">CEX / DEX</span>
+            </a>
+            <a href="#off-step-3" class="circle-orb circle-orb--off" style="left: 57.6%; top: 83.4%;" title="3. Sell MINIMA">
+                📤 <span class="orb-label orb-label--right">Sell MINIMA</span>
+            </a>
+            <a href="#off-step-4" class="circle-orb circle-orb--off circle-orb--opt" style="left: 42.4%; top: 83.4%;" title="4. Optional Bridge">
+                🌉 <span class="orb-label orb-label--left">Bridge</span>
+            </a>
+            <a href="#off-step-5" class="circle-orb circle-orb--off" style="left: 28.7%; top: 76.7%;" title="5. USDT to Fiat">
+                🔀 <span class="orb-label orb-label--left">USDT → Fiat</span>
+            </a>
+            <a href="#off-step-6" class="circle-orb circle-orb--off" style="left: 19.2%; top: 64.8%;" title="6. Withdraw Fiat">
+                🏧 <span class="orb-label orb-label--left">Withdraw Fiat</span>
+            </a>
+        </div>
+
+        <!-- ON-RAMP FLOW -->
+        <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-cyan); margin-bottom: 8px;">On-Ramp (Paper Money → Stables)</h3>
+        <div class="route-flow">
+            <div class="route-step" id="on-step-1">
+                <div class="step-header">
+                    <div class="step-num">1</div>
+                    <div class="step-title">🏦 Deposit Fiat</div>
+                </div>
+                <div class="step-desc">Deposit fiat in one of the partner exchanges (via bank or card).</div>
+            </div>
+            <div class="route-step" id="on-step-2">
+                <div class="step-header">
+                    <div class="step-num">2</div>
+                    <div class="step-title">💳 Buy USDT</div>
+                </div>
+                <div class="step-desc">Trade your deposited fiat for USDT on the exchange.</div>
+            </div>
+            <div class="route-step" id="on-step-3" style="border-style: dashed;">
+                <div class="step-header">
+                    <div class="step-num" style="background: rgba(255,255,255,0.1); color: #fff;">3</div>
+                    <div class="step-title" style="color: var(--text-secondary);">🌉 Optional Bridge</div>
+                </div>
+                <div class="step-desc">
+                    Bridge USDT to MxUSDT via <a href="https://mxusd.global/" target="_blank" class="step-action-link">mxusd.global</a> if required by your venue.
+                </div>
+            </div>
+            <div class="route-step" id="on-step-4">
+                <div class="step-header">
+                    <div class="step-num">4</div>
+                    <div class="step-title">⚡ Buy MINIMA</div>
+                </div>
+                <div class="step-desc">Trade your USDT for MINIMA on a CEX or the Minima DEX (<a href="#ramp-where-buy-minima" class="step-action-link">see the list of venues below</a>).</div>
+            </div>
+            <div class="route-step" id="on-step-5">
+                <div class="step-header">
+                    <div class="step-num">5</div>
+                    <div class="step-title">📱 On-chain Withdrawal</div>
+                </div>
+                <div class="step-desc">Send MINIMA to your Stables wallet address.</div>
+            </div>
+            <div class="route-step" id="on-step-6" style="border-color: var(--accent-cyan); background: rgba(103, 232, 249, 0.05);">
+                <div class="step-header">
+                    <div class="step-num" style="background: var(--accent-cyan); color: #000;">6</div>
+                    <div class="step-title" style="color: var(--accent-cyan);">✨ Mint Stables</div>
+                </div>
+                <div class="step-desc">
+                    Convert your MINIMA into Stables tokens directly in the app.
+                    <br>
+                    <button type="button" class="step-action-btn" onclick="alert('Mint Wables opened!')">Mint Stables →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- OFF-RAMP FLOW -->
+        <h3 style="font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-purple); margin-bottom: 8px;">Off-Ramp (Stables → Paper Money)</h3>
+        <div class="route-flow route-flow--offramp">
+            <div class="route-step" id="off-step-1" style="border-color: var(--accent-purple); background: rgba(167, 139, 250, 0.05);">
+                <div class="step-header">
+                    <div class="step-num" style="background: var(--accent-purple); color: #000;">1</div>
+                    <div class="step-title" style="color: var(--accent-purple);">🔥 Burn to MINIMA</div>
+                </div>
+                <div class="step-desc">
+                    Burn your Stables tokens to reclaim native MINIMA on-chain.
+                    <br>
+                    <button type="button" class="step-action-btn" onclick="alert('Burn Wables opened!')">Burn Stables →</button>
+                </div>
+            </div>
+            <div class="route-step" id="off-step-2">
+                <div class="step-header">
+                    <div class="step-num">2</div>
+                    <div class="step-title">📥 CEX / DEX</div>
+                </div>
+                <div class="step-desc">Deposit to CEX, or use DEX directly from your wallet.</div>
+            </div>
+            <div class="route-step" id="off-step-3">
+                <div class="step-header">
+                    <div class="step-num">3</div>
+                    <div class="step-title">📤 Sell MINIMA</div>
+                </div>
+                <div class="step-desc">Trade for USDT on a CEX, or MxUSDT on the DEX (<a href="#ramp-where-buy-minima" class="step-action-link">see venues below</a>).</div>
+            </div>
+            <div class="route-step" id="off-step-4" style="border-style: dashed;">
+                <div class="step-header">
+                    <div class="step-num" style="background: rgba(255,255,255,0.1); color: #fff;">4</div>
+                    <div class="step-title" style="color: var(--text-secondary);">🌉 Optional Bridge</div>
+                </div>
+                <div class="step-desc">
+                    Bridge MxUSDT to USDT via <a href="https://mxusd.global/" target="_blank" class="step-action-link">mxusd.global</a> (skip if already on CEX).
+                </div>
+            </div>
+            <div class="route-step" id="off-step-5">
+                <div class="step-header">
+                    <div class="step-num">5</div>
+                    <div class="step-title">🔀 USDT to Fiat</div>
+                </div>
+                <div class="step-desc">Sell USDT for fiat currency on the exchange.</div>
+            </div>
+            <div class="route-step" id="off-step-6">
+                <div class="step-header">
+                    <div class="step-num">6</div>
+                    <div class="step-title">🏧 Withdraw Fiat</div>
+                </div>
+                <div class="step-desc">Withdraw fiat directly to your bank or card.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION: WHERE TO BUY MINIMA -->
+    <div class="app-section" id="ramp-where-buy-minima">
+        <div class="section-title">Where to buy MINIMA</div>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; line-height: 1.5;">
+            Use centralised exchanges and the on-chain Minima DEX as trading venues around MINIMA.
+        </p>
+
+        <div class="exchange-grid">
+            <!-- MEXC Card -->
+            <div class="exchange-card">
+                <div class="exchange-card-header">
+                    <div class="exchange-name">MEXC</div>
+                    <a href="https://www.mexc.com/exchange/MINIMA_USDT" target="_blank" rel="noopener noreferrer" class="exchange-link">MINIMA/USDT</a>
+                </div>
+                <div class="exchange-desc">Common route: paper money → USDT → MINIMA.</div>
+            </div>
+
+            <!-- BitMart Card -->
+            <div class="exchange-card">
+                <div class="exchange-card-header">
+                    <div class="exchange-name">BitMart</div>
+                    <a href="https://www.bitmart.com/en-US/trade/MINIMA_USDT?type=spot" target="_blank" rel="noopener noreferrer" class="exchange-link">MINIMA market</a>
+                </div>
+                <div class="exchange-desc">Alternative venue for buying/selling MINIMA liquidity.</div>
+            </div>
+
+            <!-- XT.COM Card -->
+            <div class="exchange-card">
+                <div class="exchange-card-header">
+                    <div class="exchange-name">XT.COM</div>
+                    <a href="https://www.xt.com/en/trade/minima_usdt" target="_blank" rel="noopener noreferrer" class="exchange-link">MINIMA/USDT</a>
+                </div>
+                <div class="exchange-desc">Third venue option for price discovery and execution.</div>
+            </div>
+
+            <!-- Minima DEX Card -->
+            <div class="exchange-card">
+                <div class="exchange-card-header">
+                    <div class="exchange-name">Minima DEX (on-chain)</div>
+                    <a href="https://minimaxt.org/" target="_blank" rel="noopener noreferrer" class="exchange-link">Launch DEX</a>
+                </div>
+                <div class="exchange-desc">Peer-to-peer non-custodial venue directly on Minima.</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                target.style.transition = 'background 0.3s ease';
+                const originalBg = target.style.background;
+                target.style.background = 'rgba(255,255,255,0.1)';
+                setTimeout(() => {
+                    target.style.background = originalBg;
+                }, 600);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

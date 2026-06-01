@@ -22,7 +22,7 @@
     } catch (_) {}
   }
 
-  const DEMO_CONTACTS = [
+  const SHOWCASE_CONTACTS = [
     { name: 'Alex', category: 'Friend', address: 'MxA1...9f21', city: 'Amsterdam, NL' },
     { name: 'Maria', category: 'Friend', address: 'MxB2...3ca8', city: 'Lisbon, PT' },
     { name: 'Sam', category: 'Friend', address: 'MxC3...88de', city: 'Berlin, DE' },
@@ -34,6 +34,7 @@
     { name: 'RentVault', category: 'Housing', address: 'MxI9...11aa', city: 'Amsterdam, NL' },
     { name: 'Nimbus Subscriptions', category: 'Subscription', address: 'MxJ0...84cc', city: 'Remote' }
   ];
+  const DEMO_CONTACTS = DEMO_REAL ? [] : SHOWCASE_CONTACTS;
 
   const SHOP_PROFILES = {
     'Ground Coffee Roasters': {
@@ -166,7 +167,7 @@
   const hiddenShops = new Set(JSON.parse(localStorage.getItem(HIDDEN_SHOPS_KEY) || '[]'));
   const contactNotes = JSON.parse(localStorage.getItem(CONTACT_NOTES_KEY) || '{}');
   const txNotes = JSON.parse(localStorage.getItem(TX_NOTES_KEY) || '{}');
-  const DEFAULT_FAVORITES = ['Alex', 'Maria', 'Sam'];
+  const DEFAULT_FAVORITES = DEMO_REAL ? [] : ['Alex', 'Maria', 'Sam'];
   const contactFavorites = new Set(
     localStorage.getItem(CONTACT_FAVORITES_KEY)
       ? JSON.parse(localStorage.getItem(CONTACT_FAVORITES_KEY))
@@ -196,7 +197,7 @@
   function getExchangeById(id) { return DEMO_EXCHANGES.find(x => x.id === id); }
   function getExplorerBaseUrl() {
     const raw = (window.STABLES_CONFIG && window.STABLES_CONFIG.MINIMA_EXPLORER_TX_BASE_URL) || '';
-    const fallback = 'https://explorer.minima.global/transaction/';
+    const fallback = 'https://explorer.minima.global/search?q=';
     return String(raw || fallback).trim();
   }
   function toDemoTradeId(txId) {
@@ -215,6 +216,500 @@
     return String(tx.note || '').trim();
   }
 
+  function upsertUserActivityRows(rows) {
+    if (!DEMO_REAL || !Array.isArray(rows) || !rows.length) return 0;
+    const byId = new Map(USER_ACTIVITY.map(row => [String(row.id || ''), row]));
+    let changed = 0;
+    rows.forEach(row => {
+      if (!row || !row.id) return;
+      const id = String(row.id);
+      if (byId.has(id)) {
+        Object.assign(byId.get(id), row);
+      } else {
+        USER_ACTIVITY.unshift(row);
+        byId.set(id, row);
+      }
+      changed++;
+    });
+    if (USER_ACTIVITY.length > 500) USER_ACTIVITY.length = 500;
+    persistUserActivityToStorage();
+    if (typeof window.renderActivity === 'function') window.renderActivity();
+    if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
+    return changed;
+  }
+  window.stablesUpsertUserActivityRows = upsertUserActivityRows;
+
+  function coerceMdsPayloadLocal(payload) {
+    try {
+      if (typeof window.stablesCoerceMdsPayload === 'function') return window.stablesCoerceMdsPayload(payload);
+      if (typeof payload === 'string') {
+        const s = payload.trim();
+        if ((s.startsWith('{') && s.endsWith('}')) || (s.startsWith('[') && s.endsWith(']'))) return JSON.parse(s);
+      }
+    } catch (_) { /* ignore */ }
+    return payload;
+  }
+
+  function mdsOk(resp) {
+    if (typeof window.stablesMdsCmdOk === 'function') return window.stablesMdsCmdOk(resp);
+    return !!(resp && (resp.status === true || resp.status === 'true' || resp.success === true));
+  }
+
+  function mdsCommand(command) {
+    return new Promise((resolve) => {
+      try {
+        if (typeof window.MDS === 'undefined' || !window.MDS || !window.MDS.cmd) {
+          resolve(null);
+          return;
+        }
+        window.MDS.cmd(command, function (resp) { resolve(resp); });
+      } catch (_) { resolve(null); }
+    });
+  }
+
+  function collectObjectsDeep(obj, out, depth) {
+    if (depth > 10 || obj == null) return;
+    if (Array.isArray(obj)) {
+      obj.forEach(item => collectObjectsDeep(item, out, depth + 1));
+      return;
+    }
+    if (typeof obj !== 'object') return;
+    out.push(obj);
+    Object.keys(obj).forEach(k => collectObjectsDeep(obj[k], out, depth + 1));
+  }
+
+  function tokenLabelFromRow(row) {
+    if (!row || typeof row !== 'object') return 'MINIMA';
+    const tokenId = String(row.tokenid != null ? row.tokenid : (row.tokenId != null ? row.tokenId : '')).toLowerCase();
+    if (tokenId === '0x00' || tokenId === '0x0' || tokenId === '0') return 'MINIMA';
+    const raw = String(row.token || row.tokenname || row.name || row.ticker || row.currency || tokenId || 'Token').trim();
+    const compact = raw.replace(/\s+/g, '').toLowerCase();
+    if (compact === 'xminima' || compact === 'xwiniwa') return 'xWiniwa';
+    if (compact.includes('coverage') || compact.includes('usdwcf')) return 'USDwcf';
+    if (compact.includes('winiwa') && !compact.includes('x')) return 'Winiwa';
+    const stable = raw.match(/\b[A-Z]{2,6}w\b/);
+    if (stable) return stable[0];
+    return raw;
+  }
+
+  function isMinimaTokenId(tokenId) {
+    if (tokenId == null || tokenId === '') return true;
+    const t = String(tokenId).trim().toLowerCase();
+    return t === '0x00' || t === '0x0' || t === '0' || /^0x0+$/.test(t);
+  }
+
+  function minimaCoinsOnly(coins) {
+    if (!Array.isArray(coins)) return [];
+    return coins.filter(c => c && isMinimaTokenId(c.tokenid != null ? c.tokenid : c.tokenId));
+  }
+
+  function sumMinimaCoins(coins) {
+    return minimaCoinsOnly(coins).reduce((acc, c) => {
+      const v = parseFloat(String(c.amount || c.value || 0).replace(/,/g, ''));
+      return acc + (Number.isFinite(v) ? v : 0);
+    }, 0);
+  }
+
+  function txpowWrapperToActivity(wrapper) {
+    if (!wrapper || typeof wrapper !== 'object') return null;
+    const txpow = (wrapper.txpow && wrapper.txpow.txpowid) ? wrapper.txpow : wrapper;
+    const relevant = (wrapper.txpow && wrapper.relevant) ? wrapper.relevant : {};
+    const id = String(txpow.txpowid || '').trim();
+    if (!id || id.length < 8) return null;
+    const header = txpow.header || {};
+    let parsedDate = null;
+    if (header.date) { parsedDate = new Date(header.date); if (isNaN(parsedDate.getTime())) parsedDate = null; }
+    if (!parsedDate && header.timemilli) {
+      const ms = parseInt(String(header.timemilli), 10);
+      if (!isNaN(ms)) parsedDate = new Date(ms);
+    }
+    const txn = (txpow.body && (txpow.body.txn || txpow.body.transaction)) || {};
+    const allInputs = Array.isArray(txn.inputs) ? txn.inputs : [];
+    const allOutputs = Array.isArray(txn.outputs) ? txn.outputs : [];
+    
+    let dir, amount = 0, counterpartyAddr = '';
+    let hasValuesBlock = false;
+
+    const valuesArr = Array.isArray(wrapper.values) ? wrapper.values : Array.isArray(txpow.values) ? txpow.values : null;
+    if (valuesArr) {
+      const minimaVal = valuesArr.find(v => isMinimaTokenId(v.tokenid != null ? v.tokenid : (v.token != null ? v.token : '')));
+      if (minimaVal) {
+        hasValuesBlock = true;
+        const netValue = parseFloat(String(minimaVal.amount || minimaVal.value || 0).replace(/,/g, ''));
+        if (Number.isFinite(netValue) && netValue !== 0) {
+          if (netValue < 0) {
+            dir = 'out';
+            amount = Math.abs(netValue);
+          } else {
+            dir = 'in';
+            amount = Math.abs(netValue);
+          }
+        }
+      }
+    }
+
+    let weSigned = false;
+    if (relevant.weSigned === true) {
+      weSigned = true;
+    } else if (Array.isArray(txpow.body?.witness?.signatures)) {
+      // Fallback check if publicKeys were passed down or known somehow
+    }
+
+    if (!hasValuesBlock) {
+      const relIn = minimaCoinsOnly(Array.isArray(relevant.inputs) ? relevant.inputs : []);
+      const relOut = minimaCoinsOnly(Array.isArray(relevant.outputs) ? relevant.outputs : []);
+      if (relIn.length === 0 && relOut.length === 0 && !weSigned) return null;
+      const inSum = sumMinimaCoins(relIn);
+      const outSum = sumMinimaCoins(relOut);
+      
+      if (weSigned) {
+        dir = 'out';
+        const trueInSum = inSum > 0 ? inSum : sumMinimaCoins(minimaCoinsOnly(allInputs));
+        amount = Math.max(0, trueInSum - outSum);
+      } else if (relIn.length > 0 && relOut.length > 0) {
+        dir = 'out';
+        amount = Math.max(0, inSum - outSum);
+      } else if (relIn.length > 0) {
+        dir = 'out';
+        amount = inSum;
+      } else {
+        dir = 'in';
+        amount = outSum;
+      }
+    }
+
+    if (dir === 'out') {
+      const ourInAddrs = new Set((Array.isArray(relevant.inputs) ? relevant.inputs : []).map(c => String(c.address || '').trim()).filter(Boolean));
+      const ourOutAddrs = new Set((Array.isArray(relevant.outputs) ? relevant.outputs : []).map(c => String(c.address || '').trim()).filter(Boolean));
+      const recipients = minimaCoinsOnly(allOutputs).filter(c => c.address && !ourInAddrs.has(String(c.address).trim()) && !ourOutAddrs.has(String(c.address).trim()));
+      if (recipients.length > 0) counterpartyAddr = String(recipients[0].address).trim();
+    } else if (dir === 'in') {
+      const senders = minimaCoinsOnly(allInputs);
+      if (senders.length > 0 && senders[0].address) counterpartyAddr = String(senders[0].address).trim();
+    }
+
+    if (!dir) return null;
+    let counterparty = 'Minima network';
+    if (counterpartyAddr) {
+      let found = false;
+      for (const c of CONTACTS_BOOK.values()) {
+        if (c.address && c.address === counterpartyAddr) { counterparty = c.name; found = true; break; }
+      }
+      if (!found) {
+        counterparty = counterpartyAddr.length > 22
+          ? counterpartyAddr.slice(0, 8) + String.fromCharCode(8230) + counterpartyAddr.slice(-6)
+          : counterpartyAddr;
+      }
+    }
+    const dateText = parsedDate
+      ? parsedDate.toLocaleString('en-GB', { month: 'short', day: '2-digit' }) + ' ' + String.fromCharCode(183) + ' ' + parsedDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+      : 'Node history';
+    return {
+      id: 'NODE-' + id,
+      dir,
+      icon: dir === 'out' ? String.fromCharCode(8599) : String.fromCharCode(8601),
+      counterparty,
+      category: 'MINIMA',
+      title: (dir === 'out' ? 'Sent ' : 'Received ') + 'MINIMA',
+      date: dateText,
+      amt: dir === 'out' ? -Math.abs(amount) : Math.abs(amount),
+      ccy: 'MINIMA',
+      address: counterpartyAddr,
+      fee: 0,
+      explorerTxId: id,
+      status: 'Confirmed',
+      note: '',
+      directionLabel: dir === 'out' ? 'Outgoing' : 'Incoming',
+      minimaOnChain: true,
+      rawTxpow: wrapper
+    };
+  }
+  /**
+   * Builds a WalletContext for direction/amount classification of raw txpow objects.
+   *
+   * Three-source address collection:
+   *   1. keys      -  all addresses ever generated in the wallet (Minima keeps these even after use)
+   *   2. coins     -  current unspent MINIMA coins; each coin has both 0x and Mx address fields
+   *                 so we can build a cross-format map (Mx ↔ 0x) for every known address
+   *   3. coinids   -  for every input coinid appearing in txpowList, call `coins coinid:X`;
+   *                 Minima nodes store spent coins and return them by coinid, so we can
+   *                 confirm ownership of inputs that are no longer in the UTXO set
+   *
+   * isOurCoin(c) matches against both address formats AND known owned coinids.
+   */
+  async function buildWalletContext(txpowList) {
+    const addresses = new Set();   // canonical lowercase: 0x... and Mx...
+    const ownedCoinIds = new Set(); // lowercase coinids we own or owned
+    const publicKeys = new Set();  // lowercase public keys to detect if we signed a tx
+    const fmtMap = {};             // lowercase addr → lowercase other-format addr
+
+    function addAddr(v) {
+      if (!v) return;
+      const s = String(v).trim().toLowerCase();
+      if (s.length > 6) addresses.add(s);
+    }
+    function addCoin(c) {
+      if (!c) return;
+      const h = c.address    ? String(c.address).trim().toLowerCase()    : null;
+      const m = c.mxaddress  ? String(c.mxaddress).trim().toLowerCase()  : null;
+      const n = c.miniaddress? String(c.miniaddress).trim().toLowerCase(): null;
+      // add all address variants
+      if (h) addresses.add(h);
+      if (m) addresses.add(m);
+      if (n) addresses.add(n);
+      // record cross-format mappings so keys addresses can be resolved to their partner format
+      if (h && m) { fmtMap[h] = m; fmtMap[m] = h; }
+      if (h && n) { fmtMap[h] = n; fmtMap[n] = h; }
+      if (m && n && m !== n) { fmtMap[m] = n; fmtMap[n] = m; }
+      if (c.coinid) ownedCoinIds.add(String(c.coinid).trim().toLowerCase());
+    }
+
+    // ── Source 1: keys  -  all keys/addresses ever generated ──
+    try {
+      const kr = await mdsCommand('keys');
+      if (mdsOk(kr)) {
+        const kp = coerceMdsPayloadLocal(kr.response);
+        const klist = Array.isArray(kp) ? kp : Array.isArray(kp && kp.keys) ? kp.keys : [];
+        klist.forEach(k => {
+          if (!k) return;
+          ['address', 'mxaddress', 'miniaddress'].forEach(f => addAddr(k[f]));
+          if (k.publickey) publicKeys.add(String(k.publickey).trim().toLowerCase());
+        });
+      }
+    } catch (_) {}
+
+    // ── Source 1b: scripts  -  all custom scripts tracked by the wallet ──
+    try {
+      const sr = await mdsCommand('scripts');
+      if (mdsOk(sr)) {
+        const sp = coerceMdsPayloadLocal(sr.response);
+        const slist = Array.isArray(sp) ? sp : Array.isArray(sp && sp.scripts) ? sp.scripts : [];
+        slist.forEach(s => {
+          if (!s) return;
+          ['address', 'mxaddress', 'miniaddress'].forEach(f => addAddr(s[f]));
+        });
+      }
+    } catch (_) {}
+
+    // ── Source 2: unspent MINIMA coins  -  provides both address formats per coin ──
+    try {
+      for (const cmd of ['coins relevant:true tokenid:0x00', 'coins tokenid:0x00', 'coins relevant:true']) {
+        const cr = await mdsCommand(cmd);
+        if (!mdsOk(cr)) continue;
+        const cp = coerceMdsPayloadLocal(cr.response);
+        const coins = Array.isArray(cp) ? cp : Array.isArray(cp && cp.coins) ? cp.coins : [];
+        coins.forEach(c => addCoin(c));
+        if (addresses.size > 0) break;
+      }
+    } catch (_) {}
+
+    // After source 2 we have a fmtMap. Walk the keys addresses and resolve any missing formats.
+    [...addresses].forEach(a => {
+      const other = fmtMap[a];
+      if (other && !addresses.has(other)) addresses.add(other);
+    });
+
+    // ── Source 3: coinid lookup for every input in txpowList ──
+    // `coins coinid:X` returns the coin record even for spent coins on a full Minima node,
+    // letting us confirm inputs that no longer appear in the UTXO set.
+    if (Array.isArray(txpowList)) {
+      const inputCids = new Set();
+      txpowList.forEach(tp => {
+        if (!tp || !tp.body) return;
+        const txn = tp.body.txn || tp.body.transaction || {};
+        minimaCoinsOnly(Array.isArray(txn.inputs) ? txn.inputs : []).forEach(c => {
+          if (c && c.coinid) inputCids.add(String(c.coinid).trim());
+        });
+      });
+      for (const cid of inputCids) {
+        if (ownedCoinIds.has(cid.toLowerCase())) continue;
+        try {
+          const r = await mdsCommand('coins coinid:' + cid);
+          if (mdsOk(r)) {
+            const cp = coerceMdsPayloadLocal(r.response);
+            const coins = Array.isArray(cp) ? cp : Array.isArray(cp && cp.coins) ? cp.coins : cp ? [cp] : [];
+            if (coins.length > 0 && coins[0]) {
+              const c = coins[0];
+              const h = c.address ? String(c.address).trim().toLowerCase() : null;
+              const m = c.mxaddress ? String(c.mxaddress).trim().toLowerCase() : null;
+              const n = c.miniaddress ? String(c.miniaddress).trim().toLowerCase() : null;
+              if ((h && addresses.has(h)) || (m && addresses.has(m)) || (n && addresses.has(n))) {
+                ownedCoinIds.add(cid.toLowerCase());
+              }
+            }
+          }
+        } catch (_) {}
+      }
+    }
+
+    function isOurCoin(c) {
+      if (!c) return false;
+      if (c.coinid && ownedCoinIds.has(String(c.coinid).trim().toLowerCase())) return true;
+      return ['address', 'mxaddress', 'miniaddress'].some(f => {
+        const v = c[f];
+        return v && addresses.has(String(v).trim().toLowerCase());
+      });
+    }
+
+    return { addresses, ownedCoinIds, publicKeys, isOurCoin };
+  }
+
+  window.stablesSyncNodeTransactions = async function (silent) {
+    const status = document.getElementById('nodeTxSyncStatus');
+    if (!silent && status) status.textContent = 'Syncing node balances and history...';
+    if (typeof window.MDS === 'undefined' || !window.MDS || !window.MDS.cmd) {
+      if (!silent && status) status.textContent = 'Node history sync needs MinimaOS / MDS. MiniMask exposes balance and send, not full node history here.';
+      if (!silent && typeof window.showToast === 'function') window.showToast('Open from MinimaOS to sync node history.', { tone: 'amber', durationMs: 4200 });
+      return;
+    }
+
+    const tokenMap = {};
+    try {
+      const balResp = await mdsCommand('balance');
+      const bal = mdsOk(balResp) ? coerceMdsPayloadLocal(balResp.response) : null;
+      const rows = Array.isArray(bal) ? bal : (bal && Array.isArray(bal.balance) ? bal.balance : (bal && Array.isArray(bal.tokens) ? bal.tokens : []));
+      rows.forEach(row => {
+        const id = String(row && (row.tokenid != null ? row.tokenid : row.tokenId != null ? row.tokenId : '')).toLowerCase();
+        if (id) tokenMap[id] = tokenLabelFromRow(row);
+      });
+      tokenMap['0x00'] = 'MINIMA';
+      tokenMap['0x0'] = 'MINIMA';
+      tokenMap['0'] = 'MINIMA';
+      tokenMap['0x0000000000000000000000000000000000000000000000000000000000000000'] = 'MINIMA';
+    } catch (_) { /* ignore */ }
+
+    const commands = ['history offset:0', 'history'];
+    let imported = 0;
+    let sawHistory = false;
+    let diagInfo = '';
+    for (const cmd of commands) {
+      const resp = await mdsCommand(cmd);
+      if (!mdsOk(resp)) continue;
+      sawHistory = true;
+      const payload = coerceMdsPayloadLocal(resp.response);
+      let rows = [];
+
+      // ── Strategy A: details array ──
+      // Minima nodes may include a pre-classified `details` array alongside `txpows`.
+      // Each item can be { txpow, relevant:{inputs,outputs} } or similar.
+      const detailsArr = Array.isArray(payload && payload.details) ? payload.details : null;
+      if (detailsArr && detailsArr.length) {
+        diagInfo = 'src=details n=' + detailsArr.length
+          + ' keys=' + Object.keys(detailsArr[0] || {}).join(',');
+        rows = detailsArr.map(d => {
+          if (!d) return null;
+          const txpow = (d.txpow && d.txpow.txpowid) ? d.txpow : (d.txpowid ? d : null);
+          if (!txpow) return null;
+          const rel = d.relevant || d.coins || d.wallet || {};
+          return txpowWrapperToActivity({ txpow, relevant: rel });
+        }).filter(Boolean);
+      }
+
+      // ── Strategy B: relevant map keyed by txpowid ──
+      // Some Minima versions return relevant:{txpowid:{inputs,outputs},...}
+      if (!rows.length) {
+        const relMap = (payload && payload.relevant && typeof payload.relevant === 'object'
+          && !Array.isArray(payload.relevant)) ? payload.relevant : null;
+        const txpowListB = Array.isArray(payload) ? payload
+          : Array.isArray(payload && payload.txpows) ? payload.txpows
+          : Array.isArray(payload && payload.transactions) ? payload.transactions
+          : Array.isArray(payload && payload.history) ? payload.history
+          : null;
+        if (relMap && txpowListB && Object.keys(relMap).length > 0) {
+          diagInfo = 'src=relMap n=' + Object.keys(relMap).length;
+          rows = txpowListB.map(txpow => {
+            const id = String(txpow.txpowid || '').toLowerCase();
+            const rel = relMap[txpow.txpowid] || relMap[id] || {};
+            return txpowWrapperToActivity({ txpow, relevant: rel });
+          }).filter(Boolean);
+        }
+      }
+
+      // ── Strategy C: wallet-context address + coinid matching ──
+      if (!rows.length) {
+        const txpowList = Array.isArray(payload) ? payload
+          : Array.isArray(payload && payload.txpows) ? payload.txpows
+          : Array.isArray(payload && payload.transactions) ? payload.transactions
+          : Array.isArray(payload && payload.history) ? payload.history
+          : null;
+        if (!txpowList || !txpowList.length) continue;
+
+        const first = txpowList[0];
+        const isBareTxpow = first && first.txpowid && !first.txpow;
+
+        if (isBareTxpow) {
+          const walletCtx = await buildWalletContext(txpowList);
+          // Diagnostic: show what keys/coins returned + first input coin's address fields
+          const firstInput = (() => {
+            for (const tp of txpowList) {
+              const txn = (tp.body && (tp.body.txn || tp.body.transaction)) || {};
+              const ins = minimaCoinsOnly(Array.isArray(txn.inputs) ? txn.inputs : []);
+              if (ins[0]) return ins[0];
+            }
+            return null;
+          })();
+          diagInfo = 'src=walletCtx addrs=' + walletCtx.addresses.size
+            + ' coinIds=' + walletCtx.ownedCoinIds.size
+            + (firstInput
+              ? ' in.addr=' + (firstInput.address || '').slice(0, 12)
+                + ' in.mx=' + (firstInput.mxaddress || '').slice(0, 8)
+              : ' no-inputs');
+          rows = txpowList.map(txpow => {
+            if (!txpow || !txpow.txpowid) return null;
+            const txn = (txpow.body && (txpow.body.txn || txpow.body.transaction)) || {};
+            const allInputs = Array.isArray(txn.inputs) ? txn.inputs : [];
+            const allOutputs = Array.isArray(txn.outputs) ? txn.outputs : [];
+            if (walletCtx.addresses.size > 0 || walletCtx.ownedCoinIds.size > 0 || walletCtx.publicKeys.size > 0) {
+              const witness = txpow.body && txpow.body.witness;
+              const sigs = witness && Array.isArray(witness.signatures) ? witness.signatures : [];
+              
+              let usedKeys = [];
+              sigs.forEach(s => {
+                if (s && s.publickey) usedKeys.push(s.publickey);
+                if (s && s.rootkey) usedKeys.push(s.rootkey);
+                if (s && Array.isArray(s.signatures)) {
+                  s.signatures.forEach(ss => {
+                    if (ss && ss.publickey) usedKeys.push(ss.publickey);
+                    if (ss && ss.rootkey) usedKeys.push(ss.rootkey);
+                  });
+                }
+              });
+              const weSigned = usedKeys.some(pk => pk && walletCtx.publicKeys.has(String(pk).trim().toLowerCase()));
+
+              const relIn = minimaCoinsOnly(allInputs).filter(c => walletCtx.isOurCoin(c));
+              const relOut = minimaCoinsOnly(allOutputs).filter(c => walletCtx.isOurCoin(c));
+              if (weSigned || relIn.length > 0 || relOut.length > 0) {
+                return txpowWrapperToActivity({ txpow, relevant: { inputs: relIn, outputs: relOut, weSigned } });
+              }
+            }
+            return null;
+          }).filter(Boolean);
+        } else {
+          diagInfo = 'src=wrappers';
+          rows = txpowList.map(w => txpowWrapperToActivity(w)).filter(Boolean);
+        }
+      }
+
+      if (rows.length) {
+        imported += upsertUserActivityRows(rows);
+        break;
+      }
+    }
+
+    if (!silent) {
+      if (status) {
+        status.textContent = imported
+          ? `Imported ${imported} tx. [${diagInfo}]`
+          : (sawHistory
+            ? ('No rows matched. [' + diagInfo + ']')
+            : 'Node did not expose history to the MiniDapp.');
+      }
+      if (typeof window.showToast === 'function') {
+        window.showToast(imported ? `Synced ${imported} node transaction row${imported === 1 ? '' : 's'}.` : 'No node history rows imported.', { durationMs: 4200 });
+      }
+    }
+  };
+
   window.openTxExplorer = function () {
     if (typeof window.openModal === 'function') {
       window.openModal('minimaExplorerComingModal');
@@ -224,6 +719,14 @@
       window.showToast('Demo: link to the Minima explorer will be added at a later stage.', { tone: 'amber', durationMs: 3800 });
     }
   };
+  function fmtAmt(a) {
+    const abs = Math.abs(a);
+    if (abs === 0) return '0';
+    if (abs >= 1) return abs.toFixed(2);
+    if (abs >= 0.01) return abs.toFixed(3);
+    if (abs >= 0.001) return abs.toFixed(4);
+    return abs.toFixed(6);
+  }
   function activityMatchesDir(x) {
     if (activityFilter === 'all' || activityFilter === 'hidden') return true;
     return x.dir === activityFilter;
@@ -421,10 +924,10 @@
     const meta = sum.count
       ? `${sum.count} reviews · weighted by spent amount`
       : 'Demo rating preview';
-    return `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    return `<div  style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
         <div style="display:flex;gap:2px;align-items:center" aria-label="Merchant rating stars">${starsHtml}</div>
       </div>
-      <div class="xs mu" style="margin-top:6px">${meta}</div>`;
+      <div class="xs mu"  style="margin-top:6px">${meta}</div>`;
   }
 
   function renderSpendShopRatingBadges() {
@@ -467,15 +970,15 @@
       return `<option value="${escUi(tx.id)}" ${prefillTxId === tx.id ? 'selected' : ''}>${escUi(label)}</option>`;
     }).join('');
     const existing = merchantRatings.find(r => r.shopName === shopName && r.raterAddress === raterAddress && r.status !== 'deleted');
-    const existingNote = existing ? '<div class="xs mu" style="margin-bottom:8px">You already reviewed this merchant. Submitting again updates your signed review after cooldown.</div>' : '';
+    const existingNote = existing ? '<div class="xs mu"  style="margin-bottom:8px">You already reviewed this merchant. Submitting again updates your signed review after cooldown.</div>' : '';
     const disabled = (!canRate || !txs.length) ? 'disabled' : '';
-    const body = `<div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);margin-bottom:10px">
-      <div style="font-size:13px;font-weight:900;color:var(--t)">Rate ${escUi(shopName)}</div>
-      <div class="xs mu" style="margin-top:6px">Framework (preview): onchain + signed by interacting address; weighted by spent amount to reduce spam.</div>
+    const body = `<div  style="padding:10px;border-radius:10px;margin-bottom:10px">
+      <div  style="font-size:13px;font-weight:900;color:var(--t)">Rate ${escUi(shopName)}</div>
+      <div class="xs mu"  style="margin-top:6px">Framework (preview): onchain + signed by interacting address; weighted by spent amount to reduce spam.</div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-      <div style="padding:10px;border-radius:10px;background:rgba(16,24,38,.55);border:1px solid rgba(103,232,249,.16)"><div class="xs mu">Interacted spend</div><div style="font-size:13px;font-weight:800;margin-top:4px">$${spendUsd.toFixed(2)}</div></div>
-      <div style="padding:10px;border-radius:10px;background:rgba(16,24,38,.55);border:1px solid rgba(103,232,249,.16)"><div class="xs mu">Signer address</div><div style="font-size:12px;font-weight:800;margin-top:4px;word-break:break-all">${escUi(raterAddress)}</div></div>
+    <div  style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div  style="padding:10px;border-radius:10px"><div class="xs mu">Interacted spend</div><div  style="font-size:13px;font-weight:800;margin-top:4px">$${spendUsd.toFixed(2)}</div></div>
+      <div  style="padding:10px;border-radius:10px"><div class="xs mu">Signer address</div><div  style="font-size:12px;font-weight:800;margin-top:4px;word-break:break-all">${escUi(raterAddress)}</div></div>
     </div>
     ${existingNote}
     <label class="flabel" style="margin-bottom:6px">Score</label>
@@ -486,9 +989,9 @@
     <select id="merchantRateTx" class="fsel" style="margin-bottom:10px">${txOptions || '<option value="">No eligible payments yet</option>'}</select>
     <label class="flabel" style="margin-bottom:6px">Comment (optional)</label>
     <textarea id="merchantRateComment" class="finput" rows="3" maxlength="${MERCHANT_RATING_MAX_COMMENT}" placeholder="Share your experience..." style="resize:vertical;margin-bottom:12px"></textarea>
-    <div class="xs mu" style="margin-bottom:12px">Anti-spam in this framework: one signed review per merchant/address, cooldown between edits, and weight from linked spend amount.</div>
-    <div class="flex gap8" style="justify-content:center"><button class="btn btn-w btn-g" ${disabled} onclick="submitMerchantRating()">Submit signed review</button></div>
-    ${!canRate ? `<div class="xs mu" style="margin-top:10px;color:var(--am)">Need at least $${MERCHANT_RATING_MIN_SPEND_USD.toFixed(2)} spent with this merchant to rate.</div>` : ''}`;
+    <div class="xs mu"  style="margin-bottom:12px">Anti-spam in this framework: one signed review per merchant/address, cooldown between edits, and weight from linked spend amount.</div>
+    <div class="flex gap8"  style="justify-content:center"><button class="btn btn-w btn-g" ${disabled} onclick="submitMerchantRating()">Submit signed review</button></div>
+    ${!canRate ? `<div class="xs mu"  style="margin-top:10px;color:var(--am)">Need at least $${MERCHANT_RATING_MIN_SPEND_USD.toFixed(2)} spent with this merchant to rate.</div>` : ''}`;
     document.getElementById('agentActionTitle').textContent = 'Merchant rating';
     const titleRight = document.getElementById('agentActionTitleRight');
     if (titleRight) titleRight.innerHTML = '';
@@ -570,9 +1073,9 @@
     const shopNameSafe = normalizeId(shopName) || 'My merchant';
     pendingMerchantValidationShop = shopNameSafe;
     const suggestedUser = normalizeId(selectedContactName && CONTACTS_BOOK.has(selectedContactName) ? CONTACTS_BOOK.get(selectedContactName).address : '');
-    const body = `<div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);margin-bottom:10px">
-      <div style="font-size:13px;font-weight:900;color:var(--t)">Validate participant from ${escUi(shopNameSafe)}</div>
-      <div class="xs mu" style="margin-top:6px">Pseudonymous trust anchor (phase 1): one validation per merchant + user pair.</div>
+    const body = `<div  style="padding:10px;border-radius:10px;margin-bottom:10px">
+      <div  style="font-size:13px;font-weight:900;color:var(--t)">Validate participant from ${escUi(shopNameSafe)}</div>
+      <div class="xs mu"  style="margin-top:6px">Pseudonymous trust anchor (phase 1): one validation per merchant + user pair.</div>
     </div>
     <label class="flabel" style="margin-bottom:6px">Merchant id</label>
     <input id="merchantValidationMerchantId" class="finput" value="${escUi(shopName)}" style="margin-bottom:10px" />
@@ -580,8 +1083,8 @@
     <input id="merchantValidationUserId" class="finput" placeholder="Mx..." value="${escUi(suggestedUser)}" style="margin-bottom:10px" />
     <label class="flabel" style="margin-bottom:6px">Settlement link (optional tx id)</label>
     <input id="merchantValidationTxRef" class="finput" placeholder="0x... or TX-..." style="margin-bottom:12px" />
-    <div class="xs mu" style="margin-bottom:12px">Validation is one-time for this merchant/user pair and contributes to the Trust Score.</div>
-    <div class="flex gap8" style="justify-content:center"><button class="btn btn-w btn-g" onclick="submitMerchantValidation()">Issue validation</button></div>`;
+    <div class="xs mu"  style="margin-bottom:12px">Validation is one-time for this merchant/user pair and contributes to the Trust Score.</div>
+    <div class="flex gap8"  style="justify-content:center"><button class="btn btn-w btn-g" onclick="submitMerchantValidation()">Issue validation</button></div>`;
     document.getElementById('agentActionTitle').textContent = 'Merchant validation';
     const titleRight = document.getElementById('agentActionTitleRight');
     if (titleRight) titleRight.innerHTML = '';
@@ -632,9 +1135,8 @@
 
   window.setActivityCcyFilter = function (f) {
     activityCcyFilter = f;
-    ['actCcyFilterUSDw', 'actCcyFilterEURw'].forEach(id => document.getElementById(id)?.classList.remove('on'));
-    if (f === 'USDw') document.getElementById('actCcyFilterUSDw')?.classList.add('on');
-    if (f === 'EURw') document.getElementById('actCcyFilterEURw')?.classList.add('on');
+    const sel = document.getElementById('actCcySelect');
+    if (sel) sel.value = f || 'all';
     activityPage = 0;
     window.renderActivity();
   };
@@ -646,10 +1148,14 @@
     activityPeriod = 'all';
     activityDateFrom = '';
     activityDateTo = '';
-    ['actFilterAll', 'actFilterIn', 'actFilterOut', 'actFilterHidden', 'actCcyFilterUSDw', 'actCcyFilterEURw', 'actTimeframeAll', 'actTimeframeToday', 'actTimeframeWeek', 'actTimeframeMonth', 'actTimeframeYear', 'actPeriodAll', 'actPeriod7d', 'actPeriod30d', 'actPeriod90d', 'actPeriod365d'].forEach(id => document.getElementById(id)?.classList.remove('on'));
+    ['actFilterAll', 'actFilterIn', 'actFilterOut', 'actFilterHidden'].forEach(id => document.getElementById(id)?.classList.remove('on'));
     document.getElementById('actFilterAll')?.classList.add('on');
-    document.getElementById('actTimeframeAll')?.classList.add('on');
-    document.getElementById('actPeriodAll')?.classList.add('on');
+    const ccySel = document.getElementById('actCcySelect');
+    if (ccySel) ccySel.value = 'all';
+    const timeSel = document.getElementById('actTimeSelect');
+    if (timeSel) timeSel.value = 'all';
+    const dateRow = document.getElementById('actDateRangeRow');
+    if (dateRow) dateRow.style.display = 'none';
     const dateFromEl = document.getElementById('activityDateFrom');
     const dateToEl = document.getElementById('activityDateTo');
     if (dateFromEl) dateFromEl.value = '';
@@ -716,7 +1222,7 @@
       row.className = 'tx-row';
       if (suspiciousTx.has(x.id)) row.style.borderColor = 'rgba(248,113,113,.45)';
       const note = getTxNote(x);
-      row.innerHTML = `<div class="tx-ic ${x.dir === 'in' ? 'in-ic' : 'out-ic'}">${x.icon}</div><div class="tx-info"><div class="tx-t">${x.title}</div><div class="tx-d">${x.date} · ${x.category}${suspiciousTx.has(x.id) ? ' · Suspicious' : ''}${note ? ' · Note' : ''}</div></div><div class="tx-amt ${x.amt >= 0 ? 'pos' : 'neg'} bal-amount">${x.amt >= 0 ? '+' : '−'}${Math.abs(x.amt).toFixed(2)} ${x.ccy}</div>`;
+      row.innerHTML = `<div class="tx-ic ${x.dir === 'in' ? 'in-ic' : 'out-ic'}">${x.icon}</div><div class="tx-info"><div class="tx-t">${x.title}</div><div class="tx-d">${x.date} · ${(x.minimaOnChain && x.counterparty) ? x.counterparty : x.category}${suspiciousTx.has(x.id) ? ' · Suspicious' : ''}${note ? ' · Note' : ''}</div></div><div class="tx-amt ${x.amt >= 0 ? 'pos' : 'neg'} bal-amount">${x.amt >= 0 ? '+' : '−'}${fmtAmt(x.amt)} ${x.ccy}</div>`;
       row.addEventListener('click', () => window.openActivityDetail(x.id));
       list.appendChild(row);
     });
@@ -738,7 +1244,7 @@
       row.className = 'tx-row';
       if (suspiciousTx.has(x.id)) row.style.borderColor = 'rgba(248,113,113,.45)';
       const note = getTxNote(x);
-      row.innerHTML = `<div class="tx-ic ${x.dir === 'in' ? 'in-ic' : 'out-ic'}">${x.icon}</div><div class="tx-info"><div class="tx-t">${x.title}</div><div class="tx-d">${x.date} · ${x.category}${suspiciousTx.has(x.id) ? ' · Suspicious' : ''}${note ? ' · Note' : ''}</div></div><div class="tx-amt ${x.amt >= 0 ? 'pos' : 'neg'} bal-amount">${x.amt >= 0 ? '+' : '−'}${Math.abs(x.amt).toFixed(2)} ${x.ccy}</div>`;
+      row.innerHTML = `<div class="tx-ic ${x.dir === 'in' ? 'in-ic' : 'out-ic'}">${x.icon}</div><div class="tx-info"><div class="tx-t">${x.title}</div><div class="tx-d">${x.date} · ${(x.minimaOnChain && x.counterparty) ? x.counterparty : x.category}${suspiciousTx.has(x.id) ? ' · Suspicious' : ''}${note ? ' · Note' : ''}</div></div><div class="tx-amt ${x.amt >= 0 ? 'pos' : 'neg'} bal-amount">${x.amt >= 0 ? '+' : '−'}${fmtAmt(x.amt)} ${x.ccy}</div>`;
       row.addEventListener('click', () => window.openActivityDetail(x.id));
       list.appendChild(row);
     });
@@ -755,7 +1261,7 @@
       const row = document.createElement('div');
       row.className = 'tx-row';
       row.style.cursor = 'pointer';
-      row.innerHTML = `<div class="tx-ic" style="background:rgba(103,232,249,.1)">⇄</div><div class="tx-info"><div class="tx-t">${x.fromCcy} → ${x.toCcy}</div><div class="tx-d">${x.date}${x.status === 'Pending' ? ' · Pending' : ''}</div></div><div class="tx-amt bal-amount" style="color:var(--c)">${x.fromAmt.toFixed(2)} → ${x.toAmt.toFixed(2)}</div>`;
+      row.innerHTML = `<div class="tx-ic" >⇄</div><div class="tx-info"><div class="tx-t">${x.fromCcy} → ${x.toCcy}</div><div class="tx-d">${x.date}${x.status === 'Pending' ? ' · Pending' : ''}</div></div><div class="tx-amt bal-amount"  style="color:var(--c)">${x.fromAmt.toFixed(2)} → ${x.toAmt.toFixed(2)}</div>`;
       row.addEventListener('click', () => window.openExchangeDetail(x.id));
       list.appendChild(row);
     });
@@ -766,20 +1272,20 @@
     if (!ex) return;
     selectedExchangeId = id;
     const statusColor = ex.status === 'Confirmed' ? 'var(--gr)' : 'var(--am)';
-    const body = `<div style="margin-bottom:8px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:${statusColor};display:inline-block"></span><span class="xs mu">${ex.status}</span></div>
-      <div style="padding:12px;border-radius:12px;background:rgba(16,24,38,.55);border:1px solid rgba(103,232,249,.16);margin-bottom:10px">
-        <div class="fbet"><div><div style="font-size:16px;font-weight:900;color:var(--t)">${ex.fromCcy} → ${ex.toCcy}</div><div class="xs mu">Currency conversion</div></div><div style="text-align:right"><div class="tx-amt bal-amount" style="color:var(--t)">−${ex.fromAmt.toFixed(2)} ${ex.fromCcy}</div><div class="xs mu" style="color:var(--gr)">+${ex.toAmt.toFixed(2)} ${ex.toCcy}</div></div></div>
+    const body = `<div  style="margin-bottom:8px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:${statusColor};display:inline-block"></span><span class="xs mu">${ex.status}</span></div>
+      <div  style="padding:12px;border-radius:12px;margin-bottom:10px">
+        <div class="fbet"><div><div  style="font-size:16px;font-weight:900;color:var(--t)">${ex.fromCcy} → ${ex.toCcy}</div><div class="xs mu">Currency conversion</div></div><div  style="text-align:right"><div class="tx-amt bal-amount"  style="color:var(--t)">−${ex.fromAmt.toFixed(2)} ${ex.fromCcy}</div><div class="xs mu"  style="color:var(--gr)">+${ex.toAmt.toFixed(2)} ${ex.toCcy}</div></div></div>
       </div>
-      <div class="flex gap8" style="margin-bottom:10px;flex-wrap:wrap;justify-content:center">
+      <div class="flex gap8"  style="margin-bottom:10px;flex-wrap:wrap;justify-content:center">
         <button class="btn" onclick="repeatExchangeFromDetail()">Use same pair</button>
       </div>
       <details>
         <summary style="cursor:pointer;font-size:13px;font-weight:800;color:var(--m);margin-bottom:8px">Details</summary>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-          <div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><div class="xs mu">Exchange ID</div><div style="font-size:12px;font-weight:800;margin-top:4px;word-break:break-all">${ex.id}</div></div>
-          <div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><div class="xs mu">Date</div><div style="font-size:12px;font-weight:800;margin-top:4px">${ex.date}</div></div>
-          <div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);grid-column:1 / -1"><div class="xs mu">Quote</div><div style="font-size:12px;font-weight:800;margin-top:4px">${ex.rateLabel}</div></div>
-          <div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);grid-column:1 / -1"><div class="xs mu">Fee</div><div style="font-size:12px;font-weight:800;margin-top:4px">${ex.fee === 0 ? 'No fee (demo)' : String(ex.fee)}</div></div>
+        <div  style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <div  style="padding:10px;border-radius:10px"><div class="xs mu">Exchange ID</div><div  style="font-size:12px;font-weight:800;margin-top:4px;word-break:break-all">${ex.id}</div></div>
+          <div  style="padding:10px;border-radius:10px"><div class="xs mu">Date</div><div  style="font-size:12px;font-weight:800;margin-top:4px">${ex.date}</div></div>
+          <div  style="padding:10px;border-radius:10px;grid-column:1 / -1"><div class="xs mu">Quote</div><div  style="font-size:12px;font-weight:800;margin-top:4px">${ex.rateLabel}</div></div>
+          <div  style="padding:10px;border-radius:10px;grid-column:1 / -1"><div class="xs mu">Fee</div><div  style="font-size:12px;font-weight:800;margin-top:4px">${ex.fee === 0 ? 'No fee (demo)' : String(ex.fee)}</div></div>
         </div>
         <div class="xs mu">${ex.note}</div>
       </details>`;
@@ -802,7 +1308,7 @@
     if (typeof calcRate === 'function') calcRate();
     window.closeAgentActionModal();
     if (typeof window.navigate === 'function') window.navigate('exchange');
-    if (typeof window.showToast === 'function') window.showToast('Amounts filled — review and tap Exchange Now');
+    if (typeof window.showToast === 'function') window.showToast('Amounts filled  -  review and tap Exchange Now');
   };
 
   window.openActivityDetail = function (id) {
@@ -816,36 +1322,52 @@
     const txHash = String(tx.explorerTxId || '');
     const hasRealExplorer = !!tx.minimaOnChain && /^0x[a-fA-F0-9]{64}$/.test(txHash);
     const tradeIdBlock = hasRealExplorer
-      ? `<div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><div class="xs mu">Transaction id</div><a href="${escUi(txExplorerUrl(tx))}" target="_blank" rel="noopener noreferrer" class="btn" style="width:auto;padding:0;border:none;background:none;font-size:12px;font-weight:900;margin-top:4px;word-break:break-all;color:var(--c);text-decoration:underline;display:inline-block">${escUi(txHash)}</a></div>`
-      : `<div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><div class="xs mu">Trade ID</div><button class="btn" style="width:auto;padding:0;border:none;background:none;font-size:12px;font-weight:900;margin-top:4px;word-break:break-all;color:var(--c);text-decoration:underline" onclick="openTxExplorer()">${escUi(tx.explorerTxId || tx.id)}</button></div>`;
-    const body = `<div style="margin-bottom:8px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:${statusColor};display:inline-block"></span><span class="xs mu">${tx.status}</span></div>
-      <div style="padding:12px;border-radius:12px;background:rgba(16,24,38,.55);border:1px solid rgba(103,232,249,.16);margin-bottom:10px">
-        <div class="fbet"><div><button class="btn" style="width:auto;padding:0;border:none;background:none;font-size:16px;font-weight:900;color:var(--t)" onclick="openTxCounterpartyContact()">${tx.counterparty}</button><div class="xs mu">${tx.category} · ${tx.directionLabel}</div></div><div style="text-align:right"><div class="tx-amt ${tx.amt >= 0 ? 'pos' : 'neg'} bal-amount">${tx.amt >= 0 ? '+' : '−'}${Math.abs(tx.amt).toFixed(2)} ${tx.ccy}</div><div class="xs mu">Fee ${feeDisp} ${tx.ccy}</div></div></div>
+      ? `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction id</div><a href="${escUi(txExplorerUrl(tx))}" target="_blank" rel="noopener noreferrer" class="btn" style="width:auto;padding:0;border:none;background:none;font-size:12px;font-weight:900;word-break:break-all;color:var(--c);text-decoration:underline;display:inline-block;text-align:left">${escUi(txHash)}</a></div>`
+      : `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Trade ID</div><button class="btn" style="width:auto;padding:0;border:none;background:none;font-size:12px;font-weight:900;word-break:break-all;color:var(--c);text-decoration:underline;text-align:left" onclick="openTxExplorer()">${escUi(tx.explorerTxId || tx.id)}</button></div>`;
+    const body = `<div  style="margin-bottom:8px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:${statusColor};display:inline-block"></span><span class="xs mu">${tx.status}</span></div>
+      <div  style="margin-bottom:16px;padding:0 4px">
+        <div class="fbet"><div><div  style="font-size:16px;font-weight:900;color:var(--t)">${tx.title}</div><div class="xs mu"  style="margin-top:2px">${tx.date}</div></div><div  style="text-align:right"><div class="tx-amt ${tx.amt >= 0 ? 'pos' : 'neg'} bal-amount">${tx.amt >= 0 ? '+' : '−'}${Math.abs(tx.amt).toFixed(2)} ${tx.ccy}</div><div class="xs mu">Fee ${feeDisp} ${tx.ccy}</div></div></div>
       </div>
-      <div class="flex gap8" style="margin-bottom:10px;flex-wrap:wrap;justify-content:center">
+      <div  style="margin-bottom:16px;padding:0 4px">
+        <div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Contact / Address</div>
+        <div  style="display:flex;gap:8px">
+          <input class="finput" id="txDetailContactInput" value="${tx.counterparty === tx.address || tx.counterparty.includes('…') ? tx.address : tx.counterparty}" style="flex-grow:1;padding:8px;font-size:13px" placeholder="Enter contact name">
+          <button class="btn btn-w btn-g" style="padding:8px 12px;width:auto" onclick="saveTransactionContact()">Save</button>
+        </div>
+        <div class="xs mu"  style="margin-top:6px;word-break:break-all;font-size:11px">${tx.address}</div>
+      </div>
+      
+      <div  style="margin-bottom:12px">
+        <label class="flabel" style="margin-bottom:6px">Transaction note</label>
+        <textarea class="finput" id="txDetailNoteInput" rows="2" placeholder="Add a note for this transaction..." style="resize:vertical;margin-bottom:8px">${txNote}</textarea>
+        <div class="flex gap8"  style="justify-content:center"><button class="btn btn-w btn-g" onclick="saveTransactionNote()">Save note</button></div>
+      </div>
+
+      <div class="flex gap8"  style="margin-bottom:16px;flex-wrap:wrap;justify-content:center">
         <button class="btn" onclick="repeatTransactionFromDetail()">Repeat</button>
         ${canRateMerchant ? '<button class="btn btn-w btn-g" onclick="openTxMerchantRating()">Rate merchant</button>' : ''}
+        <button class="btn" onclick="saveTxCounterpartyToContacts()">Add to contacts</button>
+        <button class="btn" onclick="toggleSuspiciousTx()">${suspicious ? 'Unflag suspicious' : 'Flag suspicious'}</button>
+        ${hiddenTx.has(tx.id)
+          ? `<button class="btn" onclick="unhideTransactionFromHistory()">Show</button>`
+          : `<button class="btn" onclick="hideTransactionFromHistory()">Hide</button>`}
+        <button class="btn" onclick="deleteTransactionFromHistory()">Delete</button>
       </div>
+
       <details>
-        <summary style="cursor:pointer;font-size:13px;font-weight:800;color:var(--m);margin-bottom:8px">Details</summary>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+        <summary style="cursor:pointer;font-size:13px;font-weight:800;color:var(--m);margin-bottom:8px">Advanced Details</summary>
+        <div  style="display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:10px">
           ${tradeIdBlock}
-          <div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><div class="xs mu">Date</div><div style="font-size:12px;font-weight:800;margin-top:4px">${tx.date}</div></div>
-          <div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);grid-column:1 / -1"><div class="xs mu">Counterparty Address</div><div style="font-size:12px;font-weight:800;margin-top:4px;word-break:break-all">${tx.address}</div></div>
         </div>
-        <div class="flex gap8" style="margin-bottom:8px;justify-content:center"><button class="btn" onclick="saveTxCounterpartyToContacts()">Add to contacts</button><button class="btn" onclick="toggleSuspiciousTx()">${suspicious ? 'Unflag suspicious' : 'Flag suspicious'}</button></div>
-        <div class="flex gap8" style="margin-top:10px;margin-bottom:8px;flex-wrap:wrap;justify-content:center">
-          ${hiddenTx.has(tx.id)
-    ? `<button class="btn" onclick="unhideTransactionFromHistory()">Show in main lists</button>`
-    : `<button class="btn" onclick="hideTransactionFromHistory()">Hide transaction</button>`}
-          <button class="btn" onclick="deleteTransactionFromHistory()">Delete transaction</button>
-        </div>
-        <div style="margin-top:10px">
-          <label class="flabel" style="margin-bottom:6px">Transaction note</label>
-          <textarea class="finput" id="txDetailNoteInput" rows="2" placeholder="Add a note for this transaction..." style="resize:vertical;margin-bottom:8px">${txNote}</textarea>
-          <div class="flex gap8" style="justify-content:center"><button class="btn btn-w btn-g" onclick="saveTransactionNote()">Save note</button></div>
-        </div>
-        <div class="xs mu">Use the <strong>Hidden</strong> filter on All Transactions to review soft-hidden payments. Deleted items stay gone unless you reset local config. Hiding a merchant removes it from the Merchants tab and drops its payments from the main activity list until you show the merchant again from its profile.</div>
+
+        ${tx.rawTxpow ? `
+        <div  style="border-top:1px solid rgba(103,232,249,.1);padding-top:12px;margin-top:4px;margin-bottom:12px">
+          <div class="xs mu"  style="margin-bottom:8px;text-align:center;font-weight:700">Developer Tools</div>
+          <div class="flex gap8"  style="justify-content:center">
+            <button class="btn btn-w" onclick="navigator.clipboard.writeText(decodeURIComponent('${encodeURIComponent(JSON.stringify(tx.rawTxpow, null, 2))}')); if(window.showToast) window.showToast('Raw TX JSON copied to clipboard!');">Copy Raw TX Data</button>
+          </div>
+        </div>` : ''}
+        <div class="xs mu"  style="margin-top:12px">Use the <strong>Hidden</strong> filter on All Transactions to review soft-hidden payments. Deleted items stay gone unless you reset local config. Hiding a merchant removes it from the Merchants tab and drops its payments from the main activity list until you show the merchant again from its profile.</div>
       </details>`;
     document.getElementById('agentActionTitle').textContent = 'Transaction details';
     const titleRight = document.getElementById('agentActionTitleRight');
@@ -908,6 +1430,33 @@
     window.renderWalletRecentActivity();
     window.openActivityDetail(selectedTxId);
   };
+  window.saveTransactionContact = function () {
+    if (!selectedTxId) return;
+    const tx = getTxById(selectedTxId); if (!tx) return;
+    const input = document.getElementById('txDetailContactInput');
+    const newName = String(input?.value || '').trim();
+    if (!newName || newName === tx.address) return;
+
+    const contactObj = { name: newName, category: tx.category || 'MINIMA', address: tx.address, city: 'Unknown', saved: true };
+    CONTACTS_BOOK.set(newName, contactObj);
+    
+    activitySource().forEach(t => {
+      if (t.address === tx.address) {
+        t.counterparty = newName;
+        if (t.category !== 'MINIMA' && t.category !== 'Token') {
+          // Keep existing titles for custom ones if any, but default ones update:
+          t.title = (t.dir === 'out' ? 'Paid ' : 'Received from ') + newName;
+        } else {
+          t.title = (t.dir === 'out' ? 'Sent to ' : 'Received from ') + newName;
+        }
+      }
+    });
+    
+    if (typeof window.showToast === 'function') window.showToast('Contact updated');
+    window.renderActivity();
+    window.renderWalletRecentActivity();
+    window.openActivityDetail(selectedTxId);
+  };
   window.saveTxCounterpartyToContacts = function () {
     const tx = getTxById(selectedTxId); if (!tx) return;
     const existing = CONTACTS_BOOK.get(tx.counterparty) || { name: tx.counterparty, category: tx.category, address: tx.address, city: 'Unknown', saved: false };
@@ -930,14 +1479,21 @@
       return a.name.localeCompare(b.name);
     });
     list.innerHTML = '';
+    if (!contacts.length) {
+      const row = document.createElement('div');
+      row.className = 'tx-row';
+      row.style.cssText = 'display:flex;align-items:center;gap:8px';
+      row.innerHTML = '<div class="tx-ic in-ic">👤</div><div class="tx-info"  style="flex:1;min-width:0"><div class="tx-t">No contacts yet</div><div class="tx-d">Your saved contacts will appear here.</div></div>';
+      list.appendChild(row);
+    }
     contacts.forEach(c => {
       const txCount = activitySource().filter(x => !deletedTx.has(x.id) && x.counterparty === c.name).length;
       const shopHidden = hiddenShops.has(c.name);
       const isFav = contactFavorites.has(c.name);
       const row = document.createElement('div');
       row.className = 'tx-row';
-      row.style.cssText = 'display:flex;align-items:center;gap:8px;';
-      row.innerHTML = `<div class="tx-ic in-ic">${isFav ? '⭐' : '👤'}</div><div class="tx-info" style="flex:1;min-width:0"><div class="tx-t">${c.name}</div><div class="tx-d">${c.category} · ${txCount} transactions${shopHidden ? ' · Merchant hidden from Spend' : ''}</div></div><div class="badge ${c.saved ? 'b-gr' : 'b-cy'}" style="flex-shrink:0">${c.saved ? 'Saved' : 'Demo'}</div><button type="button" title="${isFav ? 'Remove from favourites' : 'Add to favourites'}" style="flex-shrink:0;background:none;border:none;cursor:pointer;font-size:16px;padding:4px 6px;color:${isFav ? '#fbbf24' : 'var(--m)'}" onclick="event.stopPropagation();toggleContactFavorite('${c.name.replace(/'/g, "\\'")}')">★</button>`;
+      row.style.cssText = 'display:flex;align-items:center;gap:8px';
+      row.innerHTML = `<div class="tx-ic in-ic">${isFav ? '⭐' : '👤'}</div><div class="tx-info"  style="flex:1;min-width:0"><div class="tx-t">${c.name}</div><div class="tx-d">${c.category} · ${txCount} transactions${shopHidden ? ' · Merchant hidden from Spend' : ''}</div></div><div class="badge ${c.saved ? 'b-gr' : 'b-cy'}"  style="flex-shrink:0">${c.saved ? 'Saved' : 'Demo'}</div><button type="button" title="${isFav ? 'Remove from favourites' : 'Add to favourites'}" style="flex-shrink:0;background:none;border:none;cursor:pointer;font-size:16px;padding:4px 6px;color:${isFav ? '#fbbf24' : 'var(--m)'}" onclick="event.stopPropagation();toggleContactFavorite('${c.name.replace(/'/g, "\\'")}')">★</button>`;
       row.querySelector('.tx-info').addEventListener('click', () => { selectedContactName = c.name; window.renderSelectedContact(); });
       row.querySelector('.tx-ic').addEventListener('click', () => { selectedContactName = c.name; window.renderSelectedContact(); });
       list.appendChild(row);
@@ -1021,6 +1577,15 @@
     return 0;
   }
 
+  function formatDisplayVersion(rawVersion) {
+    const raw = String(rawVersion || '').trim();
+    if (!raw) return 'v0';
+    return 'v' + raw.split('.').map((part) => {
+      const n = Number(part);
+      return Number.isFinite(n) ? String(n) : String(part).trim();
+    }).join('.');
+  }
+
   function criticalityPresentation(level) {
     const x = String(level || 'medium').toLowerCase();
     const map = {
@@ -1037,16 +1602,18 @@
     const current = String(cfg.APP_BUILD_VERSION || '0.0.0').trim();
     const pol = cfg.APP_UPDATE_POLICY && typeof cfg.APP_UPDATE_POLICY === 'object' ? cfg.APP_UPDATE_POLICY : {};
     const latest = String(pol.latestPublishedVersion || current).trim();
+    const displayCurrent = formatDisplayVersion(current);
+    const displayLatest = formatDisplayVersion(latest);
     const cmp = compareSemverLike(current, latest);
     const needsUpdate = cmp < 0;
     const zipUrl = typeof cfg.MDS_ZIP_URL === 'string' ? cfg.MDS_ZIP_URL.trim() : '';
 
     if (!needsUpdate) {
-      return `<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20"><div class="stitle-row"><div class="stitle">App version</div><button type="button" class="agent-mini-btn" onclick="openAgentExplain('Council communications: app version status')" title="StablesAgent"><img src="agent.png" alt="StablesAgent"></button></div><div class="card app-section-card" style="padding:14px;margin-bottom:8px;border:1px solid rgba(103,232,249,.28);background:rgba(103,232,249,.06)">
-        <div style="display:flex;align-items:flex-start;gap:10px">
+      return `<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20"><div class="stitle-row"><div class="stitle">App version</div><button type="button" class="agent-mini-btn" onclick="openAgentExplain('Council communications: app version status')" title="StablesAgent"><img src="agent.png" alt="StablesAgent"></button></div><div class="card app-section-card"  style="padding:14px;margin-bottom:8px">
+        <div  style="display:flex;align-items:flex-start;gap:10px">
           <span style="font-size:22px;line-height:1;flex-shrink:0" aria-hidden="true">✅</span>
-          <div style="min-width:0">
-            <div style="font-size:14px;line-height:1.55;font-weight:800;color:var(--muted)">This install is on the latest app version (${escCouncilHtml(current)}).</div>
+          <div  style="min-width:0">
+            <div  style="font-size:14px;line-height:1.55;font-weight:800;color:var(--muted)">This install is on the latest app version (${escCouncilHtml(displayCurrent)}).</div>
           </div>
         </div>
       </div></div>`;
@@ -1057,23 +1624,23 @@
     const what = escCouncilHtml(wu.whatChanged || 'See council release notes for this version.').replace(/\n/g, '<br>');
     const detRaw = typeof wu.details === 'string' ? wu.details.trim() : '';
     const det = detRaw ? escCouncilHtml(detRaw).replace(/\n/g, '<br>') : '';
-    const zipName = `Stables_v${latest}.mds.zip`;
+    const zipName = `Stables_${displayLatest}.mds.zip`;
     const zipBtn = zipUrl
       ? `<a class="btn btn-w" style="display:block;text-align:center;margin-top:14px;text-decoration:none;box-sizing:border-box;font-size:14px;font-weight:900;padding:14px 16px" href="${escAttr(zipUrl)}" target="_blank" rel="noopener">Download ${escCouncilHtml(zipName)}</a>`
       : '';
 
-    return `<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20"><div class="stitle-row"><div class="stitle">App version</div><button type="button" class="agent-mini-btn" onclick="openAgentExplain('Council communications: app update available and what changed')" title="StablesAgent"><img src="agent.png" alt="StablesAgent"></button></div><div class="card app-section-card" style="padding:14px;margin-bottom:8px;border:1px solid ${crit.border};background:${crit.bg}">
-      <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
+    return `<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20"><div class="stitle-row"><div class="stitle">App version</div><button type="button" class="agent-mini-btn" onclick="openAgentExplain('Council communications: app update available and what changed')" title="StablesAgent"><img src="agent.png" alt="StablesAgent"></button></div><div class="card app-section-card"  style="padding:14px;margin-bottom:8px;border:1px solid ${crit.border};background:${crit.bg}">
+      <div  style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
         <span style="font-size:22px;line-height:1;flex-shrink:0" aria-hidden="true">⚠️</span>
-        <div style="min-width:0">
-          <div style="font-size:14px;font-weight:900;color:var(--t);margin-bottom:4px">App update available</div>
-          <div style="font-size:14px;line-height:1.55;font-weight:800;color:var(--muted)">This install is <strong style="color:var(--t)">${escCouncilHtml(current)}</strong>. Latest published: <strong style="color:var(--t)">${escCouncilHtml(latest)}</strong>.</div>
+        <div  style="min-width:0">
+          <div  style="font-size:14px;font-weight:900;color:var(--t);margin-bottom:4px">App update available</div>
+          <div  style="font-size:14px;line-height:1.55;font-weight:800;color:var(--muted)">This install is <strong style="color:var(--t)">${escCouncilHtml(displayCurrent)}</strong>. Latest published: <strong style="color:var(--t)">${escCouncilHtml(displayLatest)}</strong>.</div>
         </div>
       </div>
-      <div style="display:inline-block;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;border:1px solid ${crit.border};color:var(--t);margin-bottom:10px">Criticality: ${escCouncilHtml(crit.label)}</div>
-      <div style="font-size:14px;font-weight:900;color:var(--t);margin-bottom:6px">What is updated</div>
-      <div style="font-size:14px;line-height:1.55;font-weight:800;color:var(--muted)">${what}</div>
-      ${det ? `<div style="margin-top:10px;font-size:14px;line-height:1.55;font-weight:700;color:var(--muted)">${det}</div>` : ''}
+      <div  style="display:inline-block;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;border:1px solid ${crit.border};color:var(--t);margin-bottom:10px">Criticality: ${escCouncilHtml(crit.label)}</div>
+      <div  style="font-size:14px;font-weight:900;color:var(--t);margin-bottom:6px">What is updated</div>
+      <div  style="font-size:14px;line-height:1.55;font-weight:800;color:var(--muted)">${what}</div>
+      ${det ? `<div  style="margin-top:10px;font-size:14px;line-height:1.55;font-weight:700;color:var(--muted)">${det}</div>` : ''}
       ${zipBtn}
     </div></div>`;
   }
@@ -1087,23 +1654,23 @@
       : 'This channel is for Stables Council only: security incidents, required updates, and other critical communication. It is not for casual chat.';
     let itemsHtml = '';
     if (!items.length) {
-      itemsHtml = '<div class="xs mu" style="margin-top:8px;opacity:.9;font-weight:800;line-height:1.45">No council bulletins in this build.</div>';
+      itemsHtml = '<div class="xs mu"  style="margin-top:8px;opacity:.9;font-weight:800;line-height:1.45">No council bulletins in this build.</div>';
     } else {
       itemsHtml = items.map((it) => {
         const title = escCouncilHtml(it.title || 'Notice');
         const date = it.date ? escCouncilHtml(it.date) : '';
         const body = escCouncilHtml(it.body || '').replace(/\n/g, '<br>');
-        return `<div style="margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(0,0,0,.22);border:1px solid rgba(103,232,249,.12)">
-          <div style="font-size:13px;font-weight:900;color:var(--t)">${title}</div>
-          ${date ? `<div class="xs mu" style="margin-top:2px;font-weight:700">${date}</div>` : ''}
-          <div class="xs mu" style="margin-top:6px;line-height:1.5;font-weight:700;color:var(--muted)">${body}</div>
+        return `<div  style="margin-top:10px;padding:10px 12px;border-radius:12px">
+          <div  style="font-size:13px;font-weight:900;color:var(--t)">${title}</div>
+          ${date ? `<div class="xs mu"  style="margin-top:2px;font-weight:700">${date}</div>` : ''}
+          <div class="xs mu"  style="margin-top:6px;line-height:1.5;font-weight:700;color:var(--muted)">${body}</div>
         </div>`;
       }).join('');
     }
-    return `<div class="app-section app-section--caption-bottom"><div class="stitle-row"><div class="stitle">Official notices</div><button type="button" class="agent-mini-btn" onclick="openAgentExplain('Council communications: official bulletins and critical notices')" title="StablesAgent"><img src="agent.png" alt="StablesAgent"></button></div><div class="card app-section-card" style="padding:14px;margin-bottom:8px;border:1px solid rgba(167,139,250,.22);background:linear-gradient(135deg,rgba(103,232,249,.05),rgba(167,139,250,.06))">
-      <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">
+    return `<div class="app-section app-section--caption-bottom"><div class="stitle-row"><div class="stitle">Official notices</div><button type="button" class="agent-mini-btn" onclick="openAgentExplain('Council communications: official bulletins and critical notices')" title="StablesAgent"><img src="agent.png" alt="StablesAgent"></button></div><div class="card app-section-card"  style="padding:14px;margin-bottom:8px;background:linear-gradient(135deg,rgba(103,232,249,.05),rgba(167,139,250,.06))">
+      <div  style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">
         <span style="font-size:22px;line-height:1;flex-shrink:0" aria-hidden="true">🏛️</span>
-        <div style="min-width:0;font-size:14px;line-height:1.55;font-weight:800;color:var(--muted)">${escCouncilHtml(intro)}</div>
+        <div  style="min-width:0;font-size:14px;line-height:1.55;font-weight:800;color:var(--muted)">${escCouncilHtml(intro)}</div>
       </div>
       ${itemsHtml}
     </div></div>`;
@@ -1184,15 +1751,15 @@
     const sn = JSON.stringify(shop.name);
     const shopHidden = hiddenShops.has(shop.name);
     const ratingSummary = buildMerchantRatingSummaryHtml(shop.name);
-    const body = `<div class="mcard" style="margin-bottom:10px;cursor:default"><div class="mic">${shop.icon}</div><div class="minfo"><div class="mn">${shop.name}</div><div class="mt2">${shop.category} · ${shop.city}</div></div><div class="badge ${shop.status === 'Open' ? 'b-gr' : 'b-cy'}">${shop.status}</div></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><div class="xs mu">Open Hours</div><div style="font-size:12px;font-weight:800;margin-top:4px">${shop.openHours}</div></div><div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1)"><div class="xs mu">Average Ticket</div><div style="font-size:12px;font-weight:800;margin-top:4px">${shop.avgTicket}</div></div></div>
-      <div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);margin-bottom:10px"><div class="xs mu">Accepted Currencies</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">${shop.accepts.map(c => `<span class="ccy-pill on" style="cursor:default">${c}</span>`).join('')}</div></div>
-      <div style="padding:10px;border-radius:10px;background:rgba(16,24,38,.55);border:1px solid rgba(103,232,249,.16);margin-bottom:10px"><div style="font-size:13px;font-weight:800;margin-bottom:6px">Merchant rating</div>${ratingSummary}<div class="xs mu" style="margin-top:8px">Onchain + signed review framework (weighted by spend).</div></div>
-      <div style="padding:10px;border-radius:10px;background:rgba(16,24,38,.55);border:1px solid rgba(103,232,249,.16);margin-bottom:10px"><div style="font-size:13px;font-weight:800;margin-bottom:6px">Current promotions</div><ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.4">${promos}</ul></div>
-      <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(103,232,249,.12)">
-        <div style="font-size:10px;font-weight:800;color:var(--m);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">History &amp; list</div>
-        <div class="xs mu" style="margin-bottom:10px">Local demo only. Soft-hidden items use the <strong>Hidden</strong> filter; deleted items stay removed until you reset local data.</div>
-        <div class="flex gap8" style="flex-wrap:wrap;justify-content:center">
+    const body = `<div class="mcard"  style="margin-bottom:10px;cursor:default"><div class="mic">${shop.icon}</div><div class="minfo"><div class="mn">${shop.name}</div><div class="mt2">${shop.category} · ${shop.city}</div></div><div class="badge ${shop.status === 'Open' ? 'b-gr' : 'b-cy'}">${shop.status}</div></div>
+      <div  style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div  style="padding:10px;border-radius:10px"><div class="xs mu">Open Hours</div><div  style="font-size:12px;font-weight:800;margin-top:4px">${shop.openHours}</div></div><div  style="padding:10px;border-radius:10px"><div class="xs mu">Average Ticket</div><div  style="font-size:12px;font-weight:800;margin-top:4px">${shop.avgTicket}</div></div></div>
+      <div  style="padding:10px;border-radius:10px;margin-bottom:10px"><div class="xs mu">Accepted Currencies</div><div  style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">${shop.accepts.map(c => `<span class="ccy-pill on" style="cursor:default">${c}</span>`).join('')}</div></div>
+      <div  style="padding:10px;border-radius:10px;margin-bottom:10px"><div  style="font-size:13px;font-weight:800;margin-bottom:6px">Merchant rating</div>${ratingSummary}<div class="xs mu"  style="margin-top:8px">Onchain + signed review framework (weighted by spend).</div></div>
+      <div  style="padding:10px;border-radius:10px;margin-bottom:10px"><div  style="font-size:13px;font-weight:800;margin-bottom:6px">Current promotions</div><ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.4">${promos}</ul></div>
+      <div  style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(103,232,249,.12)">
+        <div  style="font-size:10px;font-weight:800;color:var(--m);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">History &amp; list</div>
+        <div class="xs mu"  style="margin-bottom:10px">Local demo only. Soft-hidden items use the <strong>Hidden</strong> filter; deleted items stay removed until you reset local data.</div>
+        <div class="flex gap8"  style="flex-wrap:wrap;justify-content:center">
           <button class="btn btn-w btn-g" onclick="openMerchantRatingComposer(${sn})">Rate merchant</button>
           <button class="btn" onclick="shopHideAllTransactions(${sn})">Hide all transactions</button>
           <button class="btn" onclick="shopDeleteAllTransactions(${sn})">Delete all (local)</button>
@@ -1276,20 +1843,20 @@
     const titleRight = document.getElementById('agentActionTitleRight');
     if (titleRight) titleRight.innerHTML = '';
     bodyEl.innerHTML =
-      '<div class="xs mu" style="margin-bottom:12px;line-height:1.55">Choose how to use this file. Flags, hidden items, and notes will be updated as described below.</div>'
-      + '<div style="padding:12px;border-radius:12px;background:rgba(16,24,38,.55);border:1px solid rgba(103,232,249,.18);margin-bottom:10px">'
-      + '<div style="font-size:12px;font-weight:900;color:var(--c);margin-bottom:6px">Replace</div>'
-      + '<div class="xs mu" style="line-height:1.45">Clears the same kinds of data on this device, then loads <strong>only</strong> what is in the file. Use when this device should match the other one exactly.</div>'
+      '<div class="xs mu"  style="margin-bottom:12px;line-height:1.55">Choose how to use this file. Flags, hidden items, and notes will be updated as described below.</div>'
+      + '<div  style="padding:12px;border-radius:12px;margin-bottom:10px">'
+      + '<div  style="font-size:12px;font-weight:900;color:var(--c);margin-bottom:6px">Replace</div>'
+      + '<div class="xs mu"  style="line-height:1.45">Clears the same kinds of data on this device, then loads <strong>only</strong> what is in the file. Use when this device should match the other one exactly.</div>'
       + '</div>'
-      + '<div style="padding:12px;border-radius:12px;background:rgba(16,24,38,.55);border:1px solid rgba(167,139,250,.22);margin-bottom:14px">'
-      + '<div style="font-size:12px;font-weight:900;color:var(--pu);margin-bottom:6px">Combine</div>'
-      + '<div class="xs mu" style="line-height:1.45"><strong>Flags &amp; hides:</strong> keep everything that is marked on <em>either</em> device. <strong>Notes:</strong> if both have a note for the same item, the <strong>imported</strong> one is kept.</div>'
+      + '<div  style="padding:12px;border-radius:12px;margin-bottom:14px">'
+      + '<div  style="font-size:12px;font-weight:900;color:var(--pu);margin-bottom:6px">Combine</div>'
+      + '<div class="xs mu"  style="line-height:1.45"><strong>Flags &amp; hides:</strong> keep everything that is marked on <em>either</em> device. <strong>Notes:</strong> if both have a note for the same item, the <strong>imported</strong> one is kept.</div>'
       + '</div>'
-      + '<div class="flex gap8" style="flex-wrap:wrap;justify-content:center">'
+      + '<div class="flex gap8"  style="flex-wrap:wrap;justify-content:center">'
       + '<button type="button" class="btn btn-w btn-g" style="flex:1;min-width:140px" onclick="applyPendingConfigImport(\'replace\')">Replace with file</button>'
       + '<button type="button" class="btn btn-w" style="flex:1;min-width:140px" onclick="applyPendingConfigImport(\'combine\')">Combine with device</button>'
       + '</div>'
-      + '<div style="text-align:center;margin-top:10px"><button type="button" class="btn" style="width:auto;padding:6px 12px;font-size:12px" onclick="cancelPendingConfigImport()">Cancel</button></div>';
+      + '<div  style="text-align:center;margin-top:10px"><button type="button" class="btn" style="width:auto;padding:6px 12px;font-size:12px" onclick="cancelPendingConfigImport()">Cancel</button></div>';
     modal.classList.add('open');
   };
 
@@ -1410,13 +1977,13 @@
         const titleRight = document.getElementById('agentActionTitleRight');
         if (titleRight) titleRight.innerHTML = '';
         bodyEl.innerHTML =
-          '<div style="padding:12px;border-radius:12px;border:1px solid rgba(251,191,36,.42);background:rgba(251,191,36,.09);margin-bottom:12px">'
-          + '<div style="font-size:11px;font-weight:900;color:#fbbf24;margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em">Protect on-chain assets</div>'
-          + '<div class="xs mu" style="line-height:1.55;margin:0">If I lose my <strong style="color:var(--t)">Vault key</strong>, I can lose <strong style="color:var(--t)">everything</strong>. No preference file replaces it: not notes, not hidden lists, not flags.</div>'
+          '<div  style="padding:12px;border-radius:12px;margin-bottom:12px">'
+          + '<div  style="font-size:11px;font-weight:900;color:#fbbf24;margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em">Protect on-chain assets</div>'
+          + '<div class="xs mu"  style="line-height:1.55;margin:0">If I lose my <strong style="color:var(--t)">Vault key</strong>, I can lose <strong style="color:var(--t)">everything</strong>. No preference file replaces it: not notes, not hidden lists, not flags.</div>'
           + '</div>'
-          + '<div class="xs mu" style="margin-bottom:14px;line-height:1.5">Saving labels or hidden lists is handy, but <strong>far less important</strong> than my Vault key. Open Security to check my Vault key; use Export only if I want to copy preferences to another device.</div>'
+          + '<div class="xs mu"  style="margin-bottom:14px;line-height:1.5">Saving labels or hidden lists is handy, but <strong>far less important</strong> than my Vault key. Open Security to check my Vault key; use Export only if I want to copy preferences to another device.</div>'
           + '<button type="button" class="btn btn-w btn-g" style="width:100%;margin-bottom:10px" onclick="openBackupSettings()">Open Security: Vault key and preferences</button>'
-          + '<div class="xs mu" style="text-align:center"><button type="button" class="btn" style="width:auto;padding:6px 12px;font-size:11px" onclick="runConfigBackupNow()">Export preferences only</button></div>';
+          + '<div class="xs mu"  style="text-align:center"><button type="button" class="btn" style="width:auto;padding:6px 12px;font-size:11px" onclick="runConfigBackupNow()">Export preferences only</button></div>';
         modal.classList.add('open');
       }
     }
@@ -1488,6 +2055,10 @@
       return;
     }
     seedModalWaitAttempts = 0;
+    if (typeof window.openAgent === 'function') {
+      window.openAgent(false);
+      return;
+    }
     const modal = document.getElementById('seedPhraseSecurityModal');
     if (!modal || modal.classList.contains('open')) return;
     modal.classList.add('open');
@@ -1502,6 +2073,7 @@
       localStorage.setItem(SEED_PHRASE_SAVED_CONFIRMED_KEY, '1');
     } catch (_) {}
     window.closeSeedPhraseSecurityModal();
+    if (typeof window.refreshAgentAttentionBadges === 'function') window.refreshAgentAttentionBadges(true);
   };
 
   /** Legacy no-ops: periodic Vault reminders UI removed; keep names so older bookmarks don’t throw. */
@@ -1523,14 +2095,15 @@
   /** Remind me: dismiss only; prompt returns on next visit until user chooses Yes. */
   window.deferSeedPhraseRemindLater = function () {
     window.closeSeedPhraseSecurityModal();
+    if (typeof window.refreshAgentAttentionBadges === 'function') window.refreshAgentAttentionBadges();
   };
 
   window.showStorageScopeInfo = function () {
     const onchain = (CFG.ONCHAIN_RECOVERED || []).map(x => `<li>${x}</li>`).join('');
     const local = (CFG.LOCAL_CONFIG_ONLY || []).map(x => `<li>${x}</li>`).join('');
-    const body = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div style="padding:10px;border-radius:10px;background:rgba(16,24,38,.55);border:1px solid rgba(52,211,153,.22)"><div style="font-size:12px;font-weight:800;color:var(--gr);margin-bottom:6px">Recovered from seed phrase / onchain</div><ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.4">${onchain}</ul></div>
-      <div style="padding:10px;border-radius:10px;background:rgba(16,24,38,.55);border:1px solid rgba(103,232,249,.22)"><div style="font-size:12px;font-weight:800;color:var(--c);margin-bottom:6px">Local config file only</div><ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.4">${local}</ul></div>
+    const body = `<div  style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div  style="padding:10px;border-radius:10px"><div  style="font-size:12px;font-weight:800;color:var(--gr);margin-bottom:6px">Recovered from seed phrase / onchain</div><ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.4">${onchain}</ul></div>
+      <div  style="padding:10px;border-radius:10px"><div  style="font-size:12px;font-weight:800;color:var(--c);margin-bottom:6px">Local config file only</div><ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.4">${local}</ul></div>
     </div>`;
     document.getElementById('agentActionTitle').textContent = 'Storage scope';
     const titleRight = document.getElementById('agentActionTitleRight');
@@ -1642,7 +2215,7 @@
     if (!all.length) {
       const empty = document.createElement('div');
       empty.style.cssText = 'text-align:center;color:var(--m);font-size:13px;padding:24px 0;';
-      empty.textContent = 'No contacts match your search.';
+      empty.textContent = q ? 'No contacts match your search.' : 'No contacts yet.';
       listEl.appendChild(empty);
     }
   };
@@ -1718,7 +2291,7 @@
         : code;
       sel.appendChild(opt);
     });
-    const preferred = options.includes('EURw') ? 'EURw' : options[0];
+    const preferred = options.includes('MINIMA') ? 'MINIMA' : (options.includes('EURw') ? 'EURw' : options[0]);
     const next = options.includes(prev) ? prev : preferred;
     sel.value = next;
   };
@@ -1836,7 +2409,7 @@
   window.persistWelcomeCurrencyChoices = function () {
     const selected = Array.from(document.querySelectorAll('#welcomeCurrencies .ccy-pill.on'))
       .map(x => x.dataset?.ccy).filter(Boolean);
-    const primary = document.getElementById('welcomePrimary')?.value || (selected.includes('EURw') ? 'EURw' : (selected[0] || 'EURw'));
+    const primary = document.getElementById('welcomePrimary')?.value || (selected.includes('MINIMA') ? 'MINIMA' : (selected.includes('EURw') ? 'EURw' : (selected[0] || 'MINIMA')));
 
     const pills = Array.from(document.querySelectorAll('#ccyDisplayPills .ccy-pill'));
     pills.forEach(p => {
@@ -1909,25 +2482,16 @@
         else localStorage.removeItem(WELCOME_BANK_NAME_KEY);
       } catch (_) {}
       if (typeof window.refreshTopbarBrand === 'function') window.refreshTopbarBrand();
-      showWelcomeStep('personalize2');
-      if (typeof window.syncWelcomeAvatarPreviewFromCouncil === 'function') {
-        window.syncWelcomeAvatarPreviewFromCouncil();
-      }
-      return;
-    }
-    if (fromStep === 2) {
+      // Profile picture step removed: go straight to the contacts step.
       showWelcomeStep('personalize3');
-      return;
-    }
-    if (fromStep === 3) {
-      showWelcomeStep('personalize4');
       if (typeof window.renderWelcomeDirectoryPreview === 'function') {
         window.renderWelcomeDirectoryPreview();
       }
+      return;
     }
   };
 
-  /** Welcome personalize step 3: show "later stage" notice, then continue to step 4. */
+  /** Welcome personalize step 3 (final): show "later stage" notice, then refresh the contacts preview in place. */
   window.openWelcomeContactsFromPersonalize = function () {
     const modal = document.getElementById('agentActionModal');
     const title = document.getElementById('agentActionTitle');
@@ -1935,7 +2499,7 @@
     const content = document.getElementById('agentActionContent');
     if (!modal || !title || !content) {
       // Fallback: preserve onboarding continuity even if notice UI is unavailable.
-      if (typeof window.goWelcomePersonalizeNext === 'function') window.goWelcomePersonalizeNext(3);
+      if (typeof window.renderWelcomeDirectoryPreview === 'function') window.renderWelcomeDirectoryPreview();
       return;
     }
     title.textContent = 'Contacts';
@@ -1957,7 +2521,7 @@
     }
     const topModal = document.getElementById('agentActionModal');
     if (topModal) topModal.classList.remove('open', 'agent-action-notice');
-    if (typeof window.goWelcomePersonalizeNext === 'function') window.goWelcomePersonalizeNext(3);
+    if (typeof window.renderWelcomeDirectoryPreview === 'function') window.renderWelcomeDirectoryPreview();
   };
 
   window.finishWelcomePersonalization = function () {
@@ -2060,11 +2624,11 @@
         congrats: 'Congratulations on becoming your bank.',
         /** Step 0 only: demo notice + Telegram (HTML safe, static). */
         welcomeShowcaseIntroHtml:
-          '<p>This is the <strong style="color:var(--t)">Stables demo</strong> (<strong style="color:var(--t)">version __APP_VERSION__</strong>), the channel after the earlier showcase preview. The showcase showed direction and early UI; this demo adds deeper wiring: <strong style="color:var(--t)">Connect node</strong> for live chain height and on-chain MINIMA when your node answers, more wallet and flow experiments, and the same feedback loop.</p>' +
-          '<p><strong style="color:var(--t)">What you can try:</strong> explore the app, use <strong style="color:var(--t)">StablesAgent</strong> (it may be busy, retry shortly), send feedback under <strong style="color:var(--t)">More - Feedback</strong>, and when your node is live, try real MINIMA receive and send where the UI says so. Demo stablecoins and rates stay <strong style="color:var(--t)">illustrative</strong>, not production money or a final peg.</p>' +
-          '<p><strong style="color:var(--t)">What is not here yet:</strong> a finished product, full guided tours as shipped features, or guarantees on agent capacity. Some actions only work in <strong style="color:var(--t)">write mode</strong> on your MiniDapp.</p>' +
-          '<p>Updates still land often. If you use the MiniDapp on your Minima node, refresh the package from <a href="__MDS_REPO_URL__" target="_blank" rel="noopener noreferrer">GitHub</a> when a new build is published. On the public web app you usually get the latest without installing a zip.</p>' +
-          '<p><strong style="color:var(--t)">Running on a Minima node:</strong> In the MiniDapp list, set Stables to <strong style="color:var(--t)">write mode</strong> (not read mode). Write mode is required for StablesAgent, sending feedback, and other features that use the network.</p>' +
+          '<p>This is the <strong style="color:var(--t)">Stables demo</strong> (<strong style="color:var(--t)">version __APP_VERSION__</strong>), the channel after the earlier showcase preview. The showcase showed direction and early UI; this demo adds deeper wiring: <strong style="color:var(--t)">Connect node</strong> for live chain height and on-chain MINIMA transaction, more wallet and flow experiments, and the same feedback loop.</p>' +
+          '<p>The Stables dapp can be downloaded <a href="__MDS_REPO_URL__" target="_blank" rel="noopener noreferrer">here</a> as a MiniDapp zip package. Write mode is required for StablesAgent, sending feedback, and other features that use the network.</p>' +
+          '<p><strong style="color:var(--t)">What you can try:</strong> explore the app, use <strong style="color:var(--t)">StablesAgent</strong> (it may be busy, retry shortly), send feedback under <strong style="color:var(--t)">More - Feedback</strong>, test native MINIMA receive and send when your node is live, and use the mint / burn UI as it evolves toward the test phase.</p>' +
+          '<p><strong style="color:var(--t)">What is not here yet:</strong> a finished product, full guided tours as shipped features, or guarantees on agent capacity.</p>' +
+          '<p>Updates still land often. If you use the MiniDapp on your Minima node, refresh the package from <a href="__MDS_REPO_URL__" target="_blank" rel="noopener noreferrer">the download link</a> when a new build is published.</p>' +
           '<p>The Stables community can be reached at <a href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer">t.me/stablescommunity</a>.</p>',
         showcaseIntroUnderstandBtn: 'I understand',
         title: '',
@@ -2073,7 +2637,7 @@
           'Don’t worry: we are a community that supports each other. You will be able to find all the information you need in order to set your bank securely.'
         ],
         showcase:
-          'On your Minima node, keep this MiniDapp in write mode so StablesAgent and feedback work.\n\nA fuller guided tour will arrive in a later build.\n\nFor now, explore this demo in the app. Open the agent from the main bottom icon [AGENT_ICON] or from the small top buttons in each section. The agent has limited capacity and may say it is busy, so retry shortly. You can talk to the agent in your language of choice.',
+          'A fuller guided tour will arrive in a later build.\n\nFor now, explore this demo in the app. Open the agent from the main bottom icon [AGENT_ICON] or from the small top buttons in each section. The agent has limited capacity and may say it is busy, so retry shortly. You can talk to the agent in your language of choice.',
         currencySetupIntro:
           'Let’s just set up your currency of choice now, so that your bank is already personalised.',
         currencySetupNote:
@@ -2104,9 +2668,12 @@
       const cfg = (window && window.STABLES_CONFIG) || {};
       const rawVersion = String(cfg.APP_BUILD_VERSION || 'unknown').trim();
       const versionLabel = rawVersion && rawVersion !== 'unknown'
-        ? (rawVersion.startsWith('v') ? rawVersion : `v${rawVersion}`)
+        ? 'v' + rawVersion.replace(/^v/i, '').split('.').map(part => {
+            const n = Number(part);
+            return Number.isFinite(n) ? String(n) : String(part).trim();
+          }).join('.')
         : 'unknown';
-      const repoUrl = String(cfg.MDS_ZIP_URL || 'https://github.com/StablesCouncil/stablescouncil.github.io/tree/main/dapp/1-showcase/latest-version').trim();
+      const repoUrl = String(cfg.MDS_ZIP_URL || 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.1.0.mds.zip').trim();
       const introHtml = String(c.welcomeShowcaseIntroHtml || '')
         .replace(/__APP_VERSION__/g, versionLabel)
         .replace(/__MDS_REPO_URL__/g, repoUrl);
@@ -2219,7 +2786,7 @@
     for (const c of CONTACTS_BOOK.values()) {
       if (n++ >= 14) break;
       const row = document.createElement('div');
-      row.style.cssText = 'padding:8px 10px;border-radius:10px;background:rgba(103,232,249,.06);border:1px solid rgba(103,232,249,.12);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px';
+      row.style.cssText = 'padding:8px 10px;border-radius:10px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px';
       const name = document.createElement('span');
       name.style.fontWeight = '700';
       name.style.color = 'var(--t)';
@@ -2232,6 +2799,12 @@
       row.appendChild(cat);
       el.appendChild(row);
     }
+    if (!n) {
+      const row = document.createElement('div');
+      row.style.cssText = 'padding:10px;border-radius:10px;font-size:13px;color:var(--m);text-align:center';
+      row.textContent = 'No contacts yet.';
+      el.appendChild(row);
+    }
   };
 
   /** More → Help → Guided tours: open welcome on the StablesAgent role picker (path choice). */
@@ -2239,6 +2812,14 @@
     try {
       sessionStorage.setItem('stables_guided_tour_from_menu_v1', '1');
     } catch (_) {}
+    if (typeof window.openAgentGuidedTour === 'function') {
+      window.openAgentGuidedTour();
+      return;
+    }
+    if (typeof window.openAgent === 'function') {
+      window.openAgent(false);
+      return;
+    }
     const modal = document.getElementById('welcomeSetupModal');
     if (!modal) return;
     modal.classList.add('open');
@@ -2276,10 +2857,11 @@
         if (pref && Array.from(langSel.options).some(o => o.value === pref)) langSel.value = pref;
       } catch (_) {}
     }
-    const modal = document.getElementById('welcomeSetupModal');
-    if (modal) modal.classList.add('open');
-    syncWelcomeModalFabAccess();
-    showWelcomeStep('showcaseIntro');
+    // Welcome now lives in the StablesAgent dialog timeline. Keep the legacy modal dormant
+    // so older controls still have a fallback, but do not auto-open it on load.
+    try {
+      if (typeof window.refreshAgentAttentionBadges === 'function') window.refreshAgentAttentionBadges();
+    } catch (_) {}
     if (typeof window.updateWelcomeLanguage === 'function') window.updateWelcomeLanguage();
   }, 700);
 })();

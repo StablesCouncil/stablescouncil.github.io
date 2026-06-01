@@ -21,7 +21,7 @@
     { id: 'council', label: 'Council' },
     { id: 'treasury', label: 'Treasury' },
     { id: 'faucet', label: 'Get Winiwa' },
-    { id: 'settings-profile', label: 'Settings — My profile' },
+    { id: 'settings-profile', label: 'Settings  -  My profile' },
     { id: 'settings-updates', label: 'Settings and updates' },
     { id: 'settings-security', label: 'Security' },
     { id: 'settings-legal', label: 'Legal & notices' },
@@ -92,12 +92,12 @@
       '<button type="button" class="agent-mini-btn" onclick="openAgentExplain(\'Feedback: public ledger on GitHub; Send posts JSON when the Council wires the endpoint; no secrets\')" title="StablesAgent">' +
       '<img src="agent.png" alt="StablesAgent">' +
       '</button></div>' +
-      '<div class="card app-section-card" style="padding:14px 16px;margin-bottom:14px;border:1px solid rgba(251,191,36,0.35);background:rgba(251,191,36,0.08)">' +
-      '<div style="font-size:12px;font-weight:900;color:#fbbf24;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Public ledger</div>' +
+      '<div class="card app-section-card"  style="padding:14px 16px;margin-bottom:14px">' +
+      '<div  style="font-size:12px;font-weight:900;color:#fbbf24;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Public ledger</div>' +
       '<p class="sec-body" style="margin:0 0 10px;line-height:1.55;font-weight:800;color:var(--t)">Do not include personal data, private keys, seed phrases, or anything you are not comfortable sharing <strong>forever</strong> in the open.</p>' +
       '<p class="xs mu" style="margin:0;line-height:1.5;font-weight:700">Submissions go to a <a href="' + dbUrl + '" target="_blank" rel="noopener noreferrer" style="color:var(--c);font-weight:900;text-decoration:underline">public GitHub folder</a>. Anyone can read them. Optional fields below are still <strong>public</strong>.</p>' +
       '</div>' +
-      '<div class="card app-section-card" style="padding:14px 16px;margin-bottom:14px;border:1px solid rgba(103,232,249,.12)">' +
+      '<div class="card app-section-card"  style="padding:14px 16px;margin-bottom:14px">' +
       '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Topic area</label>' +
       '<select class="fsel" id="feedbackStructDomain" style="width:100%;margin-bottom:8px" aria-label="Topic area">' +
       '<option value="">Choose…</option>' +
@@ -109,17 +109,17 @@
       '<option value="open_text" disabled>Open topic (free form) - available shortly</option>' +
       '</select>' +
       '<p class="xs mu" style="margin:0 0 10px;line-height:1.45;color:var(--am);font-weight:800">Some topic areas are not active yet. These will be made available shortly (you are early).</p>' +
-      '<div id="feedbackGroupFinancial" style="display:none">' +
+      '<div id="feedbackGroupFinancial"  style="display:none">' +
       '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Financial structure: detail</label>' +
       '<select class="fsel" id="feedbackStructFinancialSub" style="width:100%;margin-bottom:8px">' +
       '<option value="idea">Idea</option><option value="other">Other</option></select></div>' +
-      '<div id="feedbackGroupTechnical" style="display:none">' +
+      '<div id="feedbackGroupTechnical"  style="display:none">' +
       '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Technical: detail</label>' +
       '<select class="fsel" id="feedbackStructTechnicalSub" style="width:100%;margin-bottom:8px">' +
       '<option value="community_communication">Community communication</option>' +
       '<option value="smart_contract">Smart contract</option>' +
       '<option value="other">Other</option></select></div>' +
-      '<div id="feedbackGroupApp" style="display:none">' +
+      '<div id="feedbackGroupApp"  style="display:none">' +
       '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Page</label>' +
       '<select class="fsel" id="feedbackStructAppPage" style="width:100%;margin-bottom:10px">' +
       '<option value="">Choose page…</option>' +
@@ -134,9 +134,9 @@
       '<option value="design">Design</option>' +
       '<option value="functionality">Functionalities</option>' +
       '<option value="other">Other</option></select></div>' +
-      '<div id="feedbackGroupOpenText" style="display:none">' +
+      '<div id="feedbackGroupOpenText"  style="display:none">' +
       '<p class="xs mu" style="margin:0 0 8px;line-height:1.5;font-weight:800;color:var(--m)">We offer this so nothing is blocked, but <strong>free-form items may take longer</strong> to triage than structured feedback.</p></div>' +
-      '<div id="feedbackGroupOtherHint" style="display:none">' +
+      '<div id="feedbackGroupOtherHint"  style="display:none">' +
       '<p class="xs mu" style="margin:0;line-height:1.5;font-weight:700;color:var(--muted)">Use the title and description below to name the area (protocol, ops, docs, …).</p></div>' +
       '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Feedback type</label>' +
       '<select class="fsel" id="feedbackStructKind" style="width:100%;margin-bottom:8px">' +
@@ -167,6 +167,24 @@
     );
   }
 
+  const FEEDBACK_ROADMAP_BLOCK =
+    '<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">' +
+    '<div class="stitle-row">' +
+    '<div class="stitle">Demo roadmap</div>' +
+    '<button type="button" class="agent-mini-btn" onclick="openAgentExplain(\'Feedback roadmap: this is Demo v1 of many; coming-soon modules are visible so reviewers know what to test and where to send feedback\')" title="StablesAgent">' +
+    '<img src="agent.png" alt="StablesAgent">' +
+    '</button></div>' +
+    '<div class="card app-section-card"  style="padding:14px 16px;margin-bottom:14px">' +
+    '<div  style="font-size:12px;font-weight:900;color:var(--c);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Demo v1 of many</div>' +
+    '<p class="sec-body" style="margin:0 0 12px;line-height:1.55;font-weight:800;color:var(--t)">This build is for coherence review: channel truth, native MINIMA wallet basics, Winiwa / Wables demo flows, merchant-first ramps, Coverage fund copy, links, and feedback routing.</p>' +
+    '<div  style="display:grid;gap:8px">' +
+    '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--t)">Now review</strong></span><span style="font-weight:800;color:var(--t)">Wallet, Mint, Coverage fund, On/Off Ramp, Settings</span></div>' +
+    '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--am)">Coming soon</strong></span><span style="font-weight:800;color:var(--t)">App feedback topic, bug reports, roadmap votes</span></div>' +
+    '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--t)">Next modules</strong></span><span style="font-weight:800;color:var(--t)">Personal themes, merchant validation, academy lessons, release notes</span></div>' +
+    '</div>' +
+    '<p class="xs mu" style="margin:12px 0 0;line-height:1.5;font-weight:800;color:var(--muted)">Use the form below for concept, financial, and technical comments today. App-specific feedback and structured bug reports are visible here so they can be activated without changing the review path later.</p>' +
+    '</div></div>';
+
   const FEEDBACK_TELEGRAM_BLOCK =
     '<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">' +
     '<div class="stitle-row">' +
@@ -174,8 +192,8 @@
     '<button type="button" class="agent-mini-btn" onclick="openAgentExplain(\'Feedback: reach Stables on Telegram (community and core team)\')" title="StablesAgent">' +
     '<img src="agent.png" alt="StablesAgent">' +
     '</button></div>' +
-    '<div class="card app-section-card" style="padding:14px 14px;border-radius:14px;background:rgba(0,0,0,.22);border:1px solid rgba(103,232,249,.12)">' +
-    '<div style="font-size:14px;font-weight:900;color:var(--accent);margin-bottom:12px">Community &amp; team</div>' +
+    '<div class="card app-section-card"  style="padding:14px 14px;border-radius:14px">' +
+    '<div  style="font-size:14px;font-weight:900;color:var(--accent);margin-bottom:12px">Community &amp; team</div>' +
     '<p style="margin:0 0 16px;font-size:14px;line-height:1.6;font-weight:800;color:var(--muted)">' +
     'There are two ways to reach us, both on Telegram. Use the button below to open the Stables community: share feedback there with everyone and join the discussion. To contact the core dev team in private, open Telegram and start a chat with <strong style="color:var(--t)">@stablescouncil</strong>.' +
     '</p>' +
@@ -400,7 +418,7 @@
     if ($ && $('pageDesc')) $('pageDesc').textContent = '';
     if (typeof ctx.setHeaderButtons === 'function') ctx.setHeaderButtons([]);
     if (!app) return;
-    app.innerHTML = '<div style="display:grid;gap:0">' + buildFeedbackFormHtml() + FEEDBACK_TELEGRAM_BLOCK + '</div>';
+    app.innerHTML = '<div  style="display:grid;gap:0">' + FEEDBACK_ROADMAP_BLOCK + buildFeedbackFormHtml() + FEEDBACK_TELEGRAM_BLOCK + '</div>';
     wireFeedbackForm(app);
   }
 
@@ -414,7 +432,7 @@
   window.renderFeedbackPage = function renderFeedbackPage() {
     var root = document.getElementById('feedbackApp');
     if (!root) return;
-    root.innerHTML = '<div style="display:grid;gap:0">' + buildFeedbackFormHtml() + FEEDBACK_TELEGRAM_BLOCK + '</div>';
+    root.innerHTML = '<div  style="display:grid;gap:0">' + FEEDBACK_ROADMAP_BLOCK + buildFeedbackFormHtml() + FEEDBACK_TELEGRAM_BLOCK + '</div>';
     wireFeedbackForm(root);
   };
 

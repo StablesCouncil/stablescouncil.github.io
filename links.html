@@ -709,25 +709,25 @@
                     </div>
                     <div class="link-description">Preview build aimed at gathering community feedback on general direction.</div>
                 </div>
-                <span class="link-badge-active">Active</span>
+                <span class="drafting-badge drafting-badge--phrase">Superseded</span>
             </a>
 
             <!-- Demo -->
-            <div class="link-item drafting">
-                <div class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
+            <a href="/dapp/2-demo/" class="link-item" onclick="openDemoLaunch(event)">
+                <div class="link-icon" style="background: rgba(103, 232, 249, 0.1); border-color: var(--accent-cyan);">
+                    <svg viewBox="0 0 24 24" fill="var(--accent-cyan)">
                         <path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/>
                     </svg>
                 </div>
                 <div class="link-content">
                     <div class="link-title-row">
                         <span class="link-title">Demo Channel</span>
-                        <span class="link-title-version" title="Demo track">v0.0.0.1</span>
+                        <span class="link-title-version" title="Demo track">v0.0.0.1.0</span>
                     </div>
-                    <div class="link-description">Minima functionality with showcase interaction.</div>
+                    <div class="link-description">Live native Minima send and receive, QR payments, and the full demo flow. Recommended install on MinimaOS, or open the web version and connect your node.</div>
                 </div>
-                <span class="drafting-badge">In Build</span>
-            </div>
+                <span class="link-badge-active">Active</span>
+            </a>
 
             <!-- Testing -->
             <div class="link-item drafting">
@@ -1174,6 +1174,39 @@
             window.closeAgent=closeAgent;
             document.addEventListener('keydown',e=>{if(e.key==='Escape'&&agentOpen)closeAgent();});
         })();
+    </script>
+
+    <!-- DEMO LAUNCH DISCLAIMER (styles in stables.css .demo-launch-*) -->
+    <div id="demoLaunchModal" class="demo-launch-overlay" role="dialog" aria-modal="true" aria-labelledby="demoLaunchTitle"
+        onclick="if(event.target===this)closeDemoLaunch()">
+        <div class="demo-launch-card">
+            <div class="demo-launch-head">
+                <div id="demoLaunchTitle" class="demo-launch-title">Launch the Stables demo</div>
+                <button type="button" class="demo-launch-close" onclick="closeDemoLaunch()" aria-label="Close">&times;</button>
+            </div>
+            <div class="demo-launch-warn">
+                <div class="demo-launch-warn-label">&#9888; FIRST RELEASE &middot; EARLY TESTING PHASE</div>
+                <p>This is a first release. There may be <strong>bugs and unexpected behavior</strong>. Only connect a wallet holding <strong>funds you are willing to lose</strong>.</p>
+                <p class="muted">Using the app at this stage is a <strong>testing contribution to the whole community</strong>. Thank you for helping us harden it. We truly appreciate your contribution.</p>
+                <p class="muted">The code is fully open and accessible for you to review: <a href="https://github.com/StablesCouncil/stablescouncil.github.io" target="_blank" rel="noopener noreferrer">github.com/StablesCouncil/stablescouncil.github.io</a>. If in doubt, please seek a third party opinion.</p>
+            </div>
+            <p class="demo-launch-lead">There are 2 ways to access the dapp:</p>
+            <div class="demo-launch-options">
+                <div class="demo-launch-option">
+                    <p><strong>1. MinimaOS</strong> <span class="demo-launch-badge">RECOMMENDED</span><br>Download the MiniDapp package and install it on your node.</p>
+                    <a href="/dapp/latest-version/Stables_v0.0.0.1.0.mds.zip" class="btn btn-primary">Install on MinimaOS</a>
+                </div>
+                <div class="demo-launch-option">
+                    <p><strong>2. Web version.</strong> Opens in your browser and connects to your running Minima node. This might be easier to set up the QR code reading function.</p>
+                    <a href="/dapp/2-demo/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Open the web demo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function openDemoLaunch(e){ if(e) e.preventDefault(); var m=document.getElementById('demoLaunchModal'); if(m){ m.classList.add('open'); document.body.style.overflow='hidden'; } }
+        function closeDemoLaunch(){ var m=document.getElementById('demoLaunchModal'); if(m){ m.classList.remove('open'); document.body.style.overflow=''; } }
+        document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDemoLaunch(); });
     </script>
 </body>
 </html>

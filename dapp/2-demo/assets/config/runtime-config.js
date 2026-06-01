@@ -12,7 +12,9 @@ window.STABLES_CONFIG = {
   /** Council channel for this package: drives top bar pill (Showcase / Demo / Test / Prod). */
   APP_STAGE: 'demo',
   /** Shipped build (keep in sync with dapp.conf "version" when you release). */
-  APP_BUILD_VERSION: '00.00.00.01.00',
+  APP_BUILD_VERSION: '0.0.0.1.0',
+  /** Date this build was published to GitHub (ISO YYYY-MM-DD). */
+  APP_BUILD_DATE: '2026-06-01',
   /**
    * Council-side view of the newest MiniDapp. If latestPublishedVersion sorts above APP_BUILD_VERSION,
    * the Council communications page shows criticality + what changed + zip link.
@@ -20,13 +22,13 @@ window.STABLES_CONFIG = {
    * Use the same segment count as APP_BUILD_VERSION so semver-like compare is meaningful.
    */
   APP_UPDATE_POLICY: {
-    latestPublishedVersion: '00.00.00.01.00',
+    latestPublishedVersion: '0.0.0.1.0',
     whenUpdateNeeded: {
       criticality: 'high',
       whatChanged:
         'Example when an update ships: security fixes, mandatory protocol UI changes, or critical Minima MDS fixes.',
       details:
-        'Install the current package Stables_v00.00.01.mds.zip from the link below, or use Settings and updates.'
+        'Install the current package from the link below, or use Settings and updates.'
     }
   },
   ACTIVITY_PAGE_SIZE: 25,
@@ -42,7 +44,7 @@ window.STABLES_CONFIG = {
    * amber security modal can appear again after each refresh (showcase / web demo).
    * Set to false for a production MiniDapp build so users are not re-prompted every visit.
    */
-  RESET_VAULT_KEY_CONFIRMATION_ON_EACH_LOAD: true,
+  RESET_VAULT_KEY_CONFIRMATION_ON_EACH_LOAD: false,
   /** After confirming, user chose whether to allow occasional soft reminders: 'yes' | 'no'. */
   VAULT_PERIODIC_REMINDER_PREF_KEY: 'stables_vault_periodic_reminder_pref_v1',
   /** Last time we showed a soft Vault reminder (when pref is yes). */
@@ -55,14 +57,14 @@ window.STABLES_CONFIG = {
    */
   FAUCET_WINIWA_COOLDOWN_MS: 3600000,
   FAUCET_WINIWA_LAST_CLAIM_STORAGE_KEY: 'stables_faucet_winiwa_last_claim_ts_v1',
-  /** Public demo: placeholder location for latest MiniDapp package (opens GitHub for now). */
-  MDS_ZIP_URL: 'https://github.com/StablesCouncil/stablescouncil.github.io/tree/main/dapp/1-showcase/latest-version',
+  /** Public demo: direct MiniDapp package download. */
+  MDS_ZIP_URL: 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.1.0.mds.zip',
   /**
    * Stables Charter on GitHub (Markdown). Governing text for how the Council and community run the protocol.
-   * Point this at the published file in your org repo when it is live (path below is a placeholder you can change).
+   * Leave empty until the charter is actually published — an empty value shows the "coming soon" modal.
+   * Point this at the published file in your org repo when it is live.
    */
-  STABLES_CHARTER_URL:
-    'https://github.com/StablesCouncil/StablesCouncil.github.io/blob/main/governance/stables_charter.md',
+  STABLES_CHARTER_URL: '',
   /**
    * Public feedback ledger on GitHub (folder of JSON files or README explaining the workflow).
    * Shown on Feedback page as "See what others sent". Point at your org repo when the folder exists.
@@ -82,6 +84,8 @@ window.STABLES_CONFIG = {
    * Set true only if the agent iframe is blocked on your Minima / WebView host.
    */
   STABLES_AGENT_OPEN_EXTERNAL_WHEN_MDS: false,
+  /** URL for local testing of the web chat */
+  AGENT_URL: 'http://127.0.0.1:8080/chat',
   /**
    * When true (default): on origins that need Connect node (not MiniDapp hub port 9003), open the Connect node modal
    * after load if the welcome modal is not open, and once after the welcome flow closes, until the node reports live RPC.
@@ -104,9 +108,9 @@ window.STABLES_CONFIG = {
   COINGECKO_MINIMA_URL: '',
   /**
    * Minima explorer base URL for transaction links.
-   * Expected format: `${base}${txId}` (example: https://explorer.minima.global/transaction/).
+   * Expected format: `${base}${txId}` (example: https://explorer.minima.global/search?q=).
    */
-  MINIMA_EXPLORER_TX_BASE_URL: 'https://explorer.minima.global/transaction/',
+  MINIMA_EXPLORER_TX_BASE_URL: 'https://explorer.minima.global/search?q=',
   /**
    * Minima explorer base URL for address (wallet) pages.
    * Expected format: `${base}${address}` (example: https://explorer.minima.global/address/).
@@ -117,7 +121,7 @@ window.STABLES_CONFIG = {
   /** How often to refresh spot price for Treasury stress slider (ms). */
   WINIWA_PRICE_POLL_MS: 120000,
   /**
-   * When true (default), Mint/Burn vault actions skip Council Executive role — for browser/local demo.
+   * When true (default), Mint/Burn vault actions skip Council Executive role  -  for browser/local demo.
    * Set false in builds where multisig gating should apply.
    */
   DEMO_VAULT_UNLOCK: true,
@@ -139,6 +143,18 @@ window.STABLES_CONFIG = {
     intro:
       'This channel is for Stables Council only: security incidents, required updates, and other critical communication. It is not for casual chat.',
     items: [
+      {
+        title: 'Demo v0.0.0.1.0 released',
+        date: '2026-06-01',
+        body:
+          'First public demo release. Live native Minima send/receive with QR scanner, guided StablesAgent welcome with three paths, merchant shop setup with brand and locations, ambassador onboarding with encrypted grant, and dead-end-proof agent flows. Full changelog in the app under More.'
+      },
+      {
+        title: 'Demo review package ready',
+        date: '2026-05-14',
+        body:
+          'The current Demo review package summarizes the build link, major changes, known limits, feedback ask, and next step. Review focus: Showcase/Demo truth, native MINIMA wallet baseline, Winiwa/Wables demo-only copy, Coverage fund wording, On/Off Ramp structure, Settings, Links, and Feedback.'
+      },
       {
         title: 'Prototype build',
         date: '2026-03-19',

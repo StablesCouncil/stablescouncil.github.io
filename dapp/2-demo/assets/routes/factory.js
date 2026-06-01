@@ -70,16 +70,16 @@ function renderSimChart(seriesNow, seriesAfter) {
   const pathFor = (arr) => arr.map((d, i) => `${i === 0 ? 'M' : 'L'} ${xFor(d.pct).toFixed(2)} ${yFor(d.total).toFixed(2)}`).join(' ');
 
   return `
-    <div class="card" style="padding:12px">
+    <div class="card"  style="padding:12px">
       <div class="muted">Portfolio value vs MINIMA price move</div>
-      <div style="margin-top:10px">
+      <div  style="margin-top:10px">
         <svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" style="display:block; border-radius:14px; border:1px solid rgba(34,48,68,.75); background:rgba(11,15,20,.18)">
           <line x1="${xFor(0)}" y1="${pad}" x2="${xFor(0)}" y2="${h - pad}" stroke="rgba(159,176,192,.25)" />
           <path d="${pathFor(seriesNow)}" fill="none" stroke="rgba(159,176,192,.55)" stroke-width="3" />
           <path d="${pathFor(seriesAfter)}" fill="none" stroke="rgba(103,232,249,.75)" stroke-width="3" />
         </svg>
       </div>
-      <div class="muted" style="margin-top:8px">Grey = current · Cyan = after mint</div>
+      <div class="muted"  style="margin-top:8px">Grey = current · Cyan = after mint</div>
     </div>
   `;
 }
@@ -98,23 +98,23 @@ function renderSimBreakdown(snap, fmt, showCR) {
   const zoneColor = snap.zone === 'ok' ? 'var(--good)' : snap.zone === 'maint' ? 'var(--warn)' : snap.zone === 'rebal' ? 'var(--bad)' : 'var(--muted)';
 
   return `
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px">
+    <div  style="display:flex; justify-content:space-between; align-items:center; gap:10px">
       <div class="muted">Total</div>
-      <div style="font-weight:900; font-size: 14px;">${fmt(snap.total)} <span class="muted" style="font-size:12px">mUSD</span></div>
+      <div  style="font-weight:900; font-size: 14px">${fmt(snap.total)} <span class="muted" style="font-size:12px">mUSD</span></div>
     </div>
-    ${showCR ? `<div class="muted" style="margin-top:8px">Coverage: <strong>${crTxt}</strong> · <strong style="color:${zoneColor}">${zoneLabel}</strong></div>` : ''}
+    ${showCR ? `<div class="muted"  style="margin-top:8px">Coverage: <strong>${crTxt}</strong> · <strong style="color:${zoneColor}">${zoneLabel}</strong></div>` : ''}
     <div class="hr"></div>
-    <div style="display:grid; gap:10px">
-      <div style="display:flex; justify-content:space-between; color:var(--muted); font-size:12px">
-        <div style="min-width:140px">Asset</div>
-        <div style="flex:1; text-align:right">Qty</div>
-        <div style="flex:1; text-align:right">Value</div>
+    <div  style="display:grid; gap:10px">
+      <div  style="display:flex; justify-content:space-between; color:var(--muted); font-size:12px">
+        <div  style="min-width:140px">Asset</div>
+        <div  style="flex:1; text-align:right">Qty</div>
+        <div  style="flex:1; text-align:right">Value</div>
       </div>
       ${rows.map(r => `
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px">
-          <div style="min-width:140px; font-weight:900; font-size: 14px;">${r.label}</div>
-          <div style="flex:1; text-align:right; font-weight:900; font-size: 14px;">${fmt(r.qty)}</div>
-          <div style="flex:1; text-align:right; font-weight:900; font-size: 14px;">${fmt(r.usd)}</div>
+        <div  style="display:flex; align-items:center; justify-content:space-between; gap:12px">
+          <div  style="min-width:140px; font-weight:900; font-size: 14px">${r.label}</div>
+          <div  style="flex:1; text-align:right; font-weight:900; font-size: 14px">${fmt(r.qty)}</div>
+          <div  style="flex:1; text-align:right; font-weight:900; font-size: 14px">${fmt(r.usd)}</div>
         </div>
       `).join('')}
     </div>
@@ -135,14 +135,14 @@ function allocSlider(state, tokenQtyFromMinimaValue, fmt, key, nameHtml, subtitl
   return `
     <div class="asset-row">
       <div class="asset-head">
-        <div style="display:flex; align-items:flex-start; gap:10px">
+        <div  style="display:flex; align-items:flex-start; gap:10px">
           <button class="iconbtn" id="lock_${key}" title="Lock this slider">${lockLabel}</button>
           <div>
             <div class="asset-name">${nameHtml}</div>
             <div class="asset-sub">${subtitle}</div>
           </div>
         </div>
-        <div class="amt" style="text-align:right">
+        <div class="amt"  style="text-align:right">
           <div style="font-weight:900" id="alloc_val_hdr_${key}">${fmt(vMin)} <span class="muted" style="font-size:12px">MINIMA</span></div>
           <div class="muted" style="margin-top:2px" id="alloc_pct_${key}">${pct.toFixed(0)}%</div>
         </div>
@@ -152,17 +152,17 @@ function allocSlider(state, tokenQtyFromMinimaValue, fmt, key, nameHtml, subtitl
         <div class="line">
           <input id="alloc_rng_${key}" type="range" min="0" max="${max}" value="${vMin}" ${disabled} />
         </div>
-        <div class="line" style="justify-content:space-between">
+        <div class="line"  style="justify-content:space-between">
           <span class="muted">0 → ${fmt(max)} MINIMA</span>
           <span class="muted">Minting: <strong id="alloc_qty_${key}">${fmt(qty)}</strong> tokens</span>
         </div>
 
         <div class="line">
-          <div style="flex:1">
+          <div  style="flex:1">
             <label for="alloc_in_${key}">Tokens</label>
             <input id="alloc_in_${key}" type="number" inputmode="decimal" autocomplete="off" min="0" step="0.0001" value="${qty}" />
           </div>
-          <div style="flex:1">
+          <div  style="flex:1">
             <label>Value (MINIMA)</label>
             <div style="padding:10px 12px; border-radius:14px; border:1px solid rgba(34,48,68,.85); background:rgba(11,15,20,.20); font-weight:900; text-align:right" id="alloc_val_${key}">${fmt(vMin)} <span class="muted" style="font-size:12px">MINIMA</span></div>
           </div>
@@ -418,16 +418,16 @@ function renderFactory(ctx) {
   const seriesAfter = portfolioSeries(state, tokenQtyFromMinimaValue, true);
 
   app.innerHTML = `
-    <div style="display:grid; gap:14px;">
+    <div  style="display:grid; gap:14px">
 
       <div class="card">
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap">
+        <div  style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap">
           <div>
-            <div class="muted" style="font-size: 12px;">Wallet MINIMA</div>
-            <div class="kpi" style="font-size: 32px; font-weight: 900;">${fmt(state.balances.minima)}</div>
+            <div class="muted"  style="font-size: 12px">Wallet MINIMA</div>
+            <div class="kpi"  style="font-size: 32px; font-weight: 900">${fmt(state.balances.minima)}</div>
           </div>
-          <div class="muted" style="text-align:right; max-width:360px">
-            Need more test MINIMA? <a href="#/faucet" style="color:var(--accent); font-weight:900">Open faucet</a>
+          <div class="muted"  style="text-align:right; max-width:360px">
+            Need more demo Winiwa? <a href="#/faucet" style="color:var(--accent); font-weight:900">Open faucet</a>
           </div>
         </div>
 
@@ -435,7 +435,7 @@ function renderFactory(ctx) {
 
         <label for="mintAmt">Total Winiwa you want to use for minting</label>
         <input id="mintAmt" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="${Math.floor(state.factory.mintAmount)}" />
-        <div class="muted" style="margin-top:10px">This is the total collateral committed for this mint.</div>
+        <div class="muted"  style="margin-top:10px">This is the total collateral committed for this mint.</div>
       </div>
 
       <div class="card">
@@ -450,23 +450,23 @@ function renderFactory(ctx) {
 
         <div class="hr"></div>
 
-        <div style="display:grid; gap:10px; justify-items:center; text-align:center">
+        <div  style="display:grid; gap:10px; justify-items:center; text-align:center">
           <button class="primary bigbtn" id="mintAll" style="width:min(560px, 100%); font-size:16px" ${mintDisabled ? 'disabled' : ''}>Mint</button>
-          <div class="muted" style="max-width:640px">Test-only assets. No real-world value.</div>
+          <div class="muted"  style="max-width:640px">Test-only assets. No real-world value.</div>
         </div>
       </div>
 
       <div class="card">
         <div class="step-title">
-          <div style="font-weight:900">Simulator</div>
+          <div  style="font-weight:900">Simulator</div>
           <div class="muted">Winiwa price ±50%</div>
         </div>
         <div class="hr"></div>
 
-        <div style="display:grid; gap:10px">
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
+        <div  style="display:grid; gap:10px">
+          <div  style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap">
             <div class="muted">Price move</div>
-            <div style="font-weight:900">${state.factory.simPct >= 0 ? '+' : ''}${state.factory.simPct.toFixed(0)}%</div>
+            <div  style="font-weight:900">${state.factory.simPct >= 0 ? '+' : ''}${state.factory.simPct.toFixed(0)}%</div>
           </div>
           <input id="simPct" type="range" min="-50" max="50" value="${state.factory.simPct}" />
         </div>
@@ -480,13 +480,13 @@ function renderFactory(ctx) {
         <div class="row two">
           <div class="card">
             <h3 style="margin:0">Current wallet + mint</h3>
-            <div class="muted" style="margin-top:6px">Quantities stay fixed. Values move with MINIMA.</div>
+            <div class="muted"  style="margin-top:6px">Quantities stay fixed. Values move with MINIMA.</div>
             <div class="hr"></div>
             ${renderSimBreakdown(snapNow, fmt)}
           </div>
           <div class="card">
             <h3 style="margin:0">After this mint</h3>
-            <div class="muted" style="margin-top:6px">Preview only (nothing executed).</div>
+            <div class="muted"  style="margin-top:6px">Preview only (nothing executed).</div>
             <div class="hr"></div>
             ${renderSimBreakdown(snapAfter, fmt, true)}
           </div>

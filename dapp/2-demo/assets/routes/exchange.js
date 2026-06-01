@@ -7,8 +7,8 @@ function renderExchange(ctx) {
 
     // Render using container
     $('app').innerHTML = SNIPPETS.container(`
-        <div class="card" style="padding: 24px;">
-            <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 16px;">
+        <div class="card"  style="padding: 24px">
+            <div  style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 16px">
                 <div class="pill">
                     <span class="badge" style="background: var(--cyan);"></span>
                     <span>Live Rates</span>
@@ -16,13 +16,13 @@ function renderExchange(ctx) {
             </div>
 
             <!-- FROM Card -->
-            <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <div  style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px">
+                <div  style="display: flex; justify-content: space-between; margin-bottom: 8px">
                     <label style="color: var(--muted); font-size: 12px; font-weight: 700;">From</label>
                     <span style="color: var(--muted); font-size: 12px;">Balance: ${fmt(state.balances.m)} mUSD</span>
                 </div>
-                <div style="display: flex; gap: 12px; align-items: center;">
-                    <div style="position: relative; width: 100%;">
+                <div  style="display: flex; gap: 12px; align-items: center">
+                    <div  style="position: relative; width: 100%">
                         <input type="text" id="exchFromAmount" inputmode="decimal" placeholder="Input Amount" 
                             style="font-size: 24px; font-weight: 700; padding: 8px 60px 8px 8px; border: none; background: transparent; width: 100%; outline: none; color: var(--text);">
                         <button id="btnExchMax" style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); padding: 4px 8px; font-size: 10px; height: auto; background: rgba(103, 232, 249, 0.15); color: var(--accent); border: none;">MAX</button>
@@ -47,20 +47,20 @@ function renderExchange(ctx) {
             </div>
 
             <!-- Arrow Divider -->
-            <div style="display: flex; justify-content: center; margin: -24px 0; position: relative; z-index: 5;">
+            <div  style="display: flex; justify-content: center; margin: -24px 0; position: relative; z-index: 5">
                 <button id="btnSwap" title="Swap Assets" style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; color: var(--text);">
                    ⇅
                 </button>
             </div>
 
             <!-- TO Card -->
-            <div style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-top: 12px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <div  style="background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-top: 12px">
+                <div  style="display: flex; justify-content: space-between; margin-bottom: 8px">
                     <label style="color: var(--muted); font-size: 12px; font-weight: 700;">To (Estimated)</label>
                     <span style="color: var(--muted); font-size: 12px;">Rate: 1 <span id="lblBase">mUSD</span> ≈ <span id="lblQuote">...</span> <span id="lblTarget">mEUR</span></span>
                 </div>
-                <div style="display: flex; gap: 12px; align-items: center;">
-                    <div style="position: relative; width: 100%;">
+                <div  style="display: flex; gap: 12px; align-items: center">
+                    <div  style="position: relative; width: 100%">
                         <input type="text" id="exchToAmount" inputmode="decimal" placeholder="Input Amount" 
                              style="font-size: 24px; font-weight: 700; padding: 8px 60px 8px 8px; border: none; background: transparent; width: 100%; outline: none; color: var(--text);">
                         <button id="btnExchMaxTo" style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); padding: 4px 8px; font-size: 10px; height: auto; background: rgba(103, 232, 249, 0.15); color: var(--accent); border: none;">MAX</button>
@@ -85,7 +85,7 @@ function renderExchange(ctx) {
             </div>
 
             <!-- Action Button -->
-            <div style="margin-top: 24px;">
+            <div  style="margin-top: 24px">
                 <button id="btnDoExchange" class="primary" style="width: 100%; padding: 16px; font-size: 16px;">
                     Exchange
                 </button>

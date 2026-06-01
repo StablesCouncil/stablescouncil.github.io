@@ -1,17 +1,17 @@
-# Stables Demo MiniDapp — Charter traceability handout
+# Stables Demo MiniDapp  -  Charter traceability handout
 
 **Audience:** Agents and developers working on **`1_development/stream_1_app/website/dapp/2-demo/`** (demo channel).  
 **Purpose:** One checklist so the **demo** visibly reflects the **Stables Charter** and handshake **protocol mechanics**, without inventing economics.
 
 **Authority order (never invert):**
 
-1. **`0_handshake/protocol_mechanics_spec.md`** — wins any numeric or mechanical conflict.
-2. **`1_development/stream_3_governance/prod_governance_papers/stables_charter.md`** — intent, governance, risk framing, UX principles.
-3. **`0_handshake/handshake.md`** — process, comms law, versioning, CHANGELOG rules.
+1. **`0_handshake/protocol_mechanics_spec.md`**  -  wins any numeric or mechanical conflict.
+2. **`1_development/stream_3_governance/prod_governance_papers/stables_charter.md`**  -  intent, governance, risk framing, UX principles.
+3. **`0_handshake/handshake.md`**  -  process, comms law, versioning, CHANGELOG rules.
 
 **Before you ship UI copy that explains mint, burn, fees, CR, Coverage Fund, or xMinima:** run **handshake Step 0b** (read `protocol_mechanics_spec.md` first).
 
-**Canonical demo tree:** `1_development/stream_1_app/website/dapp/2-demo/` — see **`0_handshake/minidapp_version.md`**. Log user-visible work in **`dapp/2-demo/CHANGELOG.md`**. Update **`1_development/stream_1_app/ui_inventory/app_ui_inventory.md`** when routes or major sections change.
+**Canonical demo tree:** `1_development/stream_1_app/website/dapp/2-demo/`  -  see **`0_handshake/minidapp_version.md`**. Log user-visible work in **`dapp/2-demo/CHANGELOG.md`**. Update **`1_development/stream_1_app/ui_inventory/app_ui_inventory.md`** when routes or major sections change.
 
 ---
 
@@ -152,7 +152,8 @@ External references for builders:
 
 - **`APP_STAGE: demo`** and version pill per **`runtime-config.js`** + **`minidapp_version.md`**.
 - **`web_component_spec.md`** + **`2_current/stream_1_app/prod_brand_masters/`** for visuals.
-- **No em dash (—)** in public-facing copy per **`handshake.md` §4** (use hyphen or rephrase).
+- **Visual quality is functional quality:** follow `0_handshake/visual_quality_system.md`. Spacing, hierarchy, typography, and proportion must look deliberate on real screens. Crowded text, random margins, and inconsistent section rhythm are defects, even when the feature technically works.
+- **No em dash ( - )** in public-facing copy per **`handshake.md` §4** (use hyphen or rephrase).
 - **Do not use the word “doctrine”** in user-facing text; use “Charter,” “official papers,” or “architectural rules.”
 
 ---
@@ -167,7 +168,7 @@ External references for builders:
 
 ---
 
-## 14. x402 readiness — concrete task list with file targets (demo)
+## 14. x402 readiness  -  concrete task list with file targets (demo)
 
 Use this as the implementation brief for the coding agent.
 

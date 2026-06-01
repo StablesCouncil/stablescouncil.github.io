@@ -10,24 +10,26 @@ The **demo** channel ships as a **self-contained** folder: **`dapp.conf`** at th
 
 Zip the **contents** of **`1_development/stream_1_app/website/dapp/2-demo/`** (this folder’s parent is **`dapp/`** on the full site; for the **demo-only** zip, zip **`dapp/2-demo/`** itself), **not** a parent wrapper directory. **Exclude** the **`build/`** directory (generated zips and notes).
 
-**Canonical filename** (version in the name):
+**Public download filename** (short display version in the name):
 
 | File | Purpose |
 |------|---------|
-| **`Stables_v00.00.00.01.00_demo.mds.zip`** | Installable MiniDapp for the Minima hub (**demo** line) |
+| **`Stables_v0.0.0.1.0.mds.zip`** | Installable MiniDapp for the Minima hub (**demo** line) |
+
+The app and public download labels use the short filename. Internal config and `dapp.conf` keep the canonical version `00.00.00.01.00` for comparisons and release bookkeeping.
 
 ## Build the zip (PowerShell, from repo root)
 
 ```powershell
 $dev = "1_development/stream_1_app/website/dapp/2-demo"
 $items = Get-ChildItem -LiteralPath $dev -Force | Where-Object { $_.Name -ne 'build' }
-Compress-Archive -LiteralPath ($items.FullName) -DestinationPath "$dev/build/Stables_v00.00.00.01.00_demo.mds.zip" -Force
+Compress-Archive -LiteralPath ($items.FullName) -DestinationPath "$dev/build/Stables_v0.0.0.1.0.mds.zip" -Force
 ```
 
 Adjust the path if your clone layout differs. After ship, publish the validated `website/` tree so the public Pages repo reflects the same `dapp/` changes.
 
 ## Install on your node
 
-1. Copy **`Stables_v00.00.00.01.00_demo.mds.zip`** to the device that runs Minima.
+1. Copy **`Stables_v0.0.0.1.0.mds.zip`** to the device that runs Minima.
 2. In the **MiniDapp hub**, install the zip and open **Stables** from the hub list.
 3. **`dapp.conf`** **`web`** is **`index.html`** at zip root (demo channel).

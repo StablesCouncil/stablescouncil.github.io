@@ -28,13 +28,13 @@ function renderWallet(ctx) {
 
   // EXACT HTML FROM template_complete.html - ONLY replace data
   app.innerHTML = `
-    <div style="display:grid; gap:14px;">
+    <div  style="display:grid; gap:14px">
       
       <!-- Column Headers (240px + 110px + 110px) -->
-      <div style="display:flex; justify-content:space-between; color:var(--muted); font-size:11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 0;">
-        <div style="width:240px;">Payment Currency</div>
-        <div style="width:110px; text-align:right;">Quantity</div>
-        <div style="width:110px; text-align:right;">Value (${defaultInfo.label})</div>
+      <div  style="display:flex; justify-content:space-between; color:var(--muted); font-size:11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 0">
+        <div  style="width:240px">Payment Currency</div>
+        <div  style="width:110px; text-align:right">Quantity</div>
+        <div  style="width:110px; text-align:right">Value (${defaultInfo.label})</div>
       </div>
 
       ${paymentAssets.map((r, i) => {
@@ -46,9 +46,9 @@ function renderWallet(ctx) {
       <!-- Content Row ${i + 1} ${isDefault ? '(Selected)' : ''} -->
       <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 12px; background: ${isDefault ? 'rgba(103,232,249,.08)' : 'rgba(103,232,249,.03)'}; border-radius: 12px; border: 1px solid ${isDefault ? 'rgba(103,232,249,.25)' : 'rgba(103,232,249,.10)'}; cursor: pointer;"
            onclick="window.selectWalletAsset('${r.key}')">
-        <div style="width:240px; display:flex; align-items:center; gap:10px;">
+        <div  style="width:240px; display:flex; align-items:center; gap:10px">
           <input type="radio" name="demo" ${isSelected ? 'checked' : ''} style="flex-shrink: 0;" onchange="window.selectWalletAsset('${r.key}')" />
-          <div style="display: flex; align-items: center; gap: 8px;">
+          <div  style="display: flex; align-items: center; gap: 8px">
             <span style="font-weight:900; color:var(--text); font-size: 14px;">${r.label}</span>
             ${isDefault
         ? '<span style="background: rgba(34, 197, 94, 0.15); color: #22c55e; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">DEFAULT</span>'
@@ -56,22 +56,22 @@ function renderWallet(ctx) {
       }
           </div>
         </div>
-        <div style="width:110px; text-align:right; font-weight:900; font-size: 14px;">${fmt(r.qty)}</div>
-        <div style="width:110px; text-align:right; font-weight:900; font-size: 14px;">${fmt(valueInDefault)}</div>
+        <div  style="width:110px; text-align:right; font-weight:900; font-size: 14px">${fmt(r.qty)}</div>
+        <div  style="width:110px; text-align:right; font-weight:900; font-size: 14px">${fmt(valueInDefault)}</div>
       </div>
         `;
   }).join('')}
 
       <!-- Total Section -->
-      <div style="margin-top: 10px; padding: 14px 10px; border-radius: 12px; background: rgba(11,15,20,.25);">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div style="font-size: 14px; font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;">Total Balance</div>
-          <div style="font-size: 18px; font-weight: 900;">${fmt(totalValue)} <span style="font-size: 13px; color: var(--muted); font-weight: 700;">${defaultInfo.label}</span></div>
+      <div  style="margin-top: 10px; padding: 14px 10px; border-radius: 12px">
+        <div  style="display:flex; justify-content:space-between; align-items:center">
+          <div  style="font-size: 14px; font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px">Total Balance</div>
+          <div  style="font-size: 18px; font-weight: 900">${fmt(totalValue)} <span style="font-size: 13px; color: var(--muted); font-weight: 700;">${defaultInfo.label}</span></div>
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 10px;">
+      <div  style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 10px">
         <button class="primary" id="openSend" style="padding: 16px; font-size: 16px; font-weight: 900;">Send</button>
         <button class="ghost" id="openReceive" style="padding: 16px; font-size: 16px; font-weight: 900;">Receive</button>
         <button class="ghost" id="openSwap" style="padding: 16px; font-size: 16px; font-weight: 900;">Swap</button>

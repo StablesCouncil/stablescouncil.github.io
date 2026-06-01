@@ -64,7 +64,7 @@ const PriceOracle = {
                 });
             }
 
-            // No MDS: MEXC public API does not send CORS headers — browser fetch fails.
+            // No MDS: MEXC public API does not send CORS headers  -  browser fetch fails.
             // CoinGecko simple/price allows * origin and tracks Minima (id: minima).
             const cgResponse = await fetch(this.config.coinGeckoSimpleUrl);
             if (!cgResponse.ok) {

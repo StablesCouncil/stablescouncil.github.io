@@ -78,7 +78,7 @@ function sortContacts(contacts) {
         valB = b.displayName.toLowerCase();
     }
 
-    if (valA < valB) return contacts sortDir === 'asc' ? -1 : 1;
+    if (valA < valB) return contactsSortDir === 'asc' ? -1 : 1;
     if (valA > valB) return contactsSortDir === 'asc' ? 1 : -1;
     return 0;
   });
@@ -90,10 +90,10 @@ function sortContacts(contacts) {
 function renderContactsListView(contacts) {
   if (contacts.length === 0) {
     return `
-      <div style="text-align: center; padding: 40px; color: var(--muted);">
-        <div style="font-size: 48px; margin-bottom: 12px;">👥</div>
-        <div style="font-size: 16px; font-weight: 700;">No contacts yet</div>
-        <div style="margin-top: 8px;">Add my first contact to get started</div>
+      <div  style="text-align: center; padding: 40px; color: var(--muted)">
+        <div  style="font-size: 48px; margin-bottom: 12px">👥</div>
+        <div  style="font-size: 16px; font-weight: 700">No contacts yet</div>
+        <div  style="margin-top: 8px">Add my first contact to get started</div>
       </div>
     `;
   }
@@ -101,10 +101,10 @@ function renderContactsListView(contacts) {
   const sorted = sortContacts(contacts);
 
   return `
-    <div style="display:grid; gap:14px;">
+    <div  style="display:grid; gap:14px">
       <!-- Column Headers -->
-      <div style="display:flex; justify-content:space-between; color:var(--muted); font-size:11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 0;">
-        <div style="width:50px;"></div>
+      <div  style="display:flex; justify-content:space-between; color:var(--muted); font-size:11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 0">
+        <div  style="width:50px"></div>
         <div style="width:180px; cursor: pointer;" onclick="sortContactsBy('name')">
           Name ${contactsSortBy === 'name' ? (contactsSortDir === 'asc' ? '▲' : '▼') : ''}
         </div>
@@ -117,20 +117,20 @@ function renderContactsListView(contacts) {
         <div style="width:100px; cursor: pointer;" onclick="sortContactsBy('chat')">
           Chat ${contactsSortBy === 'chat' ? (contactsSortDir === 'asc' ? '▲' : '▼') : ''}
         </div>
-        <div style="width:80px; text-align:right">Actions</div>
+        <div  style="width:80px; text-align:right">Actions</div>
       </div>
 
       <!-- Contact Rows -->
       ${sorted.map((contact, index) => `
-        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 12px; background: rgba(103,232,249,.03); border-radius: 12px; border: 1px solid rgba(103,232,249,.10);">
-          <div style="width:50px; font-size: 28px;">${contact.avatar || '👤'}</div>
-          <div style="width:180px; font-weight:900; font-size: 14px;">${contact.displayName}</div>
-          <div style="width:180px; font-size: 11px; color: var(--muted); word-break: break-all;">${contact.address}</div>
-          <div style="width:140px; font-size: 12px;">${contact.category}</div>
-          <div style="width:100px;">
+        <div  style="display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 12px;  border-radius: 12px">
+          <div  style="width:50px; font-size: 28px">${contact.avatar || '👤'}</div>
+          <div  style="width:180px; font-weight:900; font-size: 14px">${contact.displayName}</div>
+          <div  style="width:180px; font-size: 11px; color: var(--muted); word-break: break-all">${contact.address}</div>
+          <div  style="width:140px; font-size: 12px">${contact.category}</div>
+          <div  style="width:100px">
             ${contact.showInChat ? '<span style="background: rgba(34, 197, 94, 0.15); color: #22c55e; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">YES</span>' : '<span style="background: rgba(159, 176, 192, 0.15); color: var(--muted); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">NO</span>'}
           </div>
-          <div style="width:80px; display: flex; gap: 6px; justify-content: flex-end;">
+          <div  style="width:80px; display: flex; gap: 6px; justify-content: flex-end">
             <button onclick="editContact(${index})" style="font-size: 14px; padding: 6px 10px; background: transparent; border: 1px solid rgba(103,232,249,.3); border-radius: 8px; cursor: pointer; color: var(--text);" title="Edit">✏️</button>
             <button onclick="deleteContact(${index})" style="font-size: 14px; padding: 6px 10px; background: transparent; border: 1px solid rgba(239,68,68,.3); border-radius: 8px; cursor: pointer; color: #ef4444;" title="Delete">🗑️</button>
           </div>
@@ -144,26 +144,26 @@ function renderContactsListView(contacts) {
 function renderContactsCardView(contacts) {
   if (contacts.length === 0) {
     return `
-      <div style="text-align: center; padding: 40px; color: var(--muted);">
-        <div style="font-size: 48px; margin-bottom: 12px;">👥</div>
-        <div style="font-size: 16px; font-weight: 700;">No contacts yet</div>
-        <div style="margin-top: 8px;">Add my first contact to get started</div>
+      <div  style="text-align: center; padding: 40px; color: var(--muted)">
+        <div  style="font-size: 48px; margin-bottom: 12px">👥</div>
+        <div  style="font-size: 16px; font-weight: 700">No contacts yet</div>
+        <div  style="margin-top: 8px">Add my first contact to get started</div>
       </div>
     `;
   }
 
-  return `<div style="display:grid; gap:14px;">${contacts.map((contact, index) => `
-    <div style="display: flex; align-items: start; gap: 12px; padding: 14px; background: rgba(103,232,249,.03); border-radius: 12px; border: 1px solid rgba(103,232,249,.10);">
-      <div style="font-size: 36px; line-height: 1;">${contact.avatar || '👤'}</div>
-      <div style="flex: 1;">
-        <div style="font-size: 16px; font-weight: 900; margin-bottom: 4px;">${contact.displayName}</div>
-        <div style="font-size: 11px; color: var(--muted); word-break: break-all; margin-bottom: 8px;">${contact.address}</div>
-        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+  return `<div  style="display:grid; gap:14px">${contacts.map((contact, index) => `
+    <div  style="display: flex; align-items: start; gap: 12px; padding: 14px;  border-radius: 12px">
+      <div  style="font-size: 36px; line-height: 1">${contact.avatar || '👤'}</div>
+      <div  style="flex: 1">
+        <div  style="font-size: 16px; font-weight: 900; margin-bottom: 4px">${contact.displayName}</div>
+        <div  style="font-size: 11px; color: var(--muted); word-break: break-all; margin-bottom: 8px">${contact.address}</div>
+        <div  style="display: flex; gap: 6px; flex-wrap: wrap">
           <span style="background: rgba(103,232,249,.15); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">${contact.category}</span>
           ${contact.showInChat ? '<span style="background: rgba(34, 197, 94, 0.15); color: #22c55e; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">Chat Enabled</span>' : '<span style="background: rgba(159, 176, 192, 0.15); color: var(--muted); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">Chat Disabled</span>'}
         </div>
       </div>
-      <div style="display: flex; gap: 6px;">
+      <div  style="display: flex; gap: 6px">
         <button onclick="editContact(${index})" style="font-size: 14px; padding: 8px 12px; background: transparent; border: 1px solid rgba(103,232,249,.3); border-radius: 8px; cursor: pointer; color: var(--text);" title="Edit">✏️</button>
         <button onclick="deleteContact(${index})" style="font-size: 14px; padding: 8px 12px; background: transparent; border: 1px solid rgba(239,68,68,.3); border-radius: 8px; cursor: pointer; color: #ef4444;" title="Delete">🗑️</button>
       </div>
@@ -174,7 +174,7 @@ function renderContactsCardView(contacts) {
 // Render avatar picker
 function renderAvatarPicker(selectedAvatar = '👤') {
   return `
-    <div style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; padding: 12px; border: 1px solid rgba(34,48,68,.85); border-radius: 14px; background: rgba(11,15,20,.35);">
+    <div  style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; padding: 12px;  border-radius: 14px">
       ${AVATAR_OPTIONS.map(avatar => `
         <button type="button" class="avatar-option ${avatar === selectedAvatar ? 'selected' : ''}" 
                 onclick="selectAvatar('${avatar}')"
@@ -199,7 +199,7 @@ function renderContactForm(contact = null) {
 
   return `
     <form id="contactForm" onsubmit="saveContact(event, ${isEdit ? contact.index : 'null'})">
-      <div style="display: grid; gap: 14px;">
+      <div  style="display: grid; gap: 14px">
         
         <div>
           <label>Avatar</label>
@@ -226,17 +226,17 @@ function renderContactForm(contact = null) {
           </select>
         </div>
 
-        <div id="customCategoryField" style="display: none;">
+        <div id="customCategoryField"  style="display: none">
           <label for="customCategory">Custom Category</label>
           <input type="text" id="customCategory" placeholder="Enter custom category" />
         </div>
 
-        <div style="display: flex; align-items: center; gap: 10px;">
+        <div  style="display: flex; align-items: center; gap: 10px">
           <input type="checkbox" id="contactShowInChat" ${formData.showInChat ? 'checked' : ''} />
           <label for="contactShowInChat" style="margin: 0; cursor: pointer;">Enable for Chat</label>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+        <div  style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px">
           <button type="submit" class="primary" style="padding: 16px; font-size: 16px; font-weight: 900;">
             ${isEdit ? 'Update Contact' : 'Add Contact'}
           </button>
@@ -256,16 +256,16 @@ function renderContacts(ctx) {
   $('pageDesc').textContent = '';
 
   app.innerHTML = `
-    <div style="display:grid; gap:14px;">
+    <div  style="display:grid; gap:14px">
       <!-- Top Bar: Search + Toggle + Add Button -->
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px;">
-        <div style="flex: 1;">
+      <div  style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+        <div  style="flex: 1">
           <input type="text" id="contactSearch" placeholder="🔍 Search contacts..." 
                  onkeyup="filterContacts()" style="max-width: 400px;" />
         </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
+        <div  style="display: flex; gap: 8px; align-items: center">
           <!-- View Toggle -->
-          <div style="display: flex; gap: 4px; background: rgba(11,15,20,.35); border-radius: 8px; padding: 4px;">
+          <div  style="display: flex; gap: 4px;  border-radius: 8px; padding: 4px">
             <button id="viewListBtn" onclick="switchContactsView('list')" 
                     style="padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 700; background: ${contactsViewMode === 'list' ? 'var(--accent)' : 'transparent'}; color: ${contactsViewMode === 'list' ? '#0b0f14' : 'var(--muted)'}; border: none;">
               ☰ List
@@ -286,8 +286,8 @@ function renderContacts(ctx) {
     </div>
 
     <!-- Add/Edit Contact Modal -->
-    <div class="backdrop" id="contactModal" style="display: none;">
-      <div class="modal" style="width: min(600px, 100%);">
+    <div class="backdrop" id="contactModal"  style="display: none">
+      <div class="modal"  style="width: min(600px, 100%)">
         <div class="modal-head">
           <strong id="contactModalTitle">Add Contact</strong>
         </div>

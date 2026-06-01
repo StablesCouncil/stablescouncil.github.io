@@ -77,8 +77,8 @@ function renderMessages(messages, selectedContact = null) {
 
   if (filtered.length === 0) {
     return `
-      <div class="card" style="text-align: center; padding: 40px;">
-        <div style="font-size: 48px; margin-bottom: 12px;">💬</div>
+      <div class="card"  style="text-align: center; padding: 40px">
+        <div  style="font-size: 48px; margin-bottom: 12px">💬</div>
         <h3>No messages yet</h3>
         <div class="muted">Messages from transactions will appear here</div>
       </div>
@@ -92,18 +92,18 @@ function renderMessages(messages, selectedContact = null) {
 
     return `
       <div class="card">
-        <div style="display: flex; gap: 12px; align-items: start;">
-          <div style="font-size: 32px; line-height: 1;">${avatar}</div>
-          <div style="flex: 1;">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px;">
+        <div  style="display: flex; gap: 12px; align-items: start">
+          <div  style="font-size: 32px; line-height: 1">${avatar}</div>
+          <div  style="flex: 1">
+            <div  style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px">
               <strong>${displayName}</strong>
               <span class="muted" style="font-size: 11px;">${formatTimestamp(msg.timestamp)}</span>
             </div>
-            <div class="muted" style="font-size: 11px; word-break: break-all; margin-bottom: 8px;">${msg.address}</div>
-            <div style="margin: 12px 0; padding: 12px; background: rgba(103,232,249,.06); border-left: 3px solid var(--accent); border-radius: 8px;">
+            <div class="muted"  style="font-size: 11px; word-break: break-all; margin-bottom: 8px">${msg.address}</div>
+            <div  style="margin: 12px 0; padding: 12px;  border-left: 3px solid var(--accent); border-radius: 8px">
               ${msg.message}
             </div>
-            <div style="display: flex; gap: 12px; font-size: 12px; color: var(--muted);">
+            <div  style="display: flex; gap: 12px; font-size: 12px; color: var(--muted)">
               <span>💰 ${msg.amount.toFixed(2)} MINIMA</span>
               <span title="${msg.txid}">📝 TX: ${msg.txid.substring(0, 10)}...</span>
             </div>
@@ -124,18 +124,18 @@ function renderChat(ctx) {
   $('pageDesc').textContent = '';
 
   app.innerHTML = `
-    <div style="display:grid; gap:14px;">
+    <div  style="display:grid; gap:14px">
       ${chatContacts.length === 0 ? `
         <div class="hint">
           <strong>No chat contacts</strong>
-          <div style="margin-top: 6px; color: var(--muted);">
+          <div  style="margin-top: 6px; color: var(--muted)">
             Go to <a href="#/contacts" style="color: var(--accent); text-decoration: underline;">Contacts</a> 
             and enable "Show in Chat" for contacts you want to see messages from.
           </div>
         </div>
       ` : ''}
 
-      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+      <div  style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
         <select id="chatFilter" onchange="filterChatMessages()" style="max-width: 300px;">
           <option value="">All Contacts</option>
           ${chatContacts.map(contact => `
