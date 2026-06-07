@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "submitted_at": "2026-03-31T21:16:46.483Z",
+  "source": {
+    "app_build": "0.01.01",
+    "client": "stables-minidapp"
+  },
+  "topic_domain": "general_concept",
+  "topic_sub": null,
+  "app_context": {
+    "page_id": null,
+    "section_hint": null,
+    "element_hint": null
+  },
+  "kind": "comment",
+  "title": "onlinetest1",
+  "body": "onlinetest2",
+  "optional_minima_address": "onlinetest3",
+  "public_contact": "onlinetest4",
+  "consent_public_ledger": true,
+  "flags": {
+    "low_priority_freeform": false
+  }
+}
