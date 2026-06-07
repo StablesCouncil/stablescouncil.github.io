@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "submitted_at": "2026-03-31T17:43:32.852Z",
+  "source": {
+    "app_build": "0.01.01",
+    "client": "stables-minidapp"
+  },
+  "topic_domain": "financial_structure",
+  "topic_sub": "other",
+  "app_context": {
+    "page_id": null,
+    "section_hint": null,
+    "element_hint": null
+  },
+  "kind": "comment",
+  "title": "Test20260331-1",
+  "body": "Test20260331-2",
+  "optional_minima_address": "Test20260331-3",
+  "public_contact": "Test20260331-4",
+  "consent_public_ledger": true,
+  "flags": {
+    "low_priority_freeform": false
+  }
+}
