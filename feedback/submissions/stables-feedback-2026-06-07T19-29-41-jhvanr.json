@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "submitted_at": "2026-06-07T19:29:40.743Z",
+  "source": {
+    "app_build": "0.0.0.2.0",
+    "client": "stables-minidapp"
+  },
+  "topic_domain": "general_concept",
+  "topic_sub": null,
+  "app_context": {
+    "page_id": null,
+    "section_hint": null,
+    "element_hint": null
+  },
+  "kind": "comment",
+  "title": "Let's see if this feedback loop works!",
+  "body": "Just to see",
+  "optional_minima_address": "MxG0829FTCN5CS4KAUHJTYECM4PSAZ32EA868DP7MRKH7RJ1T96U4F291YVHWZE",
+  "public_contact": null,
+  "consent_public_ledger": true,
+  "flags": {
+    "low_priority_freeform": false
+  }
+}
