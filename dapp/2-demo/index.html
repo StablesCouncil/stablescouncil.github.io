@@ -1397,16 +1397,49 @@
             border-color: rgba(103, 232, 249, .5)
         }
 
-        .finput[type="number"] {
+        /* No native number-spinner arrows on ANY input box, app-wide. */
+        input[type="number"] {
             appearance: textfield;
             -moz-appearance: textfield;
         }
 
-        .finput[type="number"]::-webkit-outer-spin-button,
-        .finput[type="number"]::-webkit-inner-spin-button {
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
+
+        /* Convention: all numeric / amount inputs are right-aligned in their box (banking style).
+           Targets number fields and decimal-entry fields; leaves text fields (addresses, names) alone. */
+        input[type="number"],
+        input[inputmode="decimal"] {
+            text-align: right;
+        }
+
+        /* Minimalistic MAX control (MetaMask-style): a text link on the "Available" line, not a
+           button in the input row — keeps every amount input the same full width. */
+        .max-link {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: var(--c);
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            line-height: 1;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .max-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+        /* Live block-confirmation counter shown under the amount on transaction rows (x/target). */
+        .tx-amt-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+        .tx-conf-amt { font-size: 10px; font-weight: 800; letter-spacing: .03em; line-height: 1; white-space: nowrap; }
+        .tx-conf--pending { color: var(--am); }
+        .tx-conf--confirming { color: var(--c); }
+        .tx-conf--done { color: var(--m); }
 
         .fsel {
             width: 100%;
@@ -3170,6 +3203,17 @@
             border-color: rgba(103, 232, 249, .2)
         }
 
+        /* Selected (main) currency row: highlighted in place, rankable anywhere. */
+        .ccy-sec-row--selected {
+            background: linear-gradient(135deg, rgba(103, 232, 249, .12), rgba(167, 139, 250, .07));
+            border-color: rgba(103, 232, 249, .4);
+            box-shadow: 0 0 14px rgba(103, 232, 249, .1)
+        }
+
+        .ccy-sec-row--selected:hover {
+            border-color: rgba(103, 232, 249, .5)
+        }
+
         .ccy-sec-row[draggable="true"] {
             cursor: pointer
         }
@@ -3270,6 +3314,9 @@
             justify-content: center;
             cursor: pointer;
             padding: 0;
+            /* Indicator only: never intercept the grab so the whole row stays draggable.
+               In edit mode the main currency is set by tapping the row, not the star. */
+            pointer-events: none;
         }
 
         .ccy-row-star.is-primary {
@@ -4222,6 +4269,31 @@
             border-radius: 6px;
         }
 
+        .tx-refresh-btn {
+            color: var(--c);
+            font-size: 19px;
+            line-height: 1;
+            font-weight: 700;
+        }
+
+        .tx-refresh-btn .tx-refresh-glyph {
+            display: inline-block;
+            transform-origin: 50% 50%;
+        }
+
+        .tx-refresh-btn.refreshing {
+            pointer-events: none;
+            opacity: .75;
+        }
+
+        .tx-refresh-btn.refreshing .tx-refresh-glyph {
+            animation: txRefreshSpin .8s linear infinite;
+        }
+
+        @keyframes txRefreshSpin {
+            to { transform: rotate(360deg); }
+        }
+
         .agent-attention-badge {
             position: absolute;
             top: -4px;
@@ -4738,7 +4810,7 @@
             onclick="toggleTopbarChannelMenu(event)" aria-haspopup="menu" aria-expanded="false"
             title="Switch between Showcase and Demo">
             <span class="test-pill-title" id="topbarShowcasePillTitle">Demo</span>
-            <span class="test-pill-sub" id="topbarShowcasePillSub">v0.0.0.1.0</span>
+            <span class="test-pill-sub" id="topbarShowcasePillSub"></span>
             <span class="test-pill-caret" aria-hidden="true">▾</span>
         </button>
         <div class="topbar-channel-menu" id="topbarChannelMenu" role="menu" hidden>
@@ -4843,8 +4915,9 @@
                                 <circle cx="12" cy="12" r="3"></circle>
                             </svg></button>
                     </div>
-                    <div class="w-total bal-amount">3,450.75</div>
+                    <div class="w-total bal-amount">0.00</div>
                     <div class="w-ccy">EURw equivalent</div>
+                    <div id="wHeroPendingIncoming" class="w-hero-pending bal-amount xs" style="display:none;text-align:center;margin-top:6px;line-height:1.4;font-weight:700;color:var(--am)" aria-live="polite"></div>
                     <div id="wHeroNodeLiveLine" class="w-hero-node-live xs mu" style="display:none;text-align:center;margin-top:8px;color:var(--m);line-height:1.4;font-weight:600" aria-live="polite"></div>
                     <div class="act-row" id="walletSendReceiveRow" style="grid-template-columns:1fr 1fr;max-width:280px;margin:0 auto">
                         <button class="act-btn" onclick="openModal('sendModal')">
@@ -4863,7 +4936,7 @@
             <div class="stitle-row">
                 <div class="stitle">Currencies</div>
                 <div class="stitle-row-actions">
-                    <button type="button" class="ccy-edit-pen ccy-edit-pen--stitle" id="ccyEditPen" title="Edit currencies: order, main ★, show all"
+                    <button type="button" class="ccy-edit-pen ccy-edit-pen--stitle" id="ccyEditPen" title="Edit currencies: drag to reorder, tap a currency to set it as main, + / − to add or remove"
                         onclick="toggleWalletEditMode(event)">✎</button>
                     <button type="button" class="agent-mini-btn" onclick="openAgentExplain('Wallet: currencies and ordering')" title="StablesAgent">
                         <img src="agent.png" alt="StablesAgent">
@@ -5137,9 +5210,12 @@
             <div class="app-section app-section--caption-bottom">
             <div class="stitle-row">
                 <div class="stitle">Recent activity</div>
-                <button type="button" class="agent-mini-btn" onclick="openAgentExplain('Wallet: recent activity')" title="StablesAgent">
-                    <img src="agent.png" alt="StablesAgent">
-                </button>
+                <div class="stitle-row-actions">
+                    <button type="button" class="agent-mini-btn tx-refresh-btn" onclick="stablesRefreshTransactions(this)" title="Refresh activity" aria-label="Refresh activity"><span class="tx-refresh-glyph">⟳</span></button>
+                    <button type="button" class="agent-mini-btn" onclick="openAgentExplain('Wallet: recent activity')" title="StablesAgent">
+                        <img src="agent.png" alt="StablesAgent">
+                    </button>
+                </div>
             </div>
             <div class="card app-section-card" style="padding:14px 18px">
                 <div class="tx-list" id="walletRecentList"></div>
@@ -5220,6 +5296,33 @@
                     </button>
                 </div>
                 <div class="cp-card app-section-card">
+                    <div style="padding:14px;background:rgba(16,24,38,.58);border:1px solid rgba(103,232,249,.2);border-radius:12px;margin-bottom:12px">
+                        <div class="xs mu" style="font-weight:800;margin-bottom:6px">Deposit or withdraw</div>
+                        <p class="xs mu" style="margin:0 0 10px;line-height:1.45;color:var(--m)">See <strong style="color:var(--t)">My investment</strong> for available balances. The details below help you decide.</p>
+                        <div class="fbet xs mu" style="margin-bottom:4px;align-items:center">
+                            <span id="cfDepositAvail" style="color:var(--m)">Available:  - </span>
+                            <button type="button" class="max-link"
+                                onclick="setCfAmountMax()">MAX</button>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:10px">
+                            <input class="finput" id="cfAmount" type="number" min="0" step="0.01" placeholder="0.00" style="min-width:0;margin-bottom:0">
+                            <input type="hidden" id="cfAssetCcy" value="USDw" autocomplete="off" aria-label="Asset for deposit or withdraw">
+                            <div class="ex-ccy-dd ex-ccy-dd--wide">
+                                <button type="button" class="ex-ccy-dd__btn" id="cfAssetCcyVaultDdBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="cfAssetCcyVaultDdPanel" aria-label="Asset for deposit or withdraw">
+                                    <span class="ex-ccy-dd__btn-inner">
+                                        <span class="ex-ccy-dd__code" id="cfAssetCcyVaultDdLabel">USDw</span>
+                                        <span class="ex-ccy-dd__bal" id="cfAssetCcyVaultDdHint"></span>
+                                    </span>
+                                    <span class="ex-ccy-dd__chev" aria-hidden="true"></span>
+                                </button>
+                                <div class="ex-ccy-dd__panel" id="cfAssetCcyVaultDdPanel" role="listbox" aria-labelledby="cfAssetCcyVaultDdBtn" hidden></div>
+                            </div>
+                        </div>
+                        <div class="fbet" style="gap:8px">
+                            <button class="btn btn-primary" style="height:42px;min-width:116px;flex:1" onclick="depositCoverageFund()">Deposit</button>
+                            <button class="btn btn-secondary" style="height:42px;min-width:116px;flex:1" onclick="withdrawCoverageFund()">Withdraw</button>
+                        </div>
+                    </div>
                     <div style="background:rgba(16,24,38,.58);border:1px solid rgba(103,232,249,.14);border-radius:12px;padding:14px;margin-bottom:12px">
                         <div class="xs mu" style="font-weight:800;margin-bottom:6px">Coverage fund summary</div>
                         <div class="pool-grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">
@@ -5302,33 +5405,6 @@
                             <span style="color:var(--m)">Fund NAV</span><span id="cfFundNav" style="font-weight:700;color:var(--t);text-align:right">$0.00</span>
                         </div>
                     </div>
-                    <div style="padding:12px;background:rgba(16,24,38,.5);border:1px solid rgba(255,255,255,.05);border-radius:12px;margin-bottom:12px">
-                        <div class="xs mu" style="font-weight:800;margin-bottom:6px">Deposit or withdraw</div>
-                        <p class="xs mu" style="margin:0 0 10px;line-height:1.45;color:var(--m)">See <strong style="color:var(--t)">My investment</strong> for available balances.</p>
-                        <div style="margin-bottom:8px">
-                            <input type="hidden" id="cfAssetCcy" value="USDw" autocomplete="off" aria-label="Asset for deposit or withdraw">
-                            <div class="ex-ccy-dd ex-ccy-dd--field" style="max-width:100%">
-                                <button type="button" class="ex-ccy-dd__btn" id="cfAssetCcyVaultDdBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="cfAssetCcyVaultDdPanel" aria-label="Asset for deposit or withdraw">
-                                    <span class="ex-ccy-dd__btn-inner">
-                                        <span class="ex-ccy-dd__code" id="cfAssetCcyVaultDdLabel">USDw</span>
-                                        <span class="ex-ccy-dd__bal" id="cfAssetCcyVaultDdHint"></span>
-                                    </span>
-                                    <span class="ex-ccy-dd__chev" aria-hidden="true"></span>
-                                </button>
-                                <div class="ex-ccy-dd__panel" id="cfAssetCcyVaultDdPanel" role="listbox" aria-labelledby="cfAssetCcyVaultDdBtn" hidden></div>
-                            </div>
-                        </div>
-                        <div class="xs mu" id="cfDepositAvail" style="margin-bottom:6px;color:var(--m)">Available:  - </div>
-                        <div class="fbet" style="gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
-                            <input class="finput" id="cfAmount" type="number" min="0" step="0.01" placeholder="Amount" style="min-width:0;flex:1">
-                            <button type="button" class="btn btn-secondary" style="height:42px;min-width:72px;padding:0 12px;font-size:11px;font-weight:800"
-                                onclick="setCfAmountMax()">MAX</button>
-                        </div>
-                        <div class="fbet" style="gap:8px">
-                            <button class="btn btn-primary" style="height:42px;min-width:116px;flex:1" onclick="depositCoverageFund()">Deposit</button>
-                            <button class="btn btn-secondary" style="height:42px;min-width:116px;flex:1" onclick="withdrawCoverageFund()">Withdraw</button>
-                        </div>
-                    </div>
                 </div>
                 </div>
             </div> <!-- end panelCF -->
@@ -5346,7 +5422,7 @@
                     <div id="lpGraphBlock">
                         <div style="margin-bottom:10px">
                             <input type="hidden" id="lpQuoteCcy" value="xWiniwa" autocomplete="off">
-                            <div class="ex-ccy-dd ex-ccy-dd--field">
+                            <div class="ex-ccy-dd ex-ccy-dd--wide">
                                 <button type="button" class="ex-ccy-dd__btn" id="lpQuoteCcyVaultDdBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="lpQuoteCcyVaultDdPanel">
                                     <span class="ex-ccy-dd__btn-inner">
                                         <span class="ex-ccy-dd__code" id="lpQuoteCcyVaultDdLabel">xWiniwa</span>
@@ -5410,27 +5486,21 @@
                     </div>
                     <div class="cb" style="margin-bottom:16px">
                         <label class="flabel" id="lpQuoteDepositLabel">Deposit xWiniwa</label>
-                        <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:6px">
-                            <input class="finput" type="number" id="lpDepX" placeholder="0.00" inputmode="decimal"
-                                style="min-width:0;margin-bottom:0">
-                            <button class="btn btn-secondary" style="width:auto;padding:12px 14px"
-                                onclick="fillLpQuoteMax()">MAX</button>
-                        </div>
-                        <div class="fbet xs mu">
+                        <input class="finput" type="number" id="lpDepX" placeholder="0.00" inputmode="decimal"
+                            style="width:100%;margin-bottom:6px">
+                        <div class="fbet xs mu" style="align-items:center">
                             <span>Available: <span id="lpAvailX">0 xWiniwa</span></span>
+                            <button type="button" class="max-link" onclick="fillLpQuoteMax()">MAX</button>
                         </div>
                     </div>
 
                     <div class="cb" style="margin-bottom:10px">
                         <label class="flabel" id="lpBaseDepositLabel">Deposit winiwa</label>
-                        <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:6px">
-                            <input class="finput" type="number" id="lpDepW" placeholder="0.00" inputmode="decimal"
-                                style="min-width:0;margin-bottom:0">
-                            <button class="btn btn-secondary" style="width:auto;padding:12px 14px"
-                                onclick="fillLpBaseMax()">MAX</button>
-                        </div>
-                        <div class="fbet xs mu">
+                        <input class="finput" type="number" id="lpDepW" placeholder="0.00" inputmode="decimal"
+                            style="width:100%;margin-bottom:6px">
+                        <div class="fbet xs mu" style="align-items:center">
                             <span>Available: <span id="lpAvailW">0 Winiwa</span></span>
+                            <button type="button" class="max-link" onclick="fillLpBaseMax()">MAX</button>
                         </div>
                     </div>
 
@@ -5459,8 +5529,8 @@
                 Balances are local test UI. Get Winiwa from the <button type="button" onclick="navigate('faucet')" style="background:none;border:none;padding:0;color:var(--c);font-weight:900;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:inherit;font-family:inherit">faucet</button>. <strong style="color:var(--t)">xWiniwa</strong> and <strong style="color:var(--t)">Wables</strong> will be mintable when test assets are live.
             </p>
             <div class="tab-row">
-                <button class="tab-btn active" id="vXwm" onclick="setVTab('xwm')">Mint xWiniwa</button>
-                <button class="tab-btn" id="vIssue" onclick="setVTab('issue')">Mint Wables</button>
+                <button class="tab-btn active" id="vXwm" onclick="setVTab('xwm')">xWiniwa</button>
+                <button class="tab-btn" id="vIssue" onclick="setVTab('issue')">Wables</button>
             </div>
             <!-- MINT xWINIWA panel (default active) -->
             <div id="panelXwm">
@@ -5473,22 +5543,21 @@
                 </div>
                 <div class="xwm-card app-section-card">
                     <div class="cb">
-                        <div style="margin-bottom:14px">
-                            <div style="font-size:16px;font-weight:900">&#x26CF;&#xFE0F; Mint xWiniwa</div>
+                        <div class="tab-row" style="margin-bottom:16px">
+                            <button class="tab-btn active" id="xwmModeMint" onclick="setXwmMode('mint')">Mint</button>
+                            <button class="tab-btn" id="xwmModeBurn" onclick="setXwmMode('burn')">Burn</button>
                         </div>
-                        <!-- Input -->
+                        <!-- MINT xWiniwa -->
+                        <div id="xwmMintBlock">
                         <div style="margin-bottom:14px">
                             <div>
-                                <div class="fbet xs mu" style="margin-bottom:5px">
-                                    <div>Winiwa to lock</div>
-                                    <div id="availWiniwaXwm">Available: 0</div>
-                                </div>
-                                <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
-                                    <input class="finput" type="text" id="xwmAmt" placeholder="0" oninput="calcXwm()"
-                                        inputmode="decimal" autocomplete="off" style="min-width:0">
-                                    <button class="btn btn-secondary" style="width:auto;padding:10px 12px;font-size:12px"
+                                <div class="fbet xs mu" style="margin-bottom:4px;align-items:center">
+                                    <span id="availWiniwaXwm" style="color:var(--m)">Available: 0 Winiwa</span>
+                                    <button class="max-link"
                                         onclick="setXwmMax()">MAX</button>
                                 </div>
+                                <input class="finput" type="text" id="xwmAmt" placeholder="0.00" oninput="calcXwm()"
+                                    inputmode="decimal" autocomplete="off" style="width:100%;margin-bottom:0">
                             </div>
 
                             <!-- Under-input values -->
@@ -5531,23 +5600,19 @@
                                 <span><span style="display:inline-block;width:14px;height:3px;background:rgba(52,211,153,.95);margin-right:6px;vertical-align:middle;border-radius:1px"></span> Leverage</span>
                             </div>
                         </div>
+                        </div><!-- /#xwmMintBlock -->
 
-                        <!-- BURN xWINIWA - Reclaim Winiwa -->
-                        <div style="margin-top:32px">
-                            <div style="font-size:16px;font-weight:900;margin-bottom:14px">&#x1F525; Burn xWiniwa</div>
+                        <!-- BURN xWiniwa -->
+                        <div id="xwmBurnBlock" style="display:none">
                             <div style="padding:0;background:transparent;border:none;border-radius:0">
-                                
                                 <div style="margin-bottom:14px">
-                                    <div class="fbet xs mu" style="margin-bottom:5px">
-                                        <div>xWiniwa to unlock</div>
-                                        <div id="availXwmBurn">Available: 0</div>
-                                    </div>
-                                    <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
-                                        <input class="finput" type="text" id="xwmBurnAmt" placeholder="xWiniwa to burn"
-                                            oninput="calcXwmBurn()" inputmode="decimal" autocomplete="off" style="min-width:0">
-                                        <button class="btn btn-secondary" style="width:auto;padding:10px 12px;font-size:12px"
+                                    <div class="fbet xs mu" style="margin-bottom:4px;align-items:center">
+                                        <span id="availXwmBurn" style="color:var(--m)">Available: 0 xWiniwa</span>
+                                        <button class="max-link"
                                             onclick="setXwmBurnMax()">MAX</button>
                                     </div>
+                                    <input class="finput" type="text" id="xwmBurnAmt" placeholder="0.00"
+                                        oninput="calcXwmBurn()" inputmode="decimal" autocomplete="off" style="width:100%;margin-bottom:0">
                                     <div style="margin-top:12px">
                                         <div class="calc-row">
                                             <span class="mu">xWiniwa price</span>
@@ -5578,19 +5643,22 @@
                 </div>
                 <div class="card app-section-card">
                     <div class="cb">
-                        <div id="mintWablesMintBlock" style="font-size:16px;font-weight:900;margin-bottom:14px;scroll-margin-top:16px">&#x26CF;&#xFE0F; Mint Wables</div>
+                        <div class="tab-row" style="margin-bottom:16px">
+                            <button class="tab-btn active" id="wablesModeMint" onclick="setWablesMode('mint')">Mint</button>
+                            <button class="tab-btn" id="wablesModeBurn" onclick="setWablesMode('burn')">Burn</button>
+                        </div>
+                        <div id="mintWablesMintBlock" style="scroll-margin-top:16px">
                         <div style="margin-bottom:14px">
-                            <div class="fbet xs mu" style="margin-bottom:5px">
-                                <div>Amount to issue</div>
-                                <div id="availWiniwaIss">Available: 0 Winiwa</div>
-                            </div>
-                            <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px">
-                                <input class="finput" type="text" id="issueAmt" placeholder="0.00"
-                                    oninput="calcIssue()" inputmode="decimal" autocomplete="off" style="min-width:0">
-                                <button class="btn btn-secondary" style="width:auto;padding:10px 12px;font-size:12px"
+                            <div class="fbet xs mu" style="margin-bottom:4px;align-items:center">
+                                <span id="availWiniwaIss" style="color:var(--m)">Available: 0 Winiwa</span>
+                                <button type="button" class="max-link"
                                     onclick="setIssueMax()">MAX</button>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:0">
+                                <input class="finput" type="text" id="issueAmt" placeholder="0.00"
+                                    oninput="calcIssue()" inputmode="decimal" autocomplete="off" style="min-width:0;margin-bottom:0">
                                 <input type="hidden" id="issueCcy" value="USDw" autocomplete="off">
-                                <div class="ex-ccy-dd ex-ccy-dd--compact">
+                                <div class="ex-ccy-dd ex-ccy-dd--wide">
                                     <button type="button" class="ex-ccy-dd__btn" id="issueCcyVaultDdBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="issueCcyVaultDdPanel">
                                         <span class="ex-ccy-dd__btn-inner">
                                             <span class="ex-ccy-dd__code" id="issueCcyVaultDdLabel">USDw</span>
@@ -5631,24 +5699,25 @@
                         </div>
                         <button type="button" class="btn btn-w btn-lg btn-primary" id="issueMintWablesBtn"
                             onclick="executeMintWables()">Mint USDw</button>
+                        </div><!-- /#mintWablesMintBlock -->
                         <!-- Burn Wables reclaim -->
-                        <div id="mintWablesBurnBlock" style="margin-top:32px;scroll-margin-top:16px">
-                            <div style="font-size:16px;font-weight:900;margin-bottom:14px">&#x1F525; Burn Wables
-                            </div>
+                        <div id="mintWablesBurnBlock" style="display:none;scroll-margin-top:16px">
                             <div style="padding:0;background:transparent;border:none;border-radius:0">
                                 <div style="margin-bottom:14px">
                                     <div class="fbet xs mu" style="margin-bottom:5px">
                                         <div class="mu">Available Wables</div>
                                         <div id="availWablesBurn">&mdash;</div>
                                     </div>
-                                    <div class="xs mu" id="reclaimSelAvail" style="margin-bottom:6px;color:var(--m)">Available:  - </div>
-                                    <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center">
-                                        <input class="finput" type="text" id="reclaimAmt" placeholder="0.00"
-                                            oninput="calcReclaim()" inputmode="decimal" autocomplete="off" style="min-width:0">
-                                        <button type="button" class="btn btn-secondary" style="width:auto;padding:10px 12px;font-size:12px"
+                                    <div class="fbet xs mu" style="margin-bottom:4px;align-items:center">
+                                        <span id="reclaimSelAvail" style="color:var(--m)">Available:  - </span>
+                                        <button type="button" class="max-link"
                                             onclick="setReclaimMax()">MAX</button>
+                                    </div>
+                                    <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:0">
+                                        <input class="finput" type="text" id="reclaimAmt" placeholder="0.00"
+                                            oninput="calcReclaim()" inputmode="decimal" autocomplete="off" style="min-width:0;margin-bottom:0">
                                         <input type="hidden" id="reclaimCcy" value="USDw" autocomplete="off">
-                                        <div class="ex-ccy-dd ex-ccy-dd--compact">
+                                        <div class="ex-ccy-dd ex-ccy-dd--wide">
                                             <button type="button" class="ex-ccy-dd__btn" id="reclaimCcyVaultDdBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="reclaimCcyVaultDdPanel">
                                                 <span class="ex-ccy-dd__btn-inner">
                                                     <span class="ex-ccy-dd__code" id="reclaimCcyVaultDdLabel">USDw</span>
@@ -5711,12 +5780,11 @@
                 </div>
                 <div class="fbet xs mu" style="margin-bottom:6px;align-items:center">
                     <span id="exSendAvailLine" style="color:var(--m)">Available:  - </span>
+                    <button type="button" class="max-link" onclick="setExchangeSendMax()">MAX</button>
                 </div>
-                <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center">
+                <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center">
                     <input class="ex-input" type="number" id="exFrom" value="" placeholder="0" oninput="calcRate()"
                         inputmode="decimal" style="min-width:0">
-                    <button type="button" class="btn btn-secondary" style="width:auto;padding:8px 12px;font-size:11px;font-weight:800"
-                        onclick="setExchangeSendMax()">MAX</button>
                     <input type="hidden" id="exFromCcy" value="USDw" autocomplete="off">
                     <div class="ex-ccy-dd" id="exFromCcyDd">
                         <button type="button" class="ex-ccy-dd__btn" id="exFromCcyBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="exFromCcyPanel">
@@ -5740,8 +5808,8 @@
                     <span id="exRecvAvailLine" style="color:var(--m)">Balance:  - </span>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
-                    <input class="ex-input" type="number" id="exTo" value="" readonly placeholder="0"
-                        style="opacity:.7;min-width:0">
+                    <input class="ex-input" type="number" id="exTo" value="" placeholder="0"
+                        oninput="calcRateReverse()" inputmode="decimal" style="min-width:0">
                     <input type="hidden" id="exToCcy" value="EURw" autocomplete="off">
                     <div class="ex-ccy-dd" id="exToCcyDd">
                         <button type="button" class="ex-ccy-dd__btn" id="exToCcyBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="exToCcyPanel">
@@ -6628,9 +6696,12 @@
             <div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">
             <div class="stitle-row">
                 <div class="stitle">Filters &amp; history</div>
-                <button type="button" class="agent-mini-btn" onclick="openAgentExplain('Activity: filters, search, and my transaction history')" title="StablesAgent">
-                    <img src="agent.png" alt="StablesAgent">
-                </button>
+                <div class="stitle-row-actions">
+                    <button type="button" class="agent-mini-btn tx-refresh-btn" onclick="stablesRefreshTransactions(this)" title="Refresh transactions" aria-label="Refresh transactions"><span class="tx-refresh-glyph">⟳</span></button>
+                    <button type="button" class="agent-mini-btn" onclick="openAgentExplain('Activity: filters, search, and my transaction history')" title="StablesAgent">
+                        <img src="agent.png" alt="StablesAgent">
+                    </button>
+                </div>
             </div>
             <div class="card app-section-card" style="padding:14px;margin-bottom:12px">
 
@@ -7910,6 +7981,15 @@
                 </div>
                 <div class="set-row">
                     <div style="min-width:0;flex:1;padding-right:12px">
+                        <div class="set-label">Confirmations to finalise</div>
+                        <div class="set-sub">Blocks an incoming transaction must reach before it counts as final (1–30). A live <strong style="color:var(--t)">x/3</strong> counter shows under each transaction amount until then.</div>
+                    </div>
+                    <input type="number" min="1" max="30" id="confirmTargetInput" value="3" inputmode="numeric"
+                        oninput="try{if(window.stablesSetConfirmTarget)window.stablesSetConfirmTarget(this.value);}catch(_){}"
+                        style="width:72px;padding:8px 10px;background:rgba(11,15,20,.5);border:1px solid rgba(103,232,249,.2);border-radius:var(--rs);color:var(--t);font-weight:700;font-family:inherit;outline:none">
+                </div>
+                <div class="set-row">
+                    <div style="min-width:0;flex:1;padding-right:12px">
                         <div class="set-label">Native MINIMA receive format</div>
                         <div class="set-sub">Receive modal when currency is <strong style="color:var(--t)">Minima</strong>: show <strong style="color:var(--t)">Mx</strong> by default if your node returns it (or we find it in the <code style="font-size:11px">getaddress</code> reply). Choose <strong style="color:var(--t)">0x hex</strong> if you prefer the script hash form.</div>
                     </div>
@@ -8242,14 +8322,14 @@
                     <label class="flabel">Amount</label>
                     <div class="fbet xs mu" style="margin-bottom:6px;align-items:center">
                         <span id="invAvailLine" style="color:var(--m)">Available:  - </span>
-                        <button type="button" class="btn btn-secondary" style="width:auto;padding:6px 12px;font-size:11px;font-weight:800"
+                        <button type="button" class="max-link"
                             onclick="setInvAmtMax()">MAX</button>
                     </div>
                     <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:12px">
                         <input class="finput" id="invAmt" type="number" placeholder="0.00" style="margin-bottom:0"
                             oninput="updateInvoice()">
                         <input type="hidden" id="invCcy" value="USDw" autocomplete="off">
-                        <div class="ex-ccy-dd ex-ccy-dd--field">
+                        <div class="ex-ccy-dd ex-ccy-dd--wide">
                             <button type="button" class="ex-ccy-dd__btn" id="invCcyVaultDdBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="invCcyVaultDdPanel">
                                 <span class="ex-ccy-dd__btn-inner">
                                     <span class="ex-ccy-dd__code" id="invCcyVaultDdLabel">USDw</span>
@@ -8603,7 +8683,7 @@
                 <div class="fbet xs mu" style="margin-bottom:4px;align-items:center">
                     <span id="sendAvailLine" style="color:var(--m)">Available:  - </span>
                     <span id="sendTotalLine" style="display:none;font-weight:800;color:var(--t)"></span>
-                    <button type="button" id="sendAmtMaxBtn" class="btn btn-secondary" style="width:auto;padding:6px 12px;font-size:11px;font-weight:800"
+                    <button type="button" id="sendAmtMaxBtn" class="max-link"
                         onclick="setSendAmtMax()">MAX</button>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:0">
@@ -8629,6 +8709,9 @@
                 style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:9px 12px;margin-bottom:12px;background:transparent;border:1px dashed rgba(103,232,249,.25);border-radius:8px;color:var(--m);font-size:13px;font-weight:600;cursor:pointer">
                 + Add recipient&nbsp;&nbsp;<span id="sendRowCount" style="color:rgba(103,232,249,.6);font-size:11px;font-weight:700">1 / 14</span>
             </button>
+            <div id="sendReadOnlyNotice" style="display:none;margin:0 0 10px;padding:10px 12px;border-radius:10px;background:rgba(251,191,36,.10);border:1px solid rgba(251,191,36,.35);color:var(--am);font-size:12px;line-height:1.5;font-weight:700">
+                Read-only web connection — your node blocks sending from a browser for security. To send Minima, open <strong>Stables</strong> from your MinimaOS hub (it has write access). You can still view balances and receive here.
+            </div>
             <button type="button" class="btn btn-w btn-lg btn-primary" id="sendConfirmBtn"
                 onclick="stablesConfirmSendFromModal()">Confirm send</button>
         </div>
@@ -8700,6 +8783,17 @@
                     onclick="closeModal('recvModal');navigate('invoice')">Open merchant checkout (invoice)
                     →</button>
             </div>
+            <details id="recvCheckAddrBlock" style="margin-bottom:12px">
+                <summary style="cursor:pointer;font-weight:700;color:var(--m);padding:8px 0">Check an address belongs to this wallet ▾</summary>
+                <div style="margin-top:8px">
+                    <input id="recvCheckAddrInput" class="finput" placeholder="Mx… or 0x… address" style="margin-bottom:6px"
+                        autocomplete="off" autocapitalize="off" spellcheck="false">
+                    <button type="button" class="btn btn-secondary" style="width:100%;padding:10px"
+                        onclick="stablesCheckAddressIsMine()">Check this address</button>
+                    <div id="recvCheckAddrResult" class="xs" style="margin-top:8px;text-align:center;display:none;line-height:1.45" aria-live="polite"></div>
+                    <div class="xs mu" style="margin-top:6px;text-align:center;line-height:1.45;color:var(--m)">Confirms whether the address is one your connected Minima node owns.</div>
+                </div>
+            </details>
         </div>
         </div>
     </div>
@@ -10236,7 +10330,7 @@
             const buildVersion = window.STABLES_CONFIG && window.STABLES_CONFIG.APP_BUILD_VERSION;
             const link = document.getElementById('settingsMdsZipLink');
             const label = document.getElementById('settingsMdsZipUrlLabel');
-            const zipLabel = buildVersion ? ('Download Stables_' + stablesFormatDisplayVersion(buildVersion) + '.mds.zip') : 'Download Stables package (.mds.zip)';
+            const zipLabel = buildVersion ? ('Download Stables_' + (typeof stablesBuildLabel === 'function' ? stablesBuildLabel() : stablesFormatDisplayVersion(buildVersion)) + '.mds.zip') : 'Download Stables package (.mds.zip)';
             if (link) {
                 link.textContent = zipLabel;
                 if (url) {
@@ -10271,14 +10365,22 @@
                     pillTitle.style.display = stageLabel ? '' : 'none';
                 }
                 const vStr = stablesFormatDisplayVersion(buildVersion);
-                if (pillSub) pillSub.textContent = vStr;
+                const iterNum = Number(window.STABLES_CONFIG && window.STABLES_CONFIG.APP_BUILD_ITERATION);
+                // Dev build iteration replaces the trailing segment, 2-digit: v0.0.0.2.0 -> v0.0.0.2.01
+                let vStrFull = vStr;
+                if (Number.isFinite(iterNum) && iterNum > 0) {
+                    const segs = vStr.split('.');
+                    segs[segs.length - 1] = String(iterNum).padStart(2, '0');
+                    vStrFull = segs.join('.');
+                }
+                if (pillSub) pillSub.textContent = vStrFull;
                 
                 const showcaseMenuTitle = document.querySelector('#topbarChannelOptionShowcase .topbar-channel-option-title');
                 const demoMenuTitle = document.querySelector('#topbarChannelOptionDemo .topbar-channel-option-title');
                 const testMenuTitle = document.querySelector('#topbarChannelOptionTest .topbar-channel-option-title');
                 const prodMenuTitle = document.querySelector('#topbarChannelOptionProd .topbar-channel-option-title');
                 if (showcaseMenuTitle) showcaseMenuTitle.innerHTML = 'Showcase v0.0.0.0.3 <span style="font-size:10px; padding:2px 6px; border:1px solid rgba(159,176,192,0.3); border-radius:4px; color:var(--m); margin-left:8px; vertical-align:baseline; text-transform:uppercase;">Superseded</span>';
-                if (demoMenuTitle) demoMenuTitle.textContent = 'Demo Channel ' + vStr;
+                if (demoMenuTitle) demoMenuTitle.textContent = 'Demo Channel ' + vStrFull;
                 if (testMenuTitle) testMenuTitle.innerHTML = 'Public Testing v0.0.1 <span style="font-size:10px; padding:2px 6px; border:1px solid rgba(251,191,36,0.3); border-radius:4px; color:var(--am); margin-left:8px; vertical-align:middle; text-transform:uppercase;">Soon</span>';
                 if (prodMenuTitle) prodMenuTitle.innerHTML = 'Live channel v0.1 <span style="font-size:10px; padding:2px 6px; border:1px solid rgba(251,191,36,0.3); border-radius:4px; color:var(--am); margin-left:8px; vertical-align:middle; text-transform:uppercase;">TBA</span>';
                 
@@ -11097,10 +11199,10 @@
                 {
                     type: 'choices',
                     text: {
-                        en: "Welcome to the **Stables demo** (v0.0.0.1.0). The best part: with your Minima node connected you can already **send and receive native Minima** on-chain, and the **QR scanner works like a charm** for paying in seconds. Wables (CADw, EURw) are still illustrative here.\n\nWhere would you like to start?",
-                        fr: "Bienvenue dans la **démo Stables** (v0.0.0.1.0). Le meilleur : avec votre nœud Minima connecté, vous pouvez déjà **envoyer et recevoir du Minima natif** on-chain, et le **scanner QR fonctionne à merveille** pour payer en quelques secondes. Les Wables (CADw, EURw) restent illustratifs ici.\n\nPar où commencer ?",
-                        es: "Bienvenido a la **demo de Stables** (v0.0.0.1.0). Lo mejor: con su nodo Minima conectado ya puede **enviar y recibir Minima nativo** on-chain, y el **escáner QR funciona de maravilla** para pagar en segundos. Los Wables (CADw, EURw) siguen siendo ilustrativos aquí.\n\n¿Por dónde empezar?",
-                        zh: "欢迎使用**Stables演示版**（v0.0.0.1.0）。最棒的是：连接您的Minima节点后，您已经可以**发送和接收原生Minima**（链上），而且**二维码扫描功能非常好用**，几秒即可完成支付。这里的Wables（CADw、EURw）仍是说明性的。\n\n您想从哪里开始？"
+                        en: "Welcome to the **Stables demo** ({{APP_VERSION}}). The best part: with your Minima node connected you can already **send and receive native Minima** on-chain, and the **QR scanner works like a charm** for paying in seconds. Wables (CADw, EURw) are still illustrative here.\n\nWhere would you like to start?",
+                        fr: "Bienvenue dans la **démo Stables** ({{APP_VERSION}}). Le meilleur : avec votre nœud Minima connecté, vous pouvez déjà **envoyer et recevoir du Minima natif** on-chain, et le **scanner QR fonctionne à merveille** pour payer en quelques secondes. Les Wables (CADw, EURw) restent illustratifs ici.\n\nPar où commencer ?",
+                        es: "Bienvenido a la **demo de Stables** ({{APP_VERSION}}). Lo mejor: con su nodo Minima conectado ya puede **enviar y recibir Minima nativo** on-chain, y el **escáner QR funciona de maravilla** para pagar en segundos. Los Wables (CADw, EURw) siguen siendo ilustrativos aquí.\n\n¿Por dónde empezar?",
+                        zh: "欢迎使用**Stables演示版**（{{APP_VERSION}}）。最棒的是：连接您的Minima节点后，您已经可以**发送和接收原生Minima**（链上），而且**二维码扫描功能非常好用**，几秒即可完成支付。这里的Wables（CADw、EURw）仍是说明性的。\n\n您想从哪里开始？"
                     },
                     choices: [
                         { label: { en: "⚡ What works right now", fr: "⚡ Ce qui marche déjà", es: "⚡ Lo que ya funciona", zh: "⚡ 现在能用的功能" }, nextFlow: 'functionalities' },
@@ -11373,13 +11475,15 @@
             _awReturnToGenericChoiceAfterPersonalizationTour = false;
         }
 
+        const AGENT_WELCOME_AUTOOPENED_KEY = 'stables_agent_welcome_autoopened_v1';
         function autoOpenAgentWelcomeOnFirstAccess() {
-            if (_awWelcomeDone()) return;
-            setTimeout(() => {
-                const drawer = document.getElementById('agentDrawer');
-                if (drawer && drawer.classList.contains('open')) return;
-                if (typeof openAgent === 'function') openAgent(false);
-            }, 600);
+            // Do NOT auto-open the StablesAgent drawer. Its backdrop + opaque right-side panel
+            // cover app controls (e.g. the currency selectors on Mint / Coverage fund), and a
+            // user who hasn't dismissed it finds those controls unclickable. The agent stays
+            // available from the floating button (with its attention badge), and first-run
+            // onboarding is handled by the centered, click-outside-dismissible welcome modal.
+            // Kept as a no-op so existing boot/call sites stay valid.
+            return;
         }
 
         function _awSetWelcomeDone(reason) {
@@ -11407,9 +11511,27 @@
             return typeof getStoredAgentLanguage === 'function' ? getStoredAgentLanguage() : 'en';
         }
 
+        // Current build label, identical to the top-bar pill (e.g. v0.0.0.2.03), so any copy
+        // can show the live version via the {{APP_VERSION}} token instead of a hardcoded string.
+        function stablesBuildLabel() {
+            const cfg = window.STABLES_CONFIG || {};
+            let vStr = (typeof stablesFormatDisplayVersion === 'function')
+                ? stablesFormatDisplayVersion(cfg.APP_BUILD_VERSION || '0')
+                : ('v' + (cfg.APP_BUILD_VERSION || '0'));
+            const iter = Number(cfg.APP_BUILD_ITERATION);
+            if (Number.isFinite(iter) && iter > 0) {
+                const segs = vStr.split('.');
+                segs[segs.length - 1] = String(iter).padStart(2, '0');
+                vStr = segs.join('.');
+            }
+            return vStr;
+        }
+        window.stablesBuildLabel = stablesBuildLabel;
+
         function _awT(textObj) {
             if (!textObj) return '';
-            return textObj[_awLang()] || textObj.en || '';
+            const s = textObj[_awLang()] || textObj.en || '';
+            return s.indexOf('{{APP_VERSION}}') !== -1 ? s.replace(/\{\{APP_VERSION\}\}/g, stablesBuildLabel()) : s;
         }
 
         function _awEscapeHtml(text) {
@@ -12641,7 +12763,7 @@
 
             const w = typeof vaultNumericBalance === 'function' ? vaultNumericBalance(WALLET_WINIWA) : (Number(WALLET_WINIWA) || 0);
             if (w > 0) {
-                const eq = w * investSummaryRateToBase('WINIWA', base);
+                const eq = w * investSummaryRateToBase('Winiwa', base);
                 totalEq += eq;
                 parts.push(`<tr><td style="padding:6px 8px 6px 0;color:var(--t)">Winiwa (test)</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:var(--t)">${fmtQty(w, 2, 2)}</td><td style="padding:6px 0;text-align:right;font-weight:700;color:var(--gr)">${fmt2(eq)} ${base}</td></tr>`);
             }
@@ -13601,6 +13723,12 @@
             if (typeof updateWelcomeLanguage === 'function') window.updateWelcomeLanguage();
             syncAppLangLabels();
             closeAppLangMenus();
+            // Only return to the welcome after the language notice if the language was changed
+            // from WITHIN the welcome flow. Changing it from the side menu must not pop the welcome.
+            window.__stablesReopenWelcomeAfterLang = !!(function () {
+                const w = document.getElementById('welcomeSetupModal');
+                return w && w.classList.contains('open');
+            })();
             const modal = document.getElementById('agentActionModal');
             const title = document.getElementById('agentActionTitle');
             const titleRight = document.getElementById('agentActionTitleRight');
@@ -13636,7 +13764,8 @@
             const topModal = document.getElementById('agentActionModal');
             if (topModal) topModal.classList.remove('open', 'agent-action-notice');
             const welcome = document.getElementById('welcomeSetupModal');
-            if (welcome) welcome.classList.add('open');
+            if (welcome && window.__stablesReopenWelcomeAfterLang) welcome.classList.add('open');
+            window.__stablesReopenWelcomeAfterLang = false;
         }
 
         function syncAppLangLabels() {
@@ -13922,7 +14051,9 @@
 
             rows.forEach(r => {
                 const code = r.dataset.ccy;
-                r.dataset.walletEnabled = (enabled.includes(code) && code !== BASE_CCY) ? '1' : '0';
+                // The selected (main) currency stays an enabled, orderable row so it can be
+                // ranked anywhere in the list while keeping its highlight (decoupled from "top").
+                r.dataset.walletEnabled = enabled.includes(code) ? '1' : '0';
             });
 
             return { rows, enabledFromSettings: enabled, principal: BASE_CCY };
@@ -14118,10 +14249,12 @@
             }
 
             // SECOND: Resolve principal and enabled state from the current settings.
+            // Selection is decoupled from ranking: keep the saved primary (BASE_CCY) wherever it
+            // sits in the order; only fall back to the first enabled currency if it is disabled.
             const enabledFromSettings = getEnabledCurrenciesOrdered();
-            const principal = (saved && saved.length)
-                ? (saved.find(code => enabledFromSettings.includes(code)) || enabledFromSettings[0])
-                : (enabledFromSettings.includes(BASE_CCY) ? BASE_CCY : enabledFromSettings[0]);
+            const principal = enabledFromSettings.includes(BASE_CCY)
+                ? BASE_CCY
+                : (enabledFromSettings[0] || BASE_CCY);
             if (principal) BASE_CCY = principal;
 
             const { rows } = syncWalletRowState(list, enabledFromSettings);
@@ -14141,6 +14274,7 @@
             let lastInsertAfter = null; // used to reduce DOM churn during dragover
             let lastPrimaryInsertKey = null;
             let primaryDragBaseRow = null;
+            let lastDragEndTs = 0; // suppress the click that can trail a drag (avoid accidental select)
 
             const persistOrder = () => {
                 const now = Array.from(list.querySelectorAll('.ccy-sec-row'));
@@ -14273,21 +14407,31 @@
                     dragRow = null;
                     lastInsertAfter = null;
                     lastPrimaryInsertKey = null;
+                    lastDragEndTs = Date.now();
                     list.querySelectorAll('.ccy-sec-row').forEach(x => {
                         x.classList.remove('dragging');
                         x.classList.remove('dragover');
                     });
                 });
 
-                // Prevent setPrimary click from firing when user is dragging
                 r.addEventListener('click', (e) => {
-                    if (dragInProgress) {
+                    // Ignore the click that can trail a drag so reordering never changes selection.
+                    if (dragInProgress || (Date.now() - lastDragEndTs) < 250) {
                         e.preventDefault();
                         e.stopPropagation();
                         return;
                     }
-                    if (walletEditMode) return;
-                    // Tap row for quick currency actions.
+                    if (walletEditMode) {
+                        // Let the add/remove toggle handle its own click (don't also set main).
+                        if (e.target && e.target.closest && e.target.closest('.ccy-row-toggle')) return;
+                        // Edit mode: a deliberate tap sets the main currency (drag moves it instead).
+                        const code = r.dataset ? r.dataset.ccy : '';
+                        if (code && code !== BASE_CCY && r.dataset.walletEnabled === '1') {
+                            setPrimary(code, false);
+                        }
+                        return;
+                    }
+                    // Normal mode: tap row for quick currency actions.
                     if (typeof openCurrencyActions === 'function' && r.dataset?.ccy) {
                         openCurrencyActions(r.dataset.ccy);
                     }
@@ -14904,6 +15048,12 @@
             }
             const enabledRows = rows.filter(r => r.dataset.walletEnabled === '1');
 
+            // Decoupled selection: the legacy pinned "primary card" is retired. The selected
+            // (main) currency is shown as a highlighted row inline, rankable anywhere in the list.
+            const priCardEl = document.querySelector('.ccy-primary');
+            if (priCardEl) priCardEl.style.display = 'none';
+            rows.forEach(r => r.classList.toggle('ccy-sec-row--selected', r.dataset.ccy === BASE_CCY));
+
             if (walletEditMode) {
                 // Active (enabled) currencies first, inactive below; persist order for next visit.
                 sortWalletCcyRowsForEdit();
@@ -14927,6 +15077,10 @@
                 enabledRows.forEach((r, i) => {
                     r.style.display = i < limit ? 'flex' : 'none';
                 });
+                // Always keep the selected (main) currency visible, even if ranked beyond the
+                // collapsed limit, so the highlighted row never disappears when collapsed.
+                const selRow = enabledRows.find(r => r.dataset.ccy === BASE_CCY);
+                if (selRow) selRow.style.display = 'flex';
                 // Disabled rows hidden in normal mode.
                 rows.filter(r => r.dataset.walletEnabled !== '1').forEach(r => r.style.display = 'none');
             }
@@ -14991,13 +15145,11 @@
                     <div class="xs mu" style="margin-top:6px">${eqTxt}</div>
                 </div>
                 <div style="display:grid;gap:10px;max-width:420px;margin:0 auto">
-                    <div class="flex gap8" style="justify-content:center">
-                        <button class="btn" style="flex:1;min-width:132px" onclick="closeAgentActionModal();openModalWithCurrency('sendModal','${c}')">Send</button>
-                        <button class="btn" style="flex:1;min-width:132px" onclick="closeAgentActionModal();openModalWithCurrency('recvModal','${c}')">Receive</button>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                        <button class="btn" style="width:100%;min-width:0" onclick="closeAgentActionModal();openModalWithCurrency('sendModal','${c}')">Send</button>
+                        <button class="btn" style="width:100%;min-width:0" onclick="closeAgentActionModal();openModalWithCurrency('recvModal','${c}')">Receive</button>
                     </div>
-                    <div class="flex gap8" style="justify-content:center">
-                        <button class="btn" style="min-width:180px" onclick="closeAgentActionModal();navigate('exchange')">Exchange</button>
-                    </div>
+                    <button class="btn" style="width:100%;min-width:0" onclick="closeAgentActionModal();navigate('exchange')">Exchange</button>
                 </div>
             `;
             modal.classList.add('open');
@@ -15368,6 +15520,41 @@
             }
         }
 
+        // Per-asset Mint | Burn toggle: shows one shared control block at a time.
+        function setXwmMode(mode) {
+            const burn = mode === 'burn';
+            const mb = document.getElementById('xwmMintBlock');
+            const bb = document.getElementById('xwmBurnBlock');
+            if (mb) mb.style.display = burn ? 'none' : '';
+            if (bb) bb.style.display = burn ? '' : 'none';
+            const tm = document.getElementById('xwmModeMint');
+            const tb = document.getElementById('xwmModeBurn');
+            if (tm) tm.classList.toggle('active', !burn);
+            if (tb) tb.classList.toggle('active', burn);
+            try {
+                if (!burn && typeof calcXwm === 'function') calcXwm();
+                if (burn && typeof calcXwmBurn === 'function') calcXwmBurn();
+            } catch (_) { /* ignore */ }
+        }
+        window.setXwmMode = setXwmMode;
+
+        function setWablesMode(mode) {
+            const burn = mode === 'burn';
+            const mb = document.getElementById('mintWablesMintBlock');
+            const bb = document.getElementById('mintWablesBurnBlock');
+            if (mb) mb.style.display = burn ? 'none' : '';
+            if (bb) bb.style.display = burn ? '' : 'none';
+            const tm = document.getElementById('wablesModeMint');
+            const tb = document.getElementById('wablesModeBurn');
+            if (tm) tm.classList.toggle('active', !burn);
+            if (tb) tb.classList.toggle('active', burn);
+            try {
+                if (!burn && typeof calcIssue === 'function') calcIssue();
+                if (burn && typeof calcReclaim === 'function') calcReclaim();
+            } catch (_) { /* ignore */ }
+        }
+        window.setWablesMode = setWablesMode;
+
         // xWiniwa calc
         function calcXwm() {
             const wn = readVaultAmountFromInput(document.getElementById('xwmAmt'));
@@ -15597,9 +15784,15 @@
             const n = Number(blk);
             if (!Number.isFinite(n) || n < 0) return;
             const h = Math.floor(n);
+            const prev = window.__STABLES_LIVE_NODE.block;
             window.__STABLES_LIVE_NODE.block = h;
             stablesSetSyncPillLive(h);
             stablesMarkNodeRpcConfirmed();
+            // A new block deepens every pending/confirming tx — refresh the confirmation counters.
+            if (prev !== h) {
+                if (typeof window.renderActivity === 'function') window.renderActivity();
+                if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
+            }
         }
 
         function stablesRevealWiniwaRowForLiveNode() {
@@ -15924,8 +16117,37 @@
                     }
                     return;
                 }
-                if (msg.event !== 'inited') return;
-                stablesOnMdsInitedShowcase();
+                if (msg.event === 'inited') {
+                    stablesOnMdsInitedShowcase();
+                    return;
+                }
+                // Live wallet + activity updates (same event stream the Minima wallet reacts to).
+                if (msg.event === 'NEWBALANCE') {
+                    // Balance changed → refresh balance, invalidate our address cache, re-sync history.
+                    try { stablesPullBlockAndBalanceFromMds(); } catch (_) { /* ignore */ }
+                    try { if (typeof window.stablesInvalidateWalletAddrCache === 'function') window.stablesInvalidateWalletAddrCache(); } catch (_) { /* ignore */ }
+                    try { if (typeof window.stablesLiveResyncTransactions === 'function') window.stablesLiveResyncTransactions(); } catch (_) { /* ignore */ }
+                    return;
+                }
+                if (msg.event === 'NEWBLOCK') {
+                    // New top block → update height immediately (no need to wait for the poll).
+                    try {
+                        const blk = msg.data ? stablesDeepFindBlockInObject(msg.data, 0) : null;
+                        if (blk != null) stablesApplyLiveBlockFromMds(blk);
+                    } catch (_) { /* ignore */ }
+                    return;
+                }
+                if (msg.event === 'NEWTXPOW') {
+                    // A transaction reached the node (often still in the mempool): detect incoming.
+                    try {
+                        const d = msg.data || {};
+                        const tp = d.txpow || d.TxPoW || (d.txpowid ? d : null);
+                        if (tp && typeof window.stablesHandleIncomingTxpow === 'function') {
+                            window.stablesHandleIncomingTxpow(tp);
+                        }
+                    } catch (_) { /* ignore */ }
+                    return;
+                }
             });
             return true;
         }
@@ -16316,8 +16538,8 @@
                 const r = stablesWalletConversionRate(from, to);
                 return (typeof r === 'number' && Number.isFinite(r) && r > 0) ? r : 0;
             }
-            const f = (from === 'MINIMA' || from === 'WINIMA') ? 'Winiwa' : String(from || '');
-            const t = (to === 'MINIMA' || to === 'WINIMA') ? 'Winiwa' : String(to || '');
+            const f = (from === 'MINIMA' || from === 'WINIMA' || from === 'WINIWA') ? 'Winiwa' : String(from || '');
+            const t = (to === 'MINIMA' || to === 'WINIMA' || to === 'WINIWA') ? 'Winiwa' : String(to || '');
             if (f === t) return 1;
             return (RATES[f] && typeof RATES[f][t] === 'number') ? RATES[f][t] : 0;
         }
@@ -16335,6 +16557,24 @@
             document.getElementById('ratePill').textContent = '1 ' + fl + ' = ' + rate.toFixed(4) + ' ' + tl + ' \u00b7 No fees';
             if (typeof updateExchangeAvailDisplay === 'function') updateExchangeAvailDisplay();
         }
+
+        // Reverse of calcRate: the user types the exact amount they want to RECEIVE and we
+        // back-calculate the SEND amount. Setting exFrom.value programmatically does not fire its
+        // oninput, so there is no loop with calcRate.
+        function calcRateReverse() {
+            const from = document.getElementById('exFromCcy').value;
+            const to = document.getElementById('exToCcy').value;
+            const toAmt = parseFloat(String(document.getElementById('exTo').value || '').replace(/,/g, '')) || 0;
+            let rate = exchangeDemoRate(from, to);
+            if (!rate) rate = 1;
+            const exFrom = document.getElementById('exFrom');
+            if (exFrom) exFrom.value = (toAmt > 0 && rate > 0) ? String(+(toAmt / rate).toFixed(6)) : '';
+            const fl = typeof currencyDisplayLabel === 'function' ? currencyDisplayLabel(from) : from;
+            const tl = typeof currencyDisplayLabel === 'function' ? currencyDisplayLabel(to) : to;
+            document.getElementById('ratePill').textContent = '1 ' + fl + ' = ' + rate.toFixed(4) + ' ' + tl + ' \u00b7 No fees';
+            if (typeof updateExchangeAvailDisplay === 'function') updateExchangeAvailDisplay();
+        }
+        window.calcRateReverse = calcRateReverse;
 
         /**
          * Drive every RATES edge involving Winiwa / xWiniwa from live MINIMA USD spot (SIM_Winiwa_PRICE)
@@ -17069,9 +17309,22 @@
             document.querySelectorAll('.ex-ccy-dd__panel').forEach(function (pan) {
                 pan.hidden = true;
                 resetVaultCurrencyDropdownPanelPosition(pan);
-                const btn = pan.previousElementSibling;
+                const btn = pan.__ddBtn || pan.previousElementSibling;
                 if (btn && btn.classList && btn.classList.contains('ex-ccy-dd__btn')) {
                     btn.setAttribute('aria-expanded', 'false');
+                }
+                // Restore a panel that was portaled to <body> for correct fixed positioning.
+                if (pan.__ddOrigParent) {
+                    try {
+                        if (pan.__ddOrigNext && pan.__ddOrigNext.parentElement === pan.__ddOrigParent) {
+                            pan.__ddOrigParent.insertBefore(pan, pan.__ddOrigNext);
+                        } else {
+                            pan.__ddOrigParent.appendChild(pan);
+                        }
+                    } catch (_) { /* ignore */ }
+                    pan.__ddOrigParent = null;
+                    pan.__ddOrigNext = null;
+                    pan.__ddBtn = null;
                 }
             });
         }
@@ -17092,6 +17345,15 @@
 
         function positionVaultCurrencyDropdownPanel(btn, panel) {
             if (!btn || !panel) return;
+            // The panel uses position:fixed, but a glassmorphic ancestor (backdrop-filter / filter /
+            // transform) creates a containing block that traps fixed positioning and pushes the panel
+            // off-screen. Portal it to <body> while open so fixed is relative to the viewport.
+            if (panel.parentElement && panel.parentElement !== document.body) {
+                panel.__ddOrigParent = panel.parentElement;
+                panel.__ddOrigNext = panel.nextElementSibling;
+                panel.__ddBtn = btn;
+                document.body.appendChild(panel);
+            }
             const rect = btn.getBoundingClientRect();
             const margin = 8;
             const gap = 6;
@@ -17170,7 +17432,7 @@
             if (!window.__exCcyDdOutsideBound) {
                 window.__exCcyDdOutsideBound = true;
                 document.addEventListener('click', function (ev) {
-                    if (!ev.target.closest('.ex-ccy-dd')) vaultCcyDdCloseAll();
+                    if (!ev.target.closest('.ex-ccy-dd') && !ev.target.closest('.ex-ccy-dd__panel')) vaultCcyDdCloseAll();
                 });
             }
             [['from', 'exFromCcyPanel'], ['to', 'exToCcyPanel']].forEach(function (pair) {
@@ -17447,6 +17709,10 @@
         }
 
         function updateSendAvailLine() {
+            // Once we know the node connection is read-only (public/cross-origin MDS), keep the
+            // "can't send from the web" notice visible whenever the Send modal is in use.
+            const roNotice = document.getElementById('sendReadOnlyNotice');
+            if (roNotice) roNotice.style.display = window.__STABLES_MDS_READONLY ? '' : 'none';
             const el = document.getElementById('sendAvailLine');
             const sel = document.getElementById('sendCcy');
             if (!el || !sel) return;
@@ -18207,7 +18473,14 @@
                         resetSendModal();
                     } else {
                         const err = stablesMdsSendErrorText(res);
-                        if (/MxAddress|should start with|Invalid.*[Aa]ddress/.test(err)) {
+                        if (/cannot run write|public\s*mds|write command|read.?only/i.test(err)) {
+                            // Cross-origin / public MDS is read-only by Minima's design: the node
+                            // refuses WRITE (send). Surface clear guidance, not the raw node error.
+                            window.__STABLES_MDS_READONLY = true;
+                            const notice = document.getElementById('sendReadOnlyNotice');
+                            if (notice) notice.style.display = '';
+                            showToast('This web connection is read-only, so your node blocks sending here. To send Minima, open Stables from your MinimaOS hub (write access). You can still view balances and receive on the web.', { tone: 'amber', durationMs: 7000 });
+                        } else if (/MxAddress|should start with|Invalid.*[Aa]ddress/.test(err)) {
                             showToast("That recipient address is not valid. Re-scan the QR or paste the recipient's Minima (Mx) address only.", { durationMs: 5200 });
                         } else {
                             showToast(err.length > 140 ? err.slice(0, 137) + '...' : err);
@@ -18415,8 +18688,8 @@
          * Uses live SIM_Winiwa_PRICE and SIM_XWM_PRICE so UI matches spot even if RATES.Winiwa.* still held seed values.
          */
         function stablesWalletConversionRate(from, to) {
-            const f = (from === 'MINIMA' || from === 'WINIMA') ? 'Winiwa' : String(from || '');
-            const t = (to === 'MINIMA' || to === 'WINIMA') ? 'Winiwa' : String(to || '');
+            const f = (from === 'MINIMA' || from === 'WINIMA' || from === 'WINIWA') ? 'Winiwa' : String(from || '');
+            const t = (to === 'MINIMA' || to === 'WINIMA' || to === 'WINIWA') ? 'Winiwa' : String(to || '');
             if (f === t) return 1;
             const spot = Number(typeof SIM_Winiwa_PRICE !== 'undefined' ? SIM_Winiwa_PRICE : NaN);
             const spotOk = Number.isFinite(spot) && spot > 0;
@@ -18548,6 +18821,7 @@
             if (typeof navigate === 'function') navigate('mint');
             setTimeout(function () {
                 if (typeof setVTab === 'function') setVTab('issue');
+                if (typeof setWablesMode === 'function') setWablesMode('mint');
                 setTimeout(function () {
                     const el = document.getElementById('mintWablesMintBlock');
                     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -18561,6 +18835,7 @@
             if (typeof navigate === 'function') navigate('mint');
             setTimeout(function () {
                 if (typeof setVTab === 'function') setVTab('issue');
+                if (typeof setWablesMode === 'function') setWablesMode('burn');
                 setTimeout(function () {
                     const el = document.getElementById('mintWablesBurnBlock');
                     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -18807,7 +19082,7 @@
             try { if (typeof refreshWalletModalCurrencySelects === 'function') refreshWalletModalCurrencySelects(); } catch (_) { }
             try { if (typeof syncAllVaultCurrencyDropdownTriggers === 'function') syncAllVaultCurrencyDropdownTriggers(); } catch (_) { }
 
-            document.getElementById('availWiniwaXwm').textContent = `Available: ${fmtAvailVaultQty(WALLET_WINIWA)}`;
+            document.getElementById('availWiniwaXwm').textContent = `Available: ${fmtAvailVaultQty(WALLET_WINIWA)} Winiwa`;
             document.getElementById('availWiniwaIss').textContent = `Available: ${fmtAvailVaultQty(WALLET_WINIWA)} Winiwa`;
             try { if (typeof updateSendFavEq === 'function') updateSendFavEq(); } catch (_) { }
             try { if (typeof updateRecvFavEq === 'function') updateRecvFavEq(); } catch (_) { }
@@ -18864,10 +19139,11 @@
 
             const meta = CCY_META[BASE_CCY] || { name: BASE_CCY };
 
-            // Primary card styling based on currency
+            // Legacy primary card retired: selection is shown inline as a highlighted row.
             const priCard = document.querySelector('.ccy-primary');
             if (priCard) {
                 priCard.dataset.ccy = BASE_CCY;
+                priCard.style.display = 'none';
             }
 
             // Primary card label
@@ -18878,7 +19154,20 @@
                 const label = currencyDisplayLabel(BASE_CCY);
                 priName.innerHTML = `${prefix}${label} · ${meta.name}`;
             }
-            if (priFull) priFull.textContent = '';
+            // When MINIMA is the main currency, keep the sendable/locked split visible
+            // (same data and gating as the secondary MINIMA row, which is hidden while primary).
+            if (priFull) {
+                let priFullText = '';
+                if (BASE_CCY === 'MINIMA') {
+                    const minRow = document.getElementById('ccyRowNativeMinima') || document.querySelector('#ccyList .ccy-sec-row[data-ccy="MINIMA"]');
+                    if (minRow && minRow.classList.contains('ccy-sec-row--live-node-visible')) {
+                        const sendableStr = typeof fmtVaultAmt === 'function' ? fmtVaultAmt(WALLET_NATIVE_MINIMA, 2, 6) : String(WALLET_NATIVE_MINIMA);
+                        const lockedStr = typeof fmtVaultAmt === 'function' ? fmtVaultAmt(WALLET_NATIVE_MINIMA_LOCKED, 2, 6) : String(WALLET_NATIVE_MINIMA_LOCKED);
+                        priFullText = 'Sendable ' + sendableStr + ' · Locked ' + lockedStr;
+                    }
+                }
+                priFull.textContent = priFullText;
+            }
 
             // Primary card amount (quantity in BASE_CCY)
             const priBal = document.querySelector('.ccy-pri-bal');
@@ -18925,6 +19214,9 @@
             const wCcy = document.querySelector('.w-ccy');
             if (wCcy) wCcy.textContent = `${BASE_CCY} equivalent`;
             if (wTotal && Number.isFinite(totalBase)) wTotal.textContent = `${fmt2(totalBase)} ${BASE_CCY}`;
+
+            // Keep the "incoming, not yet in your total" indicator in sync with the balance.
+            try { if (typeof window.stablesRenderPendingIncomingIndicator === 'function') window.stablesRenderPendingIncomingIndicator(); } catch (_) { /* ignore */ }
 
             if (walletEditMode) refreshWalletCcyPrimaryStars();
 
@@ -19298,7 +19590,7 @@
 
             showToast(
                 '✓ Added 10,000 demo Winiwa (no monetary value).\nReady to mint, invest, and more.' +
-                '<button onclick="navigate(\'mint\');document.getElementById(\'toast\').style.display=\'none\'" style="display:block;width:100%;margin-top:12px;padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,rgba(103,232,249,.3),rgba(167,139,250,.3));border:1px solid rgba(103,232,249,.3);color:#fff;font-weight:900;font-size:14px;cursor:pointer;font-family:inherit;letter-spacing:.01em;box-shadow:0 0 20px rgba(103,232,249,.12)">Mint xWiniwa &amp; Wables →</button>',
+                '<button onclick="navigate(\'mint\');window.stablesHideToast&&window.stablesHideToast()" style="display:block;width:100%;margin-top:12px;padding:10px 16px;border-radius:12px;background:linear-gradient(135deg,rgba(103,232,249,.3),rgba(167,139,250,.3));border:1px solid rgba(103,232,249,.3);color:#fff;font-weight:900;font-size:14px;cursor:pointer;font-family:inherit;letter-spacing:.01em;box-shadow:0 0 20px rgba(103,232,249,.12)">Mint xWiniwa &amp; Wables →</button>',
                 { html: true, tone: 'amber', prose: true, centerScreen: true, durationMs: 10000 }
             );
         }
@@ -19875,7 +20167,37 @@
         function genNewAddr() {
             const code = typeof walletParseCcySel === 'function' ? walletParseCcySel('reqCcy') : '';
             if (code === 'MINIMA') {
-                showToast('Native Minima addresses come from your node. Use the Minima wallet / Security app on the device.');
+                // Native Minima: ask the connected node for a brand new address and display it.
+                const L = window.__STABLES_LIVE_NODE;
+                if (typeof MDS === 'undefined' || !MDS.cmd || !L || !L.rpcOk) {
+                    showToast('Connect your Minima node to generate a new receive address.');
+                    return;
+                }
+                showToast('Generating a new address from your node…');
+                // Use `getaddress`: it returns a fresh address from your default key set that the
+                // node (and the Minima wallet) track and recognise. `newaddress` creates a key the
+                // wallet's standard address list does not show, so we must not use it here.
+                MDS.cmd('getaddress', function (res) {
+                    const pair = stablesParseGetaddressAddressPair(res);
+                    if (!pair || (!pair.mx && !pair.hex)) {
+                        showToast('Could not get a new address from your node. Make sure Stables is in write mode, then try again.');
+                        return;
+                    }
+                    // Replace the cached node address so the box, QR, and copy all use the new one.
+                    window.__STABLES_NODE_RECEIVE_ADDRESS_PAIR = pair;
+                    const display = stablesGetPreferredMinimaReceiveDisplay(pair);
+                    window.__STABLES_NODE_RECEIVE_ADDRESS = display || null;
+                    // New address means new keys: let incoming-detection rebuild its address set.
+                    try { if (typeof window.stablesInvalidateWalletAddrCache === 'function') window.stablesInvalidateWalletAddrCache(); } catch (_) { /* ignore */ }
+                    if (typeof stablesRefreshReceiveAddressUI === 'function') {
+                        stablesRefreshReceiveAddressUI();
+                    } else {
+                        const box = document.getElementById('recvAddr');
+                        if (box && display) { box.textContent = display; box.dataset.fullAddress = display; }
+                        try { if (typeof stablesRenderReceiveQr === 'function') stablesRenderReceiveQr(); } catch (_) { /* ignore */ }
+                    }
+                    showToast('✓ New Minima receive address generated');
+                });
                 return;
             }
             const newAddr = stablesRandomDemoMxAddress();
@@ -19887,6 +20209,66 @@
             }
             try { if (typeof stablesRenderReceiveQr === 'function') stablesRenderReceiveQr(); } catch (_) { /* ignore */ }
             showToast('\u2713 New demo receive address (showcase only, not on-chain MINIMA)');
+        }
+
+        function stablesRefreshTransactions(btn) {
+            const allBtns = Array.from(document.querySelectorAll('.tx-refresh-btn'));
+            allBtns.forEach(b => b.classList.add('refreshing'));
+            const done = function () { allBtns.forEach(b => b.classList.remove('refreshing')); };
+            try {
+                if (typeof window.stablesSyncNodeTransactions === 'function' && typeof MDS !== 'undefined' && MDS.cmd) {
+                    // Connected to a node: pull fresh history (this re-renders both lists on success).
+                    window._activityLastAutoSync = Date.now();
+                    Promise.resolve(window.stablesSyncNodeTransactions(false)).then(done, done);
+                } else {
+                    // No node session: just re-render what we already hold locally.
+                    try { if (typeof window.renderActivity === 'function') window.renderActivity(); } catch (_) { /* ignore */ }
+                    try { if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity(); } catch (_) { /* ignore */ }
+                    if (typeof showToast === 'function') showToast('Activity refreshed.');
+                    setTimeout(done, 400);
+                }
+            } catch (_) { done(); }
+        }
+
+        function stablesCheckAddressIsMine() {
+            const input = document.getElementById('recvCheckAddrInput');
+            const out = document.getElementById('recvCheckAddrResult');
+            if (!input || !out) return;
+            const addr = String(input.value || '').trim();
+            out.style.display = 'block';
+            if (!addr) {
+                out.style.color = 'var(--m)';
+                out.textContent = 'Enter an Mx\u2026 or 0x\u2026 address to check.';
+                return;
+            }
+            if (!/^(Mx[A-Za-z0-9]{20,}|0x[0-9A-Fa-f]{40,128})$/i.test(addr)) {
+                out.style.color = 'var(--am)';
+                out.textContent = 'That does not look like a Minima address (Mx\u2026 or 0x\u2026).';
+                return;
+            }
+            const L = window.__STABLES_LIVE_NODE;
+            if (typeof MDS === 'undefined' || !MDS.cmd || !L || !L.rpcOk || typeof window.stablesIsOwnAddress !== 'function') {
+                out.style.color = 'var(--m)';
+                out.textContent = 'Connect your Minima node to verify addresses.';
+                return;
+            }
+            out.style.color = 'var(--m)';
+            out.textContent = 'Checking\u2026';
+            window.stablesIsOwnAddress(addr).then(function (res) {
+                if (res && res.ok) {
+                    out.style.color = 'var(--gr)';
+                    out.textContent = '\u2713 Yes, this address belongs to this wallet.';
+                } else if (res && res.reason === 'noaddrs') {
+                    out.style.color = 'var(--m)';
+                    out.textContent = 'Could not read your wallet addresses from the node. Make sure Stables is connected in write mode.';
+                } else {
+                    out.style.color = 'var(--rd)';
+                    out.textContent = '\u2717 This address is not one of this wallet\u2019s addresses.';
+                }
+            }).catch(function () {
+                out.style.color = 'var(--am)';
+                out.textContent = 'Check failed. Try again.';
+            });
         }
 
         function togglePrivacy() {
@@ -20529,6 +20911,20 @@ const APP_TAB_TITLE = 'Demo · Stables';
 
         // Toast (optional opts: { prose: true } for centered multi-line; durationMs)
         let toastTimer;
+        let _toastOutsideHandler = null;
+        let _toastKeyHandler = null;
+        function hideToastNow() {
+            const t = document.getElementById('toast');
+            clearTimeout(toastTimer);
+            if (t) {
+                t.style.display = 'none';
+                t.classList.remove('toast--prose', 'toast--center-screen', 'toast--amber', 'toast--success');
+            }
+            if (_toastOutsideHandler) { document.removeEventListener('click', _toastOutsideHandler, true); _toastOutsideHandler = null; }
+            if (_toastKeyHandler) { document.removeEventListener('keydown', _toastKeyHandler); _toastKeyHandler = null; }
+        }
+        window.stablesHideToast = hideToastNow;
+
         function showToast(msg, opts) {
             const t = document.getElementById('toast');
             if (!t) return;
@@ -20545,13 +20941,21 @@ const APP_TAB_TITLE = 'Demo · Stables';
             t.style.display = 'block';
             clearTimeout(toastTimer);
             const dur = typeof o.durationMs === 'number' ? o.durationMs : o.prose ? 5500 : 3000;
-            toastTimer = setTimeout(() => {
-                t.style.display = 'none';
-                t.classList.remove('toast--prose');
-                t.classList.remove('toast--center-screen');
-                t.classList.remove('toast--amber');
-                t.classList.remove('toast--success');
-            }, dur);
+            toastTimer = setTimeout(hideToastNow, dur);
+            // Centered, modal-like toasts dismiss on a click outside the box (or Escape).
+            if (_toastOutsideHandler) { document.removeEventListener('click', _toastOutsideHandler, true); _toastOutsideHandler = null; }
+            if (_toastKeyHandler) { document.removeEventListener('keydown', _toastKeyHandler); _toastKeyHandler = null; }
+            if (o.centerScreen) {
+                _toastOutsideHandler = function (e) { if (!t.contains(e.target)) hideToastNow(); };
+                _toastKeyHandler = function (e) { if (e.key === 'Escape') hideToastNow(); };
+                // Bind on the next tick so the click that opened the toast does not close it immediately.
+                setTimeout(function () {
+                    if (t.style.display === 'block') {
+                        document.addEventListener('click', _toastOutsideHandler, true);
+                        document.addEventListener('keydown', _toastKeyHandler);
+                    }
+                }, 0);
+            }
         }
 
         // --- PNL GRAPH AND RANGE ENGINE ---
@@ -20744,6 +21148,12 @@ const APP_TAB_TITLE = 'Demo · Stables';
                         const ak = String((window.STABLES_CONFIG || {}).USER_ACTIVITY_STORAGE_KEY || 'stables_demo_user_activity_v1').trim();
                         if (ak) localStorage.removeItem(ak);
                     }
+                } catch (_) { /* ignore */ }
+                // Wiping the demo balances must also clear the faucet cooldown, otherwise the user
+                // is left at 0 Winiwa but still locked out of the faucet.
+                try {
+                    const fk = String((window.STABLES_CONFIG || {}).FAUCET_WINIWA_LAST_CLAIM_STORAGE_KEY || 'stables_faucet_winiwa_last_claim_ts_v1').trim();
+                    if (fk) localStorage.removeItem(fk);
                 } catch (_) { /* ignore */ }
             } catch (_) { /* ignore */ }
         });

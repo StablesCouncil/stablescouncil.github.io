@@ -8,6 +8,48 @@
   const HIDDEN_TX_KEY = CFG.HIDDEN_TX_KEY || 'stables_hidden_tx_ids_v1';
   const SOFT_HIDDEN_TX_KEY = CFG.SOFT_HIDDEN_TX_KEY || 'stables_soft_hidden_tx_ids_v1';
   const HIDDEN_SHOPS_KEY = CFG.HIDDEN_SHOPS_KEY || 'stables_hidden_shop_names_v1';
+
+  // ── Block-confirmation counter ───────────────────────────────────────────────
+  // Each on-chain MINIMA tx shows how many blocks deep it is (live counter), out of a
+  // user-settable target (default 3). 0 = still in the mempool / awaiting the first block.
+  const CONFIRM_TARGET_KEY = CFG.CONFIRM_TARGET_KEY || 'stables_confirm_target_v1';
+  let CONFIRM_TARGET = (function () {
+    try { const v = parseInt(localStorage.getItem(CONFIRM_TARGET_KEY), 10); return (Number.isFinite(v) && v >= 1 && v <= 30) ? v : 3; }
+    catch (_) { return 3; }
+  })();
+  window.stablesGetConfirmTarget = function () { return CONFIRM_TARGET; };
+  window.stablesSetConfirmTarget = function (n) {
+    const v = Math.max(1, Math.min(30, parseInt(n, 10) || 3));
+    CONFIRM_TARGET = v;
+    try { localStorage.setItem(CONFIRM_TARGET_KEY, String(v)); } catch (_) { /* ignore */ }
+    if (typeof window.renderActivity === 'function') window.renderActivity();
+    if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
+    return v;
+  };
+  // Confirmations for a tx row: tip - block + 1 (1 = mined in the latest block); 0 = pending.
+  function txConfirmations(x) {
+    if (!x || !x.minimaOnChain) return null;
+    const L = window.__STABLES_LIVE_NODE;
+    const tip = Number((L && L.block != null) ? L.block : 0);
+    const b = Number(x.block || 0);
+    if (!b || !tip || tip < b) return 0;
+    return Math.max(0, tip - b + 1);
+  }
+  // Compact "x/target" confirmation line shown under the amount on each on-chain tx.
+  // Capped at the target (so a deep tx reads e.g. 3/3, muted); 0/target while still pending.
+  function txConfirmLine(x) {
+    const c = txConfirmations(x);
+    if (c === null) return '';
+    const t = CONFIRM_TARGET;
+    const shown = Math.min(c, t);
+    const state = c >= t ? 'done' : (c === 0 ? 'pending' : 'confirming');
+    return '<div class="tx-conf-amt tx-conf--' + state + '">' + shown + '/' + t + '</div>';
+  }
+  window.stablesTxConfirmations = txConfirmations;
+  (function syncConfirmTargetInput() {
+    const apply = function () { const el = document.getElementById('confirmTargetInput'); if (el) el.value = String(CONFIRM_TARGET); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply); else apply();
+  })();
   const TX_NOTES_KEY = CFG.TX_NOTES_KEY || 'stables_tx_notes_v1';
   const MERCHANT_RATINGS_KEY = CFG.MERCHANT_RATINGS_KEY || 'stables_merchant_ratings_v1';
   const CONTACT_FAVORITES_KEY = CFG.CONTACT_FAVORITES_KEY || 'stables_contact_favorites_v1';
@@ -79,6 +121,7 @@
   }
 
   let USER_ACTIVITY = [];
+  let _txSyncInFlight = false; // true while a node history sync runs (drives the loading indicator)
   function loadUserActivityFromStorage() {
     USER_ACTIVITY = [];
     if (!DEMO_REAL) return;
@@ -104,6 +147,7 @@
     persistUserActivityToStorage();
     if (typeof window.renderActivity === 'function') window.renderActivity();
     if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
+    if (typeof window.stablesRenderPendingIncomingIndicator === 'function') window.stablesRenderPendingIncomingIndicator();
   };
   window.stablesReloadUserActivityFromStorage = loadUserActivityFromStorage;
 
@@ -235,6 +279,7 @@
     persistUserActivityToStorage();
     if (typeof window.renderActivity === 'function') window.renderActivity();
     if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
+    if (typeof window.stablesRenderPendingIncomingIndicator === 'function') window.stablesRenderPendingIncomingIndicator();
     return changed;
   }
   window.stablesUpsertUserActivityRows = upsertUserActivityRows;
@@ -421,6 +466,7 @@
       note: '',
       directionLabel: dir === 'out' ? 'Outgoing' : 'Incoming',
       minimaOnChain: true,
+      block: (header && header.block != null) ? (Number(String(header.block).replace(/,/g, '')) || 0) : 0,
       rawTxpow: wrapper
     };
   }
@@ -563,6 +609,15 @@
       return;
     }
 
+    // If this is a different wallet than the one whose activity is stored, clear it first so
+    // we never show another wallet's transactions.
+    try { await reconcileActivityOwnerForCurrentWallet(); } catch (_) { /* ignore */ }
+
+    // Show the loading indicator on empty lists while we pull node history.
+    _txSyncInFlight = true;
+    if (typeof window.renderActivity === 'function') window.renderActivity();
+    if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
+
     const tokenMap = {};
     try {
       const balResp = await mdsCommand('balance');
@@ -696,6 +751,11 @@
       }
     }
 
+    // Sync finished: clear the loading indicator (resolve to rows or the empty state).
+    _txSyncInFlight = false;
+    if (typeof window.renderActivity === 'function') window.renderActivity();
+    if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
+
     if (!silent) {
       if (status) {
         status.textContent = imported
@@ -708,6 +768,267 @@
         window.showToast(imported ? `Synced ${imported} node transaction row${imported === 1 ? '' : 's'}.` : 'No node history rows imported.', { durationMs: 4200 });
       }
     }
+  };
+
+  // ── Live updates (mirrors the Minima wallet's event-driven behaviour) ───────────────
+  // The Minima wallet does not wait for a manual refresh: its MDS callback reacts to
+  // NEWBALANCE / NEWBLOCK (confirmations) and NEWTXPOW (a transaction arriving on the
+  // network) so incoming payments show up instantly. We replicate that here.
+
+  // Cached set of our addresses (both 0x and Mx forms) for fast incoming matching.
+  let _walletAddrCache = null;
+  let _walletAddrCacheTs = 0;
+  const WALLET_ADDR_CACHE_TTL_MS = 60000;
+
+  async function ensureWalletAddrCache(force) {
+    const now = Date.now();
+    if (!force && _walletAddrCache && (now - _walletAddrCacheTs) < WALLET_ADDR_CACHE_TTL_MS) {
+      return _walletAddrCache;
+    }
+    const addrs = new Set();
+    const add = (v) => { if (v) { const s = String(v).trim().toLowerCase(); if (s.length > 6) addrs.add(s); } };
+    try {
+      const kr = await mdsCommand('keys');
+      if (mdsOk(kr)) {
+        const kp = coerceMdsPayloadLocal(kr.response);
+        const klist = Array.isArray(kp) ? kp : Array.isArray(kp && kp.keys) ? kp.keys : [];
+        klist.forEach(k => { if (k) ['address', 'mxaddress', 'miniaddress'].forEach(f => add(k[f])); });
+      }
+    } catch (_) { /* ignore */ }
+    try {
+      for (const cmd of ['coins relevant:true', 'coins relevant:true tokenid:0x00']) {
+        const cr = await mdsCommand(cmd);
+        if (!mdsOk(cr)) continue;
+        const cp = coerceMdsPayloadLocal(cr.response);
+        const coins = Array.isArray(cp) ? cp : Array.isArray(cp && cp.coins) ? cp.coins : [];
+        coins.forEach(c => { if (c) ['address', 'mxaddress', 'miniaddress'].forEach(f => add(c[f])); });
+        if (addrs.size > 0) break;
+      }
+    } catch (_) { /* ignore */ }
+    if (addrs.size > 0) { _walletAddrCache = addrs; _walletAddrCacheTs = now; }
+    return _walletAddrCache || addrs;
+  }
+  window.stablesInvalidateWalletAddrCache = function () { _walletAddrCache = null; _walletAddrCacheTs = 0; };
+
+  const _seenIncomingTxids = new Set();
+
+  // Wallet-identity guard: node-derived activity is persisted in localStorage, so a different
+  // wallet on the same MiniDapp install must not show the previous wallet's transactions.
+  // We remember a sample of the wallet's own addresses; if a later sync sees an address set with
+  // NO overlap (a different seed/wallet), clear the stored activity before importing the new one.
+  const WALLET_OWNER_KEY = (window.STABLES_CONFIG || {}).WALLET_OWNER_KEY || 'stables_demo_wallet_owner_v1';
+  async function reconcileActivityOwnerForCurrentWallet() {
+    if (!DEMO_REAL) return;
+    let set;
+    try { set = await ensureWalletAddrCache(true); } catch (_) { set = null; }
+    if (!set || set.size === 0) return; // can't identify the wallet yet; never wipe blindly
+    let stored = [];
+    try { stored = JSON.parse(localStorage.getItem(WALLET_OWNER_KEY) || '[]'); } catch (_) { stored = []; }
+    const storedSet = new Set(Array.isArray(stored) ? stored : []);
+    if (storedSet.size > 0) {
+      let overlap = false;
+      for (const a of set) { if (storedSet.has(a)) { overlap = true; break; } }
+      if (!overlap) {
+        // Different wallet: drop the previous wallet's transactions and pending state.
+        USER_ACTIVITY = [];
+        persistUserActivityToStorage();
+        try { _seenIncomingTxids.clear(); } catch (_) { /* ignore */ }
+        if (typeof window.renderActivity === 'function') window.renderActivity();
+        if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
+      }
+    }
+    // Persist a capped sample of the current wallet's addresses as the owner fingerprint.
+    try { localStorage.setItem(WALLET_OWNER_KEY, JSON.stringify(Array.from(set).slice(0, 60))); } catch (_) { /* ignore */ }
+  }
+  window.stablesReconcileActivityOwner = reconcileActivityOwnerForCurrentWallet;
+
+  /**
+   * Called on every NEWTXPOW. If the transaction (even while still on the network, before a
+   * block confirms it) pays one of our addresses and we are not the sender, surface an
+   * instant "incoming" pending row + notification. When the tx later confirms, the
+   * node-history sync upserts the same `NODE-<txpowid>` id and flips it to Confirmed.
+   */
+  window.stablesHandleIncomingTxpow = async function (txpow) {
+    try {
+      if (!DEMO_REAL || !txpow || typeof txpow !== 'object') return;
+      const id = String(txpow.txpowid || '').trim();
+      if (!id || id.length < 8 || _seenIncomingTxids.has(id)) return;
+
+      const txn = (txpow.body && (txpow.body.txn || txpow.body.transaction)) || {};
+      const inputs = minimaCoinsOnly(Array.isArray(txn.inputs) ? txn.inputs : []);
+      const outputs = minimaCoinsOnly(Array.isArray(txn.outputs) ? txn.outputs : []);
+      if (!outputs.length) return;
+
+      const addrs = await ensureWalletAddrCache(false);
+      if (!addrs || addrs.size === 0) return;
+      const isOurs = (c) => c && ['address', 'mxaddress', 'miniaddress'].some(f => c[f] && addrs.has(String(c[f]).trim().toLowerCase()));
+
+      // Pure incoming only: an output pays us, and no input is ours (skip our own sends/change).
+      if (inputs.some(isOurs)) return;
+      const ourOutputs = outputs.filter(isOurs);
+      if (!ourOutputs.length) return;
+
+      const amount = ourOutputs.reduce((acc, c) => {
+        const v = parseFloat(String(c.amount || c.value || 0).replace(/,/g, ''));
+        return acc + (Number.isFinite(v) ? v : 0);
+      }, 0);
+      if (!(amount > 0)) return;
+
+      _seenIncomingTxids.add(id);
+
+      const senderAddr = inputs.length && inputs[0].address ? String(inputs[0].address).trim() : '';
+      let counterparty = 'Minima network';
+      if (senderAddr) {
+        let matched = false;
+        for (const c of CONTACTS_BOOK.values()) {
+          if (c.address && c.address === senderAddr) { counterparty = c.name; matched = true; break; }
+        }
+        if (!matched) {
+          counterparty = senderAddr.length > 22 ? senderAddr.slice(0, 8) + String.fromCharCode(8230) + senderAddr.slice(-6) : senderAddr;
+        }
+      }
+      const now = new Date();
+      const dateText = now.toLocaleString('en-GB', { month: 'short', day: '2-digit' }) + ' ' + String.fromCharCode(183) + ' ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+      upsertUserActivityRows([{
+        id: 'NODE-' + id,
+        dir: 'in',
+        icon: String.fromCharCode(8601),
+        counterparty,
+        category: 'MINIMA',
+        title: 'Incoming MINIMA',
+        date: dateText,
+        amt: Math.abs(amount),
+        ccy: 'MINIMA',
+        address: senderAddr,
+        fee: 0,
+        explorerTxId: id,
+        status: 'Pending',
+        note: 'Detected on the network, awaiting confirmation',
+        directionLabel: 'Incoming',
+        minimaOnChain: true,
+        block: 0,
+        pendingIncoming: true
+      }]);
+
+      if (typeof window.showToast === 'function') {
+        const amtStr = amount >= 1 ? amount.toFixed(2) : amount.toFixed(6);
+        window.showToast('Incoming ' + amtStr + ' MINIMA detected, awaiting confirmation', { tone: 'success', durationMs: 5200 });
+      }
+    } catch (_) { /* ignore */ }
+  };
+
+  // Find a boolean `relevant` flag anywhere in a checkaddress response.
+  function findRelevantFlag(obj, depth) {
+    if (depth > 6 || obj == null || typeof obj !== 'object') return null;
+    if (Object.prototype.hasOwnProperty.call(obj, 'relevant')) {
+      const v = obj.relevant;
+      if (v === true || v === 'true' || v === 1) return true;
+      if (v === false || v === 'false' || v === 0) return false;
+    }
+    const keys = Object.keys(obj);
+    for (let i = 0; i < keys.length; i++) {
+      const r = findRelevantFlag(obj[keys[i]], depth + 1);
+      if (r !== null) return r;
+    }
+    return null;
+  }
+
+  // Collect every 0x / Mx address string found anywhere in a parsed object.
+  function collectAddrForms(obj, seed) {
+    const forms = new Set();
+    if (seed) { const s = String(seed).trim().toLowerCase(); if (s.length > 6) forms.add(s); }
+    (function walk(o, d) {
+      if (d > 8 || o == null) return;
+      if (typeof o === 'string') {
+        const mm = o.match(/\bMx[A-Za-z0-9]{20,}\b/);
+        if (mm) forms.add(mm[0].toLowerCase());
+        const hx = o.match(/\b0x[0-9A-Fa-f]{40,128}\b/i);
+        if (hx) forms.add(hx[0].toLowerCase());
+        return;
+      }
+      if (typeof o !== 'object') return;
+      Object.keys(o).forEach(k => walk(o[k], d + 1));
+    })(obj, 0);
+    return forms;
+  }
+
+  /**
+   * Returns { ok:true } if the given address is one of this wallet's addresses, else
+   * { ok:false, reason }. The node's `checkaddress` command is authoritative: it returns a
+   * `relevant` flag that means "this address belongs to / is tracked by this node". We trust
+   * that when present, and only fall back to matching against keys/coins if the flag is absent.
+   */
+  window.stablesIsOwnAddress = async function (addr) {
+    const raw = String(addr || '').trim();
+    if (!raw) return { ok: false, reason: 'empty' };
+
+    let forms = new Set([raw.toLowerCase()]);
+    try {
+      const r = await mdsCommand('checkaddress address:' + raw);
+      if (mdsOk(r)) {
+        const p = coerceMdsPayloadLocal(r.response);
+        const rel = findRelevantFlag(p, 0);
+        if (rel === true) return { ok: true };
+        if (rel === false) return { ok: false, reason: 'notfound' };
+        // No `relevant` flag in this node version → gather forms for the fallback match.
+        forms = collectAddrForms(p, raw);
+      }
+    } catch (_) { /* ignore */ }
+
+    // Fallback: match against our keys/coins address set.
+    const set = await ensureWalletAddrCache(true);
+    if (!set || set.size === 0) return { ok: false, reason: 'noaddrs' };
+    for (const f of forms) { if (set.has(f)) return { ok: true }; }
+    return { ok: false, reason: 'notfound' };
+  };
+
+  /**
+   * Shows a small indicator under the hero balance when there are incoming MINIMA payments
+   * detected on the network but not yet confirmed (so the user knows the pending amount is
+   * NOT included in the total balance yet). Hides itself once everything is confirmed.
+   */
+  function renderPendingIncomingIndicator() {
+    const el = document.getElementById('wHeroPendingIncoming');
+    if (!el) return;
+    let sum = 0;
+    let count = 0;
+    activitySource().forEach(x => {
+      if (!x || deletedTx.has(x.id)) return;
+      if (x.ccy === 'MINIMA' && x.dir === 'in' && String(x.status) === 'Pending') {
+        const v = Math.abs(Number(x.amt) || 0);
+        if (v > 0) { sum += v; count++; }
+      }
+    });
+    if (count > 0 && sum > 0) {
+      const amtStr = sum >= 1
+        ? sum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        : sum.toFixed(6);
+      const label = count > 1 ? (count + ' incoming payments') : 'Incoming';
+      el.textContent = label + ' +' + amtStr + ' MINIMA, not yet in your total';
+      el.style.display = 'block';
+    } else {
+      el.style.display = 'none';
+      el.textContent = '';
+    }
+    // Respect the hide-amounts toggle (mirror the hero balance's blur state).
+    try {
+      const total = document.querySelector('.w-total');
+      el.classList.toggle('bal-hidden', !!(total && total.classList.contains('bal-hidden')));
+    } catch (_) { /* ignore */ }
+  }
+  window.stablesRenderPendingIncomingIndicator = renderPendingIncomingIndicator;
+
+  // Debounced live re-sync of node history, fired on NEWBALANCE / NEWBLOCK.
+  let _liveResyncTid = null;
+  window.stablesLiveResyncTransactions = function () {
+    if (typeof window.stablesSyncNodeTransactions !== 'function') return;
+    if (_liveResyncTid) clearTimeout(_liveResyncTid);
+    _liveResyncTid = setTimeout(function () {
+      _liveResyncTid = null;
+      window._activityLastAutoSync = Date.now();
+      window.stablesSyncNodeTransactions(true);
+    }, 900);
   };
 
   window.openTxExplorer = function () {
@@ -1209,6 +1530,15 @@
   window.showNextActivityPage = function () { const items = getFilteredActivity(); const maxPage = Math.max(0, Math.ceil(items.length / ACTIVITY_PAGE_SIZE) - 1); activityPage = Math.min(maxPage, activityPage + 1); window.renderActivity(); };
   window.showPrevActivityPage = function () { activityPage = Math.max(0, activityPage - 1); window.renderActivity(); };
 
+  function txListLoadingHtml(msg) {
+    return '<div class="tx-list-state" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:18px 12px;color:var(--m);font-size:13px;font-weight:600">'
+      + '<span style="display:inline-block;font-size:16px;color:var(--c);animation:txRefreshSpin .8s linear infinite">⟳</span>'
+      + '<span>' + (msg || 'Loading transaction history…') + '</span></div>';
+  }
+  function txListEmptyHtml(msg) {
+    return '<div class="tx-list-state" style="text-align:center;padding:16px 12px;color:var(--m);font-size:13px">' + (msg || 'No transactions yet.') + '</div>';
+  }
+
   window.renderActivity = function () {
     const list = document.getElementById('activityList'); if (!list) return;
     const nextBtn = document.getElementById('activityMoreBtn');
@@ -1217,12 +1547,20 @@
     const start = activityPage * ACTIVITY_PAGE_SIZE;
     const end = Math.min(items.length, start + ACTIVITY_PAGE_SIZE);
     list.innerHTML = '';
+    if (!items.length) {
+      if (activitySource().length === 0 && _txSyncInFlight) list.innerHTML = txListLoadingHtml('Loading transaction history…');
+      else if (activitySource().length === 0) list.innerHTML = txListEmptyHtml('No transactions yet.');
+      else list.innerHTML = txListEmptyHtml('No transactions match your filters.');
+      if (prevBtn) prevBtn.style.display = 'none';
+      if (nextBtn) nextBtn.style.display = 'none';
+      return;
+    }
     items.slice(start, end).forEach(x => {
       const row = document.createElement('div');
       row.className = 'tx-row';
       if (suspiciousTx.has(x.id)) row.style.borderColor = 'rgba(248,113,113,.45)';
       const note = getTxNote(x);
-      row.innerHTML = `<div class="tx-ic ${x.dir === 'in' ? 'in-ic' : 'out-ic'}">${x.icon}</div><div class="tx-info"><div class="tx-t">${x.title}</div><div class="tx-d">${x.date} · ${(x.minimaOnChain && x.counterparty) ? x.counterparty : x.category}${suspiciousTx.has(x.id) ? ' · Suspicious' : ''}${note ? ' · Note' : ''}</div></div><div class="tx-amt ${x.amt >= 0 ? 'pos' : 'neg'} bal-amount">${x.amt >= 0 ? '+' : '−'}${fmtAmt(x.amt)} ${x.ccy}</div>`;
+      row.innerHTML = `<div class="tx-ic ${x.dir === 'in' ? 'in-ic' : 'out-ic'}">${x.icon}</div><div class="tx-info"><div class="tx-t">${x.title}</div><div class="tx-d">${x.date} · ${(x.minimaOnChain && x.counterparty) ? x.counterparty : x.category}${suspiciousTx.has(x.id) ? ' · Suspicious' : ''}${note ? ' · Note' : ''}</div></div><div class="tx-amt-wrap"><div class="tx-amt ${x.amt >= 0 ? 'pos' : 'neg'} bal-amount">${x.amt >= 0 ? '+' : '−'}${fmtAmt(x.amt)} ${x.ccy}</div>${txConfirmLine(x)}</div>`;
       row.addEventListener('click', () => window.openActivityDetail(x.id));
       list.appendChild(row);
     });
@@ -1239,12 +1577,16 @@
       activitySource().filter(x => !deletedTx.has(x.id) && !hiddenTx.has(x.id) && !hiddenShops.has(x.counterparty))
     ).slice(0, 10);
     list.innerHTML = '';
+    if (!items.length) {
+      list.innerHTML = _txSyncInFlight ? txListLoadingHtml('Loading transaction history…') : txListEmptyHtml('No recent activity yet.');
+      return;
+    }
     items.forEach(x => {
       const row = document.createElement('div');
       row.className = 'tx-row';
       if (suspiciousTx.has(x.id)) row.style.borderColor = 'rgba(248,113,113,.45)';
       const note = getTxNote(x);
-      row.innerHTML = `<div class="tx-ic ${x.dir === 'in' ? 'in-ic' : 'out-ic'}">${x.icon}</div><div class="tx-info"><div class="tx-t">${x.title}</div><div class="tx-d">${x.date} · ${(x.minimaOnChain && x.counterparty) ? x.counterparty : x.category}${suspiciousTx.has(x.id) ? ' · Suspicious' : ''}${note ? ' · Note' : ''}</div></div><div class="tx-amt ${x.amt >= 0 ? 'pos' : 'neg'} bal-amount">${x.amt >= 0 ? '+' : '−'}${fmtAmt(x.amt)} ${x.ccy}</div>`;
+      row.innerHTML = `<div class="tx-ic ${x.dir === 'in' ? 'in-ic' : 'out-ic'}">${x.icon}</div><div class="tx-info"><div class="tx-t">${x.title}</div><div class="tx-d">${x.date} · ${(x.minimaOnChain && x.counterparty) ? x.counterparty : x.category}${suspiciousTx.has(x.id) ? ' · Suspicious' : ''}${note ? ' · Note' : ''}</div></div><div class="tx-amt-wrap"><div class="tx-amt ${x.amt >= 0 ? 'pos' : 'neg'} bal-amount">${x.amt >= 0 ? '+' : '−'}${fmtAmt(x.amt)} ${x.ccy}</div>${txConfirmLine(x)}</div>`;
       row.addEventListener('click', () => window.openActivityDetail(x.id));
       list.appendChild(row);
     });
@@ -1316,7 +1658,14 @@
     selectedTxId = id;
     const suspicious = suspiciousTx.has(tx.id);
     const txNote = getTxNote(tx);
-    const statusColor = tx.status === 'Confirmed' ? 'var(--gr)' : 'var(--am)';
+    const _confN = txConfirmations(tx);
+    const _confFinal = (_confN === null) ? (tx.status === 'Confirmed') : (_confN >= CONFIRM_TARGET);
+    const statusColor = _confFinal ? 'var(--gr)' : 'var(--am)';
+    const statusText = (_confN === null)
+      ? tx.status
+      : (_confN >= CONFIRM_TARGET
+        ? ('Confirmed · ' + _confN + ' block' + (_confN === 1 ? '' : 's'))
+        : ((_confN === 0 ? 'Awaiting confirmation' : 'Confirming') + ' · ' + _confN + '/' + CONFIRM_TARGET + ' blocks'));
     const canRateMerchant = !!SHOP_PROFILES[tx.counterparty] && tx.dir === 'out';
     const feeDisp = (Number(tx.fee) || 0).toFixed(2);
     const txHash = String(tx.explorerTxId || '');
@@ -1324,7 +1673,7 @@
     const tradeIdBlock = hasRealExplorer
       ? `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction id</div><a href="${escUi(txExplorerUrl(tx))}" target="_blank" rel="noopener noreferrer" class="btn" style="width:auto;padding:0;border:none;background:none;font-size:12px;font-weight:900;word-break:break-all;color:var(--c);text-decoration:underline;display:inline-block;text-align:left">${escUi(txHash)}</a></div>`
       : `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Trade ID</div><button class="btn" style="width:auto;padding:0;border:none;background:none;font-size:12px;font-weight:900;word-break:break-all;color:var(--c);text-decoration:underline;text-align:left" onclick="openTxExplorer()">${escUi(tx.explorerTxId || tx.id)}</button></div>`;
-    const body = `<div  style="margin-bottom:8px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:${statusColor};display:inline-block"></span><span class="xs mu">${tx.status}</span></div>
+    const body = `<div  style="margin-bottom:8px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:${statusColor};display:inline-block"></span><span class="xs mu">${statusText}</span></div>
       <div  style="margin-bottom:16px;padding:0 4px">
         <div class="fbet"><div><div  style="font-size:16px;font-weight:900;color:var(--t)">${tx.title}</div><div class="xs mu"  style="margin-top:2px">${tx.date}</div></div><div  style="text-align:right"><div class="tx-amt ${tx.amt >= 0 ? 'pos' : 'neg'} bal-amount">${tx.amt >= 0 ? '+' : '−'}${Math.abs(tx.amt).toFixed(2)} ${tx.ccy}</div><div class="xs mu">Fee ${feeDisp} ${tx.ccy}</div></div></div>
       </div>
@@ -1599,7 +1948,15 @@
 
   function buildAppVersionBannerHtml() {
     const cfg = window.STABLES_CONFIG || {};
-    const current = String(cfg.APP_BUILD_VERSION || '0.0.0').trim();
+    // Use the full iteration-baked version (e.g. 0.0.0.2.10) so the comparison matches
+    // latestPublishedVersion and we never flag a "false update" on the live build.
+    let current = String(cfg.APP_BUILD_VERSION || '0.0.0').trim();
+    const _iterN = Number(cfg.APP_BUILD_ITERATION);
+    if (Number.isFinite(_iterN) && _iterN > 0) {
+      const _cs = current.split('.');
+      _cs[_cs.length - 1] = String(_iterN);
+      current = _cs.join('.');
+    }
     const pol = cfg.APP_UPDATE_POLICY && typeof cfg.APP_UPDATE_POLICY === 'object' ? cfg.APP_UPDATE_POLICY : {};
     const latest = String(pol.latestPublishedVersion || current).trim();
     const displayCurrent = formatDisplayVersion(current);

@@ -49,7 +49,13 @@
     if (!primary) primary = 'https://agent.stablescouncil.org/api/feedback';
     var h = (window.location && window.location.hostname) || '';
     var isLocalHost = h === 'localhost' || h === '127.0.0.1' || h === '::1';
-    if (isLocalHost && !c.FEEDBACK_SKIP_LOCAL_SUBMIT) {
+    // When a Minima node is connected, the POST is sent via MDS.net.POST, which runs ON the
+    // node — so a 127.0.0.1 URL would hit the node's own loopback (nothing listening there →
+    // "Connection refused: getsockopt"). Only use the local ledger test server for genuine
+    // local BROWSER dev with no node session.
+    var mdsActive = typeof MDS !== 'undefined' && MDS && MDS.net &&
+      typeof MDS.mainhost === 'string' && MDS.mainhost.length > 0;
+    if (isLocalHost && !c.FEEDBACK_SKIP_LOCAL_SUBMIT && !mdsActive) {
       return 'http://127.0.0.1:8788/api/feedback';
     }
     return primary;
@@ -175,10 +181,10 @@
     '<img src="agent.png" alt="StablesAgent">' +
     '</button></div>' +
     '<div class="card app-section-card"  style="padding:14px 16px;margin-bottom:14px">' +
-    '<div  style="font-size:12px;font-weight:900;color:var(--c);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Demo v1 of many</div>' +
-    '<p class="sec-body" style="margin:0 0 12px;line-height:1.55;font-weight:800;color:var(--t)">This build is for coherence review: channel truth, native MINIMA wallet basics, Winiwa / Wables demo flows, merchant-first ramps, Coverage fund copy, links, and feedback routing.</p>' +
+    '<div  style="font-size:12px;font-weight:900;color:var(--c);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Demo v' + getAppBuild() + '</div>' +
+    '<p class="sec-body" style="margin:0 0 12px;line-height:1.55;font-weight:800;color:var(--t)">This build adds a live native MINIMA wallet on a connected node: real send and receive, QR, instant incoming detection, auto-updating transaction history with a refresh control, and address tools (new receive address and "is this address mine"). Review that alongside channel truth, Winiwa / Wables demo flows, merchant-first ramps, Coverage fund copy, links, and feedback routing.</p>' +
     '<div  style="display:grid;gap:8px">' +
-    '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--t)">Now review</strong></span><span style="font-weight:800;color:var(--t)">Wallet, Mint, Coverage fund, On/Off Ramp, Settings</span></div>' +
+    '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--t)">Now review</strong></span><span style="font-weight:800;color:var(--t)">Live MINIMA wallet, currencies and ranking, Mint, Coverage fund, On/Off Ramp, Settings</span></div>' +
     '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--am)">Coming soon</strong></span><span style="font-weight:800;color:var(--t)">App feedback topic, bug reports, roadmap votes</span></div>' +
     '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--t)">Next modules</strong></span><span style="font-weight:800;color:var(--t)">Personal themes, merchant validation, academy lessons, release notes</span></div>' +
     '</div>' +
