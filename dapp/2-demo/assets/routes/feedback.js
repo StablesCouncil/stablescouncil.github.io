@@ -50,7 +50,7 @@
     var h = (window.location && window.location.hostname) || '';
     var isLocalHost = h === 'localhost' || h === '127.0.0.1' || h === '::1';
     // When a Minima node is connected, the POST is sent via MDS.net.POST, which runs ON the
-    // node — so a 127.0.0.1 URL would hit the node's own loopback (nothing listening there →
+    // node, so a 127.0.0.1 URL would hit the node's own loopback (nothing listening there,
     // "Connection refused: getsockopt"). Only use the local ledger test server for genuine
     // local BROWSER dev with no node session.
     var mdsActive = typeof MDS !== 'undefined' && MDS && MDS.net &&

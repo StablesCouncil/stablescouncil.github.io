@@ -1325,7 +1325,11 @@
             border-radius: 18px;
             background: linear-gradient(180deg, rgba(251, 191, 36, 0.08), rgba(11, 15, 20, 0.98));
             box-shadow: 0 24px 70px rgba(0, 0, 0, 0.65);
+            /* Scrollable but no visible scrollbar (looks cleaner). */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
+        .demo-launch-card::-webkit-scrollbar { display: none; }
         .demo-launch-head {
             display: flex;
             align-items: flex-start;
@@ -3416,7 +3420,7 @@
                 <div class="demo-launch-warn-label">&#9888; FIRST RELEASE &middot; EARLY TESTING PHASE</div>
                 <p>This is a first release. There may be <strong>bugs and unexpected behavior</strong>. Only connect a wallet holding <strong>funds you are willing to lose</strong>.</p>
                 <p class="muted">Using the app at this stage is a <strong>testing contribution to the whole community</strong>. Thank you for helping us harden it. We truly appreciate your contribution.</p>
-                <p class="muted">The code is fully open and accessible for you to review: <a href="https://github.com/StablesCouncil/stablescouncil.github.io" target="_blank" rel="noopener noreferrer">github.com/StablesCouncil/stablescouncil.github.io</a>. If in doubt, please seek a third party opinion.</p>
+                <p class="muted">The code is fully open and accessible for you to review: <a href="https://github.com/StablesCouncil/stablescouncil.github.io" target="_blank" rel="noopener noreferrer" style="word-break:break-all;overflow-wrap:anywhere">github.com/StablesCouncil/stablescouncil.github.io</a>. If in doubt, please seek a third party opinion.</p>
             </div>
             <p class="demo-launch-lead">There are 2 ways to access the dapp:</p>
             <div class="demo-launch-options">

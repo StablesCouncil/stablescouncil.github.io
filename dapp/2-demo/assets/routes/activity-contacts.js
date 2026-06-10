@@ -112,7 +112,7 @@
       DEMO_ACTIVITY.push({
         id: `TX-${String(100001 + i)}`, dir, icon: ICON_BY_CATEGORY[cp.category] || (dir === 'in' ? '↙' : '↗'),
         counterparty: cp.name, category: cp.category, title: `${dir === 'in' ? 'Received from' : 'Paid'} ${cp.name}`,
-        date: dateText, amt, ccy, address: cp.address, fee: Number((Math.max(0.02, Math.abs(amt) * 0.0001)).toFixed(2)),
+        date: dateText, ts: dt.getTime(), amt, ccy, address: cp.address, fee: Number((Math.max(0.02, Math.abs(amt) * 0.0001)).toFixed(2)),
         explorerTxId: toDemoTradeId(`TX-${String(100001 + i)}`),
         status: i % 19 === 0 ? 'Pending' : 'Confirmed', note: i % 5 === 0 ? 'Monthly recurring flow' : 'Demo payment',
         directionLabel: dir === 'in' ? 'Incoming' : 'Outgoing'
@@ -142,6 +142,7 @@
 
   window.stablesAppendUserActivityRow = function (row) {
     if (!DEMO_REAL || !row || !row.id) return;
+    if (typeof row.ts !== 'number' || !Number.isFinite(row.ts) || row.ts <= 0) row.ts = Date.now();
     USER_ACTIVITY.unshift(row);
     if (USER_ACTIVITY.length > 200) USER_ACTIVITY.length = 200;
     persistUserActivityToStorage();
@@ -467,6 +468,7 @@
       directionLabel: dir === 'out' ? 'Outgoing' : 'Incoming',
       minimaOnChain: true,
       block: (header && header.block != null) ? (Number(String(header.block).replace(/,/g, '')) || 0) : 0,
+      ts: parsedDate ? parsedDate.getTime() : 0,
       rawTxpow: wrapper
     };
   }
@@ -908,6 +910,7 @@
         directionLabel: 'Incoming',
         minimaOnChain: true,
         block: 0,
+        ts: Date.now(),
         pendingIncoming: true
       }]);
 
@@ -1132,6 +1135,10 @@
   }
 
   function activityTimestamp(tx) {
+    // Prefer a real numeric timestamp captured at row creation. The displayed `date` string has
+    // no year (e.g. "09 Jun · 18:23"), so parsing it puts year-old transactions in the current
+    // year and floats them to the top, the `ts` field avoids that.
+    if (tx && typeof tx.ts === 'number' && Number.isFinite(tx.ts) && tx.ts > 0) return tx.ts;
     const date = parseActivityDateValue(tx && tx.date);
     return date ? date.getTime() : 0;
   }

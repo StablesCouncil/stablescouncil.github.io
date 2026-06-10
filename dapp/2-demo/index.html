@@ -1417,7 +1417,7 @@
         }
 
         /* Minimalistic MAX control (MetaMask-style): a text link on the "Available" line, not a
-           button in the input row — keeps every amount input the same full width. */
+           button in the input row, keeps every amount input the same full width. */
         .max-link {
             background: none;
             border: none;
@@ -2908,7 +2908,12 @@
             display: none;
             backdrop-filter: blur(12px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
-            white-space: nowrap
+            /* Wrap + cap width so longer toasts (e.g. incoming-payment notice) stay fully visible on mobile. */
+            white-space: normal;
+            max-width: min(92vw, 420px);
+            text-align: center;
+            line-height: 1.4;
+            word-break: break-word;
         }
 
         /* Multi-line, centered notices (e.g. test-build disclaimers) */
@@ -8710,7 +8715,7 @@
                 + Add recipient&nbsp;&nbsp;<span id="sendRowCount" style="color:rgba(103,232,249,.6);font-size:11px;font-weight:700">1 / 14</span>
             </button>
             <div id="sendReadOnlyNotice" style="display:none;margin:0 0 10px;padding:10px 12px;border-radius:10px;background:rgba(251,191,36,.10);border:1px solid rgba(251,191,36,.35);color:var(--am);font-size:12px;line-height:1.5;font-weight:700">
-                Read-only web connection — your node blocks sending from a browser for security. To send Minima, open <strong>Stables</strong> from your MinimaOS hub (it has write access). You can still view balances and receive here.
+                Read-only web connection. Your node blocks sending from a browser for security. To send Minima, open <strong>Stables</strong> from your MinimaOS hub (it has write access). You can still view balances and receive here.
             </div>
             <button type="button" class="btn btn-w btn-lg btn-primary" id="sendConfirmBtn"
                 onclick="stablesConfirmSendFromModal()">Confirm send</button>
@@ -8862,15 +8867,21 @@
                 </ol>
             </section>
             <section class="node-connect-section node-connect-section--compact">
-                <div class="node-connect-heading">Option 2: Connect this web dapp to your running node</div>
+                <div class="node-connect-heading">Option 2: Open in your browser and connect to your node</div>
                 <div id="directNodeCertNote" style="margin:0 0 14px;padding:10px 12px;border-radius:10px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3)">
-                    <p class="xs mu" style="margin:0 0 8px;line-height:1.5;color:#fbbf24;font-weight:800">&#9888; Make sure your node is running and accept your node's certificate</p>
-                    <a id="directNodeTrustLink" href="https://localhost:9003" target="_blank" rel="noopener noreferrer" class="btn btn-w btn-link-action" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box;margin-bottom:0">Open node to accept certificate ↗</a>
+                    <p class="xs mu" style="margin:0 0 8px;line-height:1.5;color:#fbbf24;font-weight:800">&#9888; Make sure your node is running, then click below and accept the security warning once. It is your own node's certificate.</p>
+                    <a id="directNodeTrustLink" href="https://localhost:9003" target="_blank" rel="noopener noreferrer" class="btn btn-w btn-link-action" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box;margin-bottom:0">Open node to accept certificate &#8599;</a>
                 </div>
+                <div style="font-size:13px;font-weight:800;color:var(--t);margin:0 0 6px">To view balances and receive</div>
                 <label class="flabel" for="directNodeUrl">Node URL</label>
                 <input class="finput" id="directNodeUrl" placeholder="https://localhost:9003" style="margin-bottom:8px" autocomplete="off" spellcheck="false" oninput="stablesDirectNodeUpdateTrustLink()">
                 <label class="flabel" for="directNodeUid" style="margin-top:4px">Session UID</label>
-                <input class="finput" id="directNodeUid" placeholder="0x… paste the uid= value from your Minima node URL" style="margin-bottom:6px" autocomplete="off" spellcheck="false">
+                <input class="finput" id="directNodeUid" placeholder="0x… (type the command 'mds' in your node to get this)" style="margin-bottom:6px" autocomplete="off" spellcheck="false">
+                <div style="font-size:13px;font-weight:800;color:var(--t);margin:12px 0 4px">To also send (optional)</div>
+                <p class="xs mu" style="margin:0 0 8px;line-height:1.5;color:var(--m)">Leave blank to just view and receive. To send from the browser, start your node with sending on (<code style="font-size:11px">-rpcenable -rpcssl -rpcpassword yourpass</code>), run <code style="font-size:11px">start-cors-proxy.bat</code> (in the work/tools folder) and keep its window open, then type that password below. No extra certificate is needed. This gives full access to your node, so use it on your own trusted network only.</p>
+                <label class="flabel" for="directNodeRpcPass">RPC password</label>
+                <input class="finput" id="directNodeRpcPass" type="password" placeholder="the rpcpassword you started your node with" style="margin-bottom:6px" autocomplete="off" spellcheck="false">
+                <input class="finput" id="directNodeRpcUrl" placeholder="http://localhost:9006" style="display:none" autocomplete="off" spellcheck="false">
                 <button type="button" class="btn btn-w btn-primary" style="width:100%;margin-bottom:2px" onclick="stablesConnectDirectNode()">Connect</button>
                 <button type="button" class="btn btn-w btn-secondary" id="directNodeDisconnectBtn" style="width:100%;margin-top:8px;display:none" onclick="stablesDisconnectDirectNode()">Disconnect</button>
             </section>
@@ -15788,7 +15799,7 @@
             window.__STABLES_LIVE_NODE.block = h;
             stablesSetSyncPillLive(h);
             stablesMarkNodeRpcConfirmed();
-            // A new block deepens every pending/confirming tx — refresh the confirmation counters.
+            // A new block deepens every pending/confirming tx, refresh the confirmation counters.
             if (prev !== h) {
                 if (typeof window.renderActivity === 'function') window.renderActivity();
                 if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
@@ -16200,7 +16211,7 @@
             const urlRaw = ((document.getElementById('directNodeUrl') || {}).value || '').trim().replace(/\/+$/, '');
             const link = document.getElementById('directNodeTrustLink');
             if (!link) return;
-            // Always keep the cert note visible — update the link to match the current URL
+            // Always keep the cert note visible, update the link to match the current URL
             if (urlRaw) {
                 link.href = urlRaw;
             }
@@ -16213,9 +16224,63 @@
             btn.style.display = saved ? '' : 'none';
         }
 
+        // ── Web sending via the node's RPC ───────────────────────────────────────────
+        // MDS (read path) is read-only cross-origin, so WRITE commands (send) are routed to the
+        // node's RPC interface instead. Requires the node started with RPC + CORS + a password,
+        // and the RPC cert accepted. Password is held in sessionStorage (cleared on tab close).
+        function stablesGetRpcConfig() {
+            let url = '', pass = '';
+            try { const e = document.getElementById('directNodeRpcUrl'); if (e) url = e.value || ''; } catch (_) { /* ignore */ }
+            try { const e = document.getElementById('directNodeRpcPass'); if (e) pass = e.value || ''; } catch (_) { /* ignore */ }
+            try { if (!url) url = localStorage.getItem('stables_rpc_url') || ''; } catch (_) { /* ignore */ }
+            try { if (!pass) pass = sessionStorage.getItem('stables_rpc_pass') || ''; } catch (_) { /* ignore */ }
+            url = String(url).trim().replace(/\/+$/, '');
+            pass = String(pass).trim();
+            // Opt-in to web sending = either field filled. Minima RPC has no password flag, so the
+            // password is optional (used as Basic auth only if your node is behind one).
+            if (!url && !pass) return null;
+            if (!url) {
+                // A browser can't call Minima RPC directly (case-sensitive auth header + CORS), so
+                // the web app talks to the local CORS proxy. Default to it: http://<node host>:9006.
+                try {
+                    const raw = (document.getElementById('directNodeUrl') || {}).value || localStorage.getItem('stables_direct_node_url') || '';
+                    const nu = new URL(raw);
+                    url = 'http://' + nu.hostname + ':9006';
+                } catch (_) { url = ''; }
+            }
+            return url ? { url: url, user: 'minima', pass: pass } : null;
+        }
+        window.stablesGetRpcConfig = stablesGetRpcConfig;
+
+        async function stablesRpcSendCommand(command) {
+            const cfg = stablesGetRpcConfig();
+            if (!cfg) throw new Error('RPC not configured');
+            const endpoint = cfg.url + '/' + encodeURIComponent(command);
+            const headers = {};
+            // Basic auth only when an RPC password is set (-rpcpassword on the node).
+            if (cfg.pass) headers['Authorization'] = 'Basic ' + btoa(cfg.user + ':' + cfg.pass);
+            const res = await fetch(endpoint, { method: 'GET', headers: headers, cache: 'no-store' });
+            const text = await res.text();
+            let json;
+            try { json = JSON.parse(text); } catch (_) { json = { status: false, error: text || ('HTTP ' + res.status) }; }
+            if (!res.ok && json.status === undefined) json.status = false;
+            return json;
+        }
+        window.stablesRpcSendCommand = stablesRpcSendCommand;
+
+        function stablesPersistRpcConfig() {
+            try {
+                const ru = ((document.getElementById('directNodeRpcUrl') || {}).value || '').trim();
+                const rp = ((document.getElementById('directNodeRpcPass') || {}).value || '').trim();
+                if (ru) localStorage.setItem('stables_rpc_url', ru); else localStorage.removeItem('stables_rpc_url');
+                if (rp) sessionStorage.setItem('stables_rpc_pass', rp); else sessionStorage.removeItem('stables_rpc_pass');
+            } catch (_) { /* ignore */ }
+        }
+
         function stablesConnectDirectNode() {
             const urlEl = document.getElementById('directNodeUrl');
             const uidEl = document.getElementById('directNodeUid');
+            stablesPersistRpcConfig();
             const urlRaw = (urlEl ? urlEl.value : '').trim().replace(/\/+$/, '');
             const uidRaw = (uidEl ? uidEl.value : '').trim();
             if (!urlRaw) {
@@ -16273,6 +16338,8 @@
         function stablesDisconnectDirectNode() {
             try { localStorage.removeItem('stables_direct_node_url'); } catch (_) { /* ignore */ }
             try { localStorage.removeItem('stables_direct_node_uid'); } catch (_) { /* ignore */ }
+            try { localStorage.removeItem('stables_rpc_url'); sessionStorage.removeItem('stables_rpc_pass'); } catch (_) { /* ignore */ }
+            try { const e = document.getElementById('directNodeRpcPass'); if (e) e.value = ''; } catch (_) { /* ignore */ }
             MDS.DEBUG_HOST = null;
             MDS.DEBUG_PORT = -1;
             stablesDirectNodeUpdateDisconnectBtn();
@@ -16292,6 +16359,12 @@
             const uidEl = document.getElementById('directNodeUid');
             if (urlEl) urlEl.value = url;
             if (uidEl && uid) uidEl.value = uid;
+            try {
+                const ruEl = document.getElementById('directNodeRpcUrl');
+                const rpEl = document.getElementById('directNodeRpcPass');
+                if (ruEl) ruEl.value = localStorage.getItem('stables_rpc_url') || '';
+                if (rpEl) rpEl.value = sessionStorage.getItem('stables_rpc_pass') || '';
+            } catch (_) { /* ignore */ }
             stablesDirectNodeUpdateDisconnectBtn();
             if (typeof stablesDirectNodeUpdateTrustLink === 'function') stablesDirectNodeUpdateTrustLink();
             let host, port;
@@ -18428,7 +18501,7 @@
                 const cmd = outputs.length === 1
                     ? 'send address:' + outputs[0].addr + ' amount:' + outputs[0].amt + ' tokenid:0x00'
                     : 'send multi:["' + outputs.map(function (o) { return o.addr + ':' + o.amt; }).join('","') + '"]';
-                MDS.cmd(cmd, function (res) {
+                const onSendResult = function (res) {
                     stablesSetSendBusy(false);
                     if (stablesMdsCmdOk(res)) {
                         WALLET_NATIVE_MINIMA = Math.max(0, vaultNumericBalance(WALLET_NATIVE_MINIMA) - totalAmt);
@@ -18478,15 +18551,24 @@
                             // refuses WRITE (send). Surface clear guidance, not the raw node error.
                             window.__STABLES_MDS_READONLY = true;
                             const notice = document.getElementById('sendReadOnlyNotice');
-                            if (notice) notice.style.display = '';
-                            showToast('This web connection is read-only, so your node blocks sending here. To send Minima, open Stables from your MinimaOS hub (write access). You can still view balances and receive on the web.', { tone: 'amber', durationMs: 7000 });
+                            if (notice) { notice.style.display = ''; notice.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
                         } else if (/MxAddress|should start with|Invalid.*[Aa]ddress/.test(err)) {
                             showToast("That recipient address is not valid. Re-scan the QR or paste the recipient's Minima (Mx) address only.", { durationMs: 5200 });
                         } else {
                             showToast(err.length > 140 ? err.slice(0, 137) + '...' : err);
                         }
                     }
-                });
+                };
+                const rpcCfg = stablesGetRpcConfig();
+                if (rpcCfg) {
+                    // Web / read-only MDS connection: route the WRITE (send) through the node's RPC.
+                    stablesRpcSendCommand(cmd).then(onSendResult).catch(function (e) {
+                        stablesSetSendBusy(false);
+                        showToast('Could not reach your node RPC to send. Check the RPC URL and password, that your node has RPC + CORS enabled, and that you opened the RPC URL once to accept its certificate. (' + (e && e.message ? e.message : e) + ')', { tone: 'amber', durationMs: 7000 });
+                    });
+                } else {
+                    MDS.cmd(cmd, onSendResult);
+                }
                 return;
             }
 
@@ -20317,7 +20399,7 @@
             enabled.forEach(function (code) {
                 const opt = document.createElement('option');
                 opt.value = code;
-                // Use clean short label — no "(test)" suffix to avoid truncation in the select
+                // Use clean short label, no "(test)" suffix to avoid truncation in the select
                 const meta = (typeof CURRENCY_VISUAL_META !== 'undefined' && CURRENCY_VISUAL_META[code]);
                 opt.textContent = (meta && meta.label) ? meta.label
                     : code === 'MINIMA' ? 'Minima'
@@ -20326,7 +20408,7 @@
                 if (code === newVal) opt.selected = true;
                 sel.appendChild(opt);
             });
-            // Update BASE_CCY directly — avoids cascading sync loop
+            // Update BASE_CCY directly, avoids cascading sync loop
             BASE_CCY = newVal;
         }
         window.syncPrimaryCcySelect = syncPrimaryCcySelect;

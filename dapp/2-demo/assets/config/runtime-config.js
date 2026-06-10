@@ -18,7 +18,7 @@ window.STABLES_CONFIG = {
    * each build is uniquely identifiable in the top-bar pill (e.g. v0.0.0.2.01, .02, …) and the
    * packaged zip name (Stables_v0.0.0.2.02.mds.zip). Reset to 1 when APP_BUILD_VERSION changes / published.
    */
-  APP_BUILD_ITERATION: 10,
+  APP_BUILD_ITERATION: 16,
   /** Date this build was published to GitHub (ISO YYYY-MM-DD). */
   APP_BUILD_DATE: '2026-06-09',
   /**
@@ -28,7 +28,7 @@ window.STABLES_CONFIG = {
    * Use the same segment count as APP_BUILD_VERSION so semver-like compare is meaningful.
    */
   APP_UPDATE_POLICY: {
-    latestPublishedVersion: '0.0.0.2.10',
+    latestPublishedVersion: '0.0.0.2.16',
     whenUpdateNeeded: {
       criticality: 'high',
       whatChanged:
@@ -64,7 +64,7 @@ window.STABLES_CONFIG = {
   FAUCET_WINIWA_COOLDOWN_MS: 3600000,
   FAUCET_WINIWA_LAST_CLAIM_STORAGE_KEY: 'stables_faucet_winiwa_last_claim_ts_v1',
   /** Public demo: direct MiniDapp package download. */
-  MDS_ZIP_URL: 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.2.10.mds.zip',
+  MDS_ZIP_URL: 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.2.16.mds.zip',
   /**
    * Stables Charter on GitHub (Markdown). Governing text for how the Council and community run the protocol.
    * Leave empty until the charter is actually published — an empty value shows the "coming soon" modal.
