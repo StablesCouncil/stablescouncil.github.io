@@ -8765,9 +8765,15 @@
                 onclick="try{if(typeof stablesOpenReceiveQrBig==='function')stablesOpenReceiveQrBig();}catch(_){}"></div>
             <button type="button" class="btn btn-w btn-secondary" style="width:100%;max-width:292px;margin:0 auto 10px;display:block"
                 onclick="try{if(typeof stablesOpenReceiveQrBig==='function')stablesOpenReceiveQrBig();}catch(_){}">Large QR</button>
-            <div id="recvAddr" class="addr-box" onclick="copyAddr(this)" data-full-address="Mx688F3B2A1C9D4E7F0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF01">Mx688F3B2A1C9D4E7F0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF01</div>
+            <label class="flabel" for="recvAddrInput">Receiving address</label>
+            <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:6px">
+                <input class="finput" id="recvAddrInput" placeholder="Mx… address from your wallet" style="min-width:0;margin-bottom:0;font-family:monospace;font-size:12px" autocomplete="off" autocapitalize="off" spellcheck="false" oninput="try{stablesOnRecvAddrInput()}catch(_){}">
+                <button type="button" class="btn btn-secondary" style="padding:10px;width:auto" onclick="try{stablesCopyRecvAddrInput()}catch(_){}" title="Copy address">Copy</button>
+            </div>
+            <div id="recvAddrValidateHint" class="xs" style="text-align:center;margin-bottom:6px;min-height:16px;line-height:1.45" aria-live="polite"></div>
+            <div id="recvAddr" data-full-address="" style="display:none"></div>
             <div id="recvAddrHint" class="xs mu mt8" style="text-align:center;margin-bottom:8px;line-height:1.45;color:var(--m);display:none" aria-live="polite"></div>
-            <div class="xs mu mt8" style="text-align:center;margin-bottom:8px">Tap to copy</div>
+            <div class="xs mu" style="text-align:center;margin-bottom:8px;color:var(--m)">Edit the address to receive into a specific wallet address. The QR appears once it is verified as yours.</div>
             <div style="display:grid;grid-template-columns:1fr auto;gap:6px;margin-bottom:12px">
                 <button class="btn btn-secondary" style="padding:10px" onclick="genNewAddr()">+ New
                     address</button>
@@ -8788,17 +8794,7 @@
                     onclick="closeModal('recvModal');navigate('invoice')">Open merchant checkout (invoice)
                     →</button>
             </div>
-            <details id="recvCheckAddrBlock" style="margin-bottom:12px">
-                <summary style="cursor:pointer;font-weight:700;color:var(--m);padding:8px 0">Check an address belongs to this wallet ▾</summary>
-                <div style="margin-top:8px">
-                    <input id="recvCheckAddrInput" class="finput" placeholder="Mx… or 0x… address" style="margin-bottom:6px"
-                        autocomplete="off" autocapitalize="off" spellcheck="false">
-                    <button type="button" class="btn btn-secondary" style="width:100%;padding:10px"
-                        onclick="stablesCheckAddressIsMine()">Check this address</button>
-                    <div id="recvCheckAddrResult" class="xs" style="margin-top:8px;text-align:center;display:none;line-height:1.45" aria-live="polite"></div>
-                    <div class="xs mu" style="margin-top:6px;text-align:center;line-height:1.45;color:var(--m)">Confirms whether the address is one your connected Minima node owns.</div>
-                </div>
-            </details>
+            <!-- Address ownership validation is now inline on the Receiving address field above. -->
         </div>
         </div>
     </div>
@@ -8859,31 +8855,16 @@
             <div style="margin-bottom:16px">
                 <div class="mttl" style="margin-bottom:0">Connect Minima</div>
             </div>
-            <section class="node-connect-section">
-                <div class="node-connect-heading">Option 1: Install on Minima OS</div>
-                <ol class="node-connect-list" style="margin:0">
-                    <li><a href="https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.1.0.mds.zip" target="_blank" rel="noopener noreferrer" style="color:var(--c);font-weight:900;text-decoration:underline;text-underline-offset:3px">Download Stables .mds.zip</a></li>
-                    <li>Install in MinimaOS</li>
-                </ol>
-            </section>
             <section class="node-connect-section node-connect-section--compact">
-                <div class="node-connect-heading">Option 2: Open in your browser and connect to your node</div>
-                <div id="directNodeCertNote" style="margin:0 0 14px;padding:10px 12px;border-radius:10px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3)">
-                    <p class="xs mu" style="margin:0 0 8px;line-height:1.5;color:#fbbf24;font-weight:800">&#9888; Make sure your node is running, then click below and accept the security warning once. It is your own node's certificate.</p>
-                    <a id="directNodeTrustLink" href="https://localhost:9003" target="_blank" rel="noopener noreferrer" class="btn btn-w btn-link-action" style="display:block;text-align:center;text-decoration:none;box-sizing:border-box;margin-bottom:0">Open node to accept certificate &#8599;</a>
-                </div>
-                <div style="font-size:13px;font-weight:800;color:var(--t);margin:0 0 6px">To view balances and receive</div>
-                <label class="flabel" for="directNodeUrl">Node URL</label>
-                <input class="finput" id="directNodeUrl" placeholder="https://localhost:9003" style="margin-bottom:8px" autocomplete="off" spellcheck="false" oninput="stablesDirectNodeUpdateTrustLink()">
-                <label class="flabel" for="directNodeUid" style="margin-top:4px">Session UID</label>
-                <input class="finput" id="directNodeUid" placeholder="0x… (type the command 'mds' in your node to get this)" style="margin-bottom:6px" autocomplete="off" spellcheck="false">
-                <div style="font-size:13px;font-weight:800;color:var(--t);margin:12px 0 4px">To also send (optional)</div>
-                <p class="xs mu" style="margin:0 0 8px;line-height:1.5;color:var(--m)">Leave blank to just view and receive. To send from the browser, start your node with sending on (<code style="font-size:11px">-rpcenable -rpcssl -rpcpassword yourpass</code>), run <code style="font-size:11px">start-cors-proxy.bat</code> (in the work/tools folder) and keep its window open, then type that password below. No extra certificate is needed. This gives full access to your node, so use it on your own trusted network only.</p>
-                <label class="flabel" for="directNodeRpcPass">RPC password</label>
-                <input class="finput" id="directNodeRpcPass" type="password" placeholder="the rpcpassword you started your node with" style="margin-bottom:6px" autocomplete="off" spellcheck="false">
-                <input class="finput" id="directNodeRpcUrl" placeholder="http://localhost:9006" style="display:none" autocomplete="off" spellcheck="false">
-                <button type="button" class="btn btn-w btn-primary" style="width:100%;margin-bottom:2px" onclick="stablesConnectDirectNode()">Connect</button>
-                <button type="button" class="btn btn-w btn-secondary" id="directNodeDisconnectBtn" style="width:100%;margin-top:8px;display:none" onclick="stablesDisconnectDirectNode()">Disconnect</button>
+                <div class="node-connect-heading">Connect to your Pure Minima node</div>
+                <p class="xs mu" style="margin:0 0 8px;line-height:1.5;color:var(--m)">Connect to your own Minima node over RPC. Your keys never leave it. Only connect to a node you control, since RPC has full access to your wallet.</p>
+                <p class="xs mu" style="margin:0 0 12px;line-height:1.5;color:var(--m)">Need help? Tap the StablesAgent icon at the top of this window for step-by-step setup.</p>
+                <label class="flabel" for="pureMinimaRpcUrl">RPC URL</label>
+                <input class="finput" id="pureMinimaRpcUrl" placeholder="http://localhost:9106" value="http://localhost:9106" style="margin-bottom:8px" autocomplete="off" spellcheck="false">
+                <label class="flabel" for="pureMinimaRpcPass" style="margin-top:4px">RPC password</label>
+                <input class="finput" id="pureMinimaRpcPass" type="password" placeholder="the rpcpassword you started your node with" style="margin-bottom:10px" autocomplete="off" spellcheck="false">
+                <button type="button" class="btn btn-w btn-primary" style="width:100%;margin-bottom:2px" onclick="stablesConnectPureMinima()">Connect</button>
+                <button type="button" class="btn btn-w btn-secondary" id="pureMinimaDisconnectBtn" style="width:100%;margin-top:8px;display:none" onclick="stablesDisconnectPureMinima()">Disconnect</button>
             </section>
             <div id="stablesNodeConnectStatus" class="node-connect-help" style="margin-bottom:0"></div>
         </div>
@@ -11128,7 +11109,7 @@
     zh: "扫码支付使用您的摄像头快速读取Minima地址或发票。如果失败，请确保您的浏览器已启用摄像头权限。"
   },
   "connect minima: how to connect a minima node or install the minidapp": {
-    en: "Option 2 connects this web interface directly to your running Minima node. Stables does not need to be installed inside MinimaOS.\n\nBefore connecting, open your node URL (for example https://localhost:9003) in your browser and accept the certificate when prompted. That step works on both desktop and mobile.\n\nTo get your Session UID on desktop: open your node in a browser, navigate to the MDS section, and look at the URL bar. Copy the long value after uid= and paste it into the Session UID field.\n\nTo get your Session UID on mobile or from the terminal: open the Minima terminal and run the command: mds\n\nThe output lists your MDS session with its UID. Copy the value shown there.\n\nYour node must be started with -rpccors for this web app to reach it.",
+    en: "Option 2 connects this web app directly to your own Minima node over RPC. Stables does not need to be installed in MinimaOS.\n\n1. Enable RPC on your node. In the node terminal type: rpc enable:true (no password). It should reply with \"enabled\": true and \"authenticate\": false. RPC is off by default, so this step is required.\n\n2. Find your RPC port. In the node terminal type: status and look in the reply under network, then rpc, then port. The RPC port is your node's main port + 4 (port 9101 gives RPC 9105; port 11001 gives RPC 11005).\n\n3. Enter the RPC URL above as http://your-node-address:rpc-port. On the same machine use http://localhost:9105. For a node on another device on your network, like a phone, use its IP, for example http://your-phone-ip:11005.\n\n4. Leave the RPC password blank, then tap Connect.\n\nUsing an RPC password? A browser cannot send it to Minima directly, so you must also run the local CORS proxy and point the RPC URL at the proxy. Only connect to a node you control, since RPC has full access to your wallet.",
     fr: "L'option 2 connecte cette interface web directement à votre nœud Minima actif. Stables n'a pas besoin d'être installé dans MinimaOS.\n\nAvant de vous connecter, ouvrez l'URL de votre nœud dans votre navigateur et acceptez le certificat. Cela fonctionne sur mobile et sur ordinateur.\n\nPour obtenir l'UID de session sur ordinateur : ouvrez votre nœud dans un navigateur, allez dans la section MDS, copiez la valeur après uid= dans l'URL.\n\nSur mobile ou depuis le terminal : lancez la commande mds dans le terminal Minima. La sortie affiche l'UID de session.",
     es: "La opción 2 conecta esta interfaz web directamente a su nodo Minima en ejecución. Stables no necesita estar instalado en MinimaOS.\n\nAntes de conectarse, abra la URL de su nodo en el navegador y acepte el certificado. Esto funciona en móvil y escritorio.\n\nPara obtener el UID de sesión en escritorio: abra su nodo en un navegador, vaya a la sección MDS y copie el valor después de uid= en la URL.\n\nEn móvil o desde el terminal: ejecute el comando mds en el terminal Minima. La salida muestra el UID de sesión.",
     zh: "选项2将此网页界面直接连接到您正在运行的Minima节点。Stables无需安装在MinimaOS中。\n\n连接前，在浏览器中打开节点URL并接受证书提示。这在桌面和移动端均有效。\n\n桌面获取会话UID：在浏览器中打开节点，导航到MDS部分，复制URL中uid=后面的值。\n\n移动端或终端：在Minima终端运行命令：mds。输出会显示会话UID。"
@@ -16014,12 +15995,12 @@
             if (!L.rpcOk) {
                 if (L.lastFail) {
                     pill.classList.remove('sync-pill--placeholder');
-                    syncEl.textContent = 'MDS issue';
+                    syncEl.textContent = 'Node issue';
                     pill.classList.add('stables-node-cluster-pill--error');
                     pill.title = 'MDS request failed (' + String(L.lastFail) + '). Tap to open connection options, or confirm the MiniDapp runs from your node hub. Add ?MDS_LOGGING to the URL for console details.';
                 } else {
                     pill.classList.remove('sync-pill--placeholder');
-                    syncEl.textContent = 'MDS starting…';
+                    syncEl.textContent = 'Connecting…';
                     pill.classList.add('stables-node-cluster-pill--pending');
                     pill.title = 'Waiting for node data. Use Option 2 in the Connect panel to link your own Minima node.';
                 }
@@ -16172,13 +16153,14 @@
             } else if (window.__STABLES_LIVE_NODE && window.__STABLES_LIVE_NODE.active && !window.__STABLES_LIVE_NODE.rpcOk) {
                 if (st) st.textContent = 'Use Option 2 to connect your own Minima node directly.';
             } else if (typeof MDS !== 'undefined' && MDS.cmd) {
-                if (st) st.textContent = 'MDS is available in this session.';
+                if (st) st.textContent = '';
             } else if (st) {
                 st.textContent = '';
             }
             stablesCloseCertErrorPopup();
             el.classList.add('open');
             if (typeof stablesDirectNodeUpdateDisconnectBtn === 'function') stablesDirectNodeUpdateDisconnectBtn();
+            if (typeof stablesPureMinimaUpdateDisconnectBtn === 'function') stablesPureMinimaUpdateDisconnectBtn();
         }
 
         function closeStablesNodeConnectModal() {
@@ -16267,6 +16249,65 @@
             return json;
         }
         window.stablesRpcSendCommand = stablesRpcSendCommand;
+
+        // ── Pure Minima node (RPC, no MDS) connection ────────────────────────────────
+        // Sets RPC mode so mds.js routes MDS.cmd reads to the node's RPC, then arms the live
+        // read loop. Sends already use the same RPC config (stablesGetRpcConfig).
+        function stablesConnectPureMinima() {
+            var url = ((document.getElementById('pureMinimaRpcUrl') || {}).value || '').trim().replace(/\/+$/, '');
+            var pass = ((document.getElementById('pureMinimaRpcPass') || {}).value || '').trim();
+            if (!url) { stablesDirectNodeSetStatus('Enter your node RPC URL, e.g. http://localhost:9106'); return; }
+            if (!/^https?:\/\//i.test(url)) { url = 'http://' + url; try { var _e = document.getElementById('pureMinimaRpcUrl'); if (_e) _e.value = url; } catch (_) { } }
+            window.__STABLES_RPC_MODE = { url: url, user: 'minima', pass: pass };
+            try { localStorage.setItem('stables_rpc_url', url); } catch (_) { /* ignore */ }
+            try { if (pass) sessionStorage.setItem('stables_rpc_pass', pass); } catch (_) { /* ignore */ }
+            stablesDirectNodeSetStatus('Connecting to your Pure Minima node...');
+            window.__STABLES_MDS_SINGLETON.armed = false;
+            var L = window.__STABLES_LIVE_NODE; if (L) { L.active = false; L.rpcOk = false; L.lastFail = null; }
+            stablesStopLiveNodePolling();
+            stablesAttachMdsLiveOnce();
+            stablesPureMinimaUpdateDisconnectBtn();
+        }
+        window.stablesConnectPureMinima = stablesConnectPureMinima;
+
+        function stablesDisconnectPureMinima() {
+            window.__STABLES_RPC_MODE = null;
+            try { localStorage.removeItem('stables_rpc_url'); sessionStorage.removeItem('stables_rpc_pass'); } catch (_) { /* ignore */ }
+            try { var e = document.getElementById('pureMinimaRpcPass'); if (e) e.value = ''; } catch (_) { /* ignore */ }
+            stablesStopLiveNodePolling();
+            var L = window.__STABLES_LIVE_NODE; if (L) { L.active = false; L.rpcOk = false; }
+            stablesUpdateNodeConnectButton();
+            stablesDirectNodeSetStatus('Disconnected from your node.');
+            stablesPureMinimaUpdateDisconnectBtn();
+        }
+        window.stablesDisconnectPureMinima = stablesDisconnectPureMinima;
+
+        function stablesPureMinimaUpdateDisconnectBtn() {
+            var b = document.getElementById('pureMinimaDisconnectBtn');
+            if (b) b.style.display = (window.__STABLES_RPC_MODE && window.__STABLES_RPC_MODE.url) ? 'block' : 'none';
+        }
+        window.stablesPureMinimaUpdateDisconnectBtn = stablesPureMinimaUpdateDisconnectBtn;
+
+        // Auto-reconnect on load: if a Pure Minima RPC URL was saved from a previous session, restore
+        // RPC mode and connect without the user retyping it. Skipped on the MinimaOS hub origin (MDS).
+        function stablesAutoReconnectPureMinimaOnLoad() {
+            var url = '';
+            try { url = localStorage.getItem('stables_rpc_url') || ''; } catch (_) { /* ignore */ }
+            url = String(url).trim().replace(/\/+$/, '');
+            if (!url) return;
+            if (typeof stablesPageIsLikelyMinimaHubSameOrigin === 'function' && stablesPageIsLikelyMinimaHubSameOrigin()) return;
+            var pass = '';
+            try { pass = sessionStorage.getItem('stables_rpc_pass') || ''; } catch (_) { /* ignore */ }
+            var inp = document.getElementById('pureMinimaRpcUrl'); if (inp) inp.value = url;
+            var pinp = document.getElementById('pureMinimaRpcPass'); if (pinp && pass) pinp.value = pass;
+            window.__STABLES_RPC_MODE = { url: url, user: 'minima', pass: pass };
+            if (window.__STABLES_MDS_SINGLETON) window.__STABLES_MDS_SINGLETON.armed = false;
+            var L = window.__STABLES_LIVE_NODE; if (L) { L.active = false; L.rpcOk = false; L.lastFail = null; }
+            if (typeof stablesStopLiveNodePolling === 'function') stablesStopLiveNodePolling();
+            if (typeof stablesAttachMdsLiveOnce === 'function') stablesAttachMdsLiveOnce();
+            if (typeof stablesPureMinimaUpdateDisconnectBtn === 'function') stablesPureMinimaUpdateDisconnectBtn();
+        }
+        window.stablesAutoReconnectPureMinimaOnLoad = stablesAutoReconnectPureMinimaOnLoad;
 
         function stablesPersistRpcConfig() {
             try {
@@ -18422,6 +18463,7 @@
                         hint.style.display = msg ? 'block' : 'none';
                     }
                     try { if (typeof stablesRenderReceiveQr === 'function') stablesRenderReceiveQr(); } catch (_) { /* ignore */ }
+                    try { if (typeof stablesSyncRecvAddrInputFromCanonical === 'function') stablesSyncRecvAddrInputFromCanonical(); } catch (_) { /* ignore */ }
                 });
                 return;
             }
@@ -18514,7 +18556,9 @@
                                 const dateText = now.toLocaleString('en-GB', { month: 'short', day: '2-digit' }) + ' · ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
                                 const txid = stablesExtractTxidFromMdsResponse(res);
                                 window.stablesAppendUserActivityRow({
-                                    id: 'MINIMA-' + Date.now(),
+                                    // Use the txpow id so the node-history sync upserts THIS same row
+                                    // (id NODE-<txpowid>) instead of adding a duplicate "Sent" entry.
+                                    id: txid ? ('NODE-' + txid) : ('MINIMA-' + Date.now()),
                                     dir: 'out',
                                     icon: '↗',
                                     counterparty: outputs.length > 1 ? outputs.length + ' recipients' : 'On-chain recipient',
@@ -18526,7 +18570,9 @@
                                     address: outputs.map(function (o) { return o.addr; }).join(', '),
                                     fee: 0,
                                     explorerTxId: txid || '',
-                                    status: txid ? 'Confirmed' : 'Submitted',
+                                    status: 'Pending',
+                                    block: 0,
+                                    ts: Date.now(),
                                     note: outputs.length > 1 ? 'Multi-output send via your Minima node.' : 'Sent via your Minima node (tokenid 0x00).',
                                     directionLabel: 'Outgoing',
                                     minimaOnChain: true
@@ -19216,6 +19262,11 @@
             };
 
             const fmt2 = (n) => Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            // Native MINIMA is a high-precision on-chain asset: show up to 6 decimals with trailing
+            // zeros trimmed (0.000611425 -> "0.000611", 12.5 -> "12.5"). Fiat-style stables stay at 2.
+            const fmtBase = (n) => (BASE_CCY === 'MINIMA')
+                ? Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 6 })
+                : fmt2(n);
             const priDec = (typeof decimalsForCcyForUI === 'function') ? decimalsForCcyForUI(BASE_CCY) : 2;
             const fmtPriAmt = (n) => Number(n).toLocaleString('en-US', { minimumFractionDigits: priDec, maximumFractionDigits: priDec });
 
@@ -19272,7 +19323,7 @@
                 // Equivalent display (convert to principal currency).
                 if (amt > 0) {
                     eqEl.style.color = 'var(--gr)';
-                    eqEl.textContent = `${fmt2(eq)} ${BASE_CCY}`;
+                    eqEl.textContent = `${fmtBase(eq)} ${BASE_CCY}`;
                     totalBase += eq;
                 } else {
                     eqEl.style.color = 'var(--rd)';
@@ -19295,7 +19346,7 @@
             const wTotal = document.querySelector('.w-total');
             const wCcy = document.querySelector('.w-ccy');
             if (wCcy) wCcy.textContent = `${BASE_CCY} equivalent`;
-            if (wTotal && Number.isFinite(totalBase)) wTotal.textContent = `${fmt2(totalBase)} ${BASE_CCY}`;
+            if (wTotal && Number.isFinite(totalBase)) wTotal.textContent = `${fmtBase(totalBase)} ${BASE_CCY}`;
 
             // Keep the "incoming, not yet in your total" indicator in sync with the balance.
             try { if (typeof window.stablesRenderPendingIncomingIndicator === 'function') window.stablesRenderPendingIncomingIndicator(); } catch (_) { /* ignore */ }
@@ -20353,6 +20404,75 @@
             });
         }
 
+        // ── Receiving address: editable + node-validated, QR gated on ownership ──────
+        function stablesCopyRecvAddrInput() {
+            const input = document.getElementById('recvAddrInput');
+            const v = input ? String(input.value || '').trim() : '';
+            if (!v) { if (typeof showToast === 'function') showToast('No address to copy.'); return; }
+            const done = function () { if (typeof showToast === 'function') showToast('✓ Address copied'); };
+            try { navigator.clipboard.writeText(v).then(done, function () { try { input.select(); document.execCommand('copy'); done(); } catch (_) { } }); }
+            catch (_) { try { input.select(); document.execCommand('copy'); done(); } catch (e) { } }
+        }
+
+        // Reflect the node-provided address (refresh / New address) into the editable field.
+        function stablesSyncRecvAddrInputFromCanonical() {
+            const input = document.getElementById('recvAddrInput');
+            const box = document.getElementById('recvAddr');
+            const hint = document.getElementById('recvAddrValidateHint');
+            if (!input || !box) return;
+            if (document.activeElement === input) return; // don't clobber active typing
+            const addr = (box.dataset && box.dataset.fullAddress) ? String(box.dataset.fullAddress).trim() : '';
+            if (addr && addr.indexOf('...') === -1) {
+                input.value = addr;
+                if (hint) { hint.style.color = 'var(--gr)'; hint.textContent = '✓ Your wallet address.'; }
+            } else {
+                input.value = '';
+                if (hint) { hint.style.color = 'var(--m)'; hint.textContent = 'Connect your node to load your address.'; }
+            }
+        }
+
+        // Validate the typed address against the connected node; only feed the QR once it is confirmed
+        // to belong to this wallet (otherwise the QR is withheld).
+        function stablesOnRecvAddrInput() {
+            const input = document.getElementById('recvAddrInput');
+            const hint = document.getElementById('recvAddrValidateHint');
+            const box = document.getElementById('recvAddr');
+            if (!input || !box) return;
+            const addr = String(input.value || '').trim();
+            if (window.__STABLES_RECV_ADDR_TID) { clearTimeout(window.__STABLES_RECV_ADDR_TID); window.__STABLES_RECV_ADDR_TID = null; }
+            const setHint = function (color, msg) { if (hint) { hint.style.color = color; hint.textContent = msg; } };
+            const clearQr = function () { box.dataset.fullAddress = ''; box.textContent = ''; try { stablesRenderReceiveQr(); } catch (_) { } };
+            if (!addr) { clearQr(); setHint('var(--m)', 'Enter or generate an address from your wallet.'); return; }
+            if (!/^(Mx[A-Za-z0-9]{20,}|0x[0-9A-Fa-f]{40,128})$/i.test(addr)) {
+                clearQr(); setHint('var(--am)', 'That does not look like a Minima address (Mx… or 0x…).'); return;
+            }
+            const L = window.__STABLES_LIVE_NODE;
+            if (typeof MDS === 'undefined' || !MDS.cmd || !L || !L.rpcOk || typeof window.stablesIsOwnAddress !== 'function') {
+                clearQr(); setHint('var(--m)', 'Connect your Minima node to validate this address.'); return;
+            }
+            clearQr(); setHint('var(--m)', 'Checking…');
+            window.__STABLES_RECV_ADDR_TID = setTimeout(function () {
+                window.__STABLES_RECV_ADDR_TID = null;
+                window.stablesIsOwnAddress(addr).then(function (res) {
+                    const cur = String((document.getElementById('recvAddrInput') || {}).value || '').trim();
+                    if (cur !== addr) return; // input changed while checking
+                    if (res && res.ok) {
+                        box.textContent = addr; box.dataset.fullAddress = addr;
+                        setHint('var(--gr)', '✓ This address belongs to your wallet.');
+                        try { stablesRenderReceiveQr(); } catch (_) { }
+                    } else if (res && res.reason === 'noaddrs') {
+                        setHint('var(--m)', 'Could not read your wallet addresses from the node.');
+                    } else {
+                        clearQr();
+                        setHint('var(--rd)', '✗ This address is not in your wallet, so no QR is shown.');
+                    }
+                }).catch(function () { setHint('var(--am)', 'Validation failed. Try again.'); });
+            }, 450);
+        }
+        window.stablesOnRecvAddrInput = stablesOnRecvAddrInput;
+        window.stablesCopyRecvAddrInput = stablesCopyRecvAddrInput;
+        window.stablesSyncRecvAddrInputFromCanonical = stablesSyncRecvAddrInputFromCanonical;
+
         function togglePrivacy() {
             privacyMode = !privacyMode;
             const tog = document.getElementById('privacyToggle');
@@ -21241,6 +21361,7 @@ const APP_TAB_TITLE = 'Demo · Stables';
         });
         runBootStep('restoreDirectNode', function () {
             if (typeof stablesRestoreDirectNodeOnLoad === 'function') stablesRestoreDirectNodeOnLoad();
+            if (typeof stablesAutoReconnectPureMinimaOnLoad === 'function') stablesAutoReconnectPureMinimaOnLoad();
         });
         runBootStep('loadWalletVaultState', function () {
             if (typeof loadWalletVaultState === 'function') loadWalletVaultState();

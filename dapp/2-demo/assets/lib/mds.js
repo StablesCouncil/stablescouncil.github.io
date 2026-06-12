@@ -12,6 +12,29 @@
 var MDS_MAIN_CALLBACK = null;
 
 /**
+ * Pure Minima (RPC, no MDS) transport. When window.__STABLES_RPC_MODE = { url, user, pass } is set,
+ * MDS.cmd routes here: a Minima RPC call via the local CORS proxy, wrapped to the same
+ * { status, response } shape MDS.cmd callbacks expect. Reads (status / block / balance) and the
+ * rest of the UI keep working unchanged on a core-only node that has no MDS hub.
+ */
+function MDS_RPC_cmd(command, callback){
+	var cfg = (typeof window !== "undefined" && window.__STABLES_RPC_MODE) || {};
+	var endpoint = String(cfg.url || "").replace(/\/+$/, "") + "/" + encodeURIComponent(command);
+	var headers = {};
+	if(cfg.pass){ headers["Authorization"] = "Basic " + btoa((cfg.user || "minima") + ":" + cfg.pass); }
+	fetch(endpoint, { method:"GET", headers:headers, cache:"no-store" })
+		.then(function(res){ return res.text(); })
+		.then(function(text){
+			var json;
+			try { json = JSON.parse(text); } catch(e){ json = { status:false, pending:false, error:text }; }
+			if(callback){ callback(json); }
+		})
+		.catch(function(err){
+			if(callback){ callback({ status:false, pending:false, error:String((err && err.message) || err) }); }
+		});
+}
+
+/**
  * API call id array
  */
 var API_CALLS = [];
@@ -123,6 +146,15 @@ var MDS = {
 		//Store this for poll messages
 		MDS_MAIN_CALLBACK = callback;
 		
+		//Pure Minima (RPC, no MDS) mode: there is no MDS hub, so skip the poll loop. Commands
+		//route to RPC (see MDS.cmd) and the app arms its own balance/block polling on "inited".
+		if(typeof window !== "undefined" && window.__STABLES_RPC_MODE && window.__STABLES_RPC_MODE.url){
+			MDS.mainhost = "";
+			MDS.log("RPC mode - Pure Minima node via "+window.__STABLES_RPC_MODE.url);
+			setTimeout(function(){ MDSPostMessage({ "event": "inited" }); }, 50);
+			return;
+		}
+
 		//Run the POll Listener ONCE - to get the latest Poll Counter..
 		PollListener();
 		
@@ -160,6 +192,11 @@ var MDS = {
 	 * Runs a function on the Minima Command Line - same format as MInima
 	 */
 	cmd : function(command, callback){
+		//Pure Minima (RPC, no MDS) mode: route commands to the node's RPC interface.
+		if(typeof window !== "undefined" && window.__STABLES_RPC_MODE && window.__STABLES_RPC_MODE.url){
+			MDS_RPC_cmd(command, callback);
+			return;
+		}
 		//Send via POST
 		httpPostAsync("cmd", command, callback);
 	},

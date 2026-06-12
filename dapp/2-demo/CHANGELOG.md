@@ -8,19 +8,34 @@
 
 ### [Unreleased], next daily build
 
-Ongoing demo line. We ship a new build most days; each change is logged here as it's made, then moves into a dated, published section on release. Build identity is the `APP_BUILD_ITERATION` counter, shown in the pill, `dapp.conf`, and the zip name (e.g. `Stables_v0.0.0.2.11.mds.zip`).
+Ongoing demo line. Changes are logged here as they are made, then move into a dated, published section on release. Build identity is the `APP_BUILD_ITERATION` counter, shown in the pill, `dapp.conf`, and the zip name (e.g. `Stables_v0.0.0.2.18.mds.zip`).
+
+---
+
+### [0.0.0.2.17], 2026-06-12 (demo · published)
+
+Demo build `0.0.0.2.17` published to GitHub Pages. The headline: a new way to use Stables in your browser, connect straight to your own Pure Minima node over RPC, with no MinimaOS install. This supersedes the earlier MDS-hub browser-connect from the unreleased window.
 
 #### Added
 
-- **Connect panel clarified for non-technical users.** Plain step-by-step copy, split into "view and receive" (Node URL + Session UID) and an optional "also send" (RPC password + the proxy). Corrected the certificate guidance: you accept only the node's `:9003` certificate; the send proxy needs no extra certificate (the earlier text wrongly told users to accept a `:9005` cert). The RPC URL field is hidden since it auto-uses the proxy. All em-dashes removed from app text per the new handshake writing rule.
-- **Web send connection streamlined.** Kept MDS (instant balance/incoming push) + RPC (sending) for full functionality; the **RPC URL now auto-defaults to the local CORS proxy** (`http://<node-host>:9006`) since a browser can never reach Minima's RPC directly. So the web connect is just Node URL + Session UID + RPC password (run the proxy via `work/tools/start-cors-proxy.bat`).
-- **Send Minima from the web version via your node's RPC.** A browser connection to MDS is read-only by Minima's design, so WRITE commands (`send`) are now routed to the node's **RPC** interface instead (reads stay on MDS). Enter your node's **RPC password** in the Connect panel (RPC URL optional, defaults to your node host on port `9005`) and Send works from the browser, no MinimaOS install needed. Requires the node started with **`-rpcenable -rpcssl -rpcpassword [pass]`** (SSL is needed so an HTTPS page can call it), and the RPC certificate accepted once at `https://your-node:9005/`. Security: RPC is full node access, keep it on your trusted network only; the password is held in `sessionStorage` (cleared when the tab closes), sent straight from your browser to your node. (Cross-origin reachability depends on the node returning CORS headers; if a browser blocks it, a small CORS proxy in front of RPC may be needed.)
+- **Connect to your own Pure Minima node over RPC.** The Connect panel now links the web app directly to a Minima node you run, over RPC, with no MinimaOS install needed. Your keys never leave your node. Enable RPC on your node (`rpc enable:true`, no password), enter your node's RPC address, and connect with a blank password. It works the same against a clean Pure Minima core node or a full node, and both reads (balance, block height, activity) and sends go over RPC. The contextual StablesAgent help in the panel walks through enabling RPC and finding your RPC port with the `status` command (it is your node's port + 4).
+- **Auto-reconnect after a refresh.** Once you have connected, the app restores the connection to your node automatically on the next page load, no need to re-enter the address.
+- **Receive: choose and verify your receiving address.** The receive screen now has one editable address field. Type or paste any address you want to receive into, and the app checks with your node that the address belongs to your wallet before it shows the QR, so you never share an address that is not yours. The separate "check an address" tool is folded into this.
+
+#### Changed
+
+- **Native MINIMA shown with real precision.** Balances and amounts no longer round small MINIMA down to `0.00`. Native MINIMA shows up to six decimals with trailing zeros trimmed (for example `0.000611`); fiat-style stablecoins stay at two decimals.
+- **Connect panel simplified.** One clear path: connect to your Pure Minima node. The RPC URL accepts an address with or without `http://` (added automatically). The copy is minimal, with the step-by-step detail moved into the contextual StablesAgent help (tap the agent icon at the top of the panel).
+
+#### Removed
+
+- **MinimaOS-install option removed from the Connect panel.** The in-app "install the .mds.zip in MinimaOS" step was removed from the connect window to keep it focused on connecting to your node. The download stays on the website's first page.
 
 #### Fixed
 
-- **Wallet activity now ordered newest-first.** Rows were sorted by the displayed date string, which has no year (e.g. "09 Jun · 18:23"), so year-old (and failed) node transactions parsed into the current year and floated to the top. Each row now carries a real numeric timestamp (`ts`, from the txpow header date / send time) and both the wallet "Recent activity" and "My transactions" lists sort by it, latest at the top. Existing stored rows pick up `ts` on the next node sync / refresh.
-- **Incoming-payment notice fully visible on mobile.** The toast was single-line (`white-space: nowrap`) and clipped longer messages like "Incoming … MINIMA detected, awaiting confirmation". Toasts now wrap and cap their width (`min(92vw, 420px)`, centered), so the whole message shows on any screen.
-- **Read-only send notice no longer clips.** On a failed send over the read-only web connection, the explanation now shows only as the persistent amber box inside the Send modal (which wraps and scrolls into view); the duplicate single-line toast that clipped on mobile was removed.
+- **No more duplicate "Sent" rows.** A send could appear twice (the optimistic row plus the node-history import of the same transaction). The optimistic row now uses the transaction's own node id, so the sync updates that single row instead of adding a second entry; existing duplicates are cleaned on the next sync.
+- **Wallet activity ordered newest-first.** Rows now carry a real numeric timestamp and sort by it, so older or failed transactions no longer float to the top.
+- **Incoming-payment notice fully visible on mobile.** The toast now wraps and caps its width, so the whole message shows on any screen.
 
 ---
 

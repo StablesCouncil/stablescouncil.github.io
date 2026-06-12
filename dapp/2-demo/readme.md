@@ -4,16 +4,15 @@ Stables is an experimental, protocol-focused research project built on Winiwa.
 The project explores minting, burning, oracle, and collateralization mechanisms
 for a non-custodial, censorship-resistant monetary system.
 
-## What changed in this version (demo v0.0.0.1.0)
+## What changed in this version (demo v0.0.0.2.17)
 
-First release of the public demo channel. Highlights:
+Connect Stables to your own Pure Minima node, right in your browser. Highlights:
 
-- **Live, real on-chain native Minima send and receive** when your node is connected, plus a QR scanner for fast in-person payments. Wables (CADw, EURw, …) are illustrative in this build, not yet on-chain.
-- **Guided StablesAgent welcome** with three clear paths: what works right now, set up my bank, and explore the app. The flow never leaves you without a next option.
-- **Merchant setup** with a brand-and-locations profile (one brand, many shops, each with its own address, hours and receive address), auto-detected social and map links (including Google Business), delivery and Merchant Cash Exchange opt-ins.
-- **Ambassador onboarding** under the 16 Big Mac program, including a secure encrypted "let my ambassador set up my shop" grant.
-- **Two ways to access the dapp:** install the MiniDapp package on MinimaOS (recommended) or open the web version and connect your running node.
-- **Reliability polish:** Minima is the default currency on a fresh install, the QR scanner uses the live camera on desktop nodes (with a photo-capture fallback on the Android MinimaOS app), scanned payment QR codes fill the address and amount cleanly, and My shop is always reachable.
+- **Connect to your own Pure Minima node over RPC.** Run a Minima node yourself and link the web app straight to it, no MinimaOS install needed. Your keys never leave your node. Enable RPC on your node (`rpc enable:true`, no password), enter its RPC address, and connect with a blank password. Works against a clean Pure Minima core node or a full node, and both reads and sends go over RPC.
+- **Auto-reconnect after a refresh.** Once connected, the app restores the connection to your node on the next page load, no need to re-enter the address.
+- **Receive: choose and verify your address.** One editable receiving-address field. The app checks with your node that the address belongs to your wallet before showing the QR, so you never share an address that is not yours.
+- **Real MINIMA precision.** Balances and amounts no longer round small MINIMA down to 0.00. Native MINIMA shows up to six decimals with trailing zeros trimmed (for example 0.000611); stablecoins stay at two.
+- **Simplified Connect panel.** One clear path, with the step-by-step detail in the contextual StablesAgent help (tap the agent icon). The MinimaOS-install step moved out of the connect window; the download stays on the website.
 
 Full detail in `CHANGELOG.md`.
 

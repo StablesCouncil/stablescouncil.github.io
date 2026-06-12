@@ -143,6 +143,9 @@
   window.stablesAppendUserActivityRow = function (row) {
     if (!DEMO_REAL || !row || !row.id) return;
     if (typeof row.ts !== 'number' || !Number.isFinite(row.ts) || row.ts <= 0) row.ts = Date.now();
+    // Idempotent by id: never stack two rows for the same id.
+    const dupIdx = USER_ACTIVITY.findIndex(r => r && String(r.id) === String(row.id));
+    if (dupIdx !== -1) USER_ACTIVITY.splice(dupIdx, 1);
     USER_ACTIVITY.unshift(row);
     if (USER_ACTIVITY.length > 200) USER_ACTIVITY.length = 200;
     persistUserActivityToStorage();
@@ -268,6 +271,18 @@
     rows.forEach(row => {
       if (!row || !row.id) return;
       const id = String(row.id);
+      // Heal pre-.17 duplicates: an old optimistic send row (id MINIMA-<ts>) carries the txpow id
+      // in explorerTxId. When the same tx arrives from the node as NODE-<txpowid>, drop the orphan.
+      if (id.indexOf('NODE-') === 0) {
+        const txpid = id.slice(5);
+        for (let i = USER_ACTIVITY.length - 1; i >= 0; i--) {
+          const r = USER_ACTIVITY[i];
+          if (r && String(r.id).indexOf('MINIMA-') === 0 && String(r.explorerTxId || '') === txpid) {
+            USER_ACTIVITY.splice(i, 1);
+            byId.delete(String(r.id));
+          }
+        }
+      }
       if (byId.has(id)) {
         Object.assign(byId.get(id), row);
       } else {
