@@ -12,15 +12,15 @@ window.STABLES_CONFIG = {
   /** Council channel for this package: drives top bar pill (Showcase / Demo / Test / Prod). */
   APP_STAGE: 'demo',
   /** Shipped build (keep in sync with dapp.conf "version" when you release). */
-  APP_BUILD_VERSION: '0.0.0.2.0',
+  APP_BUILD_VERSION: '0.0.0.3.0',
   /**
    * Dev build iteration for the current version line. Bump on EVERY change during testing so
    * each build is uniquely identifiable in the top-bar pill (e.g. v0.0.0.2.01, .02, …) and the
    * packaged zip name (Stables_v0.0.0.2.02.mds.zip). Reset to 1 when APP_BUILD_VERSION changes / published.
    */
-  APP_BUILD_ITERATION: 17,
+  APP_BUILD_ITERATION: 31,
   /** Date this build was published to GitHub (ISO YYYY-MM-DD). */
-  APP_BUILD_DATE: '2026-06-12',
+  APP_BUILD_DATE: '2026-06-16',
   /**
    * Council-side view of the newest MiniDapp. If latestPublishedVersion sorts above APP_BUILD_VERSION,
    * the Council communications page shows criticality + what changed + zip link.
@@ -28,11 +28,11 @@ window.STABLES_CONFIG = {
    * Use the same segment count as APP_BUILD_VERSION so semver-like compare is meaningful.
    */
   APP_UPDATE_POLICY: {
-    latestPublishedVersion: '0.0.0.2.17',
+    latestPublishedVersion: '0.0.0.3.31',
     whenUpdateNeeded: {
-      criticality: 'high',
+      criticality: 'medium',
       whatChanged:
-        'Example when an update ships: security fixes, mandatory protocol UI changes, or critical Minima MDS fixes.',
+        'The sending wallet now shows the correct transaction id that resolves on the Minima explorer. Wallet recovery asks a short safety check first, the Connect panel is clearer about the RPC port, and transaction history is pulled in after a recovery.',
       details:
         'Install the current package from the link below, or use Settings and updates.'
     }

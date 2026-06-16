@@ -271,13 +271,50 @@
     rows.forEach(row => {
       if (!row || !row.id) return;
       const id = String(row.id);
-      // Heal pre-.17 duplicates: an old optimistic send row (id MINIMA-<ts>) carries the txpow id
-      // in explorerTxId. When the same tx arrives from the node as NODE-<txpowid>, drop the orphan.
+      // De-duplicate by the on-chain transaction id: when a node row NODE-<txpowid> arrives, drop any
+      // OTHER existing row that represents the same transaction, whatever its id prefix. This covers an
+      // optimistic local send row (id MINIMA-<ts> or NODE-<sendid>) whose explorerTxId is the txpowid,
+      // so a single send never shows twice (once pending, once confirmed).
       if (id.indexOf('NODE-') === 0) {
         const txpid = id.slice(5);
+        const rowTxnId = String(row.txnId || '').trim().toLowerCase();
+        const rowDir = String(row.dir || '');
+        const rowAmtAbs = Math.abs(Number(row.amt) || 0);
+        const rowAddr = String(row.address || '').trim().toLowerCase();
+        const rowTs = Number(row.ts) || 0;
         for (let i = USER_ACTIVITY.length - 1; i >= 0; i--) {
           const r = USER_ACTIVITY[i];
-          if (r && String(r.id).indexOf('MINIMA-') === 0 && String(r.explorerTxId || '') === txpid) {
+          if (!r) continue;
+          if (String(r.id) === id) continue; // the same row; it will be upserted below
+          const rTxid = String(r.explorerTxId || '') ||
+            (String(r.id).indexOf('NODE-') === 0 ? String(r.id).slice(5) : '');
+          let drop = false;
+          if (rTxid && rTxid === txpid) {
+            // Exact on-chain id match (already-confirmed row, or an optimistic row that captured
+            // the real txpowid).
+            drop = true;
+          } else if (
+            rowDir === 'out' && r.dir === 'out' &&
+            String(r.id).indexOf('NODE-') !== 0 &&            // an optimistic local row, not another node row
+            r.minimaOnChain && r.status === 'Pending' &&
+            !/^0x[a-fA-F0-9]{64}$/.test(String(r.explorerTxId || '')) // no confirmed txpowid yet
+          ) {
+            // Reconcile the optimistic "send pending" row (which has no mined txpowid) with the
+            // authoritative confirmed node row for the SAME send, so it is replaced rather than
+            // duplicated. Prefer the inner transaction id; otherwise match amount + recipient + time.
+            const pendTxnId = String(r.pendingTxnId || '').trim().toLowerCase();
+            if (rowTxnId && pendTxnId && rowTxnId === pendTxnId) {
+              drop = true;
+            } else {
+              const amtClose = Math.abs(Math.abs(Number(r.amt) || 0) - rowAmtAbs) < 0.01;
+              const rAddr = String(r.address || '').trim().toLowerCase();
+              const addrMatch = rowAddr && rAddr && (rAddr === rowAddr || rAddr.indexOf(rowAddr) !== -1 || rowAddr.indexOf(rAddr) !== -1);
+              const rRowTs = Number(r.ts) || 0;
+              const timeClose = (!rowTs || !rRowTs) ? true : Math.abs(rowTs - rRowTs) < 2 * 60 * 60 * 1000;
+              if (amtClose && addrMatch && timeClose) drop = true;
+            }
+          }
+          if (drop) {
             USER_ACTIVITY.splice(i, 1);
             byId.delete(String(r.id));
           }
@@ -478,6 +515,7 @@
       address: counterpartyAddr,
       fee: 0,
       explorerTxId: id,
+      txnId: String(txn.transactionid || '').trim(),
       status: 'Confirmed',
       note: '',
       directionLabel: dir === 'out' ? 'Outgoing' : 'Incoming',
@@ -650,7 +688,9 @@
       tokenMap['0x0000000000000000000000000000000000000000000000000000000000000000'] = 'MINIMA';
     } catch (_) { /* ignore */ }
 
-    const commands = ['history offset:0', 'history'];
+    // history defaults to max 100 and relevant:true (YOUR transactions across ALL your addresses,
+    // Minima history is wallet-wide). Raise max so the full history is retrieved, not just the last 100.
+    const commands = ['history max:1000 offset:0', 'history max:1000', 'history'];
     let imported = 0;
     let sawHistory = false;
     let diagInfo = '';
@@ -1694,7 +1734,12 @@
     const hasRealExplorer = !!tx.minimaOnChain && /^0x[a-fA-F0-9]{64}$/.test(txHash);
     const tradeIdBlock = hasRealExplorer
       ? `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction id</div><a href="${escUi(txExplorerUrl(tx))}" target="_blank" rel="noopener noreferrer" class="btn" style="width:auto;padding:0;border:none;background:none;font-size:12px;font-weight:900;word-break:break-all;color:var(--c);text-decoration:underline;display:inline-block;text-align:left">${escUi(txHash)}</a></div>`
-      : `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Trade ID</div><button class="btn" style="width:auto;padding:0;border:none;background:none;font-size:12px;font-weight:900;word-break:break-all;color:var(--c);text-decoration:underline;text-align:left" onclick="openTxExplorer()">${escUi(tx.explorerTxId || tx.id)}</button></div>`;
+      : (tx.minimaOnChain
+        // Real on-chain send/receive whose txpow is not mined yet: do NOT link the inner transaction
+        // id (the explorer only resolves the mined txpowid, so that link returns no records). Show a
+        // clear pending state; the confirmed node row replaces this one with a working link.
+        ? `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction id</div><div  style="font-size:12px;font-weight:800;color:var(--am)">Pending confirmation</div><div class="xs mu"  style="margin-top:4px;color:var(--m)">The on-chain id appears here once your node confirms the transaction.</div></div>`
+        : `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Trade ID</div><button class="btn" style="width:auto;padding:0;border:none;background:none;font-size:12px;font-weight:900;word-break:break-all;color:var(--c);text-decoration:underline;text-align:left" onclick="openTxExplorer()">${escUi(tx.explorerTxId || tx.id)}</button></div>`);
     const body = `<div  style="margin-bottom:8px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:${statusColor};display:inline-block"></span><span class="xs mu">${statusText}</span></div>
       <div  style="margin-bottom:16px;padding:0 4px">
         <div class="fbet"><div><div  style="font-size:16px;font-weight:900;color:var(--t)">${tx.title}</div><div class="xs mu"  style="margin-top:2px">${tx.date}</div></div><div  style="text-align:right"><div class="tx-amt ${tx.amt >= 0 ? 'pos' : 'neg'} bal-amount">${tx.amt >= 0 ? '+' : '−'}${Math.abs(tx.amt).toFixed(2)} ${tx.ccy}</div><div class="xs mu">Fee ${feeDisp} ${tx.ccy}</div></div></div>

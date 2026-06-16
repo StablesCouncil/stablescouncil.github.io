@@ -8,7 +8,24 @@
 
 ### [Unreleased], next daily build
 
-Ongoing demo line. Changes are logged here as they are made, then move into a dated, published section on release. Build identity is the `APP_BUILD_ITERATION` counter, shown in the pill, `dapp.conf`, and the zip name (e.g. `Stables_v0.0.0.2.18.mds.zip`).
+Ongoing demo line. Changes are logged here as they are made, then move into a dated, published section on release. Build identity is the `APP_BUILD_ITERATION` counter, shown in the pill, `dapp.conf`, and the zip name (e.g. `Stables_v0.0.0.3.30.mds.zip`).
+
+#### Added
+
+- **Safety check before wallet recovery (standalone app).** Replacing a wallet with a recovered Vault key is irreversible, so it now asks two quick questions first: who can recover your funds if you lose your Vault key, and how to protect funds before replacing a wallet. The Recover button stays disabled until both are answered correctly, and a wrong answer offers to talk it through with StablesAgent. The warning now also states that unbacked funds could be lost forever.
+
+#### Changed
+
+- **Connect panel is clearer about the RPC port and how to start a node.** The panel now states the rule that your RPC port is your node's port + 4 (a node on port 9101 has its RPC on 9105), defaults the RPC URL to the direct no-password port `9105`, adds a copyable desktop launch command (`java -jar minima.jar ... -port 9101 -rpcenable true`), and tells you to leave the password blank for a node started that way.
+- **Recovery progress screen explains the node restart.** During wallet recovery the node restarts and the app relaunches itself. The progress screen now states this is normal and that the balance and transaction history sync from your node when it returns.
+
+#### Fixed
+
+- **Sending wallet now shows the correct, explorer-resolvable transaction id.** A send still surfaced the inner transaction id (a plain hash with no leading zeros) as the transaction id, so tapping it on the explorer returned "did not match any records", while the receiving wallet showed the right `txpowid`. The send response does not contain the mined `txpowid` yet, so the app no longer guesses a hash from it: an on-chain send now reads "Pending confirmation" until the node confirms it, then the confirmed history row (which carries the real `txpowid`) replaces the pending one with a working explorer link. The pending and confirmed rows are reconciled by the transaction id (or by amount, recipient, and time) so a single send never appears twice.
+- **Transaction hash shows the real on-chain id and links to the explorer.** The send confirmation showed an internal value (the first 64-hex string in the node's response, often a coin id), not the transaction's `txpowid`. It now extracts the actual `txpowid`, labels it as pending until confirmed, and makes it a clickable link to the Minima explorer. Activity rows already carry the corrected `explorerTxId` for when the hash is surfaced there too.
+- **Connect messages no longer reference a removed "Option 2".** Several node-connection status and error messages still pointed to "Option 2 in the Connect panel" from when the panel had two options; they now refer to the single Connect panel directly.
+- **Dropdown menus are readable.** The recovery-depth selector showed muted text on a light grey background, which was hard to read. It now uses the app's standard dark dropdown styling, and the same dark option list and color scheme are applied to other native selects so their text stays legible.
+- **Transaction history is pulled in after a recovery.** The recovery flow called a function that did not exist, so the recovered wallet's history was not imported. It now triggers the real node-transaction sync (the same one behind the Sync node transactions button and the on-connect auto-sync). Note the node must finish its MegaMMR resync before the full history is available.
 
 ---
 

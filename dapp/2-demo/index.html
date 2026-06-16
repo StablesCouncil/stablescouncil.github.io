@@ -2,6 +2,72 @@
 <html lang="en">
 
 <head>
+    <!-- Local-server channel preview. Lets you view and switch between the three Stables streams on the
+         dev server so you always know which one you are looking at: the standalone APK, the web app, or the
+         MinimaOS MiniDapp. Activates ONLY on localhost / 127.0.0.1 / LAN, never on the public site and never
+         in the real APK (its host is appassets.androidplatform.net, not local, so this returns early and the
+         real boot script's flag stands). Switch with the on-screen badge or:
+            ?preview=apk      standalone APK (embedded node; shows the native Security / recovery surfaces)
+            ?preview=webapp   web app (connect your own Pure Minima node over RPC) - default
+            ?preview=dapp     MinimaOS MiniDapp (hub-hosted)
+         Legacy aliases still work: ?previewapp=1 -> apk, ?previewapp=0 -> webapp. -->
+    <script>
+        (function () {
+            try {
+                var host = location.hostname || '';
+                var isLocal = host === 'localhost' || host === '127.0.0.1' ||
+                    /^192\.168\./.test(host) || /^10\./.test(host) || /^172\.(1[6-9]|2\d|3[01])\./.test(host);
+                if (!isLocal) return;
+                var KEY = 'stables_preview_channel';
+                var params = new URL(location.href).searchParams;
+                var p = (params.get('preview') || '').toLowerCase();
+                var legacy = params.get('previewapp');
+                if (legacy === '1') p = 'apk';
+                else if (legacy === '0') p = 'webapp';
+                if (p === 'apk' || p === 'webapp' || p === 'dapp') { localStorage.setItem(KEY, p); }
+                var channel = localStorage.getItem(KEY) || 'webapp';
+                window.__STABLES_PREVIEW_CHANNEL = channel;
+                if (channel === 'apk') { window.__STABLES_ANDROID_APP = true; }
+                if (channel === 'dapp') { window.__STABLES_PREVIEW_DAPP = true; }
+
+                // Visible badge so the current stream is never ambiguous. Click a segment to switch.
+                document.addEventListener('DOMContentLoaded', function () {
+                    var meta = {
+                        apk: { label: 'APK', color: '#67e8f9' },
+                        webapp: { label: 'Web', color: '#94a3b8' },
+                        dapp: { label: 'MiniDapp', color: '#a78bfa' }
+                    };
+                    var bar = document.createElement('div');
+                    bar.setAttribute('data-stables-preview-badge', '1');
+                    bar.style.cssText = 'position:fixed;left:10px;bottom:10px;z-index:2147483647;display:flex;' +
+                        'align-items:center;gap:6px;padding:5px 8px;border-radius:10px;font:600 11px/1 Inter,system-ui,sans-serif;' +
+                        'background:rgba(11,16,23,.82);border:1px solid rgba(103,232,249,.35);backdrop-filter:blur(8px);' +
+                        '-webkit-backdrop-filter:blur(8px);box-shadow:0 4px 14px rgba(0,0,0,.4);user-select:none';
+                    var tag = document.createElement('span');
+                    tag.textContent = 'PREVIEW';
+                    tag.style.cssText = 'color:#64748b;letter-spacing:.08em';
+                    bar.appendChild(tag);
+                    ['apk', 'webapp', 'dapp'].forEach(function (c) {
+                        var b = document.createElement('button');
+                        b.type = 'button';
+                        b.textContent = meta[c].label;
+                        var active = (c === channel);
+                        b.style.cssText = 'cursor:pointer;border-radius:7px;padding:4px 8px;font:inherit;border:1px solid ' +
+                            (active ? meta[c].color : 'transparent') + ';background:' + (active ? 'rgba(103,232,249,.12)' : 'transparent') +
+                            ';color:' + (active ? meta[c].color : '#cbd5e1') + ';transition:all .15s';
+                        b.onclick = function () {
+                            var u = new URL(location.href);
+                            u.searchParams.set('preview', c);
+                            u.searchParams.delete('previewapp');
+                            location.href = u.toString();
+                        };
+                        bar.appendChild(b);
+                    });
+                    document.body.appendChild(bar);
+                });
+            } catch (e) { /* preview is best-effort only */ }
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Demo · Stables</title>
@@ -1475,6 +1541,25 @@
             background: rgba(11, 15, 20, .95);
             color: var(--t);
         }
+
+        /* Selects styled as .finput (e.g. the agent language picker) need the same dark option
+           list and color scheme so the native dropdown text stays readable. */
+        select.finput { color-scheme: dark; }
+        select.finput option {
+            background: rgba(11, 15, 20, .95);
+            color: var(--t);
+        }
+
+        /* Recovery safety-quiz options (standalone app, before a wallet-replacing recovery). */
+        .stables-quiz-opt {
+            width: 100%; text-align: left; padding: 10px 12px; border-radius: 10px;
+            border: 1px solid rgba(103, 232, 249, .2); background: rgba(11, 15, 20, .5);
+            color: var(--t); font-size: 13px; font-weight: 600; font-family: inherit;
+            cursor: pointer; transition: border-color .15s, background .15s;
+        }
+        .stables-quiz-opt:hover { border-color: rgba(103, 232, 249, .5); }
+        .stables-quiz-opt.is-correct { border-color: rgba(52, 211, 153, .7); background: rgba(52, 211, 153, .12); color: #6ee7b7; }
+        .stables-quiz-opt.is-wrong { border-color: rgba(251, 191, 36, .7); background: rgba(251, 191, 36, .10); color: #fbbf24; }
 
         /* Send / Receive: currency + balance in each option (tabular numbers read cleanly). */
         .fsel.fsel--wallet-ccy {
@@ -4902,6 +4987,17 @@
 
         <!-- WALLET PAGE (no app-page-header: hero card is the focal entry) -->
         <div class="page active" id="page-wallet">
+            <!-- Standalone app: persistent reminder until the Vault key is backed up. Hidden in web/MinimaOS. -->
+            <div id="stablesSeedReminder" style="display:none;margin:0 0 12px 0">
+                <div class="card app-section-card" style="padding:12px 14px;border:1px solid rgba(251,191,36,.45);background:linear-gradient(180deg,rgba(251,191,36,.08),rgba(11,15,20,.2));display:flex;align-items:center;gap:10px">
+                    <div style="font-size:20px" aria-hidden="true">🔑</div>
+                    <div style="flex:1;min-width:0">
+                        <div style="font-weight:800;color:#fbbf24;font-size:13px">Back up your Vault key</div>
+                        <div class="xs mu" style="line-height:1.45">Save your 24-word Vault key now. It is the only way to recover your funds.</div>
+                    </div>
+                    <button type="button" class="btn btn-w btn-primary" style="width:auto;padding:8px 12px;flex-shrink:0" onclick="navigate('settings-security')">Back up</button>
+                </div>
+            </div>
             <div class="app-section app-section--caption-bottom">
             <div class="stitle-row">
                 <div class="stitle">Balance</div>
@@ -8038,7 +8134,7 @@
                 </button>
             </div>
             <div class="card card--prose-centered app-section-card" id="settings-app-updates" style="padding:14px 18px;margin-bottom:8px">
-                <div class="xs mu" style="margin-bottom:12px;line-height:1.55;font-weight:800;color:var(--t)">
+                <div class="xs mu" id="settingsAppUpdateTitle" style="margin-bottom:12px;line-height:1.55;font-weight:800;color:var(--t)">
                     Download the latest Stables MiniDapp package for your Minima node (MDS zip on GitHub).
                 </div>
                 <a id="settingsMdsZipLink" class="btn btn-w btn-link-action" style="flex:1;min-width:220px;font-size:14px;font-weight:900;display:block;text-align:center;width:100%;text-decoration:none;box-sizing:border-box"
@@ -8046,6 +8142,23 @@
                 <div class="xs mu" id="settingsMdsZipUrlLabel" style="margin-top:8px;line-height:1.45;opacity:.75;text-align:center"></div>
             </div>
             </div>
+
+            <!-- Standalone app only: keep the node running in the background. Shown via stablesInitBackgroundToggle(). -->
+            <div id="stablesBackgroundSection" class="app-section app-section--caption-bottom app-section--caption-bottom--mt20" style="display:none">
+                <div class="stitle-row">
+                    <div class="stitle">Node</div>
+                </div>
+                <div class="card app-section-card" style="padding:16px 16px">
+                    <label style="display:flex;align-items:center;gap:12px;cursor:pointer">
+                        <input type="checkbox" id="stablesBackgroundToggle" onchange="stablesSetBackground(this.checked)" style="width:20px;height:20px;flex-shrink:0;accent-color:#67e8f9">
+                        <span style="flex:1;min-width:0">
+                            <span style="display:block;font-weight:800;font-size:14px;color:var(--t)">Keep my bank running in the background</span>
+                            <span class="xs mu" style="display:block;line-height:1.45;margin-top:2px">Recommended. Your node stays connected so the network stays strong and your app opens fast. Turn off to save battery (the node stops when you close the app, and opening takes longer while it catches up).</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
             <div class="app-section app-section--caption-bottom">
             <div class="stitle-row">
                 <div class="stitle">Sync preferences</div>
@@ -8079,6 +8192,40 @@
                 <div class="xs mu mt8">After I choose a file, pick <strong>Replace</strong> (make this device match the file) or <strong>Combine</strong> (merge lists and notes; the file wins when both have a note for the same item). Stables may remind me if I have not exported in a while.</div>
             </div>
             </div>
+
+            <!-- Standalone app only: advanced node terminal + live log, at the bottom of the page.
+                 Shown via stablesInitAppTerminal(); off by default, revealed only after a danger
+                 warning; re-locked when leaving this page. -->
+            <div id="stablesAppTerminalSection" class="app-section app-section--caption-bottom app-section--caption-bottom--mt20" style="display:none">
+                <div class="stitle-row">
+                    <div class="stitle">Advanced</div>
+                </div>
+                <div class="card app-section-card" style="padding:18px 16px;border:1px solid rgba(248,113,113,.4);background:linear-gradient(180deg,rgba(248,113,113,.05),rgba(11,15,20,.2))">
+                    <div style="font-weight:800;color:#f87171;font-size:13px;margin-bottom:6px">Node terminal</div>
+                    <p class="sec-body" style="margin:0 0 12px">Run commands directly on your node, the engine that holds your wallet. For experienced users only: the wrong command can move or lose your funds or expose your Vault key.</p>
+                    <button type="button" class="btn btn-w" id="stablesTerminalEnableBtn" onclick="stablesEnableTerminal()">Enable node terminal</button>
+
+                    <div id="stablesTerminalPanel" style="display:none;margin-top:14px">
+                        <div style="display:flex;gap:8px">
+                            <input id="stablesTerminalInput" type="text" placeholder="e.g. status" autocapitalize="off" autocorrect="off" spellcheck="false" style="flex:1;min-width:0;font-family:monospace;font-size:14px;padding:10px;border-radius:10px;border:1px solid rgba(103,232,249,.25);background:rgba(0,0,0,.35);color:var(--t)" onkeydown="if(event.key==='Enter'){stablesRunTerminalCmd();}">
+                            <button type="button" class="btn btn-w btn-primary" style="width:auto;padding:10px 16px;flex-shrink:0" onclick="stablesRunTerminalCmd()">Run</button>
+                        </div>
+                        <p class="xs mu" style="margin:8px 0 0;line-height:1.5">Commands run on your node. Never run a command someone gave you. Safe reads: <strong>status</strong>, <strong>balance</strong>, <strong>coins</strong>.</p>
+                        <div id="stablesTerminalResultWrap" style="display:none;margin-top:10px">
+                            <div style="display:flex;justify-content:flex-end;margin-bottom:6px">
+                                <button type="button" class="btn btn-w" id="stablesTerminalCopyBtn" style="width:auto;padding:6px 12px;font-size:12px" onclick="stablesCopyTerminalOutput()">Copy result</button>
+                            </div>
+                            <pre id="stablesTerminalOutput" style="max-height:320px;overflow:auto;font-family:monospace;font-size:12px;line-height:1.5;color:var(--t);background:rgba(0,0,0,.5);border:1px solid rgba(103,232,249,.18);border-radius:10px;padding:12px;white-space:pre-wrap;word-break:break-word"></pre>
+                        </div>
+
+                        <div style="margin-top:14px;border-top:1px solid rgba(103,232,249,.12);padding-top:14px">
+                            <button type="button" class="btn btn-w" id="stablesNodeLogBtn" onclick="stablesToggleNodeLog()">Show live node log</button>
+                            <p class="xs mu" style="margin:8px 0 0;line-height:1.5">The live output of your node, the same lines you would see running it from a terminal on a computer.</p>
+                            <pre id="stablesNodeLogPane" style="display:none;margin-top:10px;max-height:360px;overflow:auto;font-family:monospace;font-size:11px;line-height:1.5;color:var(--m);background:rgba(0,0,0,.55);border:1px solid rgba(103,232,249,.18);border-radius:10px;padding:12px;white-space:pre-wrap;word-break:break-word"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- PREFERENCES: SECURITY (Vault key only, critical) -->
@@ -8090,7 +8237,7 @@
                     <div class="app-page-header__sub">Vault key: only access to your funds</div>
                 </div>
             </header>
-            <div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">
+            <div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20" id="stablesMdsSecuritySection">
             <div class="stitle-row">
                 <div class="stitle">Vault key</div>
                 <button type="button" class="agent-mini-btn" onclick="openAgentExplain('Security: your Vault key is sole access to your bank; never share it')" title="StablesAgent">
@@ -8104,6 +8251,69 @@
                 <div class="sec-key-icon" aria-hidden="true">🔑</div>
                 <button type="button" class="btn btn-w btn-lg btn-primary" id="seedSecurityAppOpenBtn" onclick="stablesOpenSecurityApp()">Open Minima Security app</button>
             </div>
+            </div>
+
+            <!-- Standalone Stables app: native Vault key management via the embedded node.
+                 Shown only when window.__STABLES_ANDROID_APP is set (see stablesInitNativeSecurity). -->
+            <div id="stablesNativeSecurity" style="display:none">
+
+                <div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">
+                    <div class="stitle-row">
+                        <div class="stitle">Back up your Vault key</div>
+                        <span id="stablesBackupStateBadge" class="xs" style="font-weight:800;color:#fbbf24">Not backed up yet</span>
+                    </div>
+                    <div class="card app-section-card" style="padding:18px 16px;border:1px solid rgba(251,191,36,.45);background:linear-gradient(180deg,rgba(251,191,36,.06),rgba(11,15,20,.2))">
+                        <p class="sec-body" style="margin:0 0 10px">Your <strong>Vault key</strong> (24-word seed phrase) is the <strong>only</strong> way to recover your funds. No one can recover it for you, not Stables, not Minima.</p>
+                        <p class="sec-body" style="color:#fbbf24;font-weight:700;margin:0 0 14px">Only reveal it in a private place. Write it on paper and store it safely. Never type it into a website or share it with anyone.</p>
+                        <button type="button" class="btn btn-w btn-lg btn-primary" id="stablesRevealSeedBtn" onclick="stablesRevealSeed()">Show my 24-word Vault key</button>
+                        <div id="stablesSeedReveal" style="display:none;margin-top:12px">
+                            <div id="stablesSeedWords" style="font-family:monospace;font-size:15px;line-height:1.9;letter-spacing:.02em;color:var(--t);background:rgba(0,0,0,.35);border:1px solid rgba(103,232,249,.2);border-radius:12px;padding:14px;word-spacing:6px;text-align:center"></div>
+                            <div style="display:flex;gap:8px;margin-top:12px">
+                                <button type="button" class="btn btn-w" style="flex:1" onclick="stablesHideSeed()">Hide</button>
+                                <button type="button" class="btn btn-w btn-primary" style="flex:1" onclick="stablesConfirmBackedUp()">I have written it down</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">
+                    <div class="stitle-row">
+                        <div class="stitle">Recover a different wallet</div>
+                    </div>
+                    <div class="card app-section-card" style="padding:18px 16px;border:1px solid rgba(103,232,249,.14)">
+                        <p class="sec-body" style="margin:0 0 12px">Restoring <strong>replaces this device’s wallet</strong> with another Vault key and rescans the Minima chain to rediscover its coins. If your current wallet holds funds, back it up first.</p>
+                        <textarea id="stablesRecoverPhrase" rows="3" placeholder="Enter your 24-word Vault key, words separated by spaces" style="width:100%;box-sizing:border-box;font-family:monospace;font-size:14px;padding:12px;border-radius:10px;border:1px solid rgba(103,232,249,.25);background:rgba(0,0,0,.3);color:var(--t);resize:vertical"></textarea>
+                        <div style="margin:12px 0 4px;font-weight:700;font-size:13px">Recovery depth</div>
+                        <select id="stablesRecoverDepth" class="fsel" onchange="stablesRecoverDepthChange()">
+                            <option value="standard">Standard (recent wallets)</option>
+                            <option value="deep">Deep (older or heavily used wallets)</option>
+                            <option value="advanced">Advanced (set keys and key-uses)</option>
+                        </select>
+                        <div id="stablesRecoverAdvanced" style="display:none;margin-top:10px;gap:8px">
+                            <label class="xs mu" style="display:block;margin-bottom:8px">Keys<input id="stablesRecoverKeys" type="number" value="64" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(103,232,249,.25);background:rgba(0,0,0,.3);color:var(--t)"></label>
+                            <label class="xs mu" style="display:block;margin-bottom:8px">Key-uses<input id="stablesRecoverKeyuses" type="number" value="1000" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(103,232,249,.25);background:rgba(0,0,0,.3);color:var(--t)"></label>
+                            <label class="xs mu" style="display:block">Recovery node (host:port)<input id="stablesRecoverHost" type="text" value="spartacusrex.com:9001" style="width:100%;margin-top:4px;padding:8px;border-radius:8px;border:1px solid rgba(103,232,249,.25);background:rgba(0,0,0,.3);color:var(--t)"></label>
+                        </div>
+                        <p class="xs mu" style="margin:10px 0 12px;line-height:1.5">If your balance looks incomplete after recovery, run <strong>Deep</strong> recovery. Minima wallets may need additional key-use scanning to rediscover older coins.</p>
+                        <button type="button" class="btn btn-w btn-lg btn-primary" id="stablesRecoverBtn" onclick="stablesStartRecovery()">Recover wallet</button>
+                        <div id="stablesRecoverStatus" class="xs" style="display:none;margin-top:12px;padding:10px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid rgba(103,232,249,.18);line-height:1.5"></div>
+                    </div>
+                </div>
+
+                <div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">
+                    <div class="stitle-row">
+                        <div class="stitle">Keys and signatures</div>
+                    </div>
+                    <div class="card app-section-card" style="padding:18px 16px;border:1px solid rgba(103,232,249,.12)">
+                        <p class="sec-body" style="margin:0 0 12px">Minima signs every payment with keys held on this device. Each key can sign a limited number of times (its key-uses), a particularity of Minima’s signature design. If you send very often you can prepare more signing capacity in advance.</p>
+                        <div style="display:flex;gap:8px;flex-wrap:wrap">
+                            <button type="button" class="btn btn-w" style="flex:1;min-width:140px" onclick="stablesCheckKeys()">Check my keys</button>
+                            <button type="button" class="btn btn-w" style="flex:1;min-width:140px" onclick="stablesPrepareMoreKeys()">Prepare more signatures</button>
+                        </div>
+                        <div id="stablesKeysStatus" class="xs" style="display:none;margin-top:12px;padding:10px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid rgba(103,232,249,.18);line-height:1.5"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -8858,11 +9068,16 @@
             <section class="node-connect-section node-connect-section--compact">
                 <div class="node-connect-heading">Connect to your Pure Minima node</div>
                 <p class="xs mu" style="margin:0 0 8px;line-height:1.5;color:var(--m)">Connect to your own Minima node over RPC. Your keys never leave it. Only connect to a node you control, since RPC has full access to your wallet.</p>
-                <p class="xs mu" style="margin:0 0 12px;line-height:1.5;color:var(--m)">Need help? Tap the StablesAgent icon at the top of this window for step-by-step setup.</p>
+                <div class="xs mu" style="margin:0 0 12px;line-height:1.6;color:var(--m)">
+                    On a computer, open a terminal in your Minima folder and run:
+                    <code style="display:block;margin:8px 0;padding:8px 10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);border-radius:8px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;line-height:1.5;color:var(--cy);white-space:pre-wrap;word-break:break-all">java -jar minima.jar -basefolder "$PWD" -data "$PWD\data" -port 9101 -rpcenable true</code>
+                    A node started this way has no password, so leave the RPC password blank below. For full setup, tap the StablesAgent icon at the top of this window.
+                </div>
+                <p class="xs mu" style="margin:0 0 6px;line-height:1.5;color:var(--m)">Your RPC port is your node's port + 4. A node on port 9101 has its RPC on 9105.</p>
                 <label class="flabel" for="pureMinimaRpcUrl">RPC URL</label>
-                <input class="finput" id="pureMinimaRpcUrl" placeholder="http://localhost:9106" value="http://localhost:9106" style="margin-bottom:8px" autocomplete="off" spellcheck="false">
+                <input class="finput" id="pureMinimaRpcUrl" placeholder="http://localhost:9105" value="http://localhost:9105" style="margin-bottom:10px" autocomplete="off" spellcheck="false">
                 <label class="flabel" for="pureMinimaRpcPass" style="margin-top:4px">RPC password</label>
-                <input class="finput" id="pureMinimaRpcPass" type="password" placeholder="the rpcpassword you started your node with" style="margin-bottom:10px" autocomplete="off" spellcheck="false">
+                <input class="finput" id="pureMinimaRpcPass" type="password" placeholder="leave blank if your node has no rpcpassword" style="margin-bottom:10px" autocomplete="off" spellcheck="false">
                 <button type="button" class="btn btn-w btn-primary" style="width:100%;margin-bottom:2px" onclick="stablesConnectPureMinima()">Connect</button>
                 <button type="button" class="btn btn-w btn-secondary" id="pureMinimaDisconnectBtn" style="width:100%;margin-top:8px;display:none" onclick="stablesDisconnectPureMinima()">Disconnect</button>
             </section>
@@ -9103,6 +9318,96 @@
                     onclick="confirmSeedPhraseSaved()">Yes, I have stored it safely</button>
                 <button type="button" class="btn btn-w" style="line-height:1.35"
                     onclick="openVaultHelpChooser()">I need help</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Standalone app: first-run invite to set up the Vault key (back up the new wallet or recover one). -->
+    <div class="mback centered" id="stablesSeedInviteModal" style="z-index:622" aria-modal="true" role="dialog" onclick="if(event.target===this)stablesDismissSeedInvite()">
+        <div class="modal welcome" onclick="event.stopPropagation()" style="max-width:420px;border:1px solid rgba(251,191,36,.45);box-shadow:0 0 0 1px rgba(251,191,36,.12),0 8px 28px rgba(0,0,0,.35);background:linear-gradient(180deg,rgba(251,191,36,.08),rgba(11,15,20,.94));padding:22px 18px 20px">
+            <div style="font-size:34px;text-align:center;margin-bottom:6px" aria-hidden="true">🔑</div>
+            <div class="mttl" style="text-align:center;margin-bottom:12px">Set up your <strong style="color:#fbbf24">Vault key</strong></div>
+            <div style="text-align:center;margin-bottom:16px;line-height:1.55;color:var(--t);font-weight:600">
+                <p style="margin:0 0 10px">A new wallet was created on this device. Your <strong>Vault key</strong> (24-word seed phrase) is the only way to recover your funds, so back it up now.</p>
+                <p style="margin:0;color:var(--m);font-weight:500">Already have a Stables or Minima wallet? You can recover it instead.</p>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+                <button type="button" class="btn btn-w btn-primary" onclick="stablesInviteGoBackup()">Back up my new wallet</button>
+                <button type="button" class="btn btn-w" onclick="stablesInviteGoRecover()">Recover an existing wallet</button>
+                <button type="button" class="btn btn-w btn-link-action" onclick="stablesDismissSeedInvite()">Later</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Standalone app: styled confirm before replacing this device's wallet (replaces browser confirm). -->
+    <div class="mback centered" id="stablesRecoverConfirmModal" style="z-index:624" aria-modal="true" role="dialog" onclick="if(event.target===this)stablesRecoverConfirmCancel()">
+        <div class="modal welcome" onclick="event.stopPropagation()" style="max-width:420px;border:1px solid rgba(251,191,36,.45);box-shadow:0 0 0 1px rgba(251,191,36,.12),0 8px 28px rgba(0,0,0,.35);background:linear-gradient(180deg,rgba(251,191,36,.08),rgba(11,15,20,.94));padding:22px 18px 20px">
+            <div class="mttl" style="text-align:center;margin-bottom:12px">Replace this wallet?</div>
+            <div style="text-align:center;margin-bottom:16px;line-height:1.55;color:var(--t);font-weight:600">
+                <p style="margin:0 0 10px">This <strong>replaces the wallet on this device</strong> with the Vault key you entered, then rescans the network to find its coins.</p>
+                <p style="margin:0;color:var(--m);font-weight:500">If your current wallet holds funds, make sure it is backed up first, otherwise those funds could be lost forever.</p>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+                <button type="button" class="btn btn-w btn-primary" onclick="stablesOpenRecoveryQuiz()">Continue</button>
+                <button type="button" class="btn btn-w" onclick="stablesRecoverConfirmCancel()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Standalone app: 2-question safety check before a wallet-replacing recovery. -->
+    <div class="mback centered" id="stablesRecoverQuizModal" style="z-index:626" aria-modal="true" role="dialog" onclick="if(event.target===this)stablesRecoverQuizCancel()">
+        <div class="modal welcome" onclick="event.stopPropagation()" style="max-width:440px;border:1px solid rgba(251,191,36,.45);box-shadow:0 0 0 1px rgba(251,191,36,.12),0 8px 28px rgba(0,0,0,.35);background:linear-gradient(180deg,rgba(251,191,36,.07),rgba(11,15,20,.95));padding:22px 18px 20px">
+            <div class="mttl" style="text-align:center;margin-bottom:6px">Quick safety check</div>
+            <p class="xs mu" style="text-align:center;margin:0 0 16px;line-height:1.5;color:var(--m)">Two quick questions before you replace your wallet. This keeps your funds safe.</p>
+            <div class="stables-quiz-q" style="margin-bottom:14px">
+                <div style="font-weight:700;font-size:13px;margin-bottom:8px;line-height:1.4">1. If you lose your 24-word Vault key, who can recover your funds for you?</div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                    <button type="button" class="stables-quiz-opt" onclick="stablesRecoverQuizAnswer(1,0,this)">The Stables Council</button>
+                    <button type="button" class="stables-quiz-opt" onclick="stablesRecoverQuizAnswer(1,0,this)">StablesAgent support</button>
+                    <button type="button" class="stables-quiz-opt" onclick="stablesRecoverQuizAnswer(1,1,this)">No one. Only your Vault key can</button>
+                </div>
+                <div class="stables-quiz-fb" style="display:none;margin-top:8px;font-size:12px;line-height:1.5"></div>
+            </div>
+            <div class="stables-quiz-q" style="margin-bottom:16px">
+                <div style="font-weight:700;font-size:13px;margin-bottom:8px;line-height:1.4">2. Before replacing this wallet, how do you protect any funds it holds?</div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                    <button type="button" class="stables-quiz-opt" onclick="stablesRecoverQuizAnswer(2,1,this)">Back up its Vault key first</button>
+                    <button type="button" class="stables-quiz-opt" onclick="stablesRecoverQuizAnswer(2,0,this)">Nothing, recovery keeps them safe</button>
+                    <button type="button" class="stables-quiz-opt" onclick="stablesRecoverQuizAnswer(2,0,this)">The Council keeps a backup copy</button>
+                </div>
+                <div class="stables-quiz-fb" style="display:none;margin-top:8px;font-size:12px;line-height:1.5"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+                <button type="button" id="stablesRecoverQuizProceed" class="btn btn-w btn-primary" disabled style="opacity:.5;pointer-events:none" onclick="stablesRecoverQuizProceed()">Recover wallet</button>
+                <button type="button" class="btn btn-w" onclick="stablesRecoverQuizCancel()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Standalone app: recovery in progress (replaces the inline "Recovering..." text). -->
+    <div class="mback centered" id="stablesRecoverProgressModal" style="z-index:628" aria-modal="true" role="dialog">
+        <div class="modal welcome" onclick="event.stopPropagation()" style="max-width:420px;border:1px solid rgba(103,232,249,.35);box-shadow:0 0 0 1px rgba(103,232,249,.12),0 8px 28px rgba(0,0,0,.35);background:linear-gradient(180deg,rgba(103,232,249,.06),rgba(11,15,20,.96));padding:26px 20px 22px">
+            <div style="display:flex;justify-content:center;margin-bottom:16px"><span class="stables-qr-spinner" style="width:34px;height:34px;border-width:4px"></span></div>
+            <div class="mttl" style="text-align:center;margin-bottom:10px">Recovering your wallet</div>
+            <div style="text-align:center;line-height:1.55;color:var(--m);font-weight:500">
+                <p style="margin:0 0 10px">Recovery restarts your node, and the app relaunches on its own. That is a normal part of the process, not an error.</p>
+                <p style="margin:0">Keep the app open. It rescans the network to find your coins, which can take a few minutes. When it returns to your wallet, your balance and transaction history sync from your node.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Standalone app: danger warning before enabling the node terminal. -->
+    <div class="mback centered" id="stablesTerminalWarnModal" style="z-index:630" aria-modal="true" role="dialog" onclick="if(event.target===this)closeModal('stablesTerminalWarnModal')">
+        <div class="modal welcome" onclick="event.stopPropagation()" style="max-width:420px;border:1px solid rgba(248,113,113,.5);box-shadow:0 0 0 1px rgba(248,113,113,.14),0 8px 28px rgba(0,0,0,.4);background:linear-gradient(180deg,rgba(248,113,113,.08),rgba(11,15,20,.96));padding:22px 18px 20px">
+            <div class="mttl" style="text-align:center;color:#f87171;margin-bottom:12px">Danger: node terminal</div>
+            <div style="text-align:center;margin-bottom:16px;line-height:1.55;color:var(--t);font-weight:600">
+                <p style="margin:0 0 10px">This runs commands <strong>directly on your node</strong>, the engine that holds your wallet.</p>
+                <p style="margin:0 0 10px">A wrong or malicious command can <strong>move or lose your funds</strong>, <strong>expose your Vault key</strong>, or corrupt your wallet.</p>
+                <p style="margin:0;color:var(--m);font-weight:500">Only continue if you know exactly what you are doing. Never run a command someone else gave you.</p>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+                <button type="button" class="btn btn-w btn-danger" style="border-color:rgba(248,113,113,.5);color:#fecaca" onclick="stablesTerminalConfirmEnable()">I understand, enable</button>
+                <button type="button" class="btn btn-w" onclick="closeModal('stablesTerminalWarnModal')">Cancel</button>
             </div>
         </div>
     </div>
@@ -10318,27 +10623,43 @@
         }
 
         function syncAppUpdatesSection() {
-            const url = window.STABLES_CONFIG && window.STABLES_CONFIG.MDS_ZIP_URL;
             const buildVersion = window.STABLES_CONFIG && window.STABLES_CONFIG.APP_BUILD_VERSION;
             const link = document.getElementById('settingsMdsZipLink');
             const label = document.getElementById('settingsMdsZipUrlLabel');
-            const zipLabel = buildVersion ? ('Download Stables_' + (typeof stablesBuildLabel === 'function' ? stablesBuildLabel() : stablesFormatDisplayVersion(buildVersion)) + '.mds.zip') : 'Download Stables package (.mds.zip)';
-            if (link) {
-                link.textContent = zipLabel;
-                if (url) {
-                    link.href = url;
+
+            // Standalone app: updates are a new APK from the website / GitHub, not an MDS zip for a
+            // node. (Later we can notify holders on-chain; for now we point to the download page.)
+            if (window.__STABLES_ANDROID_APP) {
+                const title = document.getElementById('settingsAppUpdateTitle');
+                const appUrl = (window.STABLES_CONFIG && window.STABLES_CONFIG.APP_UPDATE_URL) || 'https://stablescouncil.org';
+                const buildDate0 = window.STABLES_CONFIG && window.STABLES_CONFIG.APP_BUILD_DATE;
+                if (title) title.textContent = 'Keep your Stables app up to date. New versions are published on the Stables website and GitHub, download the latest and install it.';
+                if (link) {
+                    link.textContent = 'Get the latest Stables app';
+                    link.href = appUrl;
                     link.onclick = null;
-                } else {
-                    link.href = '#';
-                    link.onclick = function (e) {
-                        e.preventDefault();
-                        if (typeof showToast === 'function') showToast('MDS zip URL not set. Add MDS_ZIP_URL in runtime-config.js.');
-                        return false;
-                    };
                 }
+                if (label) label.textContent = 'stablescouncil.org' + (buildDate0 ? ' · this build ' + buildDate0 : '');
+            } else {
+                const url = window.STABLES_CONFIG && window.STABLES_CONFIG.MDS_ZIP_URL;
+                const zipLabel = buildVersion ? ('Download Stables_' + (typeof stablesBuildLabel === 'function' ? stablesBuildLabel() : stablesFormatDisplayVersion(buildVersion)) + '.mds.zip') : 'Download Stables package (.mds.zip)';
+                if (link) {
+                    link.textContent = zipLabel;
+                    if (url) {
+                        link.href = url;
+                        link.onclick = null;
+                    } else {
+                        link.href = '#';
+                        link.onclick = function (e) {
+                            e.preventDefault();
+                            if (typeof showToast === 'function') showToast('MDS zip URL not set. Add MDS_ZIP_URL in runtime-config.js.');
+                            return false;
+                        };
+                    }
+                }
+                const buildDate = window.STABLES_CONFIG && window.STABLES_CONFIG.APP_BUILD_DATE;
+                if (label) label.textContent = buildDate ? 'Released ' + buildDate : '';
             }
-            const buildDate = window.STABLES_CONFIG && window.STABLES_CONFIG.APP_BUILD_DATE;
-            if (label) label.textContent = buildDate ? 'Released ' + buildDate : '';
             const hint = document.getElementById('settingsAppVersionHint');
             if (hint) hint.textContent = '';
             const showcasePill = document.getElementById('topbarShowcasePill');
@@ -10428,6 +10749,13 @@
 
         function stablesNavigateTopbarChannel(event, targetStage) {
             if (event) event.stopPropagation();
+            // Standalone app: only the demo channel is packaged in the APK assets. The other
+            // channels (showcase/test/prod) are not bundled, so navigating to them would fail to
+            // load (net::ERR_INVALID_RESPONSE). Ignore the tap instead.
+            if (window.__STABLES_ANDROID_APP && targetStage !== 'demo') {
+                stablesCloseTopbarChannelMenu();
+                return;
+            }
             const current = stablesCurrentAppStage();
             if (targetStage === current) {
                 stablesCloseTopbarChannelMenu();
@@ -10517,8 +10845,14 @@
             curPage = p;
             if (p === 'settings-updates') {
                 syncAppUpdatesSection();
+                try { if (typeof stablesInitBackgroundToggle === 'function') stablesInitBackgroundToggle(); } catch (_) { /* ignore */ }
+                try { if (typeof stablesInitAppTerminal === 'function') stablesInitAppTerminal(); } catch (_) { /* ignore */ }
                 try { if (typeof stablesSyncMinimaRecvAddrFormatSelect === 'function') stablesSyncMinimaRecvAddrFormatSelect(); } catch (_) { /* ignore */ }
                 if (typeof window.refreshSettingsBackupCopy === 'function') window.refreshSettingsBackupCopy();
+            }
+            // Leaving Settings and updates: re-lock the node terminal (and stop the live log).
+            if (prevPage === 'settings-updates' && p !== 'settings-updates') {
+                try { if (typeof stablesLockTerminal === 'function') stablesLockTerminal(); } catch (_) { /* ignore */ }
             }
             if (p === 'exchange') {
                 moveLpGraphBlockToExchange();
@@ -10584,6 +10918,13 @@
                 } catch (e) {
                     console.error('[navigate] feedback render error', e);
                 }
+            }
+            if (p === 'settings-security' && typeof stablesInitNativeSecurity === 'function') stablesInitNativeSecurity();
+            // Leaving Security: never leave the Vault key on screen (hide the revealed back-up seed
+            // and clear any text typed into the recover field).
+            if (prevPage === 'settings-security' && p !== 'settings-security') {
+                try { if (typeof stablesHideSeed === 'function') stablesHideSeed(); } catch (_) { /* ignore */ }
+                try { var _rp = document.getElementById('stablesRecoverPhrase'); if (_rp) _rp.value = ''; } catch (_) { /* ignore */ }
             }
             refreshAgentContextIfOpen();
             window.scrollTo(0, 0);
@@ -14768,6 +15109,415 @@
             window.open(url, '_blank', 'noopener,noreferrer');
         }
 
+        /* =====================================================================
+         * Standalone Stables Android app: native Vault key (seed) management.
+         * Everything here is gated on window.__STABLES_ANDROID_APP (set by the
+         * packaged build's stables-android-boot.js). In the web / MinimaOS build
+         * the flag is unset, so the original "Open Minima Security app" path and
+         * the existing reminder flow are untouched. Node commands route through
+         * the in-app bridge via MDS.cmd (RPC mode -> https://appassets.../rpc).
+         * ===================================================================== */
+        var STABLES_SEED_BACKED_UP_KEY = 'stables_seed_backed_up';
+        var STABLES_SEED_INVITED_KEY = 'stables_seed_invited';
+        var STABLES_RECOVER_DEFAULT_HOST = 'spartacusrex.com:9001';
+
+        function stablesIsStandaloneApp() { return !!window.__STABLES_ANDROID_APP; }
+
+        function stablesSeedToast(msg) {
+            try { if (typeof showToast === 'function') { showToast(msg); return; } } catch (_) { /* ignore */ }
+            try { alert(msg); } catch (_) { /* ignore */ }
+        }
+
+        function stablesNodeCmd(cmd, cb) {
+            try {
+                if (typeof MDS !== 'undefined' && MDS.cmd) { MDS.cmd(cmd, function (r) { cb(r || {}); }); return; }
+            } catch (e) { cb({ status: false, error: String((e && e.message) || e) }); return; }
+            cb({ status: false, error: 'No node bridge available' });
+        }
+
+        function stablesSeedIsBackedUp() {
+            try { return localStorage.getItem(STABLES_SEED_BACKED_UP_KEY) === '1'; } catch (_) { return false; }
+        }
+
+        function stablesInitNativeSecurity() {
+            if (!stablesIsStandaloneApp()) return;
+            var mds = document.getElementById('stablesMdsSecuritySection'); if (mds) mds.style.display = 'none';
+            var nat = document.getElementById('stablesNativeSecurity'); if (nat) nat.style.display = '';
+            stablesRefreshBackupBadge();
+        }
+
+        function stablesRefreshBackupBadge() {
+            var badge = document.getElementById('stablesBackupStateBadge');
+            if (!badge) return;
+            var done = stablesSeedIsBackedUp();
+            badge.textContent = done ? 'Backed up' : 'Not backed up yet';
+            badge.style.color = done ? '#34d399' : '#fbbf24';
+        }
+
+        function stablesUpdateSeedReminder() {
+            var b = document.getElementById('stablesSeedReminder');
+            if (!b) return;
+            b.style.display = (stablesIsStandaloneApp() && !stablesSeedIsBackedUp()) ? '' : 'none';
+        }
+
+        // ---- Back up (reveal the seed via the node "vault" command) ----
+        function stablesRevealSeed() {
+            var btn = document.getElementById('stablesRevealSeedBtn');
+            if (btn) { btn.disabled = true; btn.textContent = 'Reading from your node...'; }
+            stablesNodeCmd('vault', function (r) {
+                if (btn) { btn.disabled = false; btn.textContent = 'Show my 24-word Vault key'; }
+                var resp = (r && r.response) ? r.response : {};
+                if (!r || r.status === false || !resp.phrase) {
+                    var msg = (r && r.error) ? String(r.error) : 'Could not read your Vault key from the node.';
+                    if (resp.locked) msg = 'Your wallet is password-locked. Unlock it first to view your Vault key.';
+                    stablesSeedToast(msg);
+                    return;
+                }
+                var box = document.getElementById('stablesSeedWords');
+                if (box) box.textContent = String(resp.phrase).trim();
+                var rev = document.getElementById('stablesSeedReveal'); if (rev) rev.style.display = '';
+                if (btn) btn.style.display = 'none';
+            });
+        }
+
+        function stablesHideSeed() {
+            var box = document.getElementById('stablesSeedWords'); if (box) box.textContent = '';
+            var rev = document.getElementById('stablesSeedReveal'); if (rev) rev.style.display = 'none';
+            var btn = document.getElementById('stablesRevealSeedBtn'); if (btn) btn.style.display = '';
+        }
+
+        function stablesConfirmBackedUp() {
+            try { localStorage.setItem(STABLES_SEED_BACKED_UP_KEY, '1'); } catch (_) { /* ignore */ }
+            stablesHideSeed();
+            stablesRefreshBackupBadge();
+            stablesUpdateSeedReminder();
+            stablesSeedToast('Vault key marked as backed up.');
+        }
+
+        // ---- Recover (replace this device's wallet + rescan the chain) ----
+        function stablesRecoverDepthChange() {
+            var sel = document.getElementById('stablesRecoverDepth');
+            var adv = document.getElementById('stablesRecoverAdvanced');
+            if (adv) adv.style.display = (sel && sel.value === 'advanced') ? 'grid' : 'none';
+        }
+
+        // Step 1: validate, then open the styled confirm modal (replaces the raw browser confirm).
+        function stablesStartRecovery() {
+            var raw = (document.getElementById('stablesRecoverPhrase') || {}).value || '';
+            var phrase = raw.trim().replace(/\s+/g, ' ');
+            var words = phrase ? phrase.split(' ') : [];
+            if (words.length < 12) { stablesSeedToast('Enter your full Vault key (usually 24 words).'); return; }
+            var m = document.getElementById('stablesRecoverConfirmModal');
+            if (m) m.classList.add('open');
+        }
+
+        function stablesRecoverConfirmCancel() {
+            var m = document.getElementById('stablesRecoverConfirmModal'); if (m) m.classList.remove('open');
+        }
+
+        // Safety quiz gate (standalone app): two questions before a wallet-replacing recovery.
+        // Both must be answered correctly to enable the recover button; a wrong answer points to StablesAgent.
+        var STABLES_RECOVER_QUIZ = { 1: false, 2: false };
+
+        function stablesOpenRecoveryQuiz() {
+            var cm = document.getElementById('stablesRecoverConfirmModal'); if (cm) cm.classList.remove('open');
+            stablesResetRecoveryQuiz();
+            var q = document.getElementById('stablesRecoverQuizModal'); if (q) q.classList.add('open');
+        }
+
+        function stablesResetRecoveryQuiz() {
+            STABLES_RECOVER_QUIZ = { 1: false, 2: false };
+            var modal = document.getElementById('stablesRecoverQuizModal'); if (!modal) return;
+            var opts = modal.querySelectorAll('.stables-quiz-opt');
+            for (var i = 0; i < opts.length; i++) { opts[i].classList.remove('is-correct', 'is-wrong'); }
+            var fbs = modal.querySelectorAll('.stables-quiz-fb');
+            for (var j = 0; j < fbs.length; j++) { fbs[j].style.display = 'none'; fbs[j].innerHTML = ''; }
+            stablesRecoverQuizSyncProceed();
+        }
+
+        function stablesRecoverQuizAnswer(q, correct, btn) {
+            var group = btn.closest('.stables-quiz-q'); if (!group) return;
+            var opts = group.querySelectorAll('.stables-quiz-opt');
+            for (var i = 0; i < opts.length; i++) { opts[i].classList.remove('is-correct', 'is-wrong'); }
+            var fb = group.querySelector('.stables-quiz-fb');
+            if (correct) {
+                btn.classList.add('is-correct');
+                STABLES_RECOVER_QUIZ[q] = true;
+                if (fb) { fb.style.display = 'none'; fb.innerHTML = ''; }
+            } else {
+                btn.classList.add('is-wrong');
+                STABLES_RECOVER_QUIZ[q] = false;
+                if (fb) {
+                    var msg = (q === 1)
+                        ? 'Not quite. With self-custody, only your Vault key can restore your funds. No one, not the Council or StablesAgent, can recover them for you.'
+                        : 'Not quite. Replacing this wallet discards the current one. If it holds funds, back up its Vault key first, or those funds can be lost forever.';
+                    fb.style.display = '';
+                    fb.style.color = '#fbbf24';
+                    fb.innerHTML = msg + ' <button type="button" onclick="stablesRecoverQuizAskAgent()" style="background:none;border:none;color:var(--c);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;padding:0">Talk it through with StablesAgent</button>';
+                }
+            }
+            stablesRecoverQuizSyncProceed();
+        }
+
+        function stablesRecoverQuizSyncProceed() {
+            var btn = document.getElementById('stablesRecoverQuizProceed'); if (!btn) return;
+            var ok = STABLES_RECOVER_QUIZ[1] && STABLES_RECOVER_QUIZ[2];
+            btn.disabled = !ok;
+            btn.style.opacity = ok ? '1' : '.5';
+            btn.style.pointerEvents = ok ? '' : 'none';
+        }
+
+        function stablesRecoverQuizAskAgent() {
+            stablesRecoverQuizCancel();
+            try { if (typeof openAgentExplain === 'function') openAgentExplain('Keeping your Vault key safe and what wallet recovery means'); } catch (_) { /* ignore */ }
+        }
+
+        function stablesRecoverQuizCancel() {
+            var q = document.getElementById('stablesRecoverQuizModal'); if (q) q.classList.remove('open');
+        }
+
+        function stablesRecoverQuizProceed() {
+            if (!(STABLES_RECOVER_QUIZ[1] && STABLES_RECOVER_QUIZ[2])) return;
+            var q = document.getElementById('stablesRecoverQuizModal'); if (q) q.classList.remove('open');
+            stablesRecoverConfirmProceed();
+        }
+
+        // Step 2: user confirmed in the styled modal. Run the recovery, show the progress modal, and
+        // clear the entered Vault key from the screen so it is not left exposed.
+        function stablesRecoverConfirmProceed() {
+            var cm = document.getElementById('stablesRecoverConfirmModal'); if (cm) cm.classList.remove('open');
+
+            var raw = (document.getElementById('stablesRecoverPhrase') || {}).value || '';
+            var phrase = raw.trim().replace(/\s+/g, ' ');
+            var words = phrase ? phrase.split(' ') : [];
+            if (words.length < 12) { stablesSeedToast('Enter your full Vault key (usually 24 words).'); return; }
+
+            var depth = (document.getElementById('stablesRecoverDepth') || {}).value || 'standard';
+            var keyuses, keys, host = STABLES_RECOVER_DEFAULT_HOST;
+            if (depth === 'advanced') {
+                keyuses = parseInt((document.getElementById('stablesRecoverKeyuses') || {}).value, 10) || 1000;
+                keys = parseInt((document.getElementById('stablesRecoverKeys') || {}).value, 10) || 64;
+                var h = ((document.getElementById('stablesRecoverHost') || {}).value || '').trim();
+                if (h) host = h;
+            } else if (depth === 'deep') {
+                keyuses = 5000; keys = 90;
+            } else {
+                keyuses = 1000; keys = 64;
+            }
+
+            // Build the command before clearing the field, then wipe the entered Vault key from the UI.
+            var cmd = 'megammrsync action:resync host:' + host + ' phrase:"' + phrase + '" keyuses:' + keyuses + ' keys:' + keys;
+            var ta = document.getElementById('stablesRecoverPhrase'); if (ta) ta.value = '';
+            phrase = '';
+
+            // Recovery replaces this device's wallet, so the old wallet's local activity log is stale.
+            // Clear it; the recovered wallet's full history is re-synced fresh from the node after the
+            // relaunch (avoids showing the previous wallet's transactions or duplicate rows).
+            try {
+                var _ak = (window.STABLES_CONFIG && window.STABLES_CONFIG.USER_ACTIVITY_STORAGE_KEY) || 'stables_demo_user_activity_v1';
+                localStorage.removeItem(_ak);
+            } catch (_) { /* ignore */ }
+
+            var pm = document.getElementById('stablesRecoverProgressModal'); if (pm) pm.classList.add('open');
+            var btn = document.getElementById('stablesRecoverBtn'); if (btn) { btn.disabled = true; btn.textContent = 'Recovering…'; }
+
+            // megammrsync does the whole job in one command: restore the seed phrase, regenerate keys
+            // at the chosen key-use depth, and resync the chain to rediscover coins. In the standalone
+            // app the node restarts on completion and the app relaunches itself (StablesActivity
+            // shutdown listener), so this callback often does not run, the app simply comes back on the
+            // wallet with the balance. The handling below covers the web/other case.
+            stablesNodeCmd(cmd, function (r) {
+                if (btn) { btn.disabled = false; btn.textContent = 'Recover wallet'; }
+                if (pm) pm.classList.remove('open');
+                if (!r || r.status === false) {
+                    var e = (r && r.error) ? String(r.error) : 'Recovery failed. Check the Vault key and your connection, then try Deep recovery.';
+                    stablesSeedToast('Recovery error: ' + e);
+                    return;
+                }
+                // The user clearly holds this seed elsewhere, so treat it as backed up.
+                try { localStorage.setItem(STABLES_SEED_BACKED_UP_KEY, '1'); } catch (_) { /* ignore */ }
+                stablesRefreshBackupBadge();
+                stablesUpdateSeedReminder();
+                stablesSeedToast('Recovery complete. If the balance looks incomplete, run Deep recovery.');
+                try { if (typeof stablesPullBlockAndBalanceFromMds === 'function') stablesPullBlockAndBalanceFromMds(); } catch (_) { /* ignore */ }
+                try { if (typeof window.stablesSyncNodeTransactions === 'function') window.stablesSyncNodeTransactions(true); } catch (_) { /* ignore */ }
+            });
+        }
+
+        // ---- Keys & signatures (Minima key-use model) ----
+        function stablesCheckKeys() {
+            var out = document.getElementById('stablesKeysStatus');
+            if (out) { out.style.display = ''; out.textContent = 'Checking your keys...'; }
+            stablesNodeCmd('keys action:checkkeys', function (r) {
+                if (!r || r.status === false) { if (out) out.textContent = 'Could not check keys: ' + ((r && r.error) || 'unknown'); return; }
+                stablesNodeCmd('keys', function (r2) {
+                    var resp = (r2 && r2.response) ? r2.response : {};
+                    var n = Array.isArray(resp.keys) ? resp.keys.length : (resp.size != null ? resp.size : null);
+                    var txt = 'Your keys are valid.';
+                    if (n != null) txt += ' ' + n + ' signing keys on this device.';
+                    txt += ' Each key signs a limited number of times; if you send very often, prepare more below.';
+                    if (out) out.textContent = txt;
+                });
+            });
+        }
+
+        function stablesPrepareMoreKeys() {
+            if (!window.confirm('Prepare more signing capacity? This can take a moment.')) return;
+            var out = document.getElementById('stablesKeysStatus');
+            if (out) { out.style.display = ''; out.textContent = 'Preparing more signatures...'; }
+            stablesNodeCmd('keys action:createallkeys keyuses:1000', function (r) {
+                if (out) out.textContent = (r && r.status !== false) ? 'Done. More signatures are ready.' : ('Could not prepare keys: ' + ((r && r.error) || 'unknown'));
+            });
+        }
+
+        // ---- First-run invite ----
+        function stablesMaybeShowSeedInvite() {
+            if (!stablesIsStandaloneApp()) { return; }
+            stablesUpdateSeedReminder();
+            if (stablesSeedIsBackedUp()) return;
+            var invited = false; try { invited = localStorage.getItem(STABLES_SEED_INVITED_KEY) === '1'; } catch (_) { /* ignore */ }
+            if (invited) return;
+            try { localStorage.setItem(STABLES_SEED_INVITED_KEY, '1'); } catch (_) { /* ignore */ }
+            var m = document.getElementById('stablesSeedInviteModal');
+            if (m) m.classList.add('open');
+        }
+        function stablesDismissSeedInvite() {
+            var m = document.getElementById('stablesSeedInviteModal'); if (m) m.classList.remove('open');
+        }
+
+        // ── Advanced: node terminal + live node log (standalone app only) ──────────────
+        function stablesEnableTerminal() {
+            var m = document.getElementById('stablesTerminalWarnModal'); if (m) m.classList.add('open');
+        }
+        function stablesTerminalConfirmEnable() {
+            try { closeModal('stablesTerminalWarnModal'); } catch (_) { /* ignore */ }
+            var p = document.getElementById('stablesTerminalPanel'); if (p) p.style.display = '';
+            var b = document.getElementById('stablesTerminalEnableBtn'); if (b) b.style.display = 'none';
+            var i = document.getElementById('stablesTerminalInput'); if (i) i.focus();
+        }
+        function stablesInitAppTerminal() {
+            if (!window.__STABLES_ANDROID_APP) return;
+            var sec = document.getElementById('stablesAppTerminalSection');
+            if (sec) sec.style.display = '';
+        }
+        function stablesInitBackgroundToggle() {
+            if (!window.__STABLES_ANDROID_APP) return;
+            var sec = document.getElementById('stablesBackgroundSection');
+            if (sec) sec.style.display = '';
+            var t = document.getElementById('stablesBackgroundToggle');
+            if (t) {
+                var on = true;
+                try { if (window.StablesAndroid && window.StablesAndroid.isBackgroundEnabled) on = !!window.StablesAndroid.isBackgroundEnabled(); } catch (_) { /* ignore */ }
+                t.checked = on;
+            }
+        }
+        function stablesSetBackground(checked) {
+            try { if (window.StablesAndroid && window.StablesAndroid.setBackgroundEnabled) window.StablesAndroid.setBackgroundEnabled(!!checked); } catch (_) { /* ignore */ }
+            stablesSeedToast(checked ? 'Your bank will keep running in the background.' : 'Your bank will stop when you close the app.');
+        }
+        function stablesRunTerminalCmd() {
+            var inp = document.getElementById('stablesTerminalInput');
+            var out = document.getElementById('stablesTerminalOutput');
+            var wrap = document.getElementById('stablesTerminalResultWrap');
+            var cmd = inp ? String(inp.value || '').trim() : '';
+            if (!cmd) return;
+            if (wrap) wrap.style.display = '';
+            if (out) { out.textContent = '> ' + cmd + '\n\nRunning…'; }
+            stablesNodeCmd(cmd, function (r) {
+                var text;
+                try { text = JSON.stringify(r, null, 2); } catch (_) { text = String(r); }
+                if (out) { out.textContent = '> ' + cmd + '\n\n' + text; }
+            });
+        }
+        function stablesCopyTerminalOutput() {
+            var out = document.getElementById('stablesTerminalOutput');
+            var text = out ? (out.textContent || '') : '';
+            if (!text) { stablesSeedToast('Run a command first.'); return; }
+            var done = function () { stablesSeedToast('Result copied.'); };
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(done).catch(function () { stablesFallbackCopyText(text, done); });
+                    return;
+                }
+            } catch (_) { /* ignore */ }
+            stablesFallbackCopyText(text, done);
+        }
+        function stablesFallbackCopyText(text, done) {
+            try {
+                var ta = document.createElement('textarea');
+                ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+                document.body.appendChild(ta); ta.focus(); ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                if (done) done();
+            } catch (_) { stablesSeedToast('Could not copy.'); }
+        }
+
+        // Live node log: polls the in-app capture of the node's stdout (same lines you see when the
+        // node runs from a terminal on PC). Served by the Android bridge at /log.
+        var STABLES_LOG_TIMER = null;
+        function stablesToggleNodeLog() {
+            var pane = document.getElementById('stablesNodeLogPane');
+            var btn = document.getElementById('stablesNodeLogBtn');
+            if (STABLES_LOG_TIMER) {
+                clearInterval(STABLES_LOG_TIMER); STABLES_LOG_TIMER = null;
+                if (btn) btn.textContent = 'Show live node log';
+                return;
+            }
+            if (pane) pane.style.display = '';
+            if (btn) btn.textContent = 'Stop live node log';
+            stablesFetchNodeLog();
+            STABLES_LOG_TIMER = setInterval(stablesFetchNodeLog, 1500);
+        }
+        function stablesFetchNodeLog() {
+            var pane = document.getElementById('stablesNodeLogPane');
+            if (!pane) return;
+            fetch('https://appassets.androidplatform.net/log/', { cache: 'no-store' })
+                .then(function (res) { return res.json(); })
+                .then(function (j) {
+                    var lines = (j && j.response && j.response.lines) ? j.response.lines : (j && j.lines) ? j.lines : [];
+                    var atBottom = (pane.scrollTop + pane.clientHeight >= pane.scrollHeight - 30);
+                    pane.textContent = lines.join('\n');
+                    if (atBottom) pane.scrollTop = pane.scrollHeight;
+                })
+                .catch(function () { /* ignore: log only exists in the standalone app */ });
+        }
+        function stablesLockTerminal() {
+            if (STABLES_LOG_TIMER) { clearInterval(STABLES_LOG_TIMER); STABLES_LOG_TIMER = null; }
+            var p = document.getElementById('stablesTerminalPanel'); if (p) p.style.display = 'none';
+            var b = document.getElementById('stablesTerminalEnableBtn'); if (b) b.style.display = '';
+            var w = document.getElementById('stablesTerminalResultWrap'); if (w) w.style.display = 'none';
+            var o = document.getElementById('stablesTerminalOutput'); if (o) o.textContent = '';
+            var i = document.getElementById('stablesTerminalInput'); if (i) i.value = '';
+            var lp = document.getElementById('stablesNodeLogPane'); if (lp) { lp.style.display = 'none'; lp.textContent = ''; }
+            var lb = document.getElementById('stablesNodeLogBtn'); if (lb) lb.textContent = 'Show live node log';
+        }
+
+        // Standalone app: the APK only bundles the demo channel, so dim the channels that are not
+        // packaged (Showcase; Public Testing / Live are already disabled) so they are not tappable.
+        function stablesDisableUnavailableChannelsInApp() {
+            if (!window.__STABLES_ANDROID_APP) return;
+            var sc = document.getElementById('topbarChannelOptionShowcase');
+            if (sc) {
+                sc.disabled = true;
+                sc.style.opacity = '0.5';
+                sc.style.cursor = 'not-allowed';
+            }
+        }
+        function stablesInviteGoBackup() {
+            stablesDismissSeedInvite();
+            navigate('settings-security');
+        }
+        function stablesInviteGoRecover() {
+            stablesDismissSeedInvite();
+            navigate('settings-security');
+            setTimeout(function () {
+                var el = document.getElementById('stablesRecoverPhrase');
+                if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (el) el.focus();
+            }, 250);
+        }
+
         function closeModal(id) {
             const el = document.getElementById(id);
             if (el) el.classList.remove('open');
@@ -15687,38 +16437,63 @@
             return looksLikeMexcTicker(body) ? body : null;
         }
 
-        /** Best-effort 64-hex txid from an MDS send (or nested JSON) response. */
-        function stablesExtractTxidFromMdsResponse(res) {
-            function walk(o, depth) {
-                if (depth > 14 || o == null) return '';
-                if (typeof o === 'string') {
-                    const m = o.match(/0x[a-fA-F0-9]{64}/);
-                    return m ? m[0] : '';
-                }
-                if (typeof o !== 'object') return '';
-                if (Array.isArray(o)) {
-                    for (let i = 0; i < o.length; i++) {
-                        const v = walk(o[i], depth + 1);
-                        if (v) return v;
-                    }
-                    return '';
-                }
-                const keys = Object.keys(o);
-                for (let j = 0; j < keys.length; j++) {
-                    const v = walk(o[keys[j]], depth + 1);
-                    if (v) return v;
-                }
+        /** Depth-first search for a 64-hex value under any key matching `keyRe`. */
+        function stablesFindHashUnderKey(o, keyRe, depth) {
+            if (depth > 14 || o == null || typeof o !== 'object') return '';
+            if (Array.isArray(o)) {
+                for (let i = 0; i < o.length; i++) { const v = stablesFindHashUnderKey(o[i], keyRe, depth + 1); if (v) return v; }
                 return '';
             }
-            try {
-                const a = walk(res, 0);
-                if (a) return a;
-                let body = res && res.response;
-                if (typeof body === 'string') {
-                    try { body = JSON.parse(body); } catch (_) { /* keep string */ }
+            const keys = Object.keys(o);
+            for (let j = 0; j < keys.length; j++) {
+                if (keyRe.test(keys[j]) && typeof o[keys[j]] === 'string') {
+                    const m = o[keys[j]].match(/0x[a-fA-F0-9]{64}/);
+                    if (m) return m[0];
                 }
-                return walk(body, 0);
+            }
+            for (let j = 0; j < keys.length; j++) { const v = stablesFindHashUnderKey(o[keys[j]], keyRe, depth + 1); if (v) return v; }
+            return '';
+        }
+        /** The real on-chain transaction id (txpowid) from a send / MDS response. Returns ONLY a value
+         *  found under a `txpowid` key, the proof-of-work hash the explorer indexes (e.g. 0x0000...).
+         *  It deliberately does NOT fall back to the first 64-hex value: a send response that has not
+         *  been mined yet exposes the inner transaction id (a plain hash with no leading-zero PoW)
+         *  which the explorer cannot resolve, and surfacing that produced a dead "did not match any
+         *  records" link. When no txpowid is present yet, returns '' and the row stays pending until
+         *  the node history sync supplies the confirmed txpowid. */
+        function stablesExtractTxidFromMdsResponse(res) {
+            try {
+                let body = (res && res.response != null) ? res.response : res;
+                if (typeof body === 'string') { try { body = JSON.parse(body); } catch (_) { /* keep string */ } }
+                return stablesFindHashUnderKey(body, /^txpowid$/i, 0) || stablesFindHashUnderKey(res, /^txpowid$/i, 0);
             } catch (_) { return ''; }
+        }
+        /** The inner transaction id (body.txn.transactionid) from a send response. This is a plain hash
+         *  with no leading-zero PoW and is NOT what the explorer indexes; we keep it only to reconcile
+         *  an optimistic pending row with the confirmed node-history row once the txpow is mined. */
+        function stablesExtractTransactionIdFromMdsResponse(res) {
+            try {
+                let body = (res && res.response != null) ? res.response : res;
+                if (typeof body === 'string') { try { body = JSON.parse(body); } catch (_) { /* keep string */ } }
+                const t = stablesFindHashUnderKey(body, /^transactionid$/i, 0) || stablesFindHashUnderKey(res, /^transactionid$/i, 0);
+                if (t) return t;
+                // Last resort for legacy responses with no labelled key: first 64-hex anywhere.
+                function firstHash(o, depth) {
+                    if (depth > 14 || o == null) return '';
+                    if (typeof o === 'string') { const m = o.match(/0x[a-fA-F0-9]{64}/); return m ? m[0] : ''; }
+                    if (typeof o !== 'object') return '';
+                    if (Array.isArray(o)) { for (let i = 0; i < o.length; i++) { const v = firstHash(o[i], depth + 1); if (v) return v; } return ''; }
+                    const keys = Object.keys(o);
+                    for (let j = 0; j < keys.length; j++) { const v = firstHash(o[keys[j]], depth + 1); if (v) return v; }
+                    return '';
+                }
+                return firstHash(body, 0) || firstHash(res, 0);
+            } catch (_) { return ''; }
+        }
+
+        /** Explorer URL for an on-chain transaction hash. */
+        function stablesTxExplorerHref(txid) {
+            return getTreasuryExplorerTxBase() + encodeURIComponent(String(txid || '').trim());
         }
 
         function stablesDeepFindBlockInObject(obj, depth) {
@@ -15811,7 +16586,7 @@
                 return;
             }
             if (!hasBlock && !hasMinima) {
-                el.textContent = 'Node reached · waiting for block and balance details';
+                el.textContent = window.__STABLES_ANDROID_APP ? 'Connected · loading your balance…' : 'Node reached · waiting for block and balance details';
                 el.style.display = 'block';
                 return;
             }
@@ -15841,7 +16616,7 @@
             stablesUpdateNodeConnectButton();
             stablesRefreshWalletHeroNodeLine();
             if (first) {
-                showToast('Connected to your node ✓', { tone: 'success', centerScreen: true, durationMs: 5000 });
+                showToast(window.__STABLES_ANDROID_APP ? 'Your bank is connected to the network ✓' : 'Connected to your node ✓', { tone: 'success', centerScreen: true, durationMs: 5000 });
                 closeStablesNodeConnectModal();
                 if (typeof window.stablesSyncNodeTransactions === 'function') {
                     window.stablesSyncNodeTransactions(true);
@@ -16002,7 +16777,7 @@
                     pill.classList.remove('sync-pill--placeholder');
                     syncEl.textContent = 'Connecting…';
                     pill.classList.add('stables-node-cluster-pill--pending');
-                    pill.title = 'Waiting for node data. Use Option 2 in the Connect panel to link your own Minima node.';
+                    pill.title = 'Waiting for node data. Open the Connect panel to link your own Minima node.';
                 }
                 return;
             }
@@ -16088,7 +16863,7 @@
             window.__STABLES_MDS_RPC_WAIT_TID = setTimeout(function () {
                 window.__STABLES_MDS_RPC_WAIT_TID = null;
                 if (window.__STABLES_LIVE_NODE && !window.__STABLES_LIVE_NODE.rpcOk) {
-                    stablesShowCertErrorPopup('Session opened, but node commands are not returning. Use Option 2 in the Connect panel to link your own Minima node.');
+                    stablesShowCertErrorPopup('Session opened, but node commands are not returning. Open the Connect panel to link your own Minima node.');
                 }
             }, 9000);
         }
@@ -16151,7 +16926,7 @@
             if (window.__STABLES_LIVE_NODE && window.__STABLES_LIVE_NODE.active && window.__STABLES_LIVE_NODE.rpcOk) {
                 if (st) st.textContent = 'Already connected. Block height and MINIMA update from your node.';
             } else if (window.__STABLES_LIVE_NODE && window.__STABLES_LIVE_NODE.active && !window.__STABLES_LIVE_NODE.rpcOk) {
-                if (st) st.textContent = 'Use Option 2 to connect your own Minima node directly.';
+                if (st) st.textContent = 'Connect to your own Minima node directly to continue.';
             } else if (typeof MDS !== 'undefined' && MDS.cmd) {
                 if (st) st.textContent = '';
             } else if (st) {
@@ -16256,7 +17031,7 @@
         function stablesConnectPureMinima() {
             var url = ((document.getElementById('pureMinimaRpcUrl') || {}).value || '').trim().replace(/\/+$/, '');
             var pass = ((document.getElementById('pureMinimaRpcPass') || {}).value || '').trim();
-            if (!url) { stablesDirectNodeSetStatus('Enter your node RPC URL, e.g. http://localhost:9106'); return; }
+            if (!url) { stablesDirectNodeSetStatus('Enter your node RPC URL, e.g. http://localhost:9105'); return; }
             if (!/^https?:\/\//i.test(url)) { url = 'http://' + url; try { var _e = document.getElementById('pureMinimaRpcUrl'); if (_e) _e.value = url; } catch (_) { } }
             window.__STABLES_RPC_MODE = { url: url, user: 'minima', pass: pass };
             try { localStorage.setItem('stables_rpc_url', url); } catch (_) { /* ignore */ }
@@ -16371,7 +17146,7 @@
             stablesArmMdsLivePolling();
             setTimeout(function () {
                 if (L && !L.rpcOk) {
-                    stablesShowCertErrorPopup('The node is reachable, but Stables cannot receive command responses. Please make sure your node was started with -rpccors enabled and that the Session UID matches this Stables MiniDapp. Then reconnect using Option 2 in the Connect panel.');
+                    stablesShowCertErrorPopup('The node is reachable, but Stables cannot receive command responses. Make sure RPC is enabled on your node, then reconnect from the Connect panel.');
                 }
             }, 8000);
         }
@@ -18189,7 +18964,7 @@
                     ${amount ? `<div class="xs mu" style="margin-bottom:8px">${amount}</div>` : ''}
                     ${address ? `<div class="xs mu" style="word-break:break-all">To ${address}</div>` : ''}
                 </div>
-                ${txid ? `<div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);margin-bottom:10px"><div class="xs mu">Transaction id</div><div style="font-size:12px;font-weight:800;margin-top:4px;word-break:break-all;color:var(--c)">${txid}</div></div>` : ''}
+                ${txid ? `<div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);margin-bottom:10px"><div class="xs mu">Transaction hash <span style="color:var(--am);font-weight:800">(pending on chain)</span></div><a href="${stablesTxExplorerHref(txid)}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:800;margin-top:4px;word-break:break-all;color:var(--c);text-decoration:underline;text-underline-offset:2px;display:block">${txid}</a><div class="xs mu" style="margin-top:6px;color:var(--m)">Tap to view on the Minima explorer (it appears there once confirmed).</div></div>` : ''}
                 ${o.note ? `<p class="xs mu" style="margin:0;line-height:1.5;color:var(--m)">${o.note}</p>` : ''}
             `;
             const modal = document.getElementById('agentActionModal');
@@ -18555,10 +19330,15 @@
                                 const now = new Date();
                                 const dateText = now.toLocaleString('en-GB', { month: 'short', day: '2-digit' }) + ' · ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
                                 const txid = stablesExtractTxidFromMdsResponse(res);
+                                const txnId = stablesExtractTransactionIdFromMdsResponse(res);
                                 window.stablesAppendUserActivityRow({
-                                    // Use the txpow id so the node-history sync upserts THIS same row
-                                    // (id NODE-<txpowid>) instead of adding a duplicate "Sent" entry.
+                                    // Use the txpow id when the response already carries it so the node
+                                    // history sync upserts THIS same row (id NODE-<txpowid>). When the
+                                    // txpow is not mined yet, txid is '' and we keep an optimistic
+                                    // MINIMA-<ts> row; pendingTxnId lets the confirmed node row reconcile
+                                    // against it (see upsertUserActivityRows) so it is never shown twice.
                                     id: txid ? ('NODE-' + txid) : ('MINIMA-' + Date.now()),
+                                    pendingTxnId: txnId || '',
                                     dir: 'out',
                                     icon: '↗',
                                     counterparty: outputs.length > 1 ? outputs.length + ' recipients' : 'On-chain recipient',
@@ -21425,6 +22205,15 @@ const APP_TAB_TITLE = 'Demo · Stables';
         });
         runBootStep('autoOpenAgentWelcomeOnFirstAccess', function () {
             if (typeof autoOpenAgentWelcomeOnFirstAccess === 'function') autoOpenAgentWelcomeOnFirstAccess();
+        });
+        runBootStep('stablesNativeSecurityInit', function () {
+            // Standalone app only: prime the native security page state, show the persistent backup
+            // reminder, and (first run) the set-up-your-Vault-key invite. No-ops in web/MinimaOS.
+            if (typeof stablesInitNativeSecurity === 'function') stablesInitNativeSecurity();
+            if (typeof stablesMaybeShowSeedInvite === 'function') stablesMaybeShowSeedInvite();
+            if (typeof stablesDisableUnavailableChannelsInApp === 'function') stablesDisableUnavailableChannelsInApp();
+            if (typeof stablesInitAppTerminal === 'function') stablesInitAppTerminal();
+            if (typeof stablesInitBackgroundToggle === 'function') stablesInitBackgroundToggle();
         });
 
         // Auto-hide/reveal top and bottom chrome based on scroll direction.
