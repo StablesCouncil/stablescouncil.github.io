@@ -3187,7 +3187,7 @@
             return Number.isFinite(n) ? String(n) : String(part).trim();
           }).join('.')
         : 'unknown';
-      const repoUrl = String(cfg.MDS_ZIP_URL || 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.1.0.mds.zip').trim();
+      const repoUrl = String(cfg.MDS_ZIP_URL || 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.3.42.mds.zip').trim();
       const introHtml = String(c.welcomeShowcaseIntroHtml || '')
         .replace(/__APP_VERSION__/g, versionLabel)
         .replace(/__MDS_REPO_URL__/g, repoUrl);
