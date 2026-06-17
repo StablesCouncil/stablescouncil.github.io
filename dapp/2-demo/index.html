@@ -94,13 +94,57 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
+    <script>
+        (function () {
+            var KEY = 'stables_colour_theme';
+            var LEGACY = 'theme';
+            var migrate = { midnight: 'stables-dark', 'soft-light': 'paper', daylight: 'paper', light: 'paper' };
+            var allowed = ['stables-dark', 'slate', 'solar', 'rose', 'violet', 'paper'];
+            var t = localStorage.getItem(KEY);
+            if (!t) {
+                var leg = localStorage.getItem(LEGACY);
+                if (leg === 'light') t = 'paper';
+                else if (leg === 'dark') t = 'stables-dark';
+            }
+            if (t && migrate[t]) t = migrate[t];
+            if (!t || allowed.indexOf(t) < 0) t = 'stables-dark';
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
     <style>
-        :root {
+        :root,
+        [data-theme="stables-dark"] {
             --bg: #0b0f14;
+            --bg-glow: rgba(103, 232, 249, .1);
             --panel: rgba(16, 24, 38, .85);
             --card: rgba(11, 15, 20, .4);
+            --surface-chrome: rgba(11, 15, 20, 0.4);
+            --surface-chrome-alt: rgba(10, 14, 20, 0.4);
+            --surface-card: rgba(16, 24, 38, .7);
+            --surface-input: rgba(11, 15, 20, .5);
+            --surface-input-solid: rgba(11, 15, 20, .95);
+            --surface-modal: rgba(13, 18, 27, .98);
+            --surface-btn: rgba(15, 23, 42, .6);
+            --surface-btn-hover: rgba(15, 23, 42, .82);
+            --surface-disabled: rgba(24, 34, 52, .52);
+            --surface-bar-track: rgba(255, 255, 255, 0.06);
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --border-accent: rgba(103, 232, 249, .2);
+            --border-accent-soft: rgba(103, 232, 249, .15);
+            --border-accent-faint: rgba(103, 232, 249, .08);
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, .4), 0 0 24px rgba(103, 232, 249, .06);
+            --overlay-backdrop: rgba(0, 0, 0, .7);
+            --surface-toast: rgba(16, 24, 38, .96);
+            --surface-elevated: rgba(16, 24, 38, .5);
+            --surface-elevated-hover: rgba(16, 24, 38, .72);
+            --surface-accent-soft: rgba(103, 232, 249, .07);
+            --surface-highlight-purple: rgba(167, 139, 250, .06);
+            --surface-highlight-purple-border: rgba(167, 139, 250, .22);
+            --surface-drawer: rgba(11, 15, 20, .98);
+            --surface-drawer-chrome: rgba(11, 15, 20, .96);
             --t: #e6edf3;
             --m: #9fb0c0;
+            --muted: #9fb0c0;
             --ln: rgba(103, 232, 249, .15);
             --c: #67e8f9;
             --pu: #a78bfa;
@@ -137,6 +181,206 @@
             --fz-btn-lg: 15px;
         }
 
+        [data-theme="slate"] {
+            --bg: #1a2332;
+            --bg-glow: rgba(56, 189, 248, .1);
+            --panel: rgba(30, 41, 59, .9);
+            --card: rgba(26, 35, 50, .78);
+            --surface-chrome: rgba(22, 30, 44, 0.92);
+            --surface-chrome-alt: rgba(22, 30, 44, 0.92);
+            --surface-card: rgba(30, 41, 59, .86);
+            --surface-input: rgba(34, 46, 64, .82);
+            --surface-input-solid: rgba(26, 35, 50, .98);
+            --surface-modal: rgba(24, 32, 46, .98);
+            --surface-btn: rgba(38, 50, 68, .78);
+            --surface-btn-hover: rgba(48, 62, 82, .92);
+            --surface-disabled: rgba(38, 50, 68, .55);
+            --surface-bar-track: rgba(56, 189, 248, 0.1);
+            --border-subtle: rgba(241, 245, 249, 0.08);
+            --border-accent: rgba(56, 189, 248, .32);
+            --border-accent-soft: rgba(56, 189, 248, .22);
+            --border-accent-faint: rgba(56, 189, 248, .12);
+            --shadow-card: 0 8px 28px rgba(0, 0, 0, .42), 0 0 20px rgba(56, 189, 248, .08);
+            --overlay-backdrop: rgba(10, 14, 22, .74);
+            --surface-toast: rgba(26, 35, 50, .98);
+            --surface-elevated: rgba(38, 50, 68, .72);
+            --surface-elevated-hover: rgba(48, 62, 82, .88);
+            --surface-accent-soft: rgba(56, 189, 248, .1);
+            --surface-highlight-purple: rgba(129, 140, 248, .1);
+            --surface-highlight-purple-border: rgba(129, 140, 248, .3);
+            --surface-drawer: rgba(18, 26, 38, .98);
+            --surface-drawer-chrome: rgba(22, 30, 44, .98);
+            --t: #f1f5f9;
+            --m: #94a3b8;
+            --muted: #94a3b8;
+            --ln: rgba(56, 189, 248, .2);
+            --c: #38bdf8;
+            --pu: #818cf8;
+            --am: #fbbf24;
+            --gr: #34d399;
+            --rd: #fb7185;
+        }
+
+        [data-theme="solar"] {
+            --bg: #141008;
+            --bg-glow: rgba(251, 191, 36, .14);
+            --panel: rgba(28, 20, 8, .92);
+            --card: rgba(24, 18, 8, .78);
+            --surface-chrome: rgba(20, 14, 6, 0.92);
+            --surface-chrome-alt: rgba(20, 14, 6, 0.92);
+            --surface-card: rgba(28, 20, 10, .88);
+            --surface-input: rgba(32, 24, 12, .82);
+            --surface-input-solid: rgba(28, 20, 10, .98);
+            --surface-modal: rgba(24, 18, 8, .98);
+            --surface-btn: rgba(36, 26, 10, .78);
+            --surface-btn-hover: rgba(48, 34, 14, .92);
+            --surface-disabled: rgba(36, 26, 10, .55);
+            --surface-bar-track: rgba(251, 191, 36, 0.12);
+            --border-subtle: rgba(254, 243, 199, 0.08);
+            --border-accent: rgba(251, 191, 36, .38);
+            --border-accent-soft: rgba(251, 191, 36, .28);
+            --border-accent-faint: rgba(251, 191, 36, .14);
+            --shadow-card: 0 8px 28px rgba(0, 0, 0, .5), 0 0 20px rgba(251, 191, 36, .08);
+            --overlay-backdrop: rgba(10, 6, 0, .72);
+            --surface-toast: rgba(28, 20, 10, .98);
+            --surface-elevated: rgba(36, 26, 12, .72);
+            --surface-elevated-hover: rgba(48, 34, 14, .88);
+            --surface-accent-soft: rgba(251, 191, 36, .12);
+            --surface-highlight-purple: rgba(251, 146, 60, .1);
+            --surface-highlight-purple-border: rgba(251, 146, 60, .32);
+            --surface-drawer: rgba(18, 12, 4, .98);
+            --surface-drawer-chrome: rgba(22, 16, 6, .98);
+            --t: #fef9c3;
+            --m: #d6b26a;
+            --muted: #d6b26a;
+            --ln: rgba(251, 191, 36, .22);
+            --c: #fbbf24;
+            --pu: #fb923c;
+            --am: #fcd34d;
+            --gr: #86efac;
+            --rd: #fb7185;
+        }
+
+        [data-theme="rose"] {
+            --bg: #180a12;
+            --bg-glow: rgba(244, 114, 182, .12);
+            --panel: rgba(36, 14, 28, .9);
+            --card: rgba(32, 12, 24, .78);
+            --surface-chrome: rgba(24, 8, 18, 0.9);
+            --surface-chrome-alt: rgba(24, 8, 18, 0.9);
+            --surface-card: rgba(36, 14, 28, .86);
+            --surface-input: rgba(40, 16, 30, .82);
+            --surface-input-solid: rgba(32, 12, 24, .98);
+            --surface-modal: rgba(28, 10, 20, .98);
+            --surface-btn: rgba(44, 18, 34, .78);
+            --surface-btn-hover: rgba(56, 22, 42, .92);
+            --surface-disabled: rgba(44, 18, 34, .55);
+            --surface-bar-track: rgba(244, 114, 182, 0.12);
+            --border-subtle: rgba(252, 231, 243, 0.08);
+            --border-accent: rgba(244, 114, 182, .4);
+            --border-accent-soft: rgba(244, 114, 182, .3);
+            --border-accent-faint: rgba(244, 114, 182, .16);
+            --shadow-card: 0 8px 28px rgba(0, 0, 0, .48), 0 0 22px rgba(244, 114, 182, .1);
+            --overlay-backdrop: rgba(12, 4, 8, .74);
+            --surface-toast: rgba(32, 12, 24, .98);
+            --surface-elevated: rgba(44, 18, 34, .72);
+            --surface-elevated-hover: rgba(56, 22, 42, .88);
+            --surface-accent-soft: rgba(244, 114, 182, .14);
+            --surface-highlight-purple: rgba(236, 72, 153, .12);
+            --surface-highlight-purple-border: rgba(236, 72, 153, .34);
+            --surface-drawer: rgba(20, 6, 14, .98);
+            --surface-drawer-chrome: rgba(24, 8, 18, .98);
+            --t: #fce7f3;
+            --m: #e8a4c8;
+            --muted: #e8a4c8;
+            --ln: rgba(244, 114, 182, .24);
+            --c: #f472b6;
+            --pu: #ec4899;
+            --am: #fbbf24;
+            --gr: #6ee7b7;
+            --rd: #fda4af;
+        }
+
+        [data-theme="violet"] {
+            --bg: #0c0818;
+            --bg-glow: rgba(192, 132, 252, .14);
+            --panel: rgba(22, 14, 40, .92);
+            --card: rgba(18, 12, 34, .78);
+            --surface-chrome: rgba(14, 8, 28, 0.9);
+            --surface-chrome-alt: rgba(14, 8, 28, 0.9);
+            --surface-card: rgba(22, 14, 40, .86);
+            --surface-input: rgba(26, 16, 46, .82);
+            --surface-input-solid: rgba(18, 12, 34, .98);
+            --surface-modal: rgba(16, 10, 30, .98);
+            --surface-btn: rgba(30, 18, 52, .78);
+            --surface-btn-hover: rgba(40, 24, 68, .92);
+            --surface-disabled: rgba(30, 18, 52, .55);
+            --surface-bar-track: rgba(192, 132, 252, 0.12);
+            --border-subtle: rgba(237, 233, 254, 0.08);
+            --border-accent: rgba(192, 132, 252, .38);
+            --border-accent-soft: rgba(192, 132, 252, .28);
+            --border-accent-faint: rgba(192, 132, 252, .14);
+            --shadow-card: 0 8px 28px rgba(0, 0, 0, .5), 0 0 24px rgba(192, 132, 252, .1);
+            --overlay-backdrop: rgba(6, 2, 14, .76);
+            --surface-toast: rgba(18, 12, 34, .98);
+            --surface-elevated: rgba(30, 18, 52, .72);
+            --surface-elevated-hover: rgba(40, 24, 68, .88);
+            --surface-accent-soft: rgba(192, 132, 252, .14);
+            --surface-highlight-purple: rgba(167, 139, 250, .14);
+            --surface-highlight-purple-border: rgba(167, 139, 250, .36);
+            --surface-drawer: rgba(12, 6, 24, .98);
+            --surface-drawer-chrome: rgba(16, 8, 30, .98);
+            --t: #ede9fe;
+            --m: #c4b5fd;
+            --muted: #c4b5fd;
+            --ln: rgba(192, 132, 252, .22);
+            --c: #c084fc;
+            --pu: #a78bfa;
+            --am: #fbbf24;
+            --gr: #6ee7b7;
+            --rd: #fda4af;
+        }
+
+        [data-theme="paper"] {
+            --bg: #ffffff;
+            --bg-glow: rgba(0, 102, 204, .06);
+            --panel: #f5f5f5;
+            --card: #fafafa;
+            --surface-chrome: #ffffff;
+            --surface-chrome-alt: #ffffff;
+            --surface-card: #f5f5f5;
+            --surface-input: #ffffff;
+            --surface-input-solid: #ffffff;
+            --surface-modal: #ffffff;
+            --surface-btn: #ffffff;
+            --surface-btn-hover: #ebebeb;
+            --surface-disabled: #e5e5e5;
+            --surface-bar-track: rgba(0, 0, 0, 0.1);
+            --border-subtle: rgba(0, 0, 0, 0.14);
+            --border-accent: rgba(0, 102, 204, .45);
+            --border-accent-soft: rgba(0, 102, 204, .32);
+            --border-accent-faint: rgba(0, 0, 0, 0.1);
+            --shadow-card: 0 2px 10px rgba(0, 0, 0, .12), 0 0 0 1px rgba(0, 0, 0, 0.08);
+            --overlay-backdrop: rgba(0, 0, 0, .5);
+            --surface-toast: #ffffff;
+            --surface-elevated: #ffffff;
+            --surface-elevated-hover: #f0f0f0;
+            --surface-accent-soft: rgba(0, 102, 204, .1);
+            --surface-highlight-purple: rgba(124, 58, 237, .1);
+            --surface-highlight-purple-border: rgba(124, 58, 237, .35);
+            --surface-drawer: #ffffff;
+            --surface-drawer-chrome: #fafafa;
+            --t: #0a0a0a;
+            --m: #3d3d3d;
+            --muted: #3d3d3d;
+            --ln: rgba(0, 102, 204, .28);
+            --c: #0066cc;
+            --pu: #6d28d9;
+            --am: #a16207;
+            --gr: #047857;
+            --rd: #be123c;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -148,7 +392,7 @@
             font-size: var(--fz-body);
             line-height: var(--lh-body);
             background: var(--bg);
-            background-image: radial-gradient(ellipse 80% 35% at 50% 0%, rgba(103, 232, 249, .1) 0%, transparent 60%);
+            background-image: radial-gradient(ellipse 80% 35% at 50% 0%, var(--bg-glow) 0%, transparent 60%);
             color: var(--t);
             min-height: 100dvh;
             overflow-x: hidden;
@@ -172,14 +416,25 @@
             padding-top: calc(var(--safe-top) + 24px);
             height: calc(var(--th) + var(--safe-top) + 24px);
             z-index: 100;
-            background: rgba(11, 15, 20, 0.4);
+            background: var(--surface-chrome);
             backdrop-filter: blur(24px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid var(--border-subtle);
             display: grid;
-            grid-template-columns: 1fr auto 1fr;
+            grid-template-columns: minmax(0, 1fr) auto;
             align-items: center;
             padding: 0 16px;
             gap: 10px
+        }
+
+        .topbar-trailing {
+            justify-self: end;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            flex-shrink: 0;
+            min-width: 0
         }
 
         .topbar,
@@ -213,8 +468,8 @@
             max-width: min(300px, 88vw);
             padding: 10px 14px;
             border-radius: 12px;
-            background: rgba(16, 24, 38, 0.98);
-            border: 1px solid rgba(103, 232, 249, 0.35);
+            background: var(--surface-modal);
+            border: 1px solid var(--border-accent);
             box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
             opacity: 0;
             visibility: hidden;
@@ -294,13 +549,13 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            background: rgba(16, 24, 38, .7);
-            border: 1px solid rgba(251, 191, 36, .3);
+            background: var(--surface-elevated);
+            border: 1px solid var(--border-accent-soft);
             border-radius: 999px;
             padding: 5px 11px;
             font-size: 12px;
             font-weight: 700;
-            color: var(--am);
+            color: var(--m);
             cursor: pointer
         }
 
@@ -315,7 +570,7 @@
 
         .sync-pill--placeholder {
             color: var(--m);
-            border-color: rgba(103, 232, 249, .22);
+            border-color: var(--border-accent-faint);
             font-size: 11px;
             font-weight: 800;
             letter-spacing: .02em;
@@ -328,11 +583,76 @@
         }
 
         .topbar-node-cluster {
-            justify-self: end;
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: flex-end
+        }
+
+        body.stables-standalone-app .topbar-node-cluster {
+            display: none
+        }
+
+        .stables-network-status-dot {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 50%;
+            background: transparent;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+            flex-shrink: 0;
+            margin: 0
+        }
+
+        body.stables-standalone-app .stables-network-status-dot {
+            display: flex
+        }
+
+        .stables-network-status-dot::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--rd);
+            box-shadow: 0 0 6px var(--rd)
+        }
+
+        .stables-network-status-dot--connected::before {
+            background: var(--gr);
+            box-shadow: 0 0 6px rgba(52, 211, 153, .6);
+            animation: pulse 2s ease-in-out infinite
+        }
+
+        .stables-network-status-dot--syncing::before {
+            background: var(--am);
+            box-shadow: 0 0 6px rgba(251, 191, 36, .55);
+            animation: pulse 2s ease-in-out infinite
+        }
+
+        .stables-network-status-dot--offline::before,
+        .stables-network-status-dot--error::before {
+            background: var(--rd);
+            box-shadow: 0 0 6px var(--rd);
+            animation: none
+        }
+
+        .stables-network-status-dot--inline {
+            display: inline-flex;
+            width: auto;
+            height: auto;
+            cursor: default;
+            pointer-events: none
+        }
+
+        .stables-network-status-dot--inline::before {
+            width: 9px;
+            height: 9px
         }
 
         .stables-node-cluster-pill {
@@ -356,9 +676,10 @@
         }
 
         .stables-node-cluster-pill--live {
-            border-color: rgba(52, 211, 153, .42);
-            color: var(--am);
-            background: rgba(16, 24, 38, .78)
+            border-color: color-mix(in srgb, var(--gr) 42%, transparent);
+            color: var(--t);
+            background: var(--surface-elevated);
+            box-shadow: 0 0 0 1px color-mix(in srgb, var(--gr) 12%, transparent);
         }
 
         .ccy-sec-row[data-ccy-default-hidden="1"].ccy-sec-row--live-node-visible {
@@ -516,7 +837,6 @@
 
         .topbar-channel-switch {
             position: relative;
-            justify-self: center;
         }
 
         .test-pill--selector {
@@ -538,14 +858,14 @@
         .topbar-channel-menu {
             position: absolute;
             top: calc(100% + 10px);
-            left: 50%;
-            transform: translateX(-50%);
+            right: 0;
+            left: auto;
             width: min(280px, 76vw);
             padding: 8px;
             border-radius: 18px;
             border: 1px solid rgba(251, 191, 36, .26);
-            background: rgba(16, 24, 38, .96);
-            box-shadow: 0 20px 44px rgba(0, 0, 0, .45);
+            background: var(--surface-modal);
+            box-shadow: var(--shadow-card);
             backdrop-filter: blur(18px);
             z-index: 160;
         }
@@ -694,9 +1014,9 @@
             right: 0;
             height: var(--nh);
             z-index: 100;
-            background: rgba(10, 14, 20, 0.4);
+            background: var(--surface-chrome-alt);
             backdrop-filter: blur(24px);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid var(--border-subtle);
             display: flex;
             align-items: center;
             justify-content: space-around;
@@ -806,11 +1126,11 @@
 
         /* CARDS */
         .card {
-            background: rgba(16, 24, 38, .7);
-            border: 1px solid rgba(103, 232, 249, .15);
+            background: var(--surface-card);
+            border: 1px solid var(--border-accent-soft);
             border-radius: var(--r);
             backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, .4), 0 0 24px rgba(103, 232, 249, .06);
+            box-shadow: var(--shadow-card);
             overflow: hidden
         }
 
@@ -909,9 +1229,9 @@
             flex: 1;
             height: 12px;
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.06);
+            background: var(--surface-bar-track);
             overflow: visible;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--surface-bar-track);
         }
 
         .cr-bar .fill {
@@ -1394,7 +1714,7 @@
 
         .btn-primary {
             background: linear-gradient(135deg, rgba(103, 232, 249, .3), rgba(167, 139, 250, .3));
-            border-color: rgba(103, 232, 249, .3);
+            border-color: var(--border-accent-soft);
             box-shadow: 0 0 20px rgba(103, 232, 249, .12);
             color: var(--t)
         }
@@ -1405,15 +1725,15 @@
 
         .btn-choice,
         .btn-secondary {
-            background: rgba(15, 23, 42, .6);
-            border-color: rgba(103, 232, 249, .25);
+            background: var(--surface-btn);
+            border-color: var(--border-accent);
             color: var(--t)
         }
 
         .btn-choice:hover,
         .btn-secondary:hover {
-            background: rgba(15, 23, 42, .82);
-            border-color: rgba(103, 232, 249, .48)
+            background: var(--surface-btn-hover);
+            border-color: var(--c)
         }
 
         .btn-danger {
@@ -1430,9 +1750,9 @@
 
         .btn-disabled,
         .btn[aria-disabled="true"] {
-            background: rgba(24, 34, 52, .52);
-            border-color: rgba(148, 163, 184, .16);
-            color: rgba(159, 176, 192, .68);
+            background: var(--surface-disabled);
+            border-color: var(--border-subtle);
+            color: var(--m);
             cursor: not-allowed;
             opacity: .72
         }
@@ -1447,8 +1767,8 @@
         .finput {
             width: 100%;
             padding: 13px 15px;
-            background: rgba(11, 15, 20, .5);
-            border: 1px solid rgba(103, 232, 249, .2);
+            background: var(--surface-input);
+            border: 1px solid var(--border-accent);
             border-radius: var(--rs);
             color: var(--t);
             font-size: var(--fz-body);
@@ -1510,8 +1830,8 @@
         .fsel {
             width: 100%;
             padding: 12px 14px;
-            background: rgba(11, 15, 20, .5);
-            border: 1px solid rgba(103, 232, 249, .2);
+            background: var(--surface-input);
+            border: 1px solid var(--border-accent);
             border-radius: var(--rs);
             color: var(--t);
             font-size: var(--fz-body);
@@ -1534,26 +1854,32 @@
             background-size: 5px 5px, 5px 5px;
             background-repeat: no-repeat;
             padding-right: 34px;
-            color-scheme: dark;
         }
 
-        .fsel option {
-            background: rgba(11, 15, 20, .95);
-            color: var(--t);
-        }
+        [data-theme="stables-dark"] .fsel,
+        [data-theme="slate"] .fsel,
+        [data-theme="solar"] .fsel,
+        [data-theme="rose"] .fsel,
+        [data-theme="violet"] .fsel,
+        [data-theme="stables-dark"] select.finput,
+        [data-theme="slate"] select.finput,
+        [data-theme="solar"] select.finput,
+        [data-theme="rose"] select.finput,
+        [data-theme="violet"] select.finput { color-scheme: dark; }
 
-        /* Selects styled as .finput (e.g. the agent language picker) need the same dark option
-           list and color scheme so the native dropdown text stays readable. */
-        select.finput { color-scheme: dark; }
+        [data-theme="paper"] .fsel,
+        [data-theme="paper"] select.finput { color-scheme: light; }
+
+        .fsel option,
         select.finput option {
-            background: rgba(11, 15, 20, .95);
+            background: var(--surface-input-solid);
             color: var(--t);
         }
 
         /* Recovery safety-quiz options (standalone app, before a wallet-replacing recovery). */
         .stables-quiz-opt {
             width: 100%; text-align: left; padding: 10px 12px; border-radius: 10px;
-            border: 1px solid rgba(103, 232, 249, .2); background: rgba(11, 15, 20, .5);
+            border: 1px solid var(--border-accent); background: var(--surface-input);
             color: var(--t); font-size: 13px; font-weight: 600; font-family: inherit;
             cursor: pointer; transition: border-color .15s, background .15s;
         }
@@ -2232,7 +2558,7 @@
             position: fixed;
             inset: 0;
             z-index: 200;
-            background: rgba(0, 0, 0, .6);
+            background: var(--overlay-backdrop);
             backdrop-filter: blur(4px);
             display: none;
             opacity: 0;
@@ -2266,8 +2592,8 @@
         .drawer {
             width: min(100%, 360px);
             height: 100%;
-            background: rgba(11, 15, 20, .98);
-            border-left: 1px solid rgba(103, 232, 249, .15);
+            background: var(--surface-drawer);
+            border-left: 1px solid var(--border-accent-soft);
             display: flex;
             flex-direction: column;
             transform: translateX(100%);
@@ -2359,10 +2685,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(103, 232, 249, .1);
+            border-bottom: 1px solid var(--border-accent-faint);
             position: sticky;
             top: 0;
-            background: rgba(11, 15, 20, .96);
+            background: var(--surface-drawer-chrome);
             backdrop-filter: blur(12px)
         }
 
@@ -2370,8 +2696,8 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: rgba(103, 232, 249, .08);
-            border: 1px solid rgba(103, 232, 249, .2);
+            background: var(--surface-accent-soft);
+            border: 1px solid var(--border-accent-soft);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2399,8 +2725,8 @@
             justify-content: flex-end;
             align-items: center;
             padding: 12px 14px 10px;
-            border-bottom: 1px solid rgba(103, 232, 249, .1);
-            background: rgba(11, 15, 20, .98);
+            border-bottom: 1px solid var(--border-accent-faint);
+            background: var(--surface-drawer-chrome);
         }
 
         .welcome-step-lang {
@@ -2421,8 +2747,8 @@
         }
 
         .app-lang-globe-btn {
-            background: rgba(103, 232, 249, .08);
-            border: 1px solid rgba(103, 232, 249, .22);
+            background: var(--surface-accent-soft);
+            border: 1px solid var(--border-accent-soft);
             color: var(--t);
             width: 40px;
             height: 40px;
@@ -2435,8 +2761,8 @@
         }
 
         .app-lang-globe-btn:hover {
-            background: rgba(103, 232, 249, .14);
-            border-color: rgba(103, 232, 249, .35);
+            background: var(--surface-elevated-hover);
+            border-color: var(--border-accent);
         }
 
         .app-lang-globe-btn:focus-visible {
@@ -2457,9 +2783,9 @@
             min-width: 160px;
             padding: 8px;
             border-radius: 12px;
-            border: 1px solid rgba(103, 232, 249, .18);
-            background: rgba(16, 24, 38, .98);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, .45);
+            border: 1px solid var(--border-accent-soft);
+            background: var(--surface-modal);
+            box-shadow: var(--shadow-card);
             display: none;
             flex-direction: column;
             gap: 4px;
@@ -2486,7 +2812,7 @@
 
         .app-lang-menu-item:hover,
         .app-lang-menu-item:focus-visible {
-            background: rgba(103, 232, 249, .1);
+            background: var(--surface-accent-soft);
             outline: none;
         }
 
@@ -2515,7 +2841,7 @@
         }
 
         .ditem:hover {
-            background: rgba(103, 232, 249, .07)
+            background: var(--surface-accent-soft)
         }
 
         .dic {
@@ -2527,8 +2853,8 @@
             justify-content: center;
             font-size: 19px;
             flex-shrink: 0;
-            background: rgba(103, 232, 249, .07);
-            border: 1px solid rgba(103, 232, 249, .12)
+            background: var(--surface-accent-soft);
+            border: 1px solid var(--border-accent-soft)
         }
 
         .dinfo {
@@ -2624,7 +2950,7 @@
             position: fixed;
             inset: 0;
             z-index: 300;
-            background: rgba(0, 0, 0, .7);
+            background: var(--overlay-backdrop);
             backdrop-filter: blur(8px);
             display: none;
             align-items: flex-end;
@@ -2662,8 +2988,8 @@
             position: relative;
             width: 100%;
             max-width: 540px;
-            background: rgba(13, 18, 27, .98);
-            border: 1px solid rgba(103, 232, 249, .2);
+            background: var(--surface-modal);
+            border: 1px solid var(--border-accent);
             border-bottom: none;
             border-radius: 22px 22px 0 0;
             padding: 22px 18px 36px;
@@ -2983,16 +3309,17 @@
             bottom: calc(var(--nh) + 76px);
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(16, 24, 38, .96);
-            border: 1px solid rgba(103, 232, 249, .25);
+            background: var(--surface-toast);
+            border: 1px solid var(--border-accent);
             border-radius: 999px;
             padding: 10px 20px;
             font-size: 13px;
             font-weight: 700;
+            color: var(--t);
             z-index: 999;
             display: none;
             backdrop-filter: blur(12px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
+            box-shadow: var(--shadow-card);
             /* Wrap + cap width so longer toasts (e.g. incoming-payment notice) stay fully visible on mobile. */
             white-space: normal;
             max-width: min(92vw, 420px);
@@ -3136,8 +3463,8 @@
         /* ADDRESS */
         .addr-box {
             padding: 13px 14px;
-            background: rgba(11, 15, 20, .5);
-            border: 1px solid rgba(103, 232, 249, .2);
+            background: var(--surface-input);
+            border: 1px solid var(--border-accent);
             border-radius: 11px;
             font-family: monospace;
             font-size: var(--fz-caption);
@@ -3282,8 +3609,8 @@
             align-items: center;
             justify-content: space-between;
             padding: 10px 12px;
-            background: rgba(16, 24, 38, .5);
-            border: 1px solid rgba(103, 232, 249, .08);
+            background: var(--surface-elevated);
+            border: 1px solid var(--border-accent-faint);
             border-radius: 12px;
             cursor: pointer;
             transition: border-color .2s
@@ -3321,8 +3648,8 @@
             width: 22px;
             height: 22px;
             border-radius: 8px;
-            border: 1px solid rgba(103, 232, 249, .22);
-            background: rgba(16, 24, 38, .55);
+            border: 1px solid var(--border-accent-soft);
+            background: var(--surface-elevated-hover);
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -3337,8 +3664,8 @@
             width: 26px;
             height: 26px;
             border-radius: 9px;
-            border: 1px solid rgba(103, 232, 249, .22);
-            background: rgba(16, 24, 38, .58);
+            border: 1px solid var(--border-accent-soft);
+            background: var(--surface-elevated);
             color: var(--m);
             display: inline-flex;
             align-items: center;
@@ -3813,8 +4140,8 @@
         /* Highlight Cards */
         .card--highlight-purple {
             padding: 14px 18px;
-            border: 1px solid rgba(167, 139, 250, .22);
-            background: rgba(167, 139, 250, .06);
+            border: 1px solid var(--surface-highlight-purple-border);
+            background: var(--surface-highlight-purple);
         }
 
         .ccy-pill--static {
@@ -3827,7 +4154,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 14px 0;
-            border-bottom: 1px solid rgba(103, 232, 249, .08)
+            border-bottom: 1px solid var(--border-accent-faint)
         }
 
         .set-row:last-child {
@@ -3870,8 +4197,8 @@
             width: 44px;
             height: 24px;
             flex-shrink: 0;
-            background: rgba(103, 232, 249, .12);
-            border: 1px solid rgba(103, 232, 249, .25);
+            background: var(--surface-bar-track);
+            border: 1px solid var(--border-accent);
             border-radius: 12px;
             position: relative;
             cursor: pointer;
@@ -3937,8 +4264,8 @@
         /* CURRENCY PILLS (Settings) */
         .ccy-pill {
             padding: 5px 12px;
-            background: rgba(16, 24, 38, .6);
-            border: 1px solid rgba(103, 232, 249, .1);
+            background: var(--surface-elevated);
+            border: 1px solid var(--border-accent-soft);
             border-radius: 999px;
             font-size: 12px;
             font-weight: 700;
@@ -3948,8 +4275,8 @@
         }
 
         .ccy-pill.on {
-            background: rgba(103, 232, 249, .15);
-            border-color: rgba(103, 232, 249, .3);
+            background: var(--surface-accent-soft);
+            border-color: var(--border-accent);
             color: var(--t)
         }
 
@@ -4181,19 +4508,183 @@
             margin-bottom: 12px
         }
 
-        /* LIGHT MODE */
-        body.light {
-            --bg: #f0f4f8;
-            --panel: rgba(255, 255, 255, .9);
-            --card: rgba(255, 255, 255, .8);
-            --t: #0d1117;
-            --m: #5a6a7a;
-            --ln: rgba(103, 232, 249, .3)
+        /* Colour theme picker (Settings → Appearance) */
+        .theme-picker {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
-        body.light .topbar,
-        body.light .bnav {
-            background: rgba(240, 244, 248, .95)
+        .theme-pick {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 12px;
+            min-height: 88px;
+            text-align: left;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: border-color .15s, box-shadow .15s, background .15s;
+        }
+
+        .theme-pick.is-active {
+            border-color: var(--c) !important;
+            box-shadow: 0 0 0 1px var(--c), 0 4px 14px rgba(0, 0, 0, .12);
+            background: var(--surface-btn-hover);
+        }
+
+        .theme-pick__swatch {
+            display: flex;
+            gap: 4px;
+            width: 100%;
+        }
+
+        .theme-pick__chip {
+            flex: 1;
+            height: 18px;
+            border-radius: 6px;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .theme-pick__label {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--t);
+            line-height: 1.3;
+        }
+
+        .theme-pick__sub {
+            font-size: 12px;
+            color: var(--m);
+            line-height: 1.35;
+        }
+
+        [data-theme="paper"] .topbar,
+        [data-theme="paper"] .bnav {
+            box-shadow: 0 1px 0 var(--border-subtle);
+        }
+
+        /* Paper: high-contrast light shell */
+        [data-theme="paper"] .btn-choice,
+        [data-theme="paper"] .btn-secondary {
+            background: var(--surface-input);
+            border-color: var(--border-accent-soft);
+            box-shadow: 0 0 0 1px var(--border-subtle);
+        }
+
+        [data-theme="paper"] .btn-choice:hover,
+        [data-theme="paper"] .btn-secondary:hover {
+            border-color: var(--border-accent);
+            box-shadow: 0 0 0 1px var(--border-accent-soft);
+        }
+
+        [data-theme="paper"] .theme-pick {
+            background: var(--surface-input);
+        }
+
+        [data-theme="paper"] .theme-pick.is-active {
+            background: var(--surface-btn-hover);
+            box-shadow: 0 0 0 2px var(--c), var(--shadow-card);
+        }
+
+        [data-theme="paper"] .btn-primary {
+            background: linear-gradient(135deg, rgba(0, 102, 204, .14), rgba(109, 40, 217, .1));
+            border-color: var(--border-accent);
+            color: var(--t);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .1);
+        }
+
+        [data-theme="paper"] .ntab.active {
+            background: var(--surface-accent-soft);
+            border-color: var(--border-accent-soft);
+            color: var(--c);
+        }
+
+        [data-theme="paper"] .ccy-primary {
+            box-shadow: inset 0 0 0 1px var(--border-accent-soft);
+        }
+
+        [data-theme="paper"] .ccy-sec-row--selected {
+            background: linear-gradient(135deg, rgba(0, 102, 204, .1), rgba(109, 40, 217, .06));
+            border-color: var(--border-accent);
+            box-shadow: 0 0 0 1px var(--border-accent-soft);
+        }
+
+        [data-theme="paper"] .toggle.on {
+            background: rgba(0, 102, 204, .22);
+        }
+
+        [data-theme="paper"] .sync-pill,
+        [data-theme="paper"] .stables-node-cluster-pill--live {
+            background: var(--surface-input);
+            border-color: var(--border-subtle);
+            color: var(--t);
+            box-shadow: 0 0 0 1px var(--border-subtle);
+        }
+
+        [data-theme="paper"] .stables-node-cluster-pill--live {
+            border-color: color-mix(in srgb, var(--gr) 55%, var(--border-subtle));
+            box-shadow: 0 0 0 1px color-mix(in srgb, var(--gr) 18%, transparent);
+        }
+
+        [data-theme="paper"] .sync-pill--placeholder {
+            border-color: var(--border-subtle);
+            color: var(--m);
+        }
+
+        [data-theme="paper"] .test-pill {
+            background: var(--surface-input);
+            border-color: var(--border-accent-soft);
+        }
+
+        /* Side menu (More drawer): legible section labels and row captions on every theme */
+        .dsect-t {
+            font-size: 11px;
+            letter-spacing: .08em;
+        }
+
+        [data-theme="paper"] .drawer {
+            border-left-color: var(--border-subtle);
+            box-shadow: -8px 0 24px rgba(0, 0, 0, .12);
+        }
+
+        [data-theme="paper"] .dsect-t {
+            color: #262626;
+        }
+
+        [data-theme="paper"] .ddesc {
+            color: #404040;
+        }
+
+        [data-theme="paper"] .dic {
+            background: #f0f0f0;
+            border-color: rgba(0, 0, 0, 0.12);
+        }
+
+        [data-theme="paper"] .ditem:hover {
+            background: rgba(0, 102, 204, .08);
+        }
+
+        [data-theme="solar"] .drawer,
+        [data-theme="rose"] .drawer,
+        [data-theme="violet"] .drawer {
+            box-shadow: -10px 0 32px rgba(0, 0, 0, .35);
+        }
+
+        [data-theme="slate"] .dsect-t,
+        [data-theme="solar"] .dsect-t,
+        [data-theme="rose"] .dsect-t,
+        [data-theme="violet"] .dsect-t {
+            color: var(--c);
+            opacity: .92;
+        }
+
+        [data-theme="slate"] .ddesc,
+        [data-theme="solar"] .ddesc,
+        [data-theme="rose"] .ddesc,
+        [data-theme="violet"] .ddesc {
+            color: var(--m);
         }
 
         /* STABLESAGENT */
@@ -4341,16 +4832,16 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            background: rgba(16, 24, 38, .65);
-            border: 1px solid rgba(103, 232, 249, .18);
-            box-shadow: 0 0 18px rgba(103, 232, 249, .10);
+            background: var(--surface-elevated);
+            border: 1px solid var(--border-accent-soft);
+            box-shadow: var(--shadow-card);
             transition: transform .12s ease, border-color .12s ease, background .12s ease;
         }
 
         .agent-mini-btn:hover {
             transform: translateY(-1px);
-            border-color: rgba(103, 232, 249, .28);
-            background: rgba(16, 24, 38, .78);
+            border-color: var(--border-accent);
+            background: var(--surface-elevated-hover);
         }
 
         .agent-mini-btn img {
@@ -4894,48 +5385,51 @@
                 <span class="brand-hover-tip__text">My bank made possible by Stables on Minima</span>
             </div>
         </div>
-    <!-- Column 2: Channel selector (Center) -->
-    <div class="topbar-channel-switch" id="topbarChannelSwitch">
-        <button type="button" id="topbarShowcasePill" class="test-pill test-pill--selector"
-            onclick="toggleTopbarChannelMenu(event)" aria-haspopup="menu" aria-expanded="false"
-            title="Switch between Showcase and Demo">
-            <span class="test-pill-title" id="topbarShowcasePillTitle">Demo</span>
-            <span class="test-pill-sub" id="topbarShowcasePillSub"></span>
-            <span class="test-pill-caret" aria-hidden="true">▾</span>
-        </button>
-        <div class="topbar-channel-menu" id="topbarChannelMenu" role="menu" hidden>
-            <button type="button" class="topbar-channel-option" id="topbarChannelOptionShowcase" role="menuitem"
-                onclick="stablesNavigateTopbarChannel(event,'showcase')">
-                <span class="topbar-channel-option-title">Showcase</span>
-                <span class="topbar-channel-option-sub">Preview build aimed at gathering community feedback on general direction.</span>
+    <!-- Trailing cluster: network dot (app) + version pill + connect pill (web) -->
+    <div class="topbar-trailing">
+        <button type="button" id="stablesNetworkStatusDot" class="stables-network-status-dot stables-network-status-dot--offline"
+            onclick="stablesOpenNetworkSettings()" aria-label="Network status. Open network settings."
+            title="Network status"></button>
+        <div class="topbar-channel-switch" id="topbarChannelSwitch">
+            <button type="button" id="topbarShowcasePill" class="test-pill test-pill--selector"
+                onclick="toggleTopbarChannelMenu(event)" aria-haspopup="menu" aria-expanded="false"
+                title="Switch between Showcase and Demo">
+                <span class="test-pill-title" id="topbarShowcasePillTitle">Demo</span>
+                <span class="test-pill-sub" id="topbarShowcasePillSub"></span>
+                <span class="test-pill-caret" aria-hidden="true">▾</span>
             </button>
-            <button type="button" class="topbar-channel-option" id="topbarChannelOptionDemo" role="menuitem"
-                onclick="stablesNavigateTopbarChannel(event,'demo')">
-                <span class="topbar-channel-option-title">Demo Channel</span>
-                <span class="topbar-channel-option-sub">Minima functionality with showcase interaction.</span>
-            </button>
-            <button type="button" class="topbar-channel-option" id="topbarChannelOptionTest" role="menuitem" disabled
-                style="opacity: 0.5; cursor: not-allowed;"
-                onclick="stablesNavigateTopbarChannel(event,'test')">
-                <span class="topbar-channel-option-title">Public Testing</span>
-                <span class="topbar-channel-option-sub">Minima functionality and test tokens with full functionality.</span>
-            </button>
-            <button type="button" class="topbar-channel-option" id="topbarChannelOptionProd" role="menuitem" disabled
-                style="opacity: 0.5; cursor: not-allowed;"
-                onclick="stablesNavigateTopbarChannel(event,'prod')">
-                <span class="topbar-channel-option-title">Live channel</span>
-                <span class="topbar-channel-option-sub">Final live MiniDapp on the Minima network</span>
-            </button>
-            
+            <div class="topbar-channel-menu" id="topbarChannelMenu" role="menu" hidden>
+                <button type="button" class="topbar-channel-option" id="topbarChannelOptionShowcase" role="menuitem"
+                    onclick="stablesNavigateTopbarChannel(event,'showcase')">
+                    <span class="topbar-channel-option-title">Showcase</span>
+                    <span class="topbar-channel-option-sub">Preview build aimed at gathering community feedback on general direction.</span>
+                </button>
+                <button type="button" class="topbar-channel-option" id="topbarChannelOptionDemo" role="menuitem"
+                    onclick="stablesNavigateTopbarChannel(event,'demo')">
+                    <span class="topbar-channel-option-title">Demo Channel</span>
+                    <span class="topbar-channel-option-sub">Minima functionality with showcase interaction.</span>
+                </button>
+                <button type="button" class="topbar-channel-option" id="topbarChannelOptionTest" role="menuitem" disabled
+                    style="opacity: 0.5; cursor: not-allowed;"
+                    onclick="stablesNavigateTopbarChannel(event,'test')">
+                    <span class="topbar-channel-option-title">Public Testing</span>
+                    <span class="topbar-channel-option-sub">Minima functionality and test tokens with full functionality.</span>
+                </button>
+                <button type="button" class="topbar-channel-option" id="topbarChannelOptionProd" role="menuitem" disabled
+                    style="opacity: 0.5; cursor: not-allowed;"
+                    onclick="stablesNavigateTopbarChannel(event,'prod')">
+                    <span class="topbar-channel-option-title">Live channel</span>
+                    <span class="topbar-channel-option-sub">Final live MiniDapp on the Minima network</span>
+                </button>
+            </div>
         </div>
-    </div>
-    <!-- Column 3: single pill  -  status dot + block height; tap opens MinimaOS install steps when not live -->
-    <div class="topbar-node-cluster">
-        <button type="button" class="sync-pill sync-pill--placeholder stables-node-cluster-pill" id="stablesSyncPill"
-            onclick="openStablesNodeConnectModal()"
-            title="Connect to your Minima node.">
-            <span class="dot" aria-hidden="true"></span><span id="syncNum">Connect</span>
-        </button>
+        <div class="topbar-node-cluster" id="topbarNodeCluster">
+            <button type="button" class="sync-pill sync-pill--placeholder stables-node-cluster-pill" id="stablesSyncPill"
+                onclick="openStablesNodeConnectModal()"
+                title="Connect to your Minima node.">
+                <span class="dot" aria-hidden="true"></span><span id="syncNum">Connect</span>
+            </button>
+        </div>
     </div>
     </div>
 
@@ -7109,43 +7603,40 @@
                 </div>
                 <div class="card app-section-card" style="padding:16px 16px;margin-bottom:24px;border:1px solid rgba(103,232,249,.12)">
                     <p class="sec-body" style="margin:0 0 12px;line-height:1.5;font-size:var(--fz-caption);color:var(--m)">
-                        Domains, accounts, and repos listed on the links page are <strong style="color:var(--t)">operated for the Council</strong>.
-                        The live directory may also appear at
-                        <a href="https://stablescouncil.github.io/links.html" target="_blank" rel="noopener noreferrer"
-                            style="color:var(--c);text-decoration:underline">stablescouncil.github.io/links.html</a>.
+                        These entries mirror the public website map at
+                        <a href="https://stablescouncil.org/links.html" target="_blank" rel="noopener noreferrer"
+                            style="color:var(--c);text-decoration:underline">stablescouncil.org/links.html</a>.
+                        Domains, accounts, and repos listed there are <strong style="color:var(--t)">operated for the Council</strong>.
                     </p>
-                    <div class="xs mu" style="font-weight:800;margin:0 0 8px;color:var(--t)">Domains &amp; sites</div>
+                    <div class="xs mu" style="font-weight:800;margin:0 0 8px;color:var(--t)">Website map</div>
                     <ul style="margin:0 0 14px;padding-left:1.15em;line-height:1.55;font-size:13px;color:var(--m)">
-        <li><a href="/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.org</a>  -  public site · By Stables on Minima</li>
-                        <li><a href="https://stablescouncil.org/links.html" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.org/links.html</a>  -  official public links page</li>
-                        <li><a href="https://stablescouncil.github.io/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">stablescouncil.github.io</a>  -  GitHub Pages presentation &amp; resources</li>
-                        <li><a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer" style="color:var(--c)">agent.stablescouncil.org</a>  -  StablesAgent web chat</li>
-                        <li><a href="https://stablescouncil.org/onion-resilience/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Onion resilience page</a>  -  continuity and verification bundle</li>
-                        <li><a href="http://ipgrd3e7jwwkk7yzay4k2ft3vwbsgig62v6mdaqws3mato64hfwwr7yd.onion" target="_blank" rel="noopener noreferrer" style="color:var(--c)">ipgrd3e7…r7yd.onion</a>  -  Tor onion mirror address</li>
+                        <li><a href="https://stablescouncil.org/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Home page</a>  -  Be your bank</li>
+                        <li><a href="https://stablescouncil.org/playing_field.html" target="_blank" rel="noopener noreferrer" style="color:var(--c)">The playing field</a>  -  System structural balance</li>
+                        <li><a href="https://stablescouncil.org/circulareconomy.html" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Stables circular economy</a>  -  Structural map: funds, treasuries, and flows</li>
+                        <li><a href="https://stablescouncil.org/bankingsystem.html" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Our banking system</a>  -  An infographic presentation</li>
+                        <li><a href="https://stablescouncil.org/ambassadorsprogramdesc.html" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Ambassador program</a>  -  The 16 Big Mac® economy (V0.0.01)</li>
+                        <li><a href="https://stablescouncil.org/links.html" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Website map</a>  -  Full public links directory</li>
                     </ul>
-                    <div class="xs mu" style="font-weight:800;margin:0 0 8px;color:var(--t)">Code &amp; email</div>
+                    <div class="xs mu" style="font-weight:800;margin:0 0 8px;color:var(--t)">Community</div>
                     <ul style="margin:0 0 14px;padding-left:1.15em;line-height:1.55;font-size:13px;color:var(--m)">
-                        <li><a href="https://github.com/StablesCouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">github.com/StablesCouncil</a>  -  public organisation</li>
-                        <li><a href="https://github.com/StablesCouncilExec" target="_blank" rel="noopener noreferrer" style="color:var(--c)">github.com/StablesCouncilExec</a>  -  Council admin account</li>
-                        <li><a href="https://stablescouncil.org/communication_plan.html" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Communication plan</a>  -  public channel and rollout reference</li>
-                        <li><a href="mailto:StablesCouncil@protonmail.com" style="color:var(--c)">StablesCouncil@protonmail.com</a></li>
-                        <li><a href="mailto:StablesCouncil@gmail.com" style="color:var(--c)">StablesCouncil@gmail.com</a></li>
+                        <li><a href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Telegram community</a>  -  Join our public group</li>
+                        <li><a href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">X</a>  -  Follow us @StablesCouncil</li>
+                        <li><a href="https://www.moltbook.com/u/stablesagent" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Moltbook</a>  -  StablesAgent on the agent social network</li>
+                        <li><a href="https://www.youtube.com/@StablesCouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">YouTube</a>  -  @StablesCouncil</li>
+                        <li><a href="https://rumble.com/user/stablescouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Rumble</a>  -  Video updates on Rumble</li>
+                        <li><a href="https://www.instagram.com/stablescouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Instagram</a>  -  @stablescouncil</li>
+                        <li><a href="https://www.facebook.com/groups/stablescommunity" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Facebook</a>  -  Stables community group</li>
                     </ul>
-                    <div class="xs mu" style="font-weight:800;margin:0 0 8px;color:var(--t)">Social &amp; community (handles)</div>
+                    <div class="xs mu" style="font-weight:800;margin:0 0 8px;color:var(--t)">Council</div>
                     <ul style="margin:0;padding-left:1.15em;line-height:1.55;font-size:13px;color:var(--m)">
-                        <li><a href="https://discord.gg/rTdqwRGPXR" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Discord  -  Stables server</a></li>
-                        <li><a href="https://www.facebook.com/groups/stablescommunity" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Facebook  -  Stables Community group</a></li>
-                        <li><a href="https://www.facebook.com/share/16nCLsLHkg/" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Facebook  -  Stables official page</a></li>
-                        <li><a href="https://www.instagram.com/stablescouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Instagram  -  @stablescouncil</a></li>
-                        <li><a href="https://www.moltbook.com/u/stablesagent" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Moltbook  -  u/stablesagent</a> (StablesAgent)</li>
-                        <li><a href="https://rumble.com/user/stablescouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Rumble  -  @stablescouncil</a></li>
-                        <li><a href="https://t.me/StablesAgentBot" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Telegram  -  @StablesAgentBot</a></li>
-                        <li><a href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Telegram  -  @stablescommunity</a> (community)</li>
-                        <li><a href="https://t.me/StablesCouncilOfficial" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Telegram  -  StablesCouncilOfficial</a> (announcements)</li>
-                        <li><a href="https://www.tiktok.com/@stablescouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">TikTok  -  @stablescouncil</a></li>
-                        <li><a href="https://www.twitch.tv/stablescouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Twitch  -  stablescouncil</a></li>
-                        <li><a href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">X / Twitter  -  @StablesCouncil</a></li>
-                        <li><a href="https://www.youtube.com/@StablesCouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">YouTube  -  @StablesCouncil</a></li>
+                        <li><a href="http://ipgrd3e7jwwkk7yzay4k2ft3vwbsgig62v6mdaqws3mato64hfwwr7yd.onion" target="_blank" rel="noopener noreferrer" style="color:var(--c)">BCP resilience site</a>  -  Open in Tor Browser. Essential backup page with MiniDapp zip, verification files, notices, and continuity resources</li>
+                        <li><a href="https://t.me/StablesCouncilOfficial" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Telegram Council official</a>  -  Official Council communications</li>
+                        <li><a href="https://discord.gg/rTdqwRGPXR" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Discord</a>  -  Council community server</li>
+                        <li><a href="https://stablescouncil.org/onchain-watch.html" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Minima onchain watch</a>  -  Holdings chart by address and archive-node export download (Council devtools)</li>
+                        <li><a href="https://github.com/StablesCouncil" target="_blank" rel="noopener noreferrer" style="color:var(--c)">GitHub</a>  -  Open source development</li>
+                        <li><a href="https://stablescouncil.org/council_navigation_system.html" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Navigation system</a>  -  Public draft direction, status, and discussion map</li>
+                        <li><a href="https://stablescouncil.org/council_dashboard.html" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Dashboard</a>  -  Public draft baseline indicators and weekly signals</li>
+                        <li><a href="https://stablescouncil.org/communication_plan.html" target="_blank" rel="noopener noreferrer" style="color:var(--c)">Communication plan</a>  -  Platform strategy for social profiles, posts, feedback routing, and Dashboard measures</li>
                     </ul>
                 </div>
             </div>
@@ -8032,17 +8523,68 @@
             <div class="app-section app-section--caption-bottom">
             <div class="stitle-row">
                 <div class="stitle">Appearance &amp; behaviour</div>
-                <button type="button" class="agent-mini-btn" onclick="openAgentExplain('Settings: appearance and personalization, light mode, and coming-soon bank themes')" title="StablesAgent">
+                <button type="button" class="agent-mini-btn" onclick="openAgentExplain('Settings: appearance and personalization, six colour themes, and coming-soon bank themes')" title="StablesAgent">
                     <img src="agent.png" alt="StablesAgent">
                 </button>
             </div>
-            <div class="card app-section-card" style="padding:0 18px">
-                <div class="set-row" style="border-bottom:none">
-                    <div>
-                        <div class="set-label">🌙 Light mode</div>
-                        <div class="set-sub">Switch to a light colour scheme</div>
-                    </div>
-                    <div class="toggle" id="themeToggle" onclick="toggleTheme()"></div>
+            <div class="card app-section-card" style="padding:14px 18px">
+                <div class="set-label" style="margin-bottom:4px">Colour theme</div>
+                <div class="set-sub" style="margin-bottom:12px">Six distinct looks. Your choice is saved on this device.</div>
+                <div class="theme-picker" id="themePicker" role="radiogroup" aria-label="Colour theme">
+                    <button type="button" class="theme-pick btn-choice" data-theme-id="stables-dark" aria-pressed="false">
+                        <span class="theme-pick__swatch" aria-hidden="true">
+                            <span class="theme-pick__chip" style="background:#0b0f14"></span>
+                            <span class="theme-pick__chip" style="background:#67e8f9"></span>
+                            <span class="theme-pick__chip" style="background:#101826"></span>
+                        </span>
+                        <span class="theme-pick__label">Stables dark</span>
+                        <span class="theme-pick__sub">Cyan on navy (default)</span>
+                    </button>
+                    <button type="button" class="theme-pick btn-choice" data-theme-id="slate" aria-pressed="false">
+                        <span class="theme-pick__swatch" aria-hidden="true">
+                            <span class="theme-pick__chip" style="background:#1a2332"></span>
+                            <span class="theme-pick__chip" style="background:#38bdf8"></span>
+                            <span class="theme-pick__chip" style="background:#1e293b"></span>
+                        </span>
+                        <span class="theme-pick__label">Slate</span>
+                        <span class="theme-pick__sub">Grey-blue midpoint</span>
+                    </button>
+                    <button type="button" class="theme-pick btn-choice" data-theme-id="solar" aria-pressed="false">
+                        <span class="theme-pick__swatch" aria-hidden="true">
+                            <span class="theme-pick__chip" style="background:#141008"></span>
+                            <span class="theme-pick__chip" style="background:#fbbf24"></span>
+                            <span class="theme-pick__chip" style="background:#281c0a"></span>
+                        </span>
+                        <span class="theme-pick__label">Solar</span>
+                        <span class="theme-pick__sub">Warm amber and gold</span>
+                    </button>
+                    <button type="button" class="theme-pick btn-choice" data-theme-id="rose" aria-pressed="false">
+                        <span class="theme-pick__swatch" aria-hidden="true">
+                            <span class="theme-pick__chip" style="background:#180a12"></span>
+                            <span class="theme-pick__chip" style="background:#f472b6"></span>
+                            <span class="theme-pick__chip" style="background:#2a1020"></span>
+                        </span>
+                        <span class="theme-pick__label">Rose</span>
+                        <span class="theme-pick__sub">Pink and blush tones</span>
+                    </button>
+                    <button type="button" class="theme-pick btn-choice" data-theme-id="violet" aria-pressed="false">
+                        <span class="theme-pick__swatch" aria-hidden="true">
+                            <span class="theme-pick__chip" style="background:#0c0818"></span>
+                            <span class="theme-pick__chip" style="background:#c084fc"></span>
+                            <span class="theme-pick__chip" style="background:#1a1030"></span>
+                        </span>
+                        <span class="theme-pick__label">Violet</span>
+                        <span class="theme-pick__sub">Purple and lavender</span>
+                    </button>
+                    <button type="button" class="theme-pick btn-choice" data-theme-id="paper" aria-pressed="false">
+                        <span class="theme-pick__swatch" aria-hidden="true">
+                            <span class="theme-pick__chip" style="background:#ffffff"></span>
+                            <span class="theme-pick__chip" style="background:#0066cc"></span>
+                            <span class="theme-pick__chip" style="background:#0a0a0a"></span>
+                        </span>
+                        <span class="theme-pick__label">Paper</span>
+                        <span class="theme-pick__sub">Stark white, black text</span>
+                    </button>
                 </div>
             </div>
             <div class="card card--prose-centered app-section-card card--highlight-purple" id="settings-bank-personalization" style="margin-top:12px">
@@ -8087,7 +8629,7 @@
                     </div>
                     <input type="number" min="1" max="30" id="confirmTargetInput" value="3" inputmode="numeric"
                         oninput="try{if(window.stablesSetConfirmTarget)window.stablesSetConfirmTarget(this.value);}catch(_){}"
-                        style="width:72px;padding:8px 10px;background:rgba(11,15,20,.5);border:1px solid rgba(103,232,249,.2);border-radius:var(--rs);color:var(--t);font-weight:700;font-family:inherit;outline:none">
+                        style="width:72px;padding:8px 10px;background:var(--surface-input);border:1px solid var(--border-accent);border-radius:var(--rs);color:var(--t);font-weight:700;font-family:inherit;outline:none">
                 </div>
                 <div class="set-row">
                     <div style="min-width:0;flex:1;padding-right:12px">
@@ -8137,10 +8679,33 @@
                 <div class="xs mu" id="settingsAppUpdateTitle" style="margin-bottom:12px;line-height:1.55;font-weight:800;color:var(--t)">
                     Download the latest Stables MiniDapp package for your Minima node (MDS zip on GitHub).
                 </div>
+                <div id="settingsApkVersionLine" class="xs mu" style="display:none;margin-bottom:10px;line-height:1.5;text-align:center"></div>
+                <div id="settingsApkUpdateStatus" class="xs" style="display:none;margin-bottom:12px;line-height:1.55;font-weight:800;text-align:center"></div>
+                <div id="settingsApkWhatChanged" class="xs mu" style="display:none;margin-bottom:12px;line-height:1.5;text-align:center"></div>
+                <button type="button" id="settingsApkUpdateBtn" class="btn btn-w btn-primary" style="display:none;width:100%;font-size:14px;font-weight:900" onclick="stablesStartApkUpdate()">Download and install update</button>
                 <a id="settingsMdsZipLink" class="btn btn-w btn-link-action" style="flex:1;min-width:220px;font-size:14px;font-weight:900;display:block;text-align:center;width:100%;text-decoration:none;box-sizing:border-box"
                     href="#" target="_blank" rel="noopener">Download Stables_v0.0.0.1.0.mds.zip</a>
+                <a id="settingsApkReleasesLink" class="btn btn-w btn-secondary" style="display:none;margin-top:8px;width:100%;text-align:center;text-decoration:none;box-sizing:border-box;font-size:14px;font-weight:900"
+                    href="#" target="_blank" rel="noopener">View releases on GitHub</a>
                 <div class="xs mu" id="settingsMdsZipUrlLabel" style="margin-top:8px;line-height:1.45;opacity:.75;text-align:center"></div>
+                <div class="xs mu" id="settingsApkProgress" style="display:none;margin-top:8px;line-height:1.45;opacity:.85;text-align:center;font-weight:700;color:var(--c)"></div>
             </div>
+            </div>
+
+            <!-- Standalone app only: network status and block height. Shown via stablesInitNetworkSection(). -->
+            <div id="stablesNetworkSection" class="app-section app-section--caption-bottom app-section--caption-bottom--mt20" style="display:none">
+                <div class="stitle-row">
+                    <div class="stitle">Network</div>
+                </div>
+                <div class="card app-section-card" style="padding:16px 16px">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                        <span id="stablesNetworkStatusDotInline" class="stables-network-status-dot stables-network-status-dot--inline stables-network-status-dot--offline" aria-hidden="true"></span>
+                        <span id="stablesNetworkStatusLine" style="font-weight:800;font-size:14px;color:var(--t)">Offline</span>
+                    </div>
+                    <div class="xs mu" id="stablesNetworkStatusDetail" style="margin-bottom:10px;line-height:1.45">Your bank connects to the Minima network through the node built into this app.</div>
+                    <div class="xs" id="stablesNetworkBlockHeight" style="font-weight:700;color:var(--t);margin-bottom:12px">Block height: —</div>
+                    <button type="button" class="btn btn-w btn-secondary" style="width:100%" onclick="stablesCheckNetworkConnection()">Check connection</button>
+                </div>
             </div>
 
             <!-- Standalone app only: keep the node running in the background. Shown via stablesInitBackgroundToggle(). -->
@@ -8788,21 +9353,14 @@
                         <div class="ddesc">Questionnaires and certificate</div>
                     </div><span style="color:var(--m)">›</span>
                 </div>
-                <div class="ditem" onclick="openWelcomeGuidedToursFromMenu();closeMoreNow()">
-                    <div class="dic">🧭</div>
-                    <div class="dinfo">
-                        <div class="dname">Guided tours</div>
-                        <div class="ddesc">Start from the welcome screen, then pick a guided path</div>
-                    </div><span style="color:var(--m)">›</span>
-                </div>
-                <div class="ditem" onclick="openAgent();closeMoreNow()">
+                <div class="ditem" onclick="openAgentGuidedTour();closeMoreNow()">
                     <div class="dic">
                         <img src="agent.png" alt="StablesAgent"
                             style="width:20px;height:20px;border-radius:7px;flex-shrink:0">
                     </div>
                     <div class="dinfo">
                         <div class="dname">StablesAgent</div>
-                        <div class="ddesc">Ask StablesAgent for contextual help</div>
+                        <div class="ddesc">Guided tours, setup help, and ask anything</div>
                     </div><span style="color:var(--m)">&rsaquo;</span>
                 </div>
                 <div class="ditem" onclick="navigate('help-links');closeMoreNow()">
@@ -8879,9 +9437,9 @@
                     <button type="button" onclick="stablesCloseSendCam()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.65);border:none;border-radius:20px;color:rgba(255,255,255,.9);font-size:12px;font-weight:700;padding:4px 12px;cursor:pointer;line-height:1.5;z-index:2">&#x2715; Close</button>
                 </div>
                 <div id="sendCamStatus" style="display:none;font-size:11px;color:var(--m);text-align:center;margin-top:6px"></div>
-                <!-- MinimaOS fallback: native camera via file input -->
-                <input type="file" id="sendCamPhotoInput" accept="image/*" capture="environment" style="display:none" onchange="stablesSendCamOnPhotoFile(this)">
-                <button type="button" id="sendCamPhotoBtn" style="display:none;width:100%;margin-top:8px" class="btn btn-secondary" onclick="document.getElementById('sendCamPhotoInput').click()">&#x1F4F7; Use a photo to scan QR code</button>
+                <!-- Photo scan: file picker when live camera works; capture="environment" when live camera is blocked (e.g. MinimaOS WebView) -->
+                <input type="file" id="sendCamPhotoInput" accept="image/*" style="display:none" onchange="stablesSendCamOnPhotoFile(this)">
+                <button type="button" id="sendCamPhotoBtn" style="display:none;width:100%;margin-top:8px" class="btn btn-secondary" onclick="document.getElementById('sendCamPhotoInput').click()">Use a photo to scan QR code</button>
                 <div id="sendCamProcessing" style="display:none;align-items:center;justify-content:center;gap:10px;margin-top:10px;font-size:12px;color:var(--m)"><span class="stables-qr-spinner" aria-hidden="true"></span><span>Reading QR code...</span></div>
             </div>            <div id="sendContactChips" style="display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 8px 0"></div>
             <!-- Row 0: static so the currency picker stays stably paired with the amount -->
@@ -10622,25 +11180,205 @@
             if (amountInput && typeof amountInput.focus === 'function') amountInput.focus();
         }
 
+        function stablesCompareSemverLike(a, b) {
+            const pa = String(a || '0').split('.').map(function (n) { return parseInt(n, 10) || 0; });
+            const pb = String(b || '0').split('.').map(function (n) { return parseInt(n, 10) || 0; });
+            const len = Math.max(pa.length, pb.length, 3);
+            for (let i = 0; i < len; i++) {
+                const da = pa[i] || 0;
+                const db = pb[i] || 0;
+                if (da < db) return -1;
+                if (da > db) return 1;
+            }
+            return 0;
+        }
+
+        function stablesGetInstalledApkVersion() {
+            try {
+                if (window.StablesAndroid && typeof window.StablesAndroid.getAppVersionName === 'function') {
+                    const native = String(window.StablesAndroid.getAppVersionName() || '').trim();
+                    if (native) return native;
+                }
+            } catch (_) { /* ignore */ }
+            const cfg = window.STABLES_CONFIG || {};
+            let current = String(cfg.APP_BUILD_VERSION || '').trim();
+            const iterN = Number(cfg.APP_BUILD_ITERATION);
+            if (Number.isFinite(iterN) && iterN > 0 && current) {
+                const cs = current.split('.');
+                cs[cs.length - 1] = String(iterN);
+                current = cs.join('.');
+            }
+            return current;
+        }
+
+        function stablesResolveApkUpdateConfig() {
+            const cfg = window.STABLES_CONFIG || {};
+            const apk = cfg.ANDROID_APK_UPDATE && typeof cfg.ANDROID_APK_UPDATE === 'object' ? cfg.ANDROID_APK_UPDATE : {};
+            const pol = cfg.APP_UPDATE_POLICY && typeof cfg.APP_UPDATE_POLICY === 'object' ? cfg.APP_UPDATE_POLICY : {};
+            let latest = String(apk.latestVersion || pol.latestPublishedVersion || '').trim();
+            let downloadUrl = String(apk.downloadUrl || '').trim();
+            if (!downloadUrl && latest) {
+                downloadUrl = 'https://github.com/StablesCouncil/stables-app/releases/download/app-v'
+                    + latest + '/Stables_v' + latest + '.apk';
+            }
+            return {
+                latestVersion: latest,
+                downloadUrl: downloadUrl,
+                sha256: String(apk.sha256 || '').trim(),
+                releasesPageUrl: String(apk.releasesPageUrl || 'https://github.com/StablesCouncil/stables-app/releases').trim()
+            };
+        }
+
+        function stablesSetApkUpdateProgress(text) {
+            const el = document.getElementById('settingsApkProgress');
+            if (!el) return;
+            const msg = String(text || '').trim();
+            if (!msg) {
+                el.style.display = 'none';
+                el.textContent = '';
+                return;
+            }
+            el.style.display = '';
+            el.textContent = msg;
+        }
+
+        window.stablesApkUpdateNativeEvent = function (phase, message) {
+            const btn = document.getElementById('settingsApkUpdateBtn');
+            const p = String(phase || '').toLowerCase();
+            const msg = String(message || '').trim();
+            if (p === 'downloading' || p === 'verified' || p === 'installing') {
+                stablesSetApkUpdateProgress(msg);
+                if (btn) { btn.disabled = true; }
+                return;
+            }
+            if (p === 'done') {
+                stablesSetApkUpdateProgress(msg);
+                if (btn) { btn.disabled = false; btn.textContent = 'Download and install update'; }
+                if (typeof showToast === 'function') showToast(msg, { tone: 'success', durationMs: 6000 });
+                return;
+            }
+            if (p === 'permission') {
+                stablesSetApkUpdateProgress(msg);
+                if (btn) { btn.disabled = false; }
+                if (typeof showToast === 'function') showToast(msg, { tone: 'warn', durationMs: 8000 });
+                return;
+            }
+            if (p === 'busy') {
+                if (typeof showToast === 'function') showToast(msg);
+                return;
+            }
+            if (p === 'error') {
+                stablesSetApkUpdateProgress(msg);
+                if (btn) { btn.disabled = false; btn.textContent = 'Download and install update'; }
+                if (typeof showToast === 'function') showToast(msg, { tone: 'error', durationMs: 8000 });
+            }
+        };
+
+        function stablesStartApkUpdate() {
+            if (!window.__STABLES_ANDROID_APP) return;
+            const cfg = stablesResolveApkUpdateConfig();
+            if (!cfg.downloadUrl) {
+                if (typeof showToast === 'function') showToast('APK download URL is not configured yet.');
+                return;
+            }
+            try {
+                if (!window.StablesAndroid || typeof window.StablesAndroid.downloadAndInstallApk !== 'function') {
+                    window.open(cfg.downloadUrl, '_blank', 'noopener,noreferrer');
+                    if (typeof showToast === 'function') showToast('Opened the APK download in your browser. Install it when the download finishes.');
+                    return;
+                }
+                const btn = document.getElementById('settingsApkUpdateBtn');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.textContent = 'Downloading…';
+                }
+                stablesSetApkUpdateProgress('Starting download…');
+                window.StablesAndroid.downloadAndInstallApk(cfg.downloadUrl, cfg.sha256 || '');
+            } catch (e) {
+                stablesSetApkUpdateProgress('');
+                const btn = document.getElementById('settingsApkUpdateBtn');
+                if (btn) { btn.disabled = false; btn.textContent = 'Download and install update'; }
+                if (typeof showToast === 'function') showToast(String((e && e.message) || e || 'Could not start update.'));
+            }
+        }
+        window.stablesStartApkUpdate = stablesStartApkUpdate;
+
         function syncAppUpdatesSection() {
             const buildVersion = window.STABLES_CONFIG && window.STABLES_CONFIG.APP_BUILD_VERSION;
             const link = document.getElementById('settingsMdsZipLink');
             const label = document.getElementById('settingsMdsZipUrlLabel');
+            const apkVersionLine = document.getElementById('settingsApkVersionLine');
+            const apkStatus = document.getElementById('settingsApkUpdateStatus');
+            const apkWhat = document.getElementById('settingsApkWhatChanged');
+            const apkBtn = document.getElementById('settingsApkUpdateBtn');
+            const apkReleases = document.getElementById('settingsApkReleasesLink');
 
-            // Standalone app: updates are a new APK from the website / GitHub, not an MDS zip for a
-            // node. (Later we can notify holders on-chain; for now we point to the download page.)
             if (window.__STABLES_ANDROID_APP) {
                 const title = document.getElementById('settingsAppUpdateTitle');
-                const appUrl = (window.STABLES_CONFIG && window.STABLES_CONFIG.APP_UPDATE_URL) || 'https://stablescouncil.org';
-                const buildDate0 = window.STABLES_CONFIG && window.STABLES_CONFIG.APP_BUILD_DATE;
-                if (title) title.textContent = 'Keep your Stables app up to date. New versions are published on the Stables website and GitHub, download the latest and install it.';
-                if (link) {
-                    link.textContent = 'Get the latest Stables app';
-                    link.href = appUrl;
-                    link.onclick = null;
+                const apkCfg = stablesResolveApkUpdateConfig();
+                const installed = stablesGetInstalledApkVersion();
+                const latest = apkCfg.latestVersion || installed;
+                const needsUpdate = latest && installed && stablesCompareSemverLike(installed, latest) < 0;
+                const displayInstalled = installed ? ('v' + installed.split('.').map(function (p) { const n = Number(p); return Number.isFinite(n) ? String(n) : p; }).join('.')) : '';
+                const displayLatest = latest ? ('v' + latest.split('.').map(function (p) { const n = Number(p); return Number.isFinite(n) ? String(n) : p; }).join('.')) : '';
+                const pol = (window.STABLES_CONFIG && window.STABLES_CONFIG.APP_UPDATE_POLICY) || {};
+                const wu = pol.whenUpdateNeeded && typeof pol.whenUpdateNeeded === 'object' ? pol.whenUpdateNeeded : {};
+
+                if (title) {
+                    title.textContent = needsUpdate
+                        ? 'A newer Stables app is available on GitHub. Download and install it here to update in place.'
+                        : 'Your Stables app is up to date. New releases are published on GitHub when Council ships an update.';
                 }
-                if (label) label.textContent = 'stablescouncil.org' + (buildDate0 ? ' · this build ' + buildDate0 : '');
+                if (apkVersionLine) {
+                    apkVersionLine.style.display = '';
+                    apkVersionLine.textContent = displayInstalled
+                        ? ('Installed ' + displayInstalled + (displayLatest ? ' · Latest ' + displayLatest : ''))
+                        : (displayLatest ? ('Latest ' + displayLatest) : '');
+                }
+                if (apkStatus) {
+                    apkStatus.style.display = '';
+                    if (needsUpdate) {
+                        apkStatus.style.color = '#fbbf24';
+                        apkStatus.textContent = 'Update available';
+                    } else {
+                        apkStatus.style.color = '#34d399';
+                        apkStatus.textContent = 'You are on the latest app version';
+                    }
+                }
+                if (apkWhat) {
+                    if (needsUpdate && wu.whatChanged) {
+                        apkWhat.style.display = '';
+                        apkWhat.textContent = String(wu.whatChanged);
+                    } else {
+                        apkWhat.style.display = 'none';
+                        apkWhat.textContent = '';
+                    }
+                }
+                if (apkBtn) {
+                    apkBtn.style.display = needsUpdate ? '' : 'none';
+                    apkBtn.disabled = false;
+                    apkBtn.textContent = 'Download and install update';
+                }
+                if (link) link.style.display = 'none';
+                if (apkReleases) {
+                    apkReleases.style.display = '';
+                    apkReleases.href = apkCfg.releasesPageUrl;
+                    apkReleases.textContent = 'View releases on GitHub';
+                }
+                if (label) {
+                    label.textContent = needsUpdate && apkCfg.sha256
+                        ? ('SHA256 ' + apkCfg.sha256)
+                        : 'Play Protect may warn on sideloaded updates. Verify the SHA256 on GitHub if you prefer.';
+                }
+                stablesSetApkUpdateProgress('');
             } else {
+                if (apkVersionLine) apkVersionLine.style.display = 'none';
+                if (apkStatus) apkStatus.style.display = 'none';
+                if (apkWhat) apkWhat.style.display = 'none';
+                if (apkBtn) apkBtn.style.display = 'none';
+                if (apkReleases) apkReleases.style.display = 'none';
+                stablesSetApkUpdateProgress('');
+                if (link) link.style.display = '';
                 const url = window.STABLES_CONFIG && window.STABLES_CONFIG.MDS_ZIP_URL;
                 const zipLabel = buildVersion ? ('Download Stables_' + (typeof stablesBuildLabel === 'function' ? stablesBuildLabel() : stablesFormatDisplayVersion(buildVersion)) + '.mds.zip') : 'Download Stables package (.mds.zip)';
                 if (link) {
@@ -10845,6 +11583,7 @@
             curPage = p;
             if (p === 'settings-updates') {
                 syncAppUpdatesSection();
+                try { if (typeof stablesInitNetworkSection === 'function') stablesInitNetworkSection(); } catch (_) { /* ignore */ }
                 try { if (typeof stablesInitBackgroundToggle === 'function') stablesInitBackgroundToggle(); } catch (_) { /* ignore */ }
                 try { if (typeof stablesInitAppTerminal === 'function') stablesInitAppTerminal(); } catch (_) { /* ignore */ }
                 try { if (typeof stablesSyncMinimaRecvAddrFormatSelect === 'function') stablesSyncMinimaRecvAddrFormatSelect(); } catch (_) { /* ignore */ }
@@ -11359,8 +12098,8 @@
     es: "Una futura suite de personalización que le permitirá personalizar completamente los temas de su interfaz bancaria.",
     zh: "未来的个性化套件，允许您完全自定义银行UI主题并与社区共享。"
   },
-  "settings: appearance, light mode, merchant toggle for my shop in more, address privacy": {
-    en: "Manage visual preferences like Dark/Light mode, toggle your Merchant shop visibility, and control address privacy.",
+  "settings: appearance, six colour themes, merchant toggle for my shop in more, address privacy": {
+    en: "Choose one of six colour themes (Stables dark, Slate, Solar, Rose, Violet, Paper), toggle your Merchant shop visibility, and control address privacy.",
     fr: "Gérez les préférences visuelles, activez la visibilité de votre boutique Marchand et contrôlez la confidentialité de l'adresse.",
     es: "Administre las preferencias visuales, alterne la visibilidad de su tienda comercial y controle la privacidad de la dirección.",
     zh: "管理视觉首选项（如深色/浅色模式），切换商家店铺可见性，并控制地址隐私。"
@@ -15411,6 +16150,92 @@
                 t.checked = on;
             }
         }
+
+        function stablesGetNetworkStatus() {
+            var L = window.__STABLES_LIVE_NODE;
+            if (!L || !L.active) {
+                return { state: 'offline', label: 'Offline', detail: 'Your node is not running. Close and reopen the app, or check that background mode is on in Settings.' };
+            }
+            if (!L.rpcOk) {
+                if (L.lastFail) {
+                    return { state: 'error', label: 'Connection issue', detail: 'Your bank could not reach the node (' + String(L.lastFail) + '). Tap Check connection to try again.' };
+                }
+                return { state: 'syncing', label: 'Connecting', detail: 'Your bank is starting up and catching up with the network.' };
+            }
+            return { state: 'connected', label: 'Connected', detail: 'Your bank is connected to the Minima network.' };
+        }
+
+        function stablesApplyNetworkStatusClasses(el, state) {
+            if (!el) return;
+            el.classList.remove('stables-network-status-dot--connected', 'stables-network-status-dot--syncing', 'stables-network-status-dot--offline', 'stables-network-status-dot--error');
+            if (state === 'connected') el.classList.add('stables-network-status-dot--connected');
+            else if (state === 'syncing') el.classList.add('stables-network-status-dot--syncing');
+            else if (state === 'error') el.classList.add('stables-network-status-dot--error');
+            else el.classList.add('stables-network-status-dot--offline');
+        }
+
+        function stablesUpdateNetworkUI() {
+            if (!window.__STABLES_ANDROID_APP) return;
+            var status = stablesGetNetworkStatus();
+            var L = window.__STABLES_LIVE_NODE;
+            var dot = document.getElementById('stablesNetworkStatusDot');
+            var dotInline = document.getElementById('stablesNetworkStatusDotInline');
+            stablesApplyNetworkStatusClasses(dot, status.state);
+            stablesApplyNetworkStatusClasses(dotInline, status.state);
+            if (dot) {
+                var tip = status.label;
+                if (status.state === 'connected' && L && L.block != null && Number.isFinite(Number(L.block))) {
+                    tip += ' · block ' + Number(L.block).toLocaleString();
+                }
+                dot.title = tip;
+            }
+            var line = document.getElementById('stablesNetworkStatusLine');
+            if (line) line.textContent = status.label;
+            var detail = document.getElementById('stablesNetworkStatusDetail');
+            if (detail) detail.textContent = status.detail;
+            var blockEl = document.getElementById('stablesNetworkBlockHeight');
+            if (blockEl) {
+                if (L && L.rpcOk && L.block != null && Number.isFinite(Number(L.block))) {
+                    blockEl.textContent = 'Block height: ' + Number(L.block).toLocaleString();
+                } else if (L && L.active && !L.rpcOk) {
+                    blockEl.textContent = 'Block height: loading…';
+                } else {
+                    blockEl.textContent = 'Block height: —';
+                }
+            }
+        }
+
+        function stablesInitNetworkSection() {
+            if (!window.__STABLES_ANDROID_APP) return;
+            document.body.classList.add('stables-standalone-app');
+            var sec = document.getElementById('stablesNetworkSection');
+            if (sec) sec.style.display = '';
+            stablesUpdateNetworkUI();
+        }
+
+        function stablesOpenNetworkSettings() {
+            navigate('settings-updates');
+            setTimeout(function () {
+                var el = document.getElementById('stablesNetworkSection');
+                if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 220);
+        }
+
+        function stablesCheckNetworkConnection() {
+            if (!window.__STABLES_ANDROID_APP) return;
+            stablesSeedToast('Checking connection…');
+            try { if (typeof stablesPullBlockAndBalanceFromMds === 'function') stablesPullBlockAndBalanceFromMds(); } catch (_) { /* ignore */ }
+            try {
+                if (typeof stablesNodeCmd === 'function') {
+                    stablesNodeCmd('status', function () {
+                        stablesUpdateNetworkUI();
+                        if (typeof stablesUpdateNodeConnectButton === 'function') stablesUpdateNodeConnectButton();
+                    });
+                }
+            } catch (_) { /* ignore */ }
+            setTimeout(stablesUpdateNetworkUI, 500);
+            setTimeout(stablesUpdateNetworkUI, 1500);
+        }
         function stablesSetBackground(checked) {
             try { if (window.StablesAndroid && window.StablesAndroid.setBackgroundEnabled) window.StablesAndroid.setBackgroundEnabled(!!checked); } catch (_) { /* ignore */ }
             stablesSeedToast(checked ? 'Your bank will keep running in the background.' : 'Your bank will stop when you close the app.');
@@ -15502,6 +16327,17 @@
                 sc.disabled = true;
                 sc.style.opacity = '0.5';
                 sc.style.cursor = 'not-allowed';
+            }
+            var pill = document.getElementById('topbarShowcasePill');
+            if (pill) {
+                pill.onclick = null;
+                pill.style.cursor = 'default';
+                pill.removeAttribute('aria-haspopup');
+                pill.removeAttribute('aria-expanded');
+                var caret = pill.querySelector('.test-pill-caret');
+                if (caret) caret.style.display = 'none';
+                pill.classList.remove('test-pill--selector');
+                pill.style.paddingRight = '';
             }
         }
         function stablesInviteGoBackup() {
@@ -16454,18 +17290,28 @@
             for (let j = 0; j < keys.length; j++) { const v = stablesFindHashUnderKey(o[keys[j]], keyRe, depth + 1); if (v) return v; }
             return '';
         }
-        /** The real on-chain transaction id (txpowid) from a send / MDS response. Returns ONLY a value
-         *  found under a `txpowid` key, the proof-of-work hash the explorer indexes (e.g. 0x0000...).
-         *  It deliberately does NOT fall back to the first 64-hex value: a send response that has not
-         *  been mined yet exposes the inner transaction id (a plain hash with no leading-zero PoW)
-         *  which the explorer cannot resolve, and surfacing that produced a dead "did not match any
-         *  records" link. When no txpowid is present yet, returns '' and the row stays pending until
-         *  the node history sync supplies the confirmed txpowid. */
+        /** True when `id` is a mined proof-of-work hash the Minima explorer can resolve (0x + 64 hex
+         *  with a leading-zero PoW run). Inner transaction ids from an unmined send are also 64-hex
+         *  but lack that PoW prefix and must not be shown as explorer links. */
+        function stablesIsExplorerTxpowId(id) {
+            const t = String(id || '').trim().toLowerCase();
+            if (!/^0x[a-f0-9]{64}$/.test(t)) return false;
+            return /^0x0{2,}/.test(t);
+        }
+        window.stablesIsExplorerTxpowId = stablesIsExplorerTxpowId;
+
+        /** The real on-chain transaction id (txpowid) from a send / MDS response. Returns ONLY a mined
+         *  explorer-resolvable txpowid. When the response has no mined hash yet, returns '' so the UI
+         *  stays on "Pending confirmation" until node history sync supplies the confirmed txpowid. */
         function stablesExtractTxidFromMdsResponse(res) {
             try {
                 let body = (res && res.response != null) ? res.response : res;
                 if (typeof body === 'string') { try { body = JSON.parse(body); } catch (_) { /* keep string */ } }
-                return stablesFindHashUnderKey(body, /^txpowid$/i, 0) || stablesFindHashUnderKey(res, /^txpowid$/i, 0);
+                const candidate = stablesFindHashUnderKey(body, /^txpowid$/i, 0) || stablesFindHashUnderKey(res, /^txpowid$/i, 0);
+                if (!candidate || !stablesIsExplorerTxpowId(candidate)) return '';
+                const inner = stablesFindHashUnderKey(body, /^transactionid$/i, 0) || stablesFindHashUnderKey(res, /^transactionid$/i, 0);
+                if (inner && String(inner).trim().toLowerCase() === String(candidate).trim().toLowerCase()) return '';
+                return candidate;
             } catch (_) { return ''; }
         }
         /** The inner transaction id (body.txn.transactionid) from a send response. This is a plain hash
@@ -16741,6 +17587,7 @@
                 if (L && L.rpcOk) pill.classList.add('stables-node-cluster-pill--live');
                 pill.setAttribute('title', 'Live block height from your Minima node. Tap for connection settings.');
             }
+            if (typeof stablesUpdateNetworkUI === 'function') stablesUpdateNetworkUI();
         }
 
         function stablesSetSyncPillPlaceholder() {
@@ -16765,6 +17612,7 @@
                 pill.classList.add('sync-pill--placeholder');
                 syncEl.textContent = 'Connect';
                 pill.title = 'Connect to your Minima node via the Connect option.';
+                if (typeof stablesUpdateNetworkUI === 'function') stablesUpdateNetworkUI();
                 return;
             }
             if (!L.rpcOk) {
@@ -16779,6 +17627,7 @@
                     pill.classList.add('stables-node-cluster-pill--pending');
                     pill.title = 'Waiting for node data. Open the Connect panel to link your own Minima node.';
                 }
+                if (typeof stablesUpdateNetworkUI === 'function') stablesUpdateNetworkUI();
                 return;
             }
             pill.classList.remove('sync-pill--placeholder');
@@ -16792,6 +17641,7 @@
                 }
             }
             pill.title = 'Node live · block ' + (L.block != null && Number.isFinite(Number(L.block)) ? Number(L.block).toLocaleString() : '...') + '. Tap for connection settings.';
+            if (typeof stablesUpdateNetworkUI === 'function') stablesUpdateNetworkUI();
         }
 
         function stablesStopLiveNodePolling() {
@@ -16920,6 +17770,10 @@
         }
 
         function openStablesNodeConnectModal() {
+            if (window.__STABLES_ANDROID_APP) {
+                if (typeof stablesOpenNetworkSettings === 'function') stablesOpenNetworkSettings();
+                return;
+            }
             const el = document.getElementById('stablesNodeConnectModal');
             if (!el) return;
             const st = document.getElementById('stablesNodeConnectStatus');
@@ -17209,6 +18063,10 @@
 
         function stablesMdsOriginPopupOpenConnect() {
             stablesCloseMdsOriginPopupDismiss();
+            if (window.__STABLES_ANDROID_APP && typeof stablesOpenNetworkSettings === 'function') {
+                stablesOpenNetworkSettings();
+                return;
+            }
             openStablesNodeConnectModal();
         }
 
@@ -17280,6 +18138,7 @@
 
         window.__STABLES_AUTO_CONNECT_MODAL_OPENED = window.__STABLES_AUTO_CONNECT_MODAL_OPENED || false;
         window.stablesTryAutoOpenNodeConnectModal = function () {
+            if (window.__STABLES_ANDROID_APP) return;
             try {
                 if (window.STABLES_CONFIG && window.STABLES_CONFIG.AUTO_OPEN_CONNECT_NODE_ON_LAUNCH === false) return;
             } catch (_) { /* ignore */ }
@@ -18684,6 +19543,13 @@
         window.__STABLES_SEND_CAM_ACTIVE = false;
         window.__STABLES_SEND_CAM_RAF = 0;
 
+        function stablesSendCamSetPhotoInputMode(liveCamActive) {
+            const input = document.getElementById('sendCamPhotoInput');
+            if (!input) return;
+            if (liveCamActive) input.removeAttribute('capture');
+            else input.setAttribute('capture', 'environment');
+        }
+
         function stablesStartSendCam() {
             const video = document.getElementById('sendCamVideo');
             const canvas = document.getElementById('sendCamCanvas');
@@ -18699,18 +19565,19 @@
             if (opening) opening.style.display = 'none';
             video.style.display = 'none';
             if (status) status.style.display = 'none';
-            if (photoBtn) photoBtn.style.display = 'none';
+            if (photoBtn) photoBtn.style.display = '';
 
             // Try the live camera first. It works in desktop browsers and on the MinimaOS hub opened
-            // in a desktop browser (a secure context at https://localhost:9003). Only fall back to the
-            // native file input with capture="environment" when getUserMedia is unavailable or blocked
-            // (e.g. the Android MinimaOS WebView, where that input opens the device camera instead).
+            // in a desktop browser (a secure context at https://localhost:9003). The photo-scan button
+            // stays visible either way: file picker when live camera works, capture="environment" when
+            // getUserMedia is unavailable or blocked (e.g. the Android MinimaOS WebView).
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                stablesSendCamSetPhotoInputMode(false);
                 if (ph) ph.style.display = 'flex';
-                if (photoBtn) photoBtn.style.display = '';
-                if (status) { status.textContent = 'Live camera not available here. Use Take a photo to scan.'; status.style.display = ''; }
+                if (status) { status.textContent = 'Live camera not available here. Use a photo to scan.'; status.style.display = ''; }
                 return;
             }
+            stablesSendCamSetPhotoInputMode(true);
             // Show the "opening camera" spinner while the permission prompt / stream is being acquired.
             if (opening) opening.style.display = 'flex';
             navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
@@ -18762,10 +19629,10 @@
                 })
                 .catch(function() {
                     window.__STABLES_SEND_CAM_ACTIVE = false;
+                    stablesSendCamSetPhotoInputMode(false);
                     if (opening) opening.style.display = 'none';
-                    if (status) { status.textContent = 'Live camera blocked. Use Take a photo to scan, or check camera permission.'; status.style.display = ''; }
+                    if (status) { status.textContent = 'Live camera blocked. Use a photo to scan, or check camera permission.'; status.style.display = ''; }
                     if (ph) ph.style.display = 'flex';
-                    if (photoBtn) photoBtn.style.display = '';
                     video.style.display = 'none';
                 });
         }
@@ -18957,14 +19824,17 @@
             const status = String(o.status || '');
             const amount = String(o.amount || '');
             const address = String(o.address || '');
-            const txid = String(o.txid || '');
+            const txid = stablesIsExplorerTxpowId(o.txid) ? String(o.txid || '').trim() : '';
+            const pendingTxBlock = o.pendingOnChain && !txid
+                ? `<div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);margin-bottom:10px"><div class="xs mu" style="font-weight:700;color:var(--t)">Transaction id</div><div style="font-size:12px;font-weight:800;color:var(--am);margin-top:4px">Pending confirmation</div><div class="xs mu" style="margin-top:6px;color:var(--m)">The on-chain id appears here once your node confirms the transaction.</div></div>`
+                : '';
             const body = `
                 <div style="padding:12px;border-radius:12px;background:rgba(16,24,38,.62);border:1px solid rgba(103,232,249,.18);margin-bottom:10px">
                     <div style="font-size:16px;font-weight:900;color:var(--t);margin-bottom:6px">${status}</div>
                     ${amount ? `<div class="xs mu" style="margin-bottom:8px">${amount}</div>` : ''}
                     ${address ? `<div class="xs mu" style="word-break:break-all">To ${address}</div>` : ''}
                 </div>
-                ${txid ? `<div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);margin-bottom:10px"><div class="xs mu">Transaction hash <span style="color:var(--am);font-weight:800">(pending on chain)</span></div><a href="${stablesTxExplorerHref(txid)}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:800;margin-top:4px;word-break:break-all;color:var(--c);text-decoration:underline;text-underline-offset:2px;display:block">${txid}</a><div class="xs mu" style="margin-top:6px;color:var(--m)">Tap to view on the Minima explorer (it appears there once confirmed).</div></div>` : ''}
+                ${txid ? `<div style="padding:10px;border-radius:10px;background:rgba(11,15,20,.35);border:1px solid rgba(103,232,249,.1);margin-bottom:10px"><div class="xs mu">Transaction id</div><a href="${stablesTxExplorerHref(txid)}" target="_blank" rel="noopener noreferrer" style="font-size:12px;font-weight:800;margin-top:4px;word-break:break-all;color:var(--c);text-decoration:underline;text-underline-offset:2px;display:block">${txid}</a></div>` : pendingTxBlock}
                 ${o.note ? `<p class="xs mu" style="margin:0;line-height:1.5;color:var(--m)">${o.note}</p>` : ''}
             `;
             const modal = document.getElementById('agentActionModal');
@@ -19337,7 +20207,7 @@
                                     // txpow is not mined yet, txid is '' and we keep an optimistic
                                     // MINIMA-<ts> row; pendingTxnId lets the confirmed node row reconcile
                                     // against it (see upsertUserActivityRows) so it is never shown twice.
-                                    id: txid ? ('NODE-' + txid) : ('MINIMA-' + Date.now()),
+                                    id: txid ? (typeof window.stablesNodeActivityId === 'function' ? window.stablesNodeActivityId(txid) : ('NODE-' + String(txid).trim().toLowerCase())) : ('MINIMA-' + Date.now()),
                                     pendingTxnId: txnId || '',
                                     dir: 'out',
                                     icon: '↗',
@@ -19365,6 +20235,7 @@
                             amount: totalAmt + ' Minima',
                             address: outputs.map(function (o) { return o.addr; }).join('\n'),
                             txid: stablesExtractTxidFromMdsResponse(res) || '',
+                            pendingOnChain: true,
                             note: 'Balance refreshes from your Minima node.'
                         });
                         showToast(outputs.length > 1 ? 'MINIMA sent to ' + outputs.length + ' recipients.' : 'MINIMA send submitted.', { durationMs: 4200 });
@@ -21409,12 +22280,6 @@
         }
 
         // Settings
-        function toggleTheme() {
-            document.body.classList.toggle('light');
-            const tog = document.getElementById('themeToggle');
-            if (tog) tog.classList.toggle('on', document.body.classList.contains('light'));
-            showToast(document.body.classList.contains('light') ? '\u2600\ufe0f Light mode on' : '\ud83c\udf19 Dark mode on');
-        }
         function toggleMerchant() {
             merchantMode = !merchantMode;
             localStorage.setItem(MERCHANT_MODE_KEY, merchantMode ? '1' : '0');
@@ -21587,6 +22452,24 @@ const APP_TAB_TITLE = 'Demo · Stables';
         }
         window.useDefaultProfileSettings = useDefaultProfileSettings;
 
+        function stablesSyncAndroidLauncherBrand() {
+            if (!window.__STABLES_ANDROID_APP) return;
+            try {
+                if (!window.StablesAndroid || !window.StablesAndroid.updateLauncherBrand) return;
+                const customMode = isUsingCustomProfileSettings();
+                const liveBankName = String(document.getElementById('bankDisplayNameInput')?.value || '').trim();
+                let storedBankName = '';
+                try { storedBankName = String(localStorage.getItem('stables_bank_display_name_v1') || '').trim(); } catch (_) {}
+                const welcomeBankDraft = String(document.getElementById('welcomeBankNameInput')?.value || '').trim();
+                let bankName = liveBankName || storedBankName || welcomeBankDraft || '';
+                if (!customMode) bankName = '';
+                const iconDataUrl = customMode
+                    ? String(bankAvatarDataUrl || bankAvatarUrl || '').trim()
+                    : '';
+                window.StablesAndroid.updateLauncherBrand(bankName, iconDataUrl, customMode);
+            } catch (_) { /* ignore */ }
+        }
+
         function refreshTopbarBrand() {
             document.title = APP_TAB_TITLE;
             const img = document.getElementById('topbarBrandImg');
@@ -21634,6 +22517,7 @@ const APP_TAB_TITLE = 'Demo · Stables';
                     img.style.objectFit = 'contain';
                 }
             }
+            stablesSyncAndroidLauncherBrand();
         }
         window.refreshTopbarBrand = refreshTopbarBrand;
 
@@ -21687,6 +22571,7 @@ const APP_TAB_TITLE = 'Demo · Stables';
             const profile = loadCouncilProfileFromStorage();
             applyCouncilProfileToUI(profile);
             refreshProfileModeUI();
+            refreshTopbarBrand();
         }
 
         function onCouncilAvatarFile(input) {
@@ -22212,6 +23097,7 @@ const APP_TAB_TITLE = 'Demo · Stables';
             if (typeof stablesInitNativeSecurity === 'function') stablesInitNativeSecurity();
             if (typeof stablesMaybeShowSeedInvite === 'function') stablesMaybeShowSeedInvite();
             if (typeof stablesDisableUnavailableChannelsInApp === 'function') stablesDisableUnavailableChannelsInApp();
+            if (typeof stablesInitNetworkSection === 'function') stablesInitNetworkSection();
             if (typeof stablesInitAppTerminal === 'function') stablesInitAppTerminal();
             if (typeof stablesInitBackgroundToggle === 'function') stablesInitBackgroundToggle();
         });
@@ -22244,6 +23130,7 @@ const APP_TAB_TITLE = 'Demo · Stables';
             }, { passive: true });
         })();
     </script>
+    <script src="assets/theme.js"></script>
     <script src="assets/routes/activity-contacts.js"></script>
     <script src="assets/routes/trust-retro.js"></script>
     <script src="assets/routes/feedback.js"></script>

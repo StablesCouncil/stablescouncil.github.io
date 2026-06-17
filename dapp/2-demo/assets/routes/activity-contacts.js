@@ -9,6 +9,109 @@
   const SOFT_HIDDEN_TX_KEY = CFG.SOFT_HIDDEN_TX_KEY || 'stables_soft_hidden_tx_ids_v1';
   const HIDDEN_SHOPS_KEY = CFG.HIDDEN_SHOPS_KEY || 'stables_hidden_shop_names_v1';
 
+  function isExplorerTxpowId(id) {
+    if (typeof window.stablesIsExplorerTxpowId === 'function') return window.stablesIsExplorerTxpowId(id);
+    const t = String(id || '').trim().toLowerCase();
+    return /^0x[a-f0-9]{64}$/.test(t) && /^0x0{2,}/.test(t);
+  }
+
+  function normalizeTxHash(h) {
+    return String(h || '').trim().toLowerCase();
+  }
+
+  function nodeActivityId(txpowid) {
+    const h = normalizeTxHash(txpowid);
+    return h ? ('NODE-' + h) : '';
+  }
+  window.stablesNodeActivityId = nodeActivityId;
+
+  function activityAddressTokens(addr) {
+    return String(addr || '').split(/[,;\n]/).map(s => s.trim().toLowerCase()).filter(Boolean);
+  }
+
+  function activityAddressesOverlap(a, b) {
+    const A = activityAddressTokens(a);
+    const B = activityAddressTokens(b);
+    if (!A.length || !B.length) return true;
+    return A.some(x => B.some(y => x === y || x.includes(y) || y.includes(x)));
+  }
+
+  function isOptimisticOutRow(r) {
+    if (!r || r.dir !== 'out' || !r.minimaOnChain) return false;
+    const id = String(r.id || '');
+    if (id.indexOf('MINIMA-') === 0) return true;
+    return r.status === 'Pending' && !isExplorerTxpowId(r.explorerTxId) && id.indexOf('NODE-') !== 0;
+  }
+
+  function outgoingSendMatch(optimistic, nodeRow) {
+    if (!isOptimisticOutRow(optimistic) || !nodeRow || nodeRow.dir !== 'out') return false;
+    const nodeId = String(nodeRow.id || '');
+    if (nodeId.indexOf('NODE-') !== 0) return false;
+    const amtA = Math.abs(Number(optimistic.amt) || 0);
+    const amtB = Math.abs(Number(nodeRow.amt) || 0);
+    if (Math.abs(amtA - amtB) >= 0.01) return false;
+    const oTxn = normalizeTxHash(optimistic.pendingTxnId);
+    const nTxn = normalizeTxHash(nodeRow.txnId);
+    if (oTxn && nTxn && oTxn === nTxn) return true;
+    const nTxp = normalizeTxHash(nodeRow.explorerTxId || nodeId.slice(5));
+    const oTxp = normalizeTxHash(optimistic.explorerTxId);
+    if (oTxp && nTxp && oTxp === nTxp) return true;
+    if (!activityAddressesOverlap(optimistic.address, nodeRow.address)) return false;
+    const tO = Number(optimistic.ts) || 0;
+    const tN = Number(nodeRow.ts) || 0;
+    if (tO && tN && Math.abs(tO - tN) > 15 * 60 * 1000) return false;
+    return true;
+  }
+
+  function activityRowRank(r) {
+    let s = 0;
+    if (r && r.status === 'Confirmed') s += 4;
+    else if (r && r.status === 'Pending') s += 2;
+    if (isExplorerTxpowId(r && r.explorerTxId)) s += 2;
+    if (Number(r && r.block) > 0) s += 1;
+    return s;
+  }
+
+  function pruneDuplicateNodeRowsByTxpow() {
+    const groups = new Map();
+    USER_ACTIVITY.forEach(r => {
+      if (!r || String(r.id || '').indexOf('NODE-') !== 0) return;
+      const hash = normalizeTxHash(r.explorerTxId || String(r.id).slice(5));
+      if (!hash) return;
+      const key = hash + '|' + (r.dir || '');
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(r);
+    });
+    const dropIds = new Set();
+    groups.forEach(rows => {
+      if (!rows.length) return;
+      rows.sort((a, b) => activityRowRank(b) - activityRowRank(a));
+      const keep = rows[0];
+      const normId = nodeActivityId(keep.explorerTxId || keep.id.slice(5));
+      if (normId) {
+        keep.id = normId;
+        if (keep.explorerTxId) keep.explorerTxId = normId.slice(5);
+      }
+      for (let i = 1; i < rows.length; i++) dropIds.add(String(rows[i].id));
+    });
+    if (!dropIds.size) return;
+    USER_ACTIVITY = USER_ACTIVITY.filter(r => !dropIds.has(String(r.id)));
+  }
+
+  function pruneOutgoingSendDuplicates() {
+    const nodeOuts = USER_ACTIVITY.filter(r => r && r.dir === 'out' && String(r.id || '').indexOf('NODE-') === 0);
+    if (!nodeOuts.length) return;
+    USER_ACTIVITY = USER_ACTIVITY.filter(r => {
+      if (!isOptimisticOutRow(r)) return true;
+      return !nodeOuts.some(n => outgoingSendMatch(r, n));
+    });
+  }
+
+  function reconcileActivityDuplicates() {
+    pruneDuplicateNodeRowsByTxpow();
+    pruneOutgoingSendDuplicates();
+  }
+
   // ── Block-confirmation counter ───────────────────────────────────────────────
   // Each on-chain MINIMA tx shows how many blocks deep it is (live counter), out of a
   // user-settable target (default 3). 0 = still in the mempool / awaiting the first block.
@@ -131,6 +234,7 @@
     } catch (_) {
       USER_ACTIVITY = [];
     }
+    reconcileActivityDuplicates();
   }
   function persistUserActivityToStorage() {
     if (!DEMO_REAL) return;
@@ -143,10 +247,15 @@
   window.stablesAppendUserActivityRow = function (row) {
     if (!DEMO_REAL || !row || !row.id) return;
     if (typeof row.ts !== 'number' || !Number.isFinite(row.ts) || row.ts <= 0) row.ts = Date.now();
+    if (row.dir === 'out' && row.minimaOnChain) {
+      const nodeOuts = USER_ACTIVITY.filter(r => r && r.dir === 'out' && String(r.id || '').indexOf('NODE-') === 0);
+      if (isOptimisticOutRow(row) && nodeOuts.some(n => outgoingSendMatch(row, n))) return;
+    }
     // Idempotent by id: never stack two rows for the same id.
     const dupIdx = USER_ACTIVITY.findIndex(r => r && String(r.id) === String(row.id));
     if (dupIdx !== -1) USER_ACTIVITY.splice(dupIdx, 1);
     USER_ACTIVITY.unshift(row);
+    reconcileActivityDuplicates();
     if (USER_ACTIVITY.length > 200) USER_ACTIVITY.length = 200;
     persistUserActivityToStorage();
     if (typeof window.renderActivity === 'function') window.renderActivity();
@@ -276,43 +385,22 @@
       // optimistic local send row (id MINIMA-<ts> or NODE-<sendid>) whose explorerTxId is the txpowid,
       // so a single send never shows twice (once pending, once confirmed).
       if (id.indexOf('NODE-') === 0) {
-        const txpid = id.slice(5);
-        const rowTxnId = String(row.txnId || '').trim().toLowerCase();
-        const rowDir = String(row.dir || '');
-        const rowAmtAbs = Math.abs(Number(row.amt) || 0);
-        const rowAddr = String(row.address || '').trim().toLowerCase();
-        const rowTs = Number(row.ts) || 0;
+        const txpid = normalizeTxHash(id.slice(5));
+        const normId = txpid ? ('NODE-' + txpid) : id;
+        row.id = normId;
+        if (row.explorerTxId) row.explorerTxId = txpid || row.explorerTxId;
+        const rowTxnId = normalizeTxHash(row.txnId);
         for (let i = USER_ACTIVITY.length - 1; i >= 0; i--) {
           const r = USER_ACTIVITY[i];
           if (!r) continue;
-          if (String(r.id) === id) continue; // the same row; it will be upserted below
-          const rTxid = String(r.explorerTxId || '') ||
-            (String(r.id).indexOf('NODE-') === 0 ? String(r.id).slice(5) : '');
+          if (String(r.id) === normId) continue;
+          const rTxid = normalizeTxHash(r.explorerTxId ||
+            (String(r.id).indexOf('NODE-') === 0 ? String(r.id).slice(5) : ''));
           let drop = false;
-          if (rTxid && rTxid === txpid) {
-            // Exact on-chain id match (already-confirmed row, or an optimistic row that captured
-            // the real txpowid).
+          if (rTxid && txpid && rTxid === txpid) {
             drop = true;
-          } else if (
-            rowDir === 'out' && r.dir === 'out' &&
-            String(r.id).indexOf('NODE-') !== 0 &&            // an optimistic local row, not another node row
-            r.minimaOnChain && r.status === 'Pending' &&
-            !/^0x[a-fA-F0-9]{64}$/.test(String(r.explorerTxId || '')) // no confirmed txpowid yet
-          ) {
-            // Reconcile the optimistic "send pending" row (which has no mined txpowid) with the
-            // authoritative confirmed node row for the SAME send, so it is replaced rather than
-            // duplicated. Prefer the inner transaction id; otherwise match amount + recipient + time.
-            const pendTxnId = String(r.pendingTxnId || '').trim().toLowerCase();
-            if (rowTxnId && pendTxnId && rowTxnId === pendTxnId) {
-              drop = true;
-            } else {
-              const amtClose = Math.abs(Math.abs(Number(r.amt) || 0) - rowAmtAbs) < 0.01;
-              const rAddr = String(r.address || '').trim().toLowerCase();
-              const addrMatch = rowAddr && rAddr && (rAddr === rowAddr || rAddr.indexOf(rowAddr) !== -1 || rowAddr.indexOf(rAddr) !== -1);
-              const rRowTs = Number(r.ts) || 0;
-              const timeClose = (!rowTs || !rRowTs) ? true : Math.abs(rowTs - rRowTs) < 2 * 60 * 60 * 1000;
-              if (amtClose && addrMatch && timeClose) drop = true;
-            }
+          } else if (outgoingSendMatch(r, row)) {
+            drop = true;
           }
           if (drop) {
             USER_ACTIVITY.splice(i, 1);
@@ -320,14 +408,16 @@
           }
         }
       }
-      if (byId.has(id)) {
-        Object.assign(byId.get(id), row);
+      const upsertId = String(row.id);
+      if (byId.has(upsertId)) {
+        Object.assign(byId.get(upsertId), row);
       } else {
         USER_ACTIVITY.unshift(row);
-        byId.set(id, row);
+        byId.set(upsertId, row);
       }
       changed++;
     });
+    reconcileActivityDuplicates();
     if (USER_ACTIVITY.length > 500) USER_ACTIVITY.length = 500;
     persistUserActivityToStorage();
     if (typeof window.renderActivity === 'function') window.renderActivity();
@@ -412,7 +502,7 @@
     if (!wrapper || typeof wrapper !== 'object') return null;
     const txpow = (wrapper.txpow && wrapper.txpow.txpowid) ? wrapper.txpow : wrapper;
     const relevant = (wrapper.txpow && wrapper.relevant) ? wrapper.relevant : {};
-    const id = String(txpow.txpowid || '').trim();
+    const id = normalizeTxHash(txpow.txpowid || '');
     if (!id || id.length < 8) return null;
     const header = txpow.header || {};
     let parsedDate = null;
@@ -503,7 +593,7 @@
       ? parsedDate.toLocaleString('en-GB', { month: 'short', day: '2-digit' }) + ' ' + String.fromCharCode(183) + ' ' + parsedDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
       : 'Node history';
     return {
-      id: 'NODE-' + id,
+      id: nodeActivityId(id),
       dir,
       icon: dir === 'out' ? String.fromCharCode(8599) : String.fromCharCode(8601),
       counterparty,
@@ -908,7 +998,7 @@
   window.stablesHandleIncomingTxpow = async function (txpow) {
     try {
       if (!DEMO_REAL || !txpow || typeof txpow !== 'object') return;
-      const id = String(txpow.txpowid || '').trim();
+      const id = normalizeTxHash(txpow.txpowid || '');
       if (!id || id.length < 8 || _seenIncomingTxids.has(id)) return;
 
       const txn = (txpow.body && (txpow.body.txn || txpow.body.transaction)) || {};
@@ -948,7 +1038,7 @@
       const dateText = now.toLocaleString('en-GB', { month: 'short', day: '2-digit' }) + ' ' + String.fromCharCode(183) + ' ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
 
       upsertUserActivityRows([{
-        id: 'NODE-' + id,
+        id: nodeActivityId(id),
         dir: 'in',
         icon: String.fromCharCode(8601),
         counterparty,
@@ -1731,7 +1821,7 @@
     const canRateMerchant = !!SHOP_PROFILES[tx.counterparty] && tx.dir === 'out';
     const feeDisp = (Number(tx.fee) || 0).toFixed(2);
     const txHash = String(tx.explorerTxId || '');
-    const hasRealExplorer = !!tx.minimaOnChain && /^0x[a-fA-F0-9]{64}$/.test(txHash);
+    const hasRealExplorer = !!tx.minimaOnChain && isExplorerTxpowId(txHash);
     const tradeIdBlock = hasRealExplorer
       ? `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction id</div><a href="${escUi(txExplorerUrl(tx))}" target="_blank" rel="noopener noreferrer" class="btn" style="width:auto;padding:0;border:none;background:none;font-size:12px;font-weight:900;word-break:break-all;color:var(--c);text-decoration:underline;display:inline-block;text-align:left">${escUi(txHash)}</a></div>`
       : (tx.minimaOnChain
@@ -3231,11 +3321,8 @@
     }
   };
 
-  /** More → Help → Guided tours: open welcome on the StablesAgent role picker (path choice). */
+  /** Legacy alias: guided tours now live inside the StablesAgent drawer. */
   window.openWelcomeGuidedToursFromMenu = function () {
-    try {
-      sessionStorage.setItem('stables_guided_tour_from_menu_v1', '1');
-    } catch (_) {}
     if (typeof window.openAgentGuidedTour === 'function') {
       window.openAgentGuidedTour();
       return;

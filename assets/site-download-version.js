@@ -7,7 +7,7 @@
 // Note: this tracks the DOWNLOADABLE (published) package, not the dev line in
 // dapp/2-demo/ (which may be ahead). Only bump after the new zip is in latest-version/.
 (function () {
-  var PUBLISHED_DEMO_VERSION = '0.0.0.3.31';
+  var PUBLISHED_DEMO_VERSION = '0.0.0.3.42';
   var ZIP_PATH = '/dapp/latest-version/Stables_v' + PUBLISHED_DEMO_VERSION + '.mds.zip';
 
   function apply() {

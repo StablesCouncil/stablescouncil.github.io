@@ -8,19 +8,52 @@
 
 ### [Unreleased], next daily build
 
-Ongoing demo line. Changes are logged here as they are made, then move into a dated, published section on release. Build identity is the `APP_BUILD_ITERATION` counter, shown in the pill, `dapp.conf`, and the zip name (e.g. `Stables_v0.0.0.3.30.mds.zip`).
+Ongoing demo line. Changes are logged here as they are made, then move into a dated, published section on release. Build identity is the `APP_BUILD_ITERATION` counter, shown in the pill, `dapp.conf`, and the zip name (e.g. `Stables_v0.0.0.3.43.mds.zip`).
 
 #### Added
 
+- *(none yet)*
+
+#### Changed
+
+- *(none yet)*
+
+#### Fixed
+
+- *(none yet)*
+
+---
+
+## [0.0.0.3.42] - 2026-06-17 (demo · published)
+
+Published to GitHub Pages, GitHub Releases (Android), and the BCP onion mirror. Supersedes **v0.0.0.3.31**.
+
+#### Added
+
+- **In-app Android APK updates from Settings.** In the standalone app, Settings and updates can download the signed APK from GitHub Releases, verify its SHA256, and open the Android installer without leaving Stables. Bump `ANDROID_APK_UPDATE` in `runtime-config.js` when Council publishes a new release.
+- **Android home screen follows My profile branding.** In the standalone app, the launcher name and icon now sync with your bank display name and bank picture from My profile (or the welcome personalisation flow). Switch back to default settings to restore the Stables launcher entry. The first time you add a bank picture, Android may offer to pin an exact shortcut to your home screen.
+- **Six colour themes in Settings.** Appearance now offers Stables dark (default), Slate (grey-blue midpoint), Solar (amber/gold), Rose (pink), Violet (purple), and Paper (stark high-contrast light). Each theme tints the full shell, including the More side menu. Your choice is saved on this device.
 - **Safety check before wallet recovery (standalone app).** Replacing a wallet with a recovered Vault key is irreversible, so it now asks two quick questions first: who can recover your funds if you lose your Vault key, and how to protect funds before replacing a wallet. The Recover button stays disabled until both are answered correctly, and a wrong answer offers to talk it through with StablesAgent. The warning now also states that unbacked funds could be lost forever.
 
 #### Changed
 
+- **Settings and updates on Android** no longer sends users to the website homepage for APK updates; the page compares the installed version to the published GitHub release and offers one-tap download and install when an update is available.
+- **More menu: one StablesAgent entry for help.** Guided tours and StablesAgent were separate rows under Help; they are now a single StablesAgent item that opens the agent drawer with welcome paths, guided tour stops, setup help, and free-form questions.
+- **All links page matches the public website map.** More → All links now mirrors [stablescouncil.org/links.html](https://stablescouncil.org/links.html): website map, community, and Council sections with the same URLs and descriptions. The broken clearnet onion-resilience path is removed; continuity and verification resources point to the BCP resilience onion site (Tor Browser).
+- **Block height pill follows the active theme.** The live sync pill no longer keeps a fixed dark panel on Paper; it uses theme surfaces and borders so white mode reads consistently with the rest of the top bar.
+- **Standalone app: quieter top bar and a Network section in Settings.** The version pill sits on the right on every device so the logo and slogan keep room on the left. In the Android app, block height and Connect are gone from the top bar; a small status dot (green, amber, or red) opens Settings → Network instead of the Connect modal. That section shows connection status, block height, and a Check connection action. The Connect modal no longer auto-opens on app launch.
+- **Photo QR scan is always available in Send.** The "Use a photo to scan QR code" option now stays visible while the live camera is running, not only when the camera is blocked. When the live camera works, choosing a photo opens the normal file picker (screenshots and saved images). When the live camera is unavailable, the same button still uses the device camera via the native capture fallback.
 - **Connect panel is clearer about the RPC port and how to start a node.** The panel now states the rule that your RPC port is your node's port + 4 (a node on port 9101 has its RPC on 9105), defaults the RPC URL to the direct no-password port `9105`, adds a copyable desktop launch command (`java -jar minima.jar ... -port 9101 -rpcenable true`), and tells you to leave the password blank for a node started that way.
 - **Recovery progress screen explains the node restart.** During wallet recovery the node restarts and the app relaunches itself. The progress screen now states this is normal and that the balance and transaction history sync from your node when it returns.
 
 #### Fixed
 
+- **Broken onion resilience clearnet link removed.** `stablescouncil.org/onion-resilience/` is not published on GitHub Pages; the app now lists the BCP resilience onion address from the official links page instead.
+- **Light appearance is readable end to end.** The old light toggle only swapped a few background tokens, so cards, inputs, and chrome stayed dark. Themes now drive shared surface, border, text, and accent tokens across the shell.
+- **Side menu follows the active theme.** The More drawer (background, header, language bar, section labels, row captions, and hover states) now uses theme tokens instead of a fixed dark panel, so Solar, Rose, Violet, and Paper read clearly and look distinct from Stables dark.
+- **Light theme contrast pass.** Paper uses near-black text on white, stronger borders on controls, and darker drawer captions. Colourful dark themes use accent-tinted section labels in the side menu.
+- **Duplicate transaction rows are merged after send and node sync.** An optimistic local send row (`MINIMA-…`) and the authoritative node-history row (`NODE-…`) for the same payment no longer both stay in Activity or wallet recent activity. Reconciliation matches by txpow id (case-normalized), inner transaction id, amount, recipient, and time, and keeps the node row.
+- **Pending sends no longer show a wrong transaction id.** An unmined send response can carry a 64-hex value that is not the proof-of-work hash the explorer indexes. The app now accepts only mined txpow ids (leading-zero PoW prefix) for explorer links. Until that exists, the send confirmation and transaction detail show "Pending confirmation" with no hash, not a dead explorer link.
 - **Sending wallet now shows the correct, explorer-resolvable transaction id.** A send still surfaced the inner transaction id (a plain hash with no leading zeros) as the transaction id, so tapping it on the explorer returned "did not match any records", while the receiving wallet showed the right `txpowid`. The send response does not contain the mined `txpowid` yet, so the app no longer guesses a hash from it: an on-chain send now reads "Pending confirmation" until the node confirms it, then the confirmed history row (which carries the real `txpowid`) replaces the pending one with a working explorer link. The pending and confirmed rows are reconciled by the transaction id (or by amount, recipient, and time) so a single send never appears twice.
 - **Transaction hash shows the real on-chain id and links to the explorer.** The send confirmation showed an internal value (the first 64-hex string in the node's response, often a coin id), not the transaction's `txpowid`. It now extracts the actual `txpowid`, labels it as pending until confirmed, and makes it a clickable link to the Minima explorer. Activity rows already carry the corrected `explorerTxId` for when the hash is surfaced there too.
 - **Connect messages no longer reference a removed "Option 2".** Several node-connection status and error messages still pointed to "Option 2 in the Connect panel" from when the panel had two options; they now refer to the single Connect panel directly.

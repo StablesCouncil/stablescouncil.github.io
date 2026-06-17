@@ -18,9 +18,9 @@ window.STABLES_CONFIG = {
    * each build is uniquely identifiable in the top-bar pill (e.g. v0.0.0.2.01, .02, …) and the
    * packaged zip name (Stables_v0.0.0.2.02.mds.zip). Reset to 1 when APP_BUILD_VERSION changes / published.
    */
-  APP_BUILD_ITERATION: 31,
+  APP_BUILD_ITERATION: 42,
   /** Date this build was published to GitHub (ISO YYYY-MM-DD). */
-  APP_BUILD_DATE: '2026-06-16',
+  APP_BUILD_DATE: '2026-06-17',
   /**
    * Council-side view of the newest MiniDapp. If latestPublishedVersion sorts above APP_BUILD_VERSION,
    * the Council communications page shows criticality + what changed + zip link.
@@ -28,14 +28,25 @@ window.STABLES_CONFIG = {
    * Use the same segment count as APP_BUILD_VERSION so semver-like compare is meaningful.
    */
   APP_UPDATE_POLICY: {
-    latestPublishedVersion: '0.0.0.3.31',
+    latestPublishedVersion: '0.0.0.3.42',
     whenUpdateNeeded: {
       criticality: 'medium',
       whatChanged:
-        'The sending wallet now shows the correct transaction id that resolves on the Minima explorer. Wallet recovery asks a short safety check first, the Connect panel is clearer about the RPC port, and transaction history is pulled in after a recovery.',
+        'Six colour themes including Paper light mode, in-app Android updates from Settings and updates, home-screen branding from My profile, StablesAgent help and guided tours in one place, All links aligned with the website, and a safer wallet recovery flow.',
       details:
-        'Install the current package from the link below, or use Settings and updates.'
+        'On Android, open Settings and updates to download and install the latest APK from GitHub. On web or Minima hub, use the package link below.'
     }
+  },
+  /**
+   * Standalone Android APK updates (GitHub Releases). Bump with every signed APK publish.
+   * downloadUrl must be the direct GitHub asset link for Stables_v<version>.apk.
+   */
+  ANDROID_APK_UPDATE: {
+    latestVersion: '0.0.0.3.42',
+    downloadUrl:
+      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.0.3.42/Stables_v0.0.0.3.42.apk',
+    sha256: '6173A9EE076A6CB0298B41DDEE454C5F0D4BA95A55E012CE833040DB03172F20',
+    releasesPageUrl: 'https://github.com/StablesCouncil/stables-app/releases'
   },
   ACTIVITY_PAGE_SIZE: 25,
   BACKUP_REMINDER_HOURS: 48,
@@ -64,7 +75,7 @@ window.STABLES_CONFIG = {
   FAUCET_WINIWA_COOLDOWN_MS: 3600000,
   FAUCET_WINIWA_LAST_CLAIM_STORAGE_KEY: 'stables_faucet_winiwa_last_claim_ts_v1',
   /** Public demo: direct MiniDapp package download. */
-  MDS_ZIP_URL: 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.2.16.mds.zip',
+  MDS_ZIP_URL: 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.3.42.mds.zip',
   /**
    * Stables Charter on GitHub (Markdown). Governing text for how the Council and community run the protocol.
    * Leave empty until the charter is actually published — an empty value shows the "coming soon" modal.
