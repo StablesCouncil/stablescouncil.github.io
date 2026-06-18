@@ -62,7 +62,60 @@
   }
 
   function getAppBuild() {
+    if (typeof window.stablesBuildLabel === 'function') {
+      return String(window.stablesBuildLabel()).replace(/^v/, '');
+    }
     return (window.STABLES_CONFIG && window.STABLES_CONFIG.APP_BUILD_VERSION) || 'unknown';
+  }
+
+  function getDemoFeedbackRoadmapConfig() {
+    var c = window.STABLES_CONFIG || {};
+    var r = c.DEMO_FEEDBACK_ROADMAP || {};
+    return {
+      summary:
+        r.summary ||
+        'Review the live demo against channel truth, native Minima wallet behaviour, demo-only Winiwa and Wables flows, merchant-first ramps, Coverage fund copy, links, and feedback routing.',
+      nowReview: r.nowReview || 'Wallet, Mint, Coverage fund, On/Off Ramp, Settings, links',
+      comingSoon: r.comingSoon || 'App feedback topic, bug reports, roadmap votes',
+      nextModules: r.nextModules || 'Personal themes, merchant validation, academy lessons',
+      footnote:
+        r.footnote ||
+        'Use the form below for concept, financial, and technical comments today.'
+    };
+  }
+
+  function buildFeedbackRoadmapBlock() {
+    var roadmap = getDemoFeedbackRoadmapConfig();
+    return (
+      '<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">' +
+      '<div class="stitle-row">' +
+      '<div class="stitle">Demo roadmap</div>' +
+      '<button type="button" class="agent-mini-btn" onclick="openAgentExplain(\'Feedback roadmap: reviewers see what to test in this build, what is coming soon, and where to send feedback\')" title="StablesAgent">' +
+      '<img src="agent.png" alt="StablesAgent">' +
+      '</button></div>' +
+      '<div class="card app-section-card"  style="padding:14px 16px;margin-bottom:14px">' +
+      '<div  style="font-size:12px;font-weight:900;color:var(--c);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Demo v' +
+      getAppBuild() +
+      '</div>' +
+      '<p class="sec-body" style="margin:0 0 12px;line-height:1.55;font-weight:800;color:var(--t)">' +
+      roadmap.summary +
+      '</p>' +
+      '<div  style="display:grid;gap:8px">' +
+      '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--t)">Now review</strong></span><span style="font-weight:800;color:var(--t)">' +
+      roadmap.nowReview +
+      '</span></div>' +
+      '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--am)">Coming soon</strong></span><span style="font-weight:800;color:var(--t)">' +
+      roadmap.comingSoon +
+      '</span></div>' +
+      '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--t)">Next modules</strong></span><span style="font-weight:800;color:var(--t)">' +
+      roadmap.nextModules +
+      '</span></div>' +
+      '</div>' +
+      '<p class="xs mu" style="margin:12px 0 0;line-height:1.5;font-weight:800;color:var(--muted)">' +
+      roadmap.footnote +
+      '</p>' +
+      '</div></div>'
+    );
   }
 
   function el(id) {
@@ -172,24 +225,6 @@
       '</div></div>'
     );
   }
-
-  const FEEDBACK_ROADMAP_BLOCK =
-    '<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">' +
-    '<div class="stitle-row">' +
-    '<div class="stitle">Demo roadmap</div>' +
-    '<button type="button" class="agent-mini-btn" onclick="openAgentExplain(\'Feedback roadmap: this is Demo v1 of many; coming-soon modules are visible so reviewers know what to test and where to send feedback\')" title="StablesAgent">' +
-    '<img src="agent.png" alt="StablesAgent">' +
-    '</button></div>' +
-    '<div class="card app-section-card"  style="padding:14px 16px;margin-bottom:14px">' +
-    '<div  style="font-size:12px;font-weight:900;color:var(--c);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Demo v' + getAppBuild() + '</div>' +
-    '<p class="sec-body" style="margin:0 0 12px;line-height:1.55;font-weight:800;color:var(--t)">This build adds a live native MINIMA wallet on a connected node: real send and receive, QR, instant incoming detection, auto-updating transaction history with a refresh control, and address tools (new receive address and "is this address mine"). Review that alongside channel truth, Winiwa / Wables demo flows, merchant-first ramps, Coverage fund copy, links, and feedback routing.</p>' +
-    '<div  style="display:grid;gap:8px">' +
-    '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--t)">Now review</strong></span><span style="font-weight:800;color:var(--t)">Live MINIMA wallet, currencies and ranking, Mint, Coverage fund, On/Off Ramp, Settings</span></div>' +
-    '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--am)">Coming soon</strong></span><span style="font-weight:800;color:var(--t)">App feedback topic, bug reports, roadmap votes</span></div>' +
-    '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--t)">Next modules</strong></span><span style="font-weight:800;color:var(--t)">Personal themes, merchant validation, academy lessons, release notes</span></div>' +
-    '</div>' +
-    '<p class="xs mu" style="margin:12px 0 0;line-height:1.5;font-weight:800;color:var(--muted)">Use the form below for concept, financial, and technical comments today. App-specific feedback and structured bug reports are visible here so they can be activated without changing the review path later.</p>' +
-    '</div></div>';
 
   const FEEDBACK_TELEGRAM_BLOCK =
     '<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">' +
@@ -424,7 +459,7 @@
     if ($ && $('pageDesc')) $('pageDesc').textContent = '';
     if (typeof ctx.setHeaderButtons === 'function') ctx.setHeaderButtons([]);
     if (!app) return;
-    app.innerHTML = '<div  style="display:grid;gap:0">' + FEEDBACK_ROADMAP_BLOCK + buildFeedbackFormHtml() + FEEDBACK_TELEGRAM_BLOCK + '</div>';
+    app.innerHTML = '<div  style="display:grid;gap:0">' + buildFeedbackRoadmapBlock() + buildFeedbackFormHtml() + FEEDBACK_TELEGRAM_BLOCK + '</div>';
     wireFeedbackForm(app);
   }
 
@@ -438,7 +473,7 @@
   window.renderFeedbackPage = function renderFeedbackPage() {
     var root = document.getElementById('feedbackApp');
     if (!root) return;
-    root.innerHTML = '<div  style="display:grid;gap:0">' + FEEDBACK_ROADMAP_BLOCK + buildFeedbackFormHtml() + FEEDBACK_TELEGRAM_BLOCK + '</div>';
+    root.innerHTML = '<div  style="display:grid;gap:0">' + buildFeedbackRoadmapBlock() + buildFeedbackFormHtml() + FEEDBACK_TELEGRAM_BLOCK + '</div>';
     wireFeedbackForm(root);
   };
 

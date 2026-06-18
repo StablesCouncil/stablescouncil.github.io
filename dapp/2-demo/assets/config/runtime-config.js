@@ -18,7 +18,7 @@ window.STABLES_CONFIG = {
    * each build is uniquely identifiable in the top-bar pill (e.g. v0.0.0.2.01, .02, …) and the
    * packaged zip name (Stables_v0.0.0.2.02.mds.zip). Reset to 1 when APP_BUILD_VERSION changes / published.
    */
-  APP_BUILD_ITERATION: 42,
+  APP_BUILD_ITERATION: 43,
   /** Date this build was published to GitHub (ISO YYYY-MM-DD). */
   APP_BUILD_DATE: '2026-06-17',
   /**
@@ -46,7 +46,10 @@ window.STABLES_CONFIG = {
     downloadUrl:
       'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.0.3.42/Stables_v0.0.0.3.42.apk',
     sha256: '6173A9EE076A6CB0298B41DDEE454C5F0D4BA95A55E012CE833040DB03172F20',
-    releasesPageUrl: 'https://github.com/StablesCouncil/stables-app/releases'
+    releasesPageUrl: 'https://github.com/StablesCouncil/stables-app/releases',
+    /** Live config the app fetches to detect newer APKs (standalone Android only). */
+    remoteConfigUrl:
+      'https://stablescouncil.org/dapp/2-demo/assets/config/runtime-config.js'
   },
   ACTIVITY_PAGE_SIZE: 25,
   BACKUP_REMINDER_HOURS: 48,
@@ -76,6 +79,22 @@ window.STABLES_CONFIG = {
   FAUCET_WINIWA_LAST_CLAIM_STORAGE_KEY: 'stables_faucet_winiwa_last_claim_ts_v1',
   /** Public demo: direct MiniDapp package download. */
   MDS_ZIP_URL: 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.3.42.mds.zip',
+  /**
+   * Feedback page → Demo roadmap block (More → Feedback). Bump on every publish so reviewers
+   * see the current build label, review focus, and next modules. Keep aligned with CHANGELOG.
+   */
+  DEMO_FEEDBACK_ROADMAP: {
+    summary:
+      'This is the 0.0.0.3 demo line: six colour themes including Paper, unified Help (StablesAgent and guided tours), All links aligned with stablescouncil.org, safer wallet recovery on Android, Network in Settings, home-screen branding from My profile, and APK update tools in Settings and updates. Native Minima send and receive stay real on a connected node or in the standalone Android app.',
+    nowReview:
+      'Live Minima wallet, themes, Help, All links, Settings and updates, Network (Android), recovery safety gate, Mint demo flows, Coverage fund copy, On/Off Ramp, feedback routing',
+    comingSoon:
+      'Remote in-app APK update check (next publish), structured bug reports, roadmap votes',
+    nextModules:
+      'Merchant validation, academy lessons, notification icon, seed surface hardening',
+    footnote:
+      'Use the form below for concept, financial, and technical comments today. App-specific feedback and structured bug reports are visible here so they can be activated without changing the review path later.'
+  },
   /**
    * Stables Charter on GitHub (Markdown). Governing text for how the Council and community run the protocol.
    * Leave empty until the charter is actually published — an empty value shows the "coming soon" modal.
