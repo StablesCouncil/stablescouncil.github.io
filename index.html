@@ -1316,20 +1316,67 @@
         }
         .demo-launch-overlay.open { display: flex; }
         .demo-launch-card {
+            display: flex;
+            flex-direction: column;
             max-width: 560px;
             width: 100%;
             max-height: 90vh;
-            overflow-y: auto;
-            padding: 24px 22px;
+            overflow: hidden;
+            padding: 0;
             border: 1px solid rgba(251, 191, 36, 0.45);
             border-radius: 18px;
             background: linear-gradient(180deg, rgba(251, 191, 36, 0.08), rgba(11, 15, 20, 0.98));
             box-shadow: 0 24px 70px rgba(0, 0, 0, 0.65);
-            /* Scrollable but no visible scrollbar (looks cleaner). */
+        }
+        .demo-launch-card-scroll {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+            padding: 24px 22px 12px;
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
-        .demo-launch-card::-webkit-scrollbar { display: none; }
+        .demo-launch-card-scroll::-webkit-scrollbar { display: none; }
+        .demo-launch-scroll-hint {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            width: 100%;
+            margin: 0;
+            padding: 10px 16px 14px;
+            border: none;
+            border-top: 1px solid rgba(251, 191, 36, 0.18);
+            background: linear-gradient(180deg, rgba(11, 15, 20, 0.55), rgba(11, 15, 20, 0.98));
+            color: var(--text-secondary);
+            cursor: pointer;
+            font: inherit;
+        }
+        .demo-launch-scroll-hint:hover,
+        .demo-launch-scroll-hint:focus-visible {
+            color: var(--accent-cyan);
+            outline: none;
+        }
+        .demo-launch-scroll-hint[hidden] { display: none; }
+        .demo-launch-scroll-hint-text {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+        .demo-launch-scroll-hint-arrow {
+            font-size: 1.2rem;
+            line-height: 1;
+            color: var(--accent-cyan);
+            animation: demo-launch-scroll-bounce 2s ease-in-out infinite;
+        }
+        @keyframes demo-launch-scroll-bounce {
+            0%, 100% { transform: translateY(0); opacity: 0.55; }
+            50% { transform: translateY(4px); opacity: 1; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .demo-launch-scroll-hint-arrow { animation: none; opacity: 0.9; }
+        }
         .demo-launch-head {
             display: flex;
             align-items: flex-start;
@@ -3412,6 +3459,7 @@
     <div id="demoLaunchModal" class="demo-launch-overlay" role="dialog" aria-modal="true" aria-labelledby="demoLaunchTitle"
         onclick="if(event.target===this)closeDemoLaunch()">
         <div class="demo-launch-card">
+            <div class="demo-launch-card-scroll" id="demoLaunchCardScroll">
             <div class="demo-launch-head">
                 <div id="demoLaunchTitle" class="demo-launch-title">Launch the Stables demo</div>
                 <button type="button" class="demo-launch-close" onclick="closeDemoLaunch()" aria-label="Close">&times;</button>
@@ -3437,22 +3485,14 @@
                     <a href="/dapp/2-demo/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Open the web demo</a>
                 </div>
             </div>
+            </div>
+            <button type="button" class="demo-launch-scroll-hint" id="demoLaunchScrollHint" hidden aria-label="Scroll for MiniDapp and web demo">
+                <span class="demo-launch-scroll-hint-text">Scroll for MiniDapp and web</span>
+                <span class="demo-launch-scroll-hint-arrow" aria-hidden="true">↓</span>
+            </button>
         </div>
     </div>
-    <script>
-        function openDemoLaunch(e) {
-            if (e) e.preventDefault();
-            var m = document.getElementById('demoLaunchModal');
-            if (m) { m.classList.add('open'); document.body.style.overflow = 'hidden'; }
-        }
-        function closeDemoLaunch() {
-            var m = document.getElementById('demoLaunchModal');
-            if (m) { m.classList.remove('open'); document.body.style.overflow = ''; }
-        }
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeDemoLaunch();
-        });
-    </script>
+    <script src="assets/demo-launch-modal.js"></script>
     <script src="assets/site-download-version.js"></script>
 
 </body>

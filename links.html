@@ -1180,6 +1180,7 @@
     <div id="demoLaunchModal" class="demo-launch-overlay" role="dialog" aria-modal="true" aria-labelledby="demoLaunchTitle"
         onclick="if(event.target===this)closeDemoLaunch()">
         <div class="demo-launch-card">
+            <div class="demo-launch-card-scroll" id="demoLaunchCardScroll">
             <div class="demo-launch-head">
                 <div id="demoLaunchTitle" class="demo-launch-title">Launch the Stables demo</div>
                 <button type="button" class="demo-launch-close" onclick="closeDemoLaunch()" aria-label="Close">&times;</button>
@@ -1205,13 +1206,14 @@
                     <a href="/dapp/2-demo/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Open the web demo</a>
                 </div>
             </div>
+            </div>
+            <button type="button" class="demo-launch-scroll-hint" id="demoLaunchScrollHint" hidden aria-label="Scroll for MiniDapp and web demo">
+                <span class="demo-launch-scroll-hint-text">Scroll for MiniDapp and web</span>
+                <span class="demo-launch-scroll-hint-arrow" aria-hidden="true">↓</span>
+            </button>
         </div>
     </div>
-    <script>
-        function openDemoLaunch(e){ if(e) e.preventDefault(); var m=document.getElementById('demoLaunchModal'); if(m){ m.classList.add('open'); document.body.style.overflow='hidden'; } }
-        function closeDemoLaunch(){ var m=document.getElementById('demoLaunchModal'); if(m){ m.classList.remove('open'); document.body.style.overflow=''; } }
-        document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeDemoLaunch(); });
-    </script>
+    <script src="assets/demo-launch-modal.js"></script>
     <script src="assets/site-download-version.js"></script>
 </body>
 </html>
