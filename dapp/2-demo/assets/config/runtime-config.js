@@ -18,7 +18,7 @@ window.STABLES_CONFIG = {
    * each build is uniquely identifiable in the top-bar pill (e.g. v0.0.0.2.01, .02, …) and the
    * packaged zip name (Stables_v0.0.0.2.02.mds.zip). Reset to 1 when APP_BUILD_VERSION changes / published.
    */
-  APP_BUILD_ITERATION: 44,
+  APP_BUILD_ITERATION: 45,
   /** Date this build was published to GitHub (ISO YYYY-MM-DD). */
   APP_BUILD_DATE: '2026-06-18',
   /**
@@ -28,7 +28,7 @@ window.STABLES_CONFIG = {
    * Use the same segment count as APP_BUILD_VERSION so semver-like compare is meaningful.
    */
   APP_UPDATE_POLICY: {
-    latestPublishedVersion: '0.0.0.3.44',
+    latestPublishedVersion: '0.0.0.3.45',
     whenUpdateNeeded: {
       criticality: 'medium',
       whatChanged:
@@ -42,10 +42,10 @@ window.STABLES_CONFIG = {
    * downloadUrl must be the direct GitHub asset link for Stables_v<version>.apk.
    */
   ANDROID_APK_UPDATE: {
-    latestVersion: '0.0.0.3.44',
+    latestVersion: '0.0.0.3.45',
     downloadUrl:
-      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.0.3.44/Stables_v0.0.0.3.44.apk',
-    sha256: '41311776E68F529C4FEADC3FF285BDF3BE5C7D0F89BEA7034D11964C2E2394EB',
+      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.0.3.45/Stables_v0.0.0.3.45.apk',
+    sha256: '166D80380F256E21E29D4624EBF1C634635A0FECA274376D5F642BA40AC55A23',
     releasesPageUrl: 'https://github.com/StablesCouncil/stables-app/releases',
     /** Live config the app fetches to detect newer APKs (standalone Android only). */
     remoteConfigUrl:
@@ -78,7 +78,7 @@ window.STABLES_CONFIG = {
   FAUCET_WINIWA_COOLDOWN_MS: 3600000,
   FAUCET_WINIWA_LAST_CLAIM_STORAGE_KEY: 'stables_faucet_winiwa_last_claim_ts_v1',
   /** Public demo: direct MiniDapp package download. */
-  MDS_ZIP_URL: 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.3.44.mds.zip',
+  MDS_ZIP_URL: 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.3.45.mds.zip',
   /**
    * Feedback page → Demo roadmap block (More → Feedback). Bump on every publish so reviewers
    * see the current build label, review focus, and next modules. Keep aligned with CHANGELOG.

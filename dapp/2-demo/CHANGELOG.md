@@ -8,7 +8,18 @@
 
 ### [Unreleased], next daily build
 
-Ongoing demo line. Changes are logged here as they are made, then move into a dated, published section on release. Build identity is the `APP_BUILD_ITERATION` counter, shown in the pill, `dapp.conf`, and the zip name (e.g. `Stables_v0.0.0.3.44.mds.zip`).
+Ongoing demo line. Changes are logged here as they are made, then move into a dated, published section on release. Build identity is the `APP_BUILD_ITERATION` counter, shown in the pill, `dapp.conf`, and the zip name (e.g. `Stables_v0.0.0.3.45.mds.zip`).
+
+---
+
+## [0.0.0.3.45] - 2026-06-18 (demo · published)
+
+Published to GitHub Pages, GitHub Releases (Android), and onion BCP. Supersedes **v0.0.0.3.44**. **Three-platform parity fix:** APK embedded UI now matches web and MiniDapp zip (v0.0.0.3.44 APK had shipped with a stale `index.html`).
+
+#### Fixed
+
+- **APK / web / zip drift.** `sync-stables-ui.ps1` now run immediately before every APK build; publish checklist requires identical `index.html` hashes across `2-demo/`, Pages `dapp/2-demo/`, onion `webapp/`, and APK `assets/stables/`.
+- **Website no-JS fallbacks** on homepage and `links.html` updated to match `PUBLISHED_DEMO_VERSION`.
 
 ---
 
@@ -29,6 +40,11 @@ Published to GitHub Pages. Supersedes **v0.0.0.3.42**.
 - **Auto-save across the app.** Payment protection settings, contact notes, transaction notes, council profile edits, welcome currency choices, and address privacy now save on change (debounced where needed). Explicit Save buttons removed from those surfaces.
 - **Send split payment is quieter.** Multi-recipient send is a muted optional link below the amount row, not a full-width button competing with MAX.
 - **Feedback Demo roadmap is config-driven.** `runtime-config.js` → `DEMO_FEEDBACK_ROADMAP` holds summary, now review, coming soon, and next modules; `feedback.js` builds the block at render time and uses the live build pill label (not stale `APP_BUILD_VERSION` only).
+
+#### Shipped artifacts
+
+- **Android APK** `Stables_v0.0.0.3.44.apk` on GitHub Releases (`app-v0.0.0.3.44`), onion BCP mirror, and in-app updater via `ANDROID_APK_UPDATE`.
+- **Web MiniDapp zip** `Stables_v0.0.0.3.44.mds.zip` on GitHub Pages and onion BCP.
 
 #### Fixed
 
