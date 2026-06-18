@@ -18,6 +18,8 @@ Per-channel source:
 - Demo build source: [`../2-demo/build/`](../2-demo/build/)
 - Showcase latest package: [`../1-showcase/latest-version/`](../1-showcase/latest-version/)
 
+Older demo zips are in [`archive/`](archive/) (not at this folder root). Only the current package stays here.
+
 Release history:
 
 `https://github.com/StablesCouncil/stablescouncil.github.io/blob/main/dapp/latest-version/VERSION_HISTORY.md`
