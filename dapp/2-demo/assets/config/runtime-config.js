@@ -42,10 +42,10 @@ window.STABLES_CONFIG = {
    * downloadUrl must be the direct GitHub asset link for Stables_v<version>.apk.
    */
   ANDROID_APK_UPDATE: {
-    latestVersion: '0.0.0.3.42',
+    latestVersion: '0.0.0.3.44',
     downloadUrl:
-      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.0.3.42/Stables_v0.0.0.3.42.apk',
-    sha256: '6173A9EE076A6CB0298B41DDEE454C5F0D4BA95A55E012CE833040DB03172F20',
+      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.0.3.44/Stables_v0.0.0.3.44.apk',
+    sha256: '41311776E68F529C4FEADC3FF285BDF3BE5C7D0F89BEA7034D11964C2E2394EB',
     releasesPageUrl: 'https://github.com/StablesCouncil/stables-app/releases',
     /** Live config the app fetches to detect newer APKs (standalone Android only). */
     remoteConfigUrl:
