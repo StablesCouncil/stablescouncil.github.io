@@ -8,19 +8,32 @@
 
 ### [Unreleased], next daily build
 
-Ongoing demo line. Changes are logged here as they are made, then move into a dated, published section on release. Build identity is the `APP_BUILD_ITERATION` counter, shown in the pill, `dapp.conf`, and the zip name (e.g. `Stables_v0.0.0.3.43.mds.zip`).
+Ongoing demo line. Changes are logged here as they are made, then move into a dated, published section on release. Build identity is the `APP_BUILD_ITERATION` counter, shown in the pill, `dapp.conf`, and the zip name (e.g. `Stables_v0.0.0.3.44.mds.zip`).
+
+---
+
+## [0.0.0.3.44] - 2026-06-18 (demo · published)
+
+Published to GitHub Pages. Supersedes **v0.0.0.3.42**.
 
 #### Added
 
-- *(none yet)*
+- **Payment protection tiers (Quick pay, Standard pay, Protected pay).** QR scans with address and amount can quick pay under your limit (optional 2-second undo in Settings → Security). Standard sends still use Confirm send. Significant amounts, multi-recipient sends, and protected contacts require a 4-digit payment code (inline setup on first use).
+- **Contact payment tier.** Each contact can be set to Inherit, Quick pay, Standard pay, or Protected pay on the contact detail card. Favourite send chips show tier hints.
+- **Settings → Security → Payment protection.** Configure quick pay limit, significant threshold, daily quick-pay cap, and payment code in your wallet primary currency (for example Minima when that is your starred currency). Set payment code is always visible on the card.
+- **Android biometric unlock for protected pay.** On the standalone Android app, protected sends can use device biometrics when available, with payment code as fallback.
+- **Payment protection agent menu.** The ⓢ icon on that section opens StablesAgent with FAQ buttons for the payment code, on-device storage, biometrics, and Minima primary limits. Contextual FAQ answers include a path back to the main agent menu.
 
 #### Changed
 
-- *(none yet)*
+- **Auto-save across the app.** Payment protection settings, contact notes, transaction notes, council profile edits, welcome currency choices, and address privacy now save on change (debounced where needed). Explicit Save buttons removed from those surfaces.
+- **Send split payment is quieter.** Multi-recipient send is a muted optional link below the amount row, not a full-width button competing with MAX.
+- **Feedback Demo roadmap is config-driven.** `runtime-config.js` → `DEMO_FEEDBACK_ROADMAP` holds summary, now review, coming soon, and next modules; `feedback.js` builds the block at render time and uses the live build pill label (not stale `APP_BUILD_VERSION` only).
 
 #### Fixed
 
-- *(none yet)*
+- **Website published-version surfaces stay in sync.** `site-download-version.js` now also drives the **`links.html`** Demo Channel badge via **`data-demo-published-version`**; `dapp/latest-version/README.md` and in-app zip fallbacks no longer point at obsolete **`v0.0.0.1.0`**.
+- **StablesAgent contextual help had no return path.** After opening payment protection FAQ from Settings, users can return to the main agent menu via Back.
 
 ---
 

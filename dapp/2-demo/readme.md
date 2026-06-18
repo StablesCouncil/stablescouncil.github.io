@@ -4,15 +4,17 @@ Stables is an experimental, protocol-focused research project built on Winiwa.
 The project explores minting, burning, oracle, and collateralization mechanisms
 for a non-custodial, censorship-resistant monetary system.
 
-## What changed in this version (demo v0.0.0.2.17)
+## What changed in this version (demo v0.0.0.3.44)
 
-Connect Stables to your own Pure Minima node, right in your browser. Highlights:
+Payment protection and polish since v0.0.0.3.42. Highlights:
 
-- **Connect to your own Pure Minima node over RPC.** Run a Minima node yourself and link the web app straight to it, no MinimaOS install needed. Your keys never leave your node. Enable RPC on your node (`rpc enable:true`, no password), enter its RPC address, and connect with a blank password. Works against a clean Pure Minima core node or a full node, and both reads and sends go over RPC.
-- **Auto-reconnect after a refresh.** Once connected, the app restores the connection to your node on the next page load, no need to re-enter the address.
-- **Receive: choose and verify your address.** One editable receiving-address field. The app checks with your node that the address belongs to your wallet before showing the QR, so you never share an address that is not yours.
-- **Real MINIMA precision.** Balances and amounts no longer round small MINIMA down to 0.00. Native MINIMA shows up to six decimals with trailing zeros trimmed (for example 0.000611); stablecoins stay at two.
-- **Simplified Connect panel.** One clear path, with the step-by-step detail in the contextual StablesAgent help (tap the agent icon). The MinimaOS-install step moved out of the connect window; the download stays on the website.
+- **Payment protection tiers.** Quick pay for small QR sends under your limit (optional 2-second undo). Standard pay still uses Confirm send. Protected pay requires a 4-digit payment code for significant amounts, multi-recipient sends, and protected contacts.
+- **Contact payment tier.** Set each contact to Inherit, Quick pay, Standard pay, or Protected pay. Favourite send chips show tier hints.
+- **Settings → Security → Payment protection.** Configure limits and your payment code in your wallet primary currency. Set payment code is always visible on the card.
+- **Android biometric unlock.** On the standalone app, protected sends can use device biometrics when available.
+- **Auto-save.** Payment protection, contact notes, transaction notes, council profile, welcome currencies, and address privacy save on change without explicit Save buttons.
+- **Quieter split payment on Send.** Multi-recipient send is a muted optional link, not a prominent button.
+- **StablesAgent FAQ.** Contextual payment protection help includes a path back to the main agent menu.
 
 Full detail in `CHANGELOG.md`.
 
@@ -30,7 +32,7 @@ All materials published here are non-binding and informational only.
 This repository serves as a public documentation reference for Stables.
 
 It is intended to:
-- provide transparency on the project’s direction and methodology,
+- provide transparency on the project's direction and methodology,
 - preserve a Stables reference for published materials,
 - support future review and discussion.
 
@@ -49,10 +51,3 @@ Nothing in this repository constitutes:
 - a promise of outcome,
 - an offer of investment,
 - or a commitment to deploy or continue the project.
-
-All protocol behavior, if and when implemented, is enforced by code
-and subject to technical, security, and operational constraints.
-
-
-
-

@@ -4,8 +4,15 @@
  */
 (function () {
   const FEEDBACK_SCHEMA_VERSION = 1;
-  const TOPIC_ACTIVE = ['general_concept', 'financial_structure', 'technical_decision'];
-  const KIND_ACTIVE = ['comment'];
+  const TOPIC_ACTIVE = [
+    'general_concept',
+    'financial_structure',
+    'technical_decision',
+    'app',
+    'other',
+    'open_text'
+  ];
+  const KIND_ACTIVE = ['comment', 'improvement', 'bug', 'other'];
 
   const APP_PAGE_OPTIONS = [
     { id: 'wallet', label: 'Wallet' },
@@ -29,6 +36,27 @@
     { id: 'activity', label: 'Activity' },
     { id: 'contacts', label: 'Contacts' },
     { id: 'feedback', label: 'Feedback' }
+  ];
+
+  const ANDROID_EXTRA_PAGE_OPTIONS = [
+    { id: 'android:native-shell', label: 'Native shell (install, permissions)' },
+    { id: 'android:apk-update', label: 'APK update (Settings)' },
+    { id: 'android:embedded-node', label: 'Embedded Minima node' }
+  ];
+
+  const WEB_PAGE_OPTIONS = [
+    { id: 'web:homepage', label: 'Homepage' },
+    { id: 'web:links', label: 'Links hub' },
+    { id: 'web:playing-field', label: 'Playing field' },
+    { id: 'web:circular-economy', label: 'Circular economy' },
+    { id: 'web:banking-system', label: 'Banking system infographic' },
+    { id: 'web:ambassadors-program', label: 'Ambassadors program' },
+    { id: 'web:onchain-watch', label: 'Minima onchain watch' },
+    { id: 'web:agent-chat', label: 'StablesAgent web chat' },
+    { id: 'web:council-navigation', label: 'Council navigation system' },
+    { id: 'web:council-dashboard', label: 'Council dashboard' },
+    { id: 'web:communication-plan', label: 'Communication plan' },
+    { id: 'web:brand-assets', label: 'Brand assets' }
   ];
 
   function getFeedbackDbUrl() {
@@ -100,16 +128,19 @@
       '<p class="sec-body" style="margin:0 0 12px;line-height:1.55;font-weight:800;color:var(--t)">' +
       roadmap.summary +
       '</p>' +
-      '<div  style="display:grid;gap:8px">' +
-      '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--t)">Now review</strong></span><span style="font-weight:800;color:var(--t)">' +
+      '<div style="display:grid;grid-template-columns:max-content 1fr;column-gap:12px;row-gap:8px;padding:8px 10px;border-radius:10px;align-items:start">' +
+      '<span class="xs mu" style="white-space:nowrap"><strong style="color:var(--t)">Now review</strong></span>' +
+      '<span style="font-weight:800;color:var(--t);line-height:1.45">' +
       roadmap.nowReview +
-      '</span></div>' +
-      '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--am)">Coming soon</strong></span><span style="font-weight:800;color:var(--t)">' +
+      '</span>' +
+      '<span class="xs mu" style="white-space:nowrap"><strong style="color:var(--am)">Coming soon</strong></span>' +
+      '<span style="font-weight:800;color:var(--t);line-height:1.45">' +
       roadmap.comingSoon +
-      '</span></div>' +
-      '<div class="fbet"  style="padding:8px 10px;border-radius:10px"><span class="xs mu"><strong style="color:var(--t)">Next modules</strong></span><span style="font-weight:800;color:var(--t)">' +
+      '</span>' +
+      '<span class="xs mu" style="white-space:nowrap"><strong style="color:var(--t)">Next modules</strong></span>' +
+      '<span style="font-weight:800;color:var(--t);line-height:1.45">' +
       roadmap.nextModules +
-      '</span></div>' +
+      '</span>' +
       '</div>' +
       '<p class="xs mu" style="margin:12px 0 0;line-height:1.5;font-weight:800;color:var(--muted)">' +
       roadmap.footnote +
@@ -137,9 +168,27 @@
   }
 
   function buildPageSelectOptions() {
-    return APP_PAGE_OPTIONS.map(function (o) {
-      return '<option value="' + o.id + '">' + o.label + '</option>';
-    }).join('');
+    function optionRows(pages) {
+      return pages
+        .map(function (o) {
+          return '<option value="' + o.id + '">' + o.label + '</option>';
+        })
+        .join('');
+    }
+    var androidPages = APP_PAGE_OPTIONS.map(function (o) {
+      return { id: 'android:' + o.id, label: o.label };
+    }).concat(ANDROID_EXTRA_PAGE_OPTIONS);
+    return (
+      '<optgroup label="Android app">' +
+      optionRows(androidPages) +
+      '</optgroup>' +
+      '<optgroup label="MiniDapp">' +
+      optionRows(APP_PAGE_OPTIONS) +
+      '</optgroup>' +
+      '<optgroup label="Web">' +
+      optionRows(WEB_PAGE_OPTIONS) +
+      '</optgroup>'
+    );
   }
 
   function buildFeedbackFormHtml() {
@@ -163,11 +212,10 @@
       '<option value="general_concept">General concept</option>' +
       '<option value="financial_structure">Financial structure</option>' +
       '<option value="technical_decision">Technical decision</option>' +
-      '<option value="app" disabled>App (MiniDapp) - available shortly</option>' +
-      '<option value="other" disabled>Other (structured) - available shortly</option>' +
-      '<option value="open_text" disabled>Open topic (free form) - available shortly</option>' +
+      '<option value="app">App</option>' +
+      '<option value="other">Other (structured)</option>' +
+      '<option value="open_text">Open topic (free form)</option>' +
       '</select>' +
-      '<p class="xs mu" style="margin:0 0 10px;line-height:1.45;color:var(--am);font-weight:800">Some topic areas are not active yet. These will be made available shortly (you are early).</p>' +
       '<div id="feedbackGroupFinancial"  style="display:none">' +
       '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Financial structure: detail</label>' +
       '<select class="fsel" id="feedbackStructFinancialSub" style="width:100%;margin-bottom:8px">' +
@@ -179,9 +227,9 @@
       '<option value="smart_contract">Smart contract</option>' +
       '<option value="other">Other</option></select></div>' +
       '<div id="feedbackGroupApp"  style="display:none">' +
-      '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Page</label>' +
-      '<select class="fsel" id="feedbackStructAppPage" style="width:100%;margin-bottom:10px">' +
-      '<option value="">Choose page…</option>' +
+      '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Platform and page</label>' +
+      '<select class="fsel" id="feedbackStructAppPage" style="width:100%;margin-bottom:10px" aria-label="Platform and page">' +
+      '<option value="">Choose platform and page…</option>' +
       buildPageSelectOptions() +
       '</select>' +
       '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Section (short hint)</label>' +
@@ -198,12 +246,11 @@
       '<div id="feedbackGroupOtherHint"  style="display:none">' +
       '<p class="xs mu" style="margin:0;line-height:1.5;font-weight:700;color:var(--muted)">Use the title and description below to name the area (protocol, ops, docs, …).</p></div>' +
       '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Feedback type</label>' +
-      '<select class="fsel" id="feedbackStructKind" style="width:100%;margin-bottom:8px">' +
+      '<select class="fsel" id="feedbackStructKind" style="width:100%;margin-bottom:12px">' +
       '<option value="comment">Comment</option>' +
-      '<option value="improvement" disabled>Improvement - available shortly</option>' +
-      '<option value="bug" disabled>Bug - available shortly</option>' +
-      '<option value="other" disabled>Other - available shortly</option></select>' +
-      '<p class="xs mu" style="margin:0 0 12px;line-height:1.45;color:var(--am);font-weight:800">For now, only Comment is active. More feedback types are coming shortly.</p>' +
+      '<option value="improvement">Improvement</option>' +
+      '<option value="bug">Bug</option>' +
+      '<option value="other">Other</option></select>' +
       '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Title (short)</label>' +
       '<input class="finput" id="feedbackStructTitle" type="text" maxlength="200" style="width:100%;margin-bottom:12px" placeholder="One line summary" />' +
       '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Details</label>' +
@@ -253,7 +300,7 @@
     var domain = el('feedbackStructDomain').value;
     if (!domain) return { error: 'Choose a topic area.' };
     if (TOPIC_ACTIVE.indexOf(domain) === -1) {
-      return { error: 'This topic area is not active yet. Please use General concept, Financial structure, or Technical decision.' };
+      return { error: 'Choose a topic area.' };
     }
     var title = (el('feedbackStructTitle').value || '').trim();
     var body = (el('feedbackStructBody').value || '').trim();
@@ -270,7 +317,7 @@
     var appCtx = { page_id: null, section_hint: null, element_hint: null };
     if (domain === 'app') {
       var pid = el('feedbackStructAppPage').value;
-      if (!pid) return { error: 'Choose an app page.' };
+      if (!pid) return { error: 'Choose a platform and page.' };
       appCtx.page_id = pid;
       appCtx.section_hint = (el('feedbackStructAppSection').value || '').trim() || null;
       appCtx.element_hint = (el('feedbackStructAppElement').value || '').trim() || null;
@@ -279,7 +326,7 @@
     var topicSub = collectTopicSub(domain);
     var kind = el('feedbackStructKind').value;
     if (KIND_ACTIVE.indexOf(kind) === -1) {
-      return { error: 'This feedback type is not active yet. Please choose Comment.' };
+      return { error: 'Choose a feedback type.' };
     }
 
     return {

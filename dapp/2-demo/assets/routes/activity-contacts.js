@@ -156,6 +156,7 @@
   const TX_NOTES_KEY = CFG.TX_NOTES_KEY || 'stables_tx_notes_v1';
   const MERCHANT_RATINGS_KEY = CFG.MERCHANT_RATINGS_KEY || 'stables_merchant_ratings_v1';
   const CONTACT_FAVORITES_KEY = CFG.CONTACT_FAVORITES_KEY || 'stables_contact_favorites_v1';
+  const CONTACT_PAYMENT_TIER_KEY = CFG.CONTACT_PAYMENT_TIER_KEY || 'stables_contact_payment_tier_v1';
   const BACKUP_STORAGE_KEY = CFG.BACKUP_STORAGE_KEY || 'stables_last_config_backup_ts';
   const BACKUP_REMINDER_HOURS = CFG.BACKUP_REMINDER_HOURS || 48;
   const BACKUP_FIRST_SEEN_KEY = CFG.BACKUP_FIRST_SEEN_KEY || 'stables_backup_first_seen_ts';
@@ -330,6 +331,7 @@
       ? JSON.parse(localStorage.getItem(CONTACT_FAVORITES_KEY))
       : DEFAULT_FAVORITES
   );
+  const contactPaymentTiers = JSON.parse(localStorage.getItem(CONTACT_PAYMENT_TIER_KEY) || '{}');
   const merchantRatings = Array.isArray(JSON.parse(localStorage.getItem(MERCHANT_RATINGS_KEY) || '[]'))
     ? JSON.parse(localStorage.getItem(MERCHANT_RATINGS_KEY) || '[]')
     : [];
@@ -349,6 +351,73 @@
   function persistNotes() { localStorage.setItem(CONTACT_NOTES_KEY, JSON.stringify(contactNotes)); }
   function persistTxNotes() { localStorage.setItem(TX_NOTES_KEY, JSON.stringify(txNotes)); }
   function persistFavorites() { localStorage.setItem(CONTACT_FAVORITES_KEY, JSON.stringify(Array.from(contactFavorites))); }
+  function persistContactPaymentTiers() { localStorage.setItem(CONTACT_PAYMENT_TIER_KEY, JSON.stringify(contactPaymentTiers)); }
+
+  function normalizeContactAddrKey(addr) {
+    const s = String(addr || '').trim();
+    const mx = s.match(/Mx[A-Za-z0-9]{20,}/i);
+    if (mx) return mx[0];
+    const hx = s.match(/0x[0-9A-Fa-f]{40,}/i);
+    if (hx) return hx[0];
+    return s.toLowerCase();
+  }
+
+  function normalizePaymentTier(tier) {
+    if (window.StablesPaymentSecurity && typeof window.StablesPaymentSecurity.normalizeContactTier === 'function') {
+      return window.StablesPaymentSecurity.normalizeContactTier(tier);
+    }
+    const t = String(tier || 'inherit').toLowerCase();
+    return ['inherit', 'quick', 'standard', 'protected'].includes(t) ? t : 'inherit';
+  }
+
+  window.stablesLookupContactForSend = function (rawTo) {
+    const raw = String(rawTo || '').trim();
+    if (!raw) return null;
+    const all = Array.from(CONTACTS_BOOK.values());
+    for (let i = 0; i < all.length; i++) {
+      const c = all[i];
+      if (raw === c.name || raw.includes(c.address)) return c;
+      if (raw.indexOf(c.name + ' ·') === 0 || raw.indexOf(c.name + '·') === 0) return c;
+    }
+    const key = normalizeContactAddrKey(raw);
+    for (let j = 0; j < all.length; j++) {
+      if (normalizeContactAddrKey(all[j].address) === key) return all[j];
+    }
+    return null;
+  };
+
+  window.stablesResolveSendContactTier = function (rawTo) {
+    const c = window.stablesLookupContactForSend(rawTo);
+    if (!c) return 'inherit';
+    const key = normalizeContactAddrKey(c.address);
+    if (contactPaymentTiers[key]) return normalizePaymentTier(contactPaymentTiers[key]);
+    if (c.paymentTier) return normalizePaymentTier(c.paymentTier);
+    return 'inherit';
+  };
+
+  window.stablesGetContactPaymentTier = function (name) {
+    const c = CONTACTS_BOOK.get(name);
+    if (!c) return 'inherit';
+    const key = normalizeContactAddrKey(c.address);
+    return normalizePaymentTier(contactPaymentTiers[key] || c.paymentTier || 'inherit');
+  };
+
+  window.stablesSetContactPaymentTier = function (name, tier) {
+    const c = CONTACTS_BOOK.get(name);
+    if (!c) return;
+    const key = normalizeContactAddrKey(c.address);
+    const t = normalizePaymentTier(tier);
+    contactPaymentTiers[key] = t;
+    c.paymentTier = t;
+    persistContactPaymentTiers();
+  };
+
+  function paymentTierChipSuffix(tier) {
+    const t = normalizePaymentTier(tier);
+    if (t === 'protected') return ' 🛡';
+    if (t === 'quick') return ' ⚡';
+    return '';
+  }
   function persistMerchantRatings() { localStorage.setItem(MERCHANT_RATINGS_KEY, JSON.stringify(merchantRatings)); }
   function getTxById(id) { return activitySource().find(x => x.id === id); }
   function getExchangeById(id) { return DEMO_EXCHANGES.find(x => x.id === id); }
@@ -1837,16 +1906,14 @@
       <div  style="margin-bottom:16px;padding:0 4px">
         <div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Contact / Address</div>
         <div  style="display:flex;gap:8px">
-          <input class="finput" id="txDetailContactInput" value="${tx.counterparty === tx.address || tx.counterparty.includes('…') ? tx.address : tx.counterparty}" style="flex-grow:1;padding:8px;font-size:13px" placeholder="Enter contact name">
-          <button class="btn btn-w btn-g" style="padding:8px 12px;width:auto" onclick="saveTransactionContact()">Save</button>
+          <input class="finput" id="txDetailContactInput" value="${tx.counterparty === tx.address || tx.counterparty.includes('…') ? tx.address : tx.counterparty}" style="flex-grow:1;padding:8px;font-size:13px" placeholder="Enter contact name" onblur="saveTransactionContact({silent:true})">
         </div>
         <div class="xs mu"  style="margin-top:6px;word-break:break-all;font-size:11px">${tx.address}</div>
       </div>
       
       <div  style="margin-bottom:12px">
         <label class="flabel" style="margin-bottom:6px">Transaction note</label>
-        <textarea class="finput" id="txDetailNoteInput" rows="2" placeholder="Add a note for this transaction..." style="resize:vertical;margin-bottom:8px">${txNote}</textarea>
-        <div class="flex gap8"  style="justify-content:center"><button class="btn btn-w btn-g" onclick="saveTransactionNote()">Save note</button></div>
+        <textarea class="finput" id="txDetailNoteInput" rows="2" placeholder="Add a note for this transaction..." style="resize:vertical;margin-bottom:8px" oninput="scheduleTransactionNoteSave()" onblur="saveTransactionNote({silent:true})">${txNote}</textarea>
       </div>
 
       <div class="flex gap8"  style="margin-bottom:16px;flex-wrap:wrap;justify-content:center">
@@ -1924,26 +1991,37 @@
     if (tx.dir === 'in') window.openModalWithDraft('recvModal', draft);
     else window.openModalWithDraft('sendModal', draft);
   };
-  window.saveTransactionNote = function () {
+  let _txNoteSaveTimer = null;
+  window.scheduleTransactionNoteSave = function () {
+    if (_txNoteSaveTimer) clearTimeout(_txNoteSaveTimer);
+    _txNoteSaveTimer = setTimeout(function () {
+      _txNoteSaveTimer = null;
+      window.saveTransactionNote({ silent: true, skipReopen: true });
+    }, 450);
+  };
+
+  window.saveTransactionNote = function (opts) {
+    const options = opts && typeof opts === 'object' ? opts : {};
     if (!selectedTxId) return;
     const input = document.getElementById('txDetailNoteInput');
     const value = String(input?.value || '').trim();
     if (value) txNotes[selectedTxId] = value;
     else delete txNotes[selectedTxId];
     persistTxNotes();
-    if (typeof window.showToast === 'function') window.showToast('Transaction note saved');
-    window.renderActivity();
-    window.renderWalletRecentActivity();
-    window.openActivityDetail(selectedTxId);
+    if (typeof window.renderActivity === 'function') window.renderActivity();
+    if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
+    if (!options.skipReopen && typeof window.openActivityDetail === 'function') window.openActivityDetail(selectedTxId);
+    if (!options.silent && typeof window.showToast === 'function') window.showToast('Transaction note saved');
   };
-  window.saveTransactionContact = function () {
+  window.saveTransactionContact = function (opts) {
+    const options = opts && typeof opts === 'object' ? opts : {};
     if (!selectedTxId) return;
     const tx = getTxById(selectedTxId); if (!tx) return;
     const input = document.getElementById('txDetailContactInput');
     const newName = String(input?.value || '').trim();
-    if (!newName || newName === tx.address) return;
+    if (!newName || newName === tx.address || newName === tx.counterparty) return;
 
-    const contactObj = { name: newName, category: tx.category || 'MINIMA', address: tx.address, city: 'Unknown', saved: true };
+    const contactObj = { name: newName, category: tx.category || 'MINIMA', address: tx.address, city: 'Unknown', saved: true, paymentTier: 'inherit' };
     CONTACTS_BOOK.set(newName, contactObj);
     
     activitySource().forEach(t => {
@@ -1958,10 +2036,10 @@
       }
     });
     
-    if (typeof window.showToast === 'function') window.showToast('Contact updated');
+    if (!options.silent && typeof window.showToast === 'function') window.showToast('Contact updated');
     window.renderActivity();
     window.renderWalletRecentActivity();
-    window.openActivityDetail(selectedTxId);
+    if (!options.skipReopen && typeof window.openActivityDetail === 'function') window.openActivityDetail(selectedTxId);
   };
   window.saveTxCounterpartyToContacts = function () {
     const tx = getTxById(selectedTxId); if (!tx) return;
@@ -2028,6 +2106,8 @@
     if (latestRecvEl) latestRecvEl.textContent = latestIn ? `${Math.abs(latestIn.amt).toFixed(2)} ${latestIn.ccy} · ${latestIn.date}` : 'No received transaction yet';
     const notes = document.getElementById('contactNotes');
     if (notes) notes.value = contactNotes[c.name] || '';
+    const tierSel = document.getElementById('contactPaymentTier');
+    if (tierSel) tierSel.value = window.stablesGetContactPaymentTier(c.name);
     const shopBtn = document.getElementById('contactShopBtn');
     const isShop = !!SHOP_PROFILES[c.name];
     if (shopBtn) shopBtn.style.display = isShop ? '' : 'none';
@@ -2036,12 +2116,32 @@
     if (section) section.style.removeProperty('display');
   };
 
-  window.saveContactNotes = function () {
+  let _contactNotesSaveTimer = null;
+  window.scheduleContactNotesSave = function () {
+    if (_contactNotesSaveTimer) clearTimeout(_contactNotesSaveTimer);
+    _contactNotesSaveTimer = setTimeout(function () {
+      _contactNotesSaveTimer = null;
+      window.saveContactNotes({ silent: true });
+    }, 450);
+  };
+
+  window.saveContactNotes = function (opts) {
+    const options = opts && typeof opts === 'object' ? opts : {};
     if (!selectedContactName) return;
     const notes = document.getElementById('contactNotes');
     contactNotes[selectedContactName] = String(notes?.value || '').trim();
     persistNotes();
-    if (typeof window.showToast === 'function') window.showToast('Contact notes saved');
+    if (!options.silent && typeof window.showToast === 'function') window.showToast('Contact notes saved');
+  };
+
+  window.saveContactPaymentTier = function () {
+    if (!selectedContactName) return;
+    const tierSel = document.getElementById('contactPaymentTier');
+    const tier = tierSel ? tierSel.value : 'inherit';
+    window.stablesSetContactPaymentTier(selectedContactName, tier);
+    if (typeof window.renderSendContactChips === 'function') window.renderSendContactChips();
+    if (typeof window.stablesUpdateSendTierHint === 'function') window.stablesUpdateSendTierHint();
+    if (typeof window.showToast === 'function') window.showToast('Payment tier saved for this contact.');
   };
 
   window.openContactTransactions = function () {
@@ -2642,17 +2742,20 @@
       chip.className = 'ccy-pill';
       chip.style.cursor = 'pointer';
       const isFav = contactFavorites.has(c.name);
-      chip.textContent = (isFav ? '⭐ ' : '') + c.name;
-      chip.title = c.address;
-      chip.addEventListener('click', () => window.setSendRecipient(c.name, c.address));
+      const tier = window.stablesGetContactPaymentTier(c.name);
+      chip.textContent = (isFav ? '⭐ ' : '') + c.name + paymentTierChipSuffix(tier);
+      chip.title = c.address + (tier !== 'inherit' ? ' · ' + tier + ' pay tier' : '');
+      chip.addEventListener('click', () => window.setSendRecipient(c.name, c.address, 'contact_chip'));
       wrap.appendChild(chip);
     });
   };
 
-  window.setSendRecipient = function (name, address) {
+  window.setSendRecipient = function (name, address, source) {
     const input = document.getElementById('sendToInput');
     if (!input) return;
     input.value = `${name} · ${address}`;
+    window.STABLES_SEND_SOURCE = source || 'contact_chip';
+    if (typeof window.stablesUpdateSendTierHint === 'function') window.stablesUpdateSendTierHint();
   };
 
   // --- Contact picker overlay (shared across all address inputs) ---
@@ -2768,6 +2871,18 @@
       window.renderCurrencyPillVisual(el);
     }
     window.updateWelcomePrimaryOptions();
+    if (typeof window.persistWelcomeCurrencyChoicesIfValid === 'function') {
+      window.persistWelcomeCurrencyChoicesIfValid();
+    }
+  };
+
+  window.persistWelcomeCurrencyChoicesIfValid = function () {
+    const selected = Array.from(document.querySelectorAll('#welcomeCurrencies .ccy-pill.on'))
+      .map(x => x.dataset?.ccy).filter(Boolean);
+    if (!selected.length) return;
+    if (typeof window.persistWelcomeCurrencyChoices === 'function') {
+      window.persistWelcomeCurrencyChoices();
+    }
   };
 
   window.selectAllWelcomeCurrencies = function () {

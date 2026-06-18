@@ -1820,6 +1820,22 @@
         }
         .max-link:hover { text-decoration: underline; text-underline-offset: 3px; }
 
+        /* Rare send options (e.g. multi-recipient): muted text link, not peer to MAX. */
+        .send-opt-link {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            color: var(--m);
+            font-weight: 600;
+            font-size: 11px;
+            line-height: 1.4;
+            cursor: pointer;
+            font-family: inherit;
+            text-align: left;
+        }
+        .send-opt-link:hover { color: var(--c); text-decoration: underline; text-underline-offset: 3px; }
+
         /* Live block-confirmation counter shown under the amount on transaction rows (x/target). */
         .tx-amt-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
         .tx-conf-amt { font-size: 10px; font-weight: 800; letter-spacing: .03em; line-height: 1; white-space: nowrap; }
@@ -3366,6 +3382,51 @@
         .toast.toast--prose.toast--amber {
             color: var(--t);
             font-weight: 700;
+        }
+
+        .pay-code-dots {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin: 18px 0 10px;
+        }
+        .pay-code-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid rgba(103, 232, 249, .45);
+            background: transparent;
+        }
+        .pay-code-dot--filled {
+            background: var(--c);
+            border-color: var(--c);
+        }
+        .pay-code-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+        .pay-code-pad button {
+            padding: 14px 0;
+            font-size: 18px;
+            font-weight: 800;
+            border-radius: 12px;
+            border: 1px solid rgba(103, 232, 249, .22);
+            background: rgba(11, 15, 20, .55);
+            color: var(--t);
+            cursor: pointer;
+        }
+        .pay-code-pad button:active {
+            background: rgba(103, 232, 249, .12);
+        }
+        #sendTierHint {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--c);
+            margin: 0 0 8px;
+            line-height: 1.4;
         }
 
         /* CHAT */
@@ -7421,10 +7482,16 @@
                         <div style="font-size:12px;font-weight:800;margin-top:4px" id="contactLatestReceived">-</div>
                     </div>
                 </div>
+                <label class="xs mu" for="contactPaymentTier" style="display:block;margin:0 0 6px 0">Payment tier</label>
+                <select class="fsel" id="contactPaymentTier" style="margin-bottom:10px" onchange="saveContactPaymentTier()">
+                    <option value="inherit">Inherit (amount rules)</option>
+                    <option value="quick">Quick pay</option>
+                    <option value="standard">Standard pay</option>
+                    <option value="protected">Protected pay</option>
+                </select>
                 <label class="xs mu" for="contactNotes" style="display:block;margin:0 0 6px 0">Notes</label>
                 <textarea class="finput" id="contactNotes" rows="3" placeholder="Contact notes..."
-                    style="resize:vertical;margin-bottom:10px"></textarea>
-                <button class="btn btn-w btn-primary" style="width:100%;margin-bottom:10px" onclick="saveContactNotes()">Save notes</button>
+                    style="resize:vertical;margin-bottom:10px" oninput="scheduleContactNotesSave()" onblur="saveContactNotes({silent:true})"></textarea>
                 <div class="flex gap8">
                     <button class="btn btn-w btn-secondary" style="flex:1" onclick="openContactTransactions()">All transactions</button>
                     <button class="btn btn-secondary" style="flex:1" onclick="openContactConversation()">Conversation</button>
@@ -8473,10 +8540,10 @@
             <div class="card app-section-card" style="padding:14px 18px">
 
                 <label class="flabel">Council name</label>
-                <input class="finput" id="councilNameInput" placeholder="Council display name" style="margin-bottom:12px">
+                <input class="finput" id="councilNameInput" placeholder="Council display name" style="margin-bottom:12px" oninput="scheduleCouncilProfileSave()" onblur="persistCouncilMemberProfile({silent:true})">
 
                 <label class="flabel">Role</label>
-                <select class="fsel" id="councilExecRoleSel" style="width:100%;margin-bottom:14px">
+                <select class="fsel" id="councilExecRoleSel" style="width:100%;margin-bottom:14px" onchange="persistCouncilMemberProfile({silent:true})">
                     <option value="Executor">Executive (Multisig)</option>
                     <option value="Observer">Council member (vote only)</option>
                 </select>
@@ -8504,20 +8571,19 @@
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;align-items:end">
                     <div>
                         <label class="flabel">NFT contract address (optional)</label>
-                        <input class="finput" id="councilNftContract" placeholder="0x..." style="margin-bottom:0">
+                        <input class="finput" id="councilNftContract" placeholder="0x..." style="margin-bottom:0" oninput="scheduleCouncilProfileSave()" onblur="persistCouncilMemberProfile({silent:true})">
                     </div>
                     <div>
                         <label class="flabel">NFT token ID (optional)</label>
-                        <input class="finput" id="councilNftTokenId" placeholder="123" style="margin-bottom:0">
+                        <input class="finput" id="councilNftTokenId" placeholder="123" style="margin-bottom:0" oninput="scheduleCouncilProfileSave()" onblur="persistCouncilMemberProfile({silent:true})">
                     </div>
                 </div>
                 <p class="xs mu" style="margin:0 0 14px;line-height:1.45">If your avatar is an NFT, paste the contract address and token ID so your Council identity can be verified on-chain.</p>
 
                 <div class="flex gap8" style="flex-wrap:wrap;justify-content:center;margin-top:10px">
-                    <button class="btn btn-w btn-primary" style="flex:1;min-width:220px" onclick="saveCouncilMemberProfile()">Save council profile</button>
                     <button class="btn btn-danger" style="flex:1;min-width:220px" onclick="resetCouncilMemberProfile()">Reset</button>
                 </div>
-                <p class="xs mu" style="text-align:center;margin-top:12px">Saved on this device only.</p>
+                <p class="xs mu" style="text-align:center;margin-top:12px">Changes save on this device as you edit.</p>
             </div>
             </div>
             <div class="app-section app-section--caption-bottom">
@@ -8682,7 +8748,11 @@
                 <div id="settingsApkVersionLine" class="xs mu" style="display:none;margin-bottom:10px;line-height:1.5;text-align:center"></div>
                 <div id="settingsApkUpdateStatus" class="xs" style="display:none;margin-bottom:12px;line-height:1.55;font-weight:800;text-align:center"></div>
                 <div id="settingsApkWhatChanged" class="xs mu" style="display:none;margin-bottom:12px;line-height:1.5;text-align:center"></div>
+                <div id="settingsApkUpdateProgressBar" style="display:none;height:8px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin-bottom:12px">
+                    <div id="settingsApkUpdateProgressFill" style="height:100%;width:0%;background:linear-gradient(90deg,#22d3ee,#34d399);transition:width .2s ease"></div>
+                </div>
                 <button type="button" id="settingsApkUpdateBtn" class="btn btn-w btn-primary" style="display:none;width:100%;font-size:14px;font-weight:900" onclick="stablesStartApkUpdate()">Download and install update</button>
+                <button type="button" id="settingsApkCheckBtn" class="btn btn-w btn-secondary" style="display:none;width:100%;margin-top:8px;font-size:14px;font-weight:900" onclick="stablesRefreshRemoteApkUpdateConfig(true)">Check for updates</button>
                 <a id="settingsMdsZipLink" class="btn btn-w btn-link-action" style="flex:1;min-width:220px;font-size:14px;font-weight:900;display:block;text-align:center;width:100%;text-decoration:none;box-sizing:border-box"
                     href="#" target="_blank" rel="noopener">Download Stables package (.mds.zip)</a>
                 <a id="settingsApkReleasesLink" class="btn btn-w btn-secondary" style="display:none;margin-top:8px;width:100%;text-align:center;text-decoration:none;box-sizing:border-box;font-size:14px;font-weight:900"
@@ -8816,6 +8886,43 @@
                 <div class="sec-key-icon" aria-hidden="true">🔑</div>
                 <button type="button" class="btn btn-w btn-lg btn-primary" id="seedSecurityAppOpenBtn" onclick="stablesOpenSecurityApp()">Open Minima Security app</button>
             </div>
+            </div>
+
+            <div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20" id="stablesPaymentProtectionSection">
+                <div class="stitle-row">
+                    <div class="stitle">Payment protection</div>
+                    <button type="button" class="agent-mini-btn" onclick="openAgentExplain('Payment protection')" title="StablesAgent">
+                        <img src="agent.png" alt="StablesAgent">
+                    </button>
+                </div>
+                <div class="card card--prose-centered app-section-card" style="padding:18px 16px;border:1px solid rgba(103,232,249,.18)">
+                    <p class="sec-body" style="margin:0 0 12px;line-height:1.5">
+                        <strong>Quick pay</strong> sends immediately when you scan a payment QR under your limit.
+                        <strong>Standard pay</strong> asks you to confirm.
+                        <strong>Protected pay</strong> adds a 4-digit payment code for significant sends.
+                    </p>
+                    <p class="xs mu" style="margin:0 0 14px">Limits use your wallet primary currency: <strong id="paySecFavCcyLabel" style="color:var(--t)">MINIMA</strong>.</p>
+                    <p class="xs mu" id="paySecDailySpent" style="margin:0 0 14px">Quick pay today: 0.00 / 200</p>
+                    <label class="xs mu" style="display:flex;align-items:center;gap:8px;margin:0 0 12px;cursor:pointer">
+                        <input type="checkbox" id="paySecQuickEnabled" checked> Enable quick pay (QR scan)
+                    </label>
+                    <label class="xs mu" style="display:block;margin:0 0 6px">Quick pay limit</label>
+                    <input class="finput" type="number" id="paySecQuickLimit" min="0" step="1" inputmode="decimal" style="margin-bottom:10px">
+                    <label class="xs mu" style="display:block;margin:0 0 6px">Significant threshold (payment code required)</label>
+                    <input class="finput" type="number" id="paySecSignificant" min="0" step="1" inputmode="decimal" style="margin-bottom:10px">
+                    <label class="xs mu" style="display:block;margin:0 0 6px">Daily quick-pay cap</label>
+                    <input class="finput" type="number" id="paySecDailyCap" min="0" step="1" inputmode="decimal" style="margin-bottom:10px">
+                    <label class="xs mu" style="display:flex;align-items:center;gap:8px;margin:0 0 14px;cursor:pointer">
+                        <input type="checkbox" id="paySecUndo"> 2-second undo after quick pay
+                    </label>
+                    <button type="button" class="btn btn-w btn-primary" id="paySecCodeBtn" style="width:100%;margin-bottom:8px" onclick="StablesPaymentSecurity.setPaymentCodeFlow()">Set payment code</button>
+                    <div id="paySecBiometricWrap" style="display:none;margin-bottom:10px">
+                        <label class="xs mu" style="display:flex;align-items:flex-start;gap:8px;margin:0 0 6px;cursor:pointer">
+                            <input type="checkbox" id="paySecBiometric" style="margin-top:2px"> Use device biometrics for protected pay
+                        </label>
+                        <p class="xs mu" style="margin:0;line-height:1.45">Fingerprint or face can confirm protected sends even when your phone is already unlocked. You can still enter your payment code instead.</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Standalone Stables app: native Vault key management via the embedded node.
@@ -9448,20 +9555,22 @@
                 <div style="display:grid;grid-template-columns:1fr auto;gap:6px;align-items:center;margin-bottom:6px">
                     <input class="finput" id="sendToInput" type="text" placeholder="Minima address or contact" style="min-width:0;margin-bottom:0"
                         inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false"
-                        aria-label="Recipient Minima address" onpaste="stablesHandleSendPaste(event)">
+                        aria-label="Recipient Minima address" onpaste="stablesHandleSendPaste(event)" oninput="window.STABLES_SEND_SOURCE='manual';stablesUpdateSendTierHint();">
                     <button class="cpicker-book-btn" type="button" onclick="openContactPicker('sendToInput')" title="Open contact book">
                         &#x1F4D6;
                     </button>
                 </div>
-                <div class="fbet xs mu" style="margin-bottom:4px;align-items:center">
-                    <span id="sendAvailLine" style="color:var(--m)">Available:  - </span>
-                    <span id="sendTotalLine" style="display:none;font-weight:800;color:var(--t)"></span>
-                    <button type="button" id="sendAmtMaxBtn" class="max-link"
-                        onclick="setSendAmtMax()">MAX</button>
+                <div class="fbet xs mu" style="margin-bottom:4px;align-items:center;gap:8px">
+                    <span id="sendAvailLine" style="color:var(--m);min-width:0">Available:  - </span>
+                    <span style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+                        <span id="sendTotalLine" style="display:none;font-weight:800;color:var(--t)"></span>
+                        <button type="button" id="sendAmtMaxBtn" class="max-link"
+                            onclick="setSendAmtMax()">MAX</button>
+                    </span>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:0">
                     <input class="finput" type="number" id="sendAmtInput" placeholder="0.00" inputmode="decimal" style="min-width:0;margin-bottom:0"
-                        oninput="stablesUpdateSendTotal();updateSendFavEq();">
+                        oninput="stablesUpdateSendTotal();updateSendFavEq();stablesUpdateSendTierHint();">
                     <input type="hidden" id="sendCcy" value="" autocomplete="off" title="Currency to send">
                     <div class="ex-ccy-dd ex-ccy-dd--wide">
                         <button type="button" class="ex-ccy-dd__btn" id="sendCcyVaultDdBtn" aria-haspopup="listbox" aria-expanded="false" aria-controls="sendCcyVaultDdPanel" title="Currency to send">
@@ -9476,12 +9585,13 @@
                 </div>
             </div>
             <div class="xs mu" id="sendFavEq" style="display:none;margin:4px 0 8px;color:var(--m)"></div>
+            <div id="sendTierHint" style="display:none"></div>
             <!-- Dynamic extra rows (recipients 2–14) -->
             <div id="sendExtraRecipientList"></div>
-            <button type="button" id="sendAddRecipientBtn" onclick="stablesAddSendRecipient()"
-                style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:9px 12px;margin-bottom:12px;background:transparent;border:1px dashed rgba(103,232,249,.25);border-radius:8px;color:var(--m);font-size:13px;font-weight:600;cursor:pointer">
-                + Add recipient&nbsp;&nbsp;<span id="sendRowCount" style="color:rgba(103,232,249,.6);font-size:11px;font-weight:700">1 / 14</span>
-            </button>
+            <div id="sendSplitRow" style="display:none;margin:2px 0 6px">
+                <button type="button" id="sendSplitBtn" class="send-opt-link"
+                    onclick="stablesAddSendRecipient()" title="Send to multiple recipients">Split across multiple recipients</button>
+            </div>
             <div id="sendReadOnlyNotice" style="display:none;margin:0 0 10px;padding:10px 12px;border-radius:10px;background:rgba(251,191,36,.10);border:1px solid rgba(251,191,36,.35);color:var(--am);font-size:12px;line-height:1.5;font-weight:700">
                 Read-only web connection. Your node blocks sending from a browser for security. To send Minima, open <strong>Stables</strong> from your MinimaOS hub (it has write access). You can still view balances and receive here.
             </div>
@@ -9648,6 +9758,32 @@
     <div id="stablesNodeCertErrorPopup" style="display:none;position:fixed;bottom:88px;left:50%;transform:translateX(-50%);z-index:700;width:calc(100% - 32px);max-width:420px;padding:14px 40px 14px 16px;border-radius:12px;background:rgba(14,9,3,.97);border:1px solid rgba(251,191,36,.45);box-shadow:0 4px 28px rgba(0,0,0,.55)" role="alert">
         <button type="button" onclick="stablesCloseCertErrorPopup()" aria-label="Dismiss" style="position:absolute;top:10px;right:12px;background:none;border:none;color:#fbbf24;font-size:20px;line-height:1;cursor:pointer;padding:0;opacity:.7">&#x2715;</button>
         <p id="stablesNodeCertErrorMsg" style="margin:0;color:#fbbf24;font-size:13px;line-height:1.6"></p>
+    </div>
+
+    <!-- PAYMENT CODE MODAL -->
+    <div class="mback centered" id="paymentCodeModal" onclick="if(event.target===this)StablesPaymentSecurity.closePaymentCodeModal()">
+        <div class="modal" style="max-width:360px" onclick="event.stopPropagation()">
+            <div class="mttl" id="paymentCodeTitle" style="margin-bottom:4px">Enter payment code</div>
+            <p class="xs mu" id="paymentCodeStatus" style="margin:0 0 8px;line-height:1.45;text-align:center">4-digit spending guard for significant sends.</p>
+            <button type="button" class="btn btn-w btn-secondary" id="paymentCodeBiometricBtn" style="width:100%;display:none;margin-bottom:10px" onclick="StablesPaymentSecurity.tryBiometricFromModal()">Use device biometrics</button>
+            <div class="pay-code-dots" id="paymentCodeDots" aria-hidden="true">
+                <span class="pay-code-dot"></span><span class="pay-code-dot"></span><span class="pay-code-dot"></span><span class="pay-code-dot"></span>
+            </div>
+            <div class="pay-code-pad">
+                <button type="button" onclick="StablesPaymentSecurity.onPinDigit(1)">1</button>
+                <button type="button" onclick="StablesPaymentSecurity.onPinDigit(2)">2</button>
+                <button type="button" onclick="StablesPaymentSecurity.onPinDigit(3)">3</button>
+                <button type="button" onclick="StablesPaymentSecurity.onPinDigit(4)">4</button>
+                <button type="button" onclick="StablesPaymentSecurity.onPinDigit(5)">5</button>
+                <button type="button" onclick="StablesPaymentSecurity.onPinDigit(6)">6</button>
+                <button type="button" onclick="StablesPaymentSecurity.onPinDigit(7)">7</button>
+                <button type="button" onclick="StablesPaymentSecurity.onPinDigit(8)">8</button>
+                <button type="button" onclick="StablesPaymentSecurity.onPinDigit(9)">9</button>
+                <button type="button" onclick="StablesPaymentSecurity.closePaymentCodeModal()" style="font-size:13px">Cancel</button>
+                <button type="button" onclick="StablesPaymentSecurity.onPinDigit(0)">0</button>
+                <button type="button" onclick="StablesPaymentSecurity.onPinBackspace()" style="font-size:13px">Del</button>
+            </div>
+        </div>
     </div>
 
     <!-- ACTIVITY DETAIL MODAL -->
@@ -9822,8 +9958,8 @@
                     <span class="ccy-pill on" data-ccy="WINIMA" data-label="Winiwa" onclick="toggleWelcomeCcy(this)">Winiwa ✓</span>
                 </div>
                 <label class="flabel" style="margin-top:2px;margin-bottom:4px">Primary currency</label>
-                <select class="fsel" id="welcomePrimary" style="margin-bottom:14px"></select>
-                <button class="btn btn-w btn-primary" style="width:100%" onclick="goWelcomeAfterCurrencySave()">Save and continue</button>
+                <select class="fsel" id="welcomePrimary" style="margin-bottom:14px" onchange="persistWelcomeCurrencyChoicesIfValid()"></select>
+                <button class="btn btn-w btn-primary" style="width:100%" onclick="goWelcomeAfterCurrencySave()">Continue</button>
             </div>
 
             <!-- Bank personalisation intro (after currencies) -->
@@ -10254,7 +10390,14 @@
         const AMBASSADOR_GRANT_KEY = 'stables_ambassador_onboarding_grant_v1';
         const MERCHANT_RECOG_DELAY_MS = 45000;
         let merchantMode = localStorage.getItem(MERCHANT_MODE_KEY) === '1';
+        const PRIVACY_MODE_KEY = 'stables_address_privacy_v1';
         let privacyMode = false;
+
+        function initPrivacyModeFromStorage() {
+            try { privacyMode = localStorage.getItem(PRIVACY_MODE_KEY) === '1'; } catch (_) { privacyMode = false; }
+            const tog = document.getElementById('privacyToggle');
+            if (tog) tog.classList.toggle('on', privacyMode);
+        }
         let lede = false;
         const ACADEMY_STATE_KEY = 'stables_academy_v1';
         const ACADEMY_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
@@ -11211,12 +11354,23 @@
             return current;
         }
 
-        function stablesResolveApkUpdateConfig() {
-            const cfg = window.STABLES_CONFIG || {};
-            const apk = cfg.ANDROID_APK_UPDATE && typeof cfg.ANDROID_APK_UPDATE === 'object' ? cfg.ANDROID_APK_UPDATE : {};
-            const pol = cfg.APP_UPDATE_POLICY && typeof cfg.APP_UPDATE_POLICY === 'object' ? cfg.APP_UPDATE_POLICY : {};
-            let latest = String(apk.latestVersion || pol.latestPublishedVersion || '').trim();
-            let downloadUrl = String(apk.downloadUrl || '').trim();
+        window.__STABLES_REMOTE_APK_UPDATE = null;
+        window.__STABLES_REMOTE_APK_UPDATE_FETCHING = false;
+
+        function stablesParseRuntimeConfigField(raw, fieldName) {
+            const text = String(raw || '');
+            const re = new RegExp(fieldName + "\\s*:\\s*'([^']*)'");
+            const m = text.match(re);
+            return m ? String(m[1] || '').trim() : '';
+        }
+
+        function stablesParseApkUpdateFromRuntimeConfig(raw) {
+            const text = String(raw || '');
+            if (!text) return null;
+            const apkLatest = stablesParseRuntimeConfigField(text, 'latestVersion');
+            const polLatest = stablesParseRuntimeConfigField(text, 'latestPublishedVersion');
+            const latest = apkLatest || polLatest;
+            let downloadUrl = stablesParseRuntimeConfigField(text, 'downloadUrl');
             if (!downloadUrl && latest) {
                 downloadUrl = 'https://github.com/StablesCouncil/stables-app/releases/download/app-v'
                     + latest + '/Stables_v' + latest + '.apk';
@@ -11224,9 +11378,46 @@
             return {
                 latestVersion: latest,
                 downloadUrl: downloadUrl,
-                sha256: String(apk.sha256 || '').trim(),
-                releasesPageUrl: String(apk.releasesPageUrl || 'https://github.com/StablesCouncil/stables-app/releases').trim()
+                sha256: stablesParseRuntimeConfigField(text, 'sha256'),
+                releasesPageUrl: stablesParseRuntimeConfigField(text, 'releasesPageUrl')
+                    || 'https://github.com/StablesCouncil/stables-app/releases',
+                remoteConfigUrl: stablesParseRuntimeConfigField(text, 'remoteConfigUrl')
             };
+        }
+
+        function stablesResolveApkUpdateConfig() {
+            const remote = window.__STABLES_REMOTE_APK_UPDATE;
+            const cfg = window.STABLES_CONFIG || {};
+            const apk = cfg.ANDROID_APK_UPDATE && typeof cfg.ANDROID_APK_UPDATE === 'object' ? cfg.ANDROID_APK_UPDATE : {};
+            const pol = cfg.APP_UPDATE_POLICY && typeof cfg.APP_UPDATE_POLICY === 'object' ? cfg.APP_UPDATE_POLICY : {};
+            const bundled = {
+                latestVersion: String(apk.latestVersion || pol.latestPublishedVersion || '').trim(),
+                downloadUrl: String(apk.downloadUrl || '').trim(),
+                sha256: String(apk.sha256 || '').trim(),
+                releasesPageUrl: String(apk.releasesPageUrl || 'https://github.com/StablesCouncil/stables-app/releases').trim(),
+                remoteConfigUrl: String(apk.remoteConfigUrl || 'https://stablescouncil.org/dapp/2-demo/assets/config/runtime-config.js').trim()
+            };
+            if (!bundled.downloadUrl && bundled.latestVersion) {
+                bundled.downloadUrl = 'https://github.com/StablesCouncil/stables-app/releases/download/app-v'
+                    + bundled.latestVersion + '/Stables_v' + bundled.latestVersion + '.apk';
+            }
+            if (!remote || !remote.latestVersion) return bundled;
+            const useRemote = !bundled.latestVersion
+                || stablesCompareSemverLike(bundled.latestVersion, remote.latestVersion) < 0;
+            if (!useRemote) return bundled;
+            return {
+                latestVersion: remote.latestVersion || bundled.latestVersion,
+                downloadUrl: remote.downloadUrl || bundled.downloadUrl,
+                sha256: remote.sha256 || bundled.sha256,
+                releasesPageUrl: remote.releasesPageUrl || bundled.releasesPageUrl,
+                remoteConfigUrl: remote.remoteConfigUrl || bundled.remoteConfigUrl
+            };
+        }
+
+        function stablesNativeApkUpdateSupported() {
+            return !!(window.__STABLES_ANDROID_APP
+                && window.StablesAndroid
+                && typeof window.StablesAndroid.downloadAndInstallApk === 'function');
         }
 
         function stablesSetApkUpdateProgress(text) {
@@ -11242,10 +11433,79 @@
             el.textContent = msg;
         }
 
+        function stablesSetApkUpdateProgressPercent(percent) {
+            const bar = document.getElementById('settingsApkUpdateProgressBar');
+            const fill = document.getElementById('settingsApkUpdateProgressFill');
+            const n = Math.max(0, Math.min(100, Number(percent) || 0));
+            if (!bar || !fill) return;
+            if (n <= 0) {
+                bar.style.display = 'none';
+                fill.style.width = '0%';
+                return;
+            }
+            bar.style.display = '';
+            fill.style.width = n + '%';
+        }
+
+        window.stablesNativeTextFetched = function (url, body, error) {
+            window.__STABLES_REMOTE_APK_UPDATE_FETCHING = false;
+            const err = String(error || '').trim();
+            if (err) {
+                if (typeof showToast === 'function') showToast('Could not check for updates online. Using the built-in package info.');
+            } else {
+                const parsed = stablesParseApkUpdateFromRuntimeConfig(body);
+                if (parsed && parsed.latestVersion) {
+                    window.__STABLES_REMOTE_APK_UPDATE = parsed;
+                }
+            }
+            syncAppUpdatesSection();
+        };
+
+        function stablesRefreshRemoteApkUpdateConfig(userInitiated) {
+            if (!window.__STABLES_ANDROID_APP) return;
+            const bundled = (window.STABLES_CONFIG && window.STABLES_CONFIG.ANDROID_APK_UPDATE) || {};
+            const url = String(bundled.remoteConfigUrl || 'https://stablescouncil.org/dapp/2-demo/assets/config/runtime-config.js').trim();
+            if (!url) {
+                syncAppUpdatesSection();
+                return;
+            }
+            if (window.__STABLES_REMOTE_APK_UPDATE_FETCHING) return;
+            if (!window.StablesAndroid || typeof window.StablesAndroid.fetchText !== 'function') {
+                if (userInitiated && typeof showToast === 'function') {
+                    showToast('This app build cannot check online yet. Install the latest APK once, then in-app updates will work.');
+                }
+                syncAppUpdatesSection();
+                return;
+            }
+            window.__STABLES_REMOTE_APK_UPDATE_FETCHING = true;
+            const status = document.getElementById('settingsApkUpdateStatus');
+            if (status) {
+                status.style.display = '';
+                status.style.color = 'var(--m)';
+                status.textContent = 'Checking for updates…';
+            }
+            try {
+                window.StablesAndroid.fetchText(url);
+            } catch (_) {
+                window.__STABLES_REMOTE_APK_UPDATE_FETCHING = false;
+                syncAppUpdatesSection();
+            }
+        }
+        window.stablesRefreshRemoteApkUpdateConfig = stablesRefreshRemoteApkUpdateConfig;
+
         window.stablesApkUpdateNativeEvent = function (phase, message) {
             const btn = document.getElementById('settingsApkUpdateBtn');
             const p = String(phase || '').toLowerCase();
             const msg = String(message || '').trim();
+            if (p === 'progress') {
+                const pct = parseInt(msg, 10);
+                if (Number.isFinite(pct)) {
+                    stablesSetApkUpdateProgressPercent(pct);
+                    stablesSetApkUpdateProgress('Downloading update… ' + pct + '%');
+                }
+                if (btn) { btn.disabled = true; btn.textContent = 'Downloading…'; }
+                return;
+            }
             if (p === 'downloading' || p === 'verified' || p === 'installing') {
                 stablesSetApkUpdateProgress(msg);
                 if (btn) { btn.disabled = true; }
@@ -11253,12 +11513,14 @@
             }
             if (p === 'done') {
                 stablesSetApkUpdateProgress(msg);
+                stablesSetApkUpdateProgressPercent(0);
                 if (btn) { btn.disabled = false; btn.textContent = 'Download and install update'; }
                 if (typeof showToast === 'function') showToast(msg, { tone: 'success', durationMs: 6000 });
                 return;
             }
             if (p === 'permission') {
                 stablesSetApkUpdateProgress(msg);
+                stablesSetApkUpdateProgressPercent(0);
                 if (btn) { btn.disabled = false; }
                 if (typeof showToast === 'function') showToast(msg, { tone: 'warn', durationMs: 8000 });
                 return;
@@ -11269,6 +11531,7 @@
             }
             if (p === 'error') {
                 stablesSetApkUpdateProgress(msg);
+                stablesSetApkUpdateProgressPercent(0);
                 if (btn) { btn.disabled = false; btn.textContent = 'Download and install update'; }
                 if (typeof showToast === 'function') showToast(msg, { tone: 'error', durationMs: 8000 });
             }
@@ -11281,21 +11544,24 @@
                 if (typeof showToast === 'function') showToast('APK download URL is not configured yet.');
                 return;
             }
-            try {
-                if (!window.StablesAndroid || typeof window.StablesAndroid.downloadAndInstallApk !== 'function') {
-                    window.open(cfg.downloadUrl, '_blank', 'noopener,noreferrer');
-                    if (typeof showToast === 'function') showToast('Opened the APK download in your browser. Install it when the download finishes.');
-                    return;
+            if (!stablesNativeApkUpdateSupported()) {
+                if (typeof showToast === 'function') {
+                    showToast('Install the latest Stables APK once from stablescouncil.org. After that, updates run inside the app.');
                 }
+                return;
+            }
+            try {
                 const btn = document.getElementById('settingsApkUpdateBtn');
                 if (btn) {
                     btn.disabled = true;
                     btn.textContent = 'Downloading…';
                 }
                 stablesSetApkUpdateProgress('Starting download…');
+                stablesSetApkUpdateProgressPercent(1);
                 window.StablesAndroid.downloadAndInstallApk(cfg.downloadUrl, cfg.sha256 || '');
             } catch (e) {
                 stablesSetApkUpdateProgress('');
+                stablesSetApkUpdateProgressPercent(0);
                 const btn = document.getElementById('settingsApkUpdateBtn');
                 if (btn) { btn.disabled = false; btn.textContent = 'Download and install update'; }
                 if (typeof showToast === 'function') showToast(String((e && e.message) || e || 'Could not start update.'));
@@ -11311,6 +11577,7 @@
             const apkStatus = document.getElementById('settingsApkUpdateStatus');
             const apkWhat = document.getElementById('settingsApkWhatChanged');
             const apkBtn = document.getElementById('settingsApkUpdateBtn');
+            const apkCheckBtn = document.getElementById('settingsApkCheckBtn');
             const apkReleases = document.getElementById('settingsApkReleasesLink');
 
             if (window.__STABLES_ANDROID_APP) {
@@ -11319,15 +11586,19 @@
                 const installed = stablesGetInstalledApkVersion();
                 const latest = apkCfg.latestVersion || installed;
                 const needsUpdate = latest && installed && stablesCompareSemverLike(installed, latest) < 0;
+                const nativeUpdates = stablesNativeApkUpdateSupported();
+                const checking = !!window.__STABLES_REMOTE_APK_UPDATE_FETCHING;
                 const displayInstalled = installed ? ('v' + installed.split('.').map(function (p) { const n = Number(p); return Number.isFinite(n) ? String(n) : p; }).join('.')) : '';
                 const displayLatest = latest ? ('v' + latest.split('.').map(function (p) { const n = Number(p); return Number.isFinite(n) ? String(n) : p; }).join('.')) : '';
                 const pol = (window.STABLES_CONFIG && window.STABLES_CONFIG.APP_UPDATE_POLICY) || {};
                 const wu = pol.whenUpdateNeeded && typeof pol.whenUpdateNeeded === 'object' ? pol.whenUpdateNeeded : {};
 
                 if (title) {
-                    title.textContent = needsUpdate
-                        ? 'A newer Stables app is available on GitHub. Download and install it here to update in place.'
-                        : 'Your Stables app is up to date. New releases are published on GitHub when Council ships an update.';
+                    title.textContent = nativeUpdates
+                        ? (needsUpdate
+                            ? 'A newer Stables app is available. The app will download it, verify the SHA256, and open the Android installer.'
+                            : 'Updates are handled inside the app. Stables checks stablescouncil.org for the latest signed APK when you open this page.')
+                        : 'Install the latest Stables APK once from stablescouncil.org. Newer builds can update themselves from here.';
                 }
                 if (apkVersionLine) {
                     apkVersionLine.style.display = '';
@@ -11337,7 +11608,10 @@
                 }
                 if (apkStatus) {
                     apkStatus.style.display = '';
-                    if (needsUpdate) {
+                    if (checking) {
+                        apkStatus.style.color = 'var(--m)';
+                        apkStatus.textContent = 'Checking for updates…';
+                    } else if (needsUpdate) {
                         apkStatus.style.color = '#fbbf24';
                         apkStatus.textContent = 'Update available';
                     } else {
@@ -11355,29 +11629,41 @@
                     }
                 }
                 if (apkBtn) {
-                    apkBtn.style.display = needsUpdate ? '' : 'none';
+                    apkBtn.style.display = (nativeUpdates && needsUpdate && !checking) ? '' : 'none';
                     apkBtn.disabled = false;
                     apkBtn.textContent = 'Download and install update';
                 }
+                if (apkCheckBtn) {
+                    apkCheckBtn.style.display = nativeUpdates ? '' : 'none';
+                    apkCheckBtn.disabled = checking;
+                    apkCheckBtn.textContent = checking ? 'Checking…' : 'Check for updates';
+                }
                 if (link) link.style.display = 'none';
                 if (apkReleases) {
-                    apkReleases.style.display = '';
+                    apkReleases.style.display = needsUpdate ? '' : 'none';
                     apkReleases.href = apkCfg.releasesPageUrl;
-                    apkReleases.textContent = 'View releases on GitHub';
+                    apkReleases.textContent = 'Open GitHub releases';
                 }
                 if (label) {
                     label.textContent = needsUpdate && apkCfg.sha256
                         ? ('SHA256 ' + apkCfg.sha256)
-                        : 'Play Protect may warn on sideloaded updates. Verify the SHA256 on GitHub if you prefer.';
+                        : (nativeUpdates
+                            ? 'Play Protect may warn on sideloaded updates. The app verifies SHA256 before installing.'
+                            : 'Play Protect may warn on sideloaded updates. Verify the SHA256 on GitHub if you prefer.');
                 }
-                stablesSetApkUpdateProgress('');
+                if (!checking && !window.__STABLES_REMOTE_APK_UPDATE && nativeUpdates) {
+                    stablesRefreshRemoteApkUpdateConfig(false);
+                }
+                if (!checking) stablesSetApkUpdateProgress('');
             } else {
                 if (apkVersionLine) apkVersionLine.style.display = 'none';
                 if (apkStatus) apkStatus.style.display = 'none';
                 if (apkWhat) apkWhat.style.display = 'none';
                 if (apkBtn) apkBtn.style.display = 'none';
+                if (apkCheckBtn) apkCheckBtn.style.display = 'none';
                 if (apkReleases) apkReleases.style.display = 'none';
                 stablesSetApkUpdateProgress('');
+                stablesSetApkUpdateProgressPercent(0);
                 if (link) link.style.display = '';
                 const url = window.STABLES_CONFIG && window.STABLES_CONFIG.MDS_ZIP_URL;
                 const zipLabel = buildVersion ? ('Download Stables_' + (typeof stablesBuildLabel === 'function' ? stablesBuildLabel() : stablesFormatDisplayVersion(buildVersion)) + '.mds.zip') : 'Download Stables package (.mds.zip)';
@@ -11583,6 +11869,9 @@
             curPage = p;
             if (p === 'settings-updates') {
                 syncAppUpdatesSection();
+                if (window.__STABLES_ANDROID_APP) {
+                    try { stablesRefreshRemoteApkUpdateConfig(false); } catch (_) { /* ignore */ }
+                }
                 try { if (typeof stablesInitNetworkSection === 'function') stablesInitNetworkSection(); } catch (_) { /* ignore */ }
                 try { if (typeof stablesInitBackgroundToggle === 'function') stablesInitBackgroundToggle(); } catch (_) { /* ignore */ }
                 try { if (typeof stablesInitAppTerminal === 'function') stablesInitAppTerminal(); } catch (_) { /* ignore */ }
@@ -11659,6 +11948,17 @@
                 }
             }
             if (p === 'settings-security' && typeof stablesInitNativeSecurity === 'function') stablesInitNativeSecurity();
+            if (p === 'settings-security' && window.StablesPaymentSecurity) {
+                try {
+                    window.StablesPaymentSecurity.renderSettingsPanel();
+                    if (typeof window.StablesPaymentSecurity.bindSettingsPanelAutoSave === 'function') {
+                        window.StablesPaymentSecurity.bindSettingsPanelAutoSave();
+                    }
+                } catch (_) { /* ignore */ }
+            }
+            if (p === 'settings-profile' && typeof initPrivacyModeFromStorage === 'function') {
+                try { initPrivacyModeFromStorage(); } catch (_) { /* ignore */ }
+            }
             // Leaving Security: never leave the Vault key on screen (hide the revealed back-up seed
             // and clear any text typed into the recover field).
             if (prevPage === 'settings-security' && p !== 'settings-security') {
@@ -12133,6 +12433,12 @@
     fr: "Votre clé de coffre (phrase de récupération) est le mot de passe maître de vos fonds. Ne la partagez jamais.",
     es: "Su clave de bóveda (Frase semilla) es la contraseña maestra de sus fondos. Nunca la comparta.",
     zh: "您的金库密钥（助记词）是您资金的主密码。如果丢失，Stables理事会无法恢复。永远不要分享它。"
+  },
+  "payment protection": {
+    en: "Payment protection adds three send speeds on top of your normal wallet security.\n\n**Quick pay** sends immediately when you scan a payment QR that includes an address and amount, if the total stays under your quick-pay limit.\n\n**Standard pay** is the usual flow: review, then tap Confirm send.\n\n**Protected pay** asks for your 4-digit **payment code** before a significant send, a multi-recipient send, or a contact you marked as Protected pay.\n\nLimits are set in your **wallet primary currency** (the star currency on your Wallet page, for example Minima if that is your primary). Tap a question below for detail on the payment code, storage, and biometrics.",
+    fr: "La protection des paiements ajoute trois vitesses d'envoi.\n\n**Paiement rapide** : envoi immédiat après scan d'un QR de paiement complet, sous votre plafond.\n\n**Paiement standard** : vérification puis Confirmer l'envoi.\n\n**Paiement protégé** : code à 4 chiffres avant un envoi important, multi-destinataires, ou contact protégé.\n\nLes plafonds utilisent votre **devise principale** du portefeuille. Touchez une question ci-dessous.",
+    es: "La protección de pagos añade tres velocidades de envío.\n\n**Pago rápido**: envío inmediato al escanear un QR de pago completo, bajo su límite.\n\n**Pago estándar**: revisar y Confirmar envío.\n\n**Pago protegido**: código de 4 dígitos antes de envíos significativos, múltiples destinatarios o contactos protegidos.\n\nLos límites usan su **moneda principal** del monedero. Toque una pregunta abajo.",
+    zh: "支付保护在常规钱包安全之上提供三种发送速度。\n\n**快速支付**：扫描包含地址和金额的付款二维码且低于限额时立即发送。\n\n**标准支付**：核对后点击确认发送。\n\n**受保护支付**：在重要发送、多收款人或受保护联系人发送前输入4位支付码。\n\n限额使用您钱包的**主货币**（钱包页标星货币，例如若主货币为Minima则按Minima计）。点击下方问题了解详情。"
   },
   "legal: security summary; scammers; vault key storage; malware; unsolicited help; official contacts only": {
     en: "Always be cautious of scammers asking for your Vault key. Stables staff will never DM you offering unsolicited help.",
@@ -13096,6 +13402,35 @@
             }));
         }
 
+        const AW_MAIN_MENU_BACK = {
+            en: '← Back to main menu',
+            fr: '← Retour au menu principal',
+            es: '← Volver al menú principal',
+            zh: '← 返回主菜单'
+        };
+
+        function _awMainMenuBackLabel() {
+            const lang = _awLang();
+            return AW_MAIN_MENU_BACK[lang] || AW_MAIN_MENU_BACK.en;
+        }
+
+        function _awReturnToMainAgentMenu() {
+            _awClearChoices();
+            const ctx = typeof getAgentContext === 'function' ? getAgentContext() : 'app';
+            const label = document.getElementById('agentCtxLabel');
+            if (label) label.textContent = `Context: ${ctx}`;
+            lastAgentCtx = ctx;
+            _awShowGuidedTourOffer(true);
+        }
+
+        function _awAppendMainMenuBackChoice(choicesEl) {
+            if (!choicesEl) return;
+            choicesEl.appendChild(_awMakeChoiceBtn(_awMainMenuBackLabel(), function () {
+                _awAppendUserChoice(_awMainMenuBackLabel());
+                _awReturnToMainAgentMenu();
+            }));
+        }
+
         function _awShowGuidedTourOffer(force) {
             if (!_awEnsurePanel()) return;
             if (_awPostWelcomeOptionsShown && !force) return;
@@ -13274,14 +13609,15 @@
                 });
                 choicesEl.appendChild(yesBtn);
                 choicesEl.appendChild(noBtn);
+                _awAppendMainMenuBackChoice(choicesEl);
             }
-            _awUpdateControls(false, false);
+            _awUpdateControls(true, false);
         }
 
         function _awUpdateControls(showBack, showNext) {
             const backBtn = document.getElementById('agentWelcomeBackBtn');
             const nextBtn = document.getElementById('agentWelcomeNextBtn');
-            const canBack = !!showBack && _awStack.length > 0;
+            const canBack = !!showBack && (_awStack.length > 0 || _awActiveMode === 'context');
             const canNext = !!showNext;
             if (backBtn) {
                 backBtn.style.display = 'block';
@@ -13439,6 +13775,10 @@
         }
 
         function agentWelcomeBack() {
+            if (_awActiveMode === 'context') {
+                _awReturnToMainAgentMenu();
+                return;
+            }
             if (_awStack.length === 0) return;
             const prev = _awStack.pop();
             // Remove last bubble(s) from the DOM
@@ -13528,6 +13868,139 @@
         // END NATIVE AGENT WELCOME SERIES
         // ═══════════════════════════════════════════════════════════════════
 
+        const PAYMENT_PROTECTION_AGENT_FAQ = {
+            en: [
+                {
+                    q: 'Where do I set the payment code?',
+                    a: 'Open **More → Security**, then scroll to **Payment protection** and tap **Set payment code**.\n\nIf you skip that, your **first protected send** also opens inline setup in the payment code modal.\n\nAfter a code exists, the button reads **Change payment code**. You must enter the current code before choosing a new one.\n\nThis is separate from your **Vault key** (24 words). Never use your Vault key as the payment code.'
+                },
+                {
+                    q: 'Is the code stored securely on my phone?',
+                    a: 'Stables stores only a **salted hash** of your 4-digit code in this device\'s local app storage. The plain code is **not** saved and Stables cannot recover it for you.\n\nThat is a **spending guard**, not bank-grade vault security. If someone unlocks your phone and knows the code, they could authorize protected sends. Use a code you do not share, and keep your device lock screen enabled.\n\nYour **Vault key** remains the only way to recover funds. The payment code cannot move money without your unlocked app session and an active send path.'
+                },
+                {
+                    q: 'Can I use phone biometrics instead?',
+                    a: '**Yes, on the standalone Android app** when your device supports fingerprint or face unlock.\n\nSet a payment code first, then enable **Use device biometrics for protected pay** under **More → Security → Payment protection** (it saves as soon as you toggle it).\n\nOn a protected send, Stables opens the system biometric sheet first (even if your phone is already unlocked). Tap **Use payment code** on that sheet, or **Use device biometrics** in the code modal, to switch methods.\n\nWeb and MiniDapp hub builds still use the 4-digit code only. Biometrics never leave your device; Stables does not receive your fingerprint or face data.'
+                },
+                {
+                    q: 'How do limits work with Minima as my primary currency?',
+                    a: 'Payment limits are counted in your **wallet primary currency**. If Minima is your primary (the starred row on Wallet), quick-pay, significant, and daily caps are **Minima amounts**.\n\nIf you send another asset, Stables converts the send total into Minima equivalent using the same rates as the wallet ≈ line before comparing limits.\n\nChange your primary currency on the Wallet page; Payment protection labels update automatically.'
+                }
+            ],
+            fr: [
+                {
+                    q: 'Où définir le code de paiement ?',
+                    a: 'Ouvrez **Plus → Sécurité**, puis **Protection des paiements** et touchez **Définir le code de paiement**.\n\nSinon, le **premier envoi protégé** ouvre aussi la configuration dans le modal.\n\nEnsuite, utilisez **Changer le code de paiement**. Ce code est distinct de votre **clé Vault** (24 mots).'
+                },
+                {
+                    q: 'Le code est-il stocké en sécurité sur mon téléphone ?',
+                    a: 'Stables enregistre uniquement un **hash salé** du code à 4 chiffres dans le stockage local de l\'appareil. Le code en clair n\'est **pas** conservé.\n\nC\'est une **protection de dépense**, pas un coffre bancaire. Si quelqu\'un déverrouille votre téléphone et connaît le code, il pourrait autoriser des envois protégés. Gardez le verrouillage de l\'appareil activé.'
+                },
+                {
+                    q: 'Puis-je utiliser la biométrie du téléphone ?',
+                    a: '**Oui, dans l\'app Android autonome** si votre appareil prend en charge empreinte ou visage.\n\nDéfinissez d\'abord un code, puis activez **Utiliser la biométrie de l\'appareil pour les paiements protégés** dans **Plus → Sécurité → Protection des paiements**, et enregistrez.\n\nLors d\'un envoi protégé, la feuille biométrique du système s\'affiche en premier (même si le téléphone est déjà déverrouillé). **Utiliser le code de paiement** ou **Utiliser la biométrie** permet de changer de méthode.\n\nLe web et le hub MiniDapp utilisent encore le code à 4 chiffres uniquement.'
+                },
+                {
+                    q: 'Comment fonctionnent les plafonds avec Minima comme devise principale ?',
+                    a: 'Les plafonds suivent votre **devise principale** du portefeuille. Si Minima est principal, les limites sont en **Minima**.\n\nPour un autre actif, Stables convertit le montant en équivalent Minima avant de comparer aux plafonds.'
+                }
+            ],
+            es: [
+                {
+                    q: '¿Dónde configuro el código de pago?',
+                    a: 'Abra **Más → Seguridad**, luego **Protección de pagos** y toque **Configurar código de pago**.\n\nSi lo omite, el **primer envío protegido** también abre la configuración en el modal.\n\nDespués use **Cambiar código de pago**. Es distinto de su **clave Vault** (24 palabras).'
+                },
+                {
+                    q: '¿El código se guarda de forma segura en mi teléfono?',
+                    a: 'Stables guarda solo un **hash con sal** del código de 4 dígitos en el almacenamiento local del dispositivo. El código en texto plano **no** se guarda.\n\nEs una **protección de gasto**, no seguridad de banco. Si alguien desbloquea su teléfono y conoce el código, podría autorizar envíos protegidos. Mantenga el bloqueo de pantalla activo.'
+                },
+                {
+                    q: '¿Puedo usar la biometría del teléfono?',
+                    a: '**Sí, en la app Android independiente** si su dispositivo admite huella o rostro.\n\nPrimero configure un código, luego active **Usar biometría del dispositivo para pagos protegidos** en **Más → Seguridad → Protección de pagos** y guarde.\n\nEn un envío protegido, aparece primero la hoja biométrica del sistema (incluso si el teléfono ya está desbloqueado). Puede cambiar con **Usar código de pago** o **Usar biometría del dispositivo**.\n\nLa web y el hub MiniDapp siguen usando solo el código de 4 dígitos.'
+                },
+                {
+                    q: '¿Cómo funcionan los límites con Minima como moneda principal?',
+                    a: 'Los límites usan su **moneda principal** del monedero. Si Minima es principal, los topes son en **Minima**.\n\nPara otro activo, Stables convierte el total a equivalente Minima antes de comparar.'
+                }
+            ],
+            zh: [
+                {
+                    q: '在哪里设置支付码？',
+                    a: '打开 **更多 → 安全**，找到 **支付保护**，点击 **设置支付码**。\n\n若跳过，**首次受保护发送**也会在弹窗中内联设置。\n\n之后按钮显示 **更改支付码**。这与 **金库密钥**（24个词）不同。'
+                },
+                {
+                    q: '支付码在手机上安全存储吗？',
+                    a: 'Stables 仅在设备本地存储4位支付码的**加盐哈希**，明文**不会**保存。\n\n这是**支出防护**，不是银行级保险库安全。若他人解锁您的手机并知道支付码，可能授权受保护发送。请保持设备锁屏。'
+                },
+                {
+                    q: '可以使用手机生物识别吗？',
+                    a: '**可以，在独立 Android 应用中**（设备需支持指纹或面容）。\n\n先设置支付码，再在 **更多 → 安全 → 支付保护** 中启用 **使用设备生物识别进行受保护支付** 并保存。\n\n受保护发送时，系统会先显示生物识别界面（即使手机已解锁）。可在系统界面选择 **使用支付码**，或在支付码弹窗中选择 **使用设备生物识别**。\n\n网页版和 MiniDapp hub 仍仅使用4位支付码。'
+                },
+                {
+                    q: '主货币为 Minima 时限额如何计算？',
+                    a: '限额按钱包**主货币**计算。若主货币为 Minima，快速支付、重要阈值和每日上限均为 **Minima 数量**。\n\n发送其他资产时，Stables 会先换算为 Minima 等价再比较限额。'
+                }
+            ]
+        };
+
+        function _awAppendPaymentProtectionFaqChoices(choicesEl, faqs, mappedLang) {
+            if (!choicesEl) return;
+            choicesEl.appendChild(_awMakeChoiceBtn(
+                { en: 'Ask something else', fr: 'Autre question', es: 'Otra pregunta', zh: '其他问题' }[mappedLang] || 'Ask something else',
+                function () { _awFocusComposer(); }
+            ));
+            _awAppendMainMenuBackChoice(choicesEl);
+        }
+
+        function _awShowPaymentProtectionAgentMenu() {
+            const lang = _awLang();
+            const mappedLang = { en: 'en', fr: 'fr', es: 'es', zh: 'zh' }[lang] || 'en';
+            const overview = (typeof AGENT_KNOWLEDGE !== 'undefined' && AGENT_KNOWLEDGE['payment protection'] && AGENT_KNOWLEDGE['payment protection'][mappedLang])
+                ? AGENT_KNOWLEDGE['payment protection'][mappedLang]
+                : AGENT_KNOWLEDGE['payment protection'].en;
+            const faqs = PAYMENT_PROTECTION_AGENT_FAQ[mappedLang] || PAYMENT_PROTECTION_AGENT_FAQ.en;
+            _awEnsurePanel();
+            _awActiveMode = 'context';
+            _awClearChoices();
+            _awAppendBubble(overview);
+            const choicesEl = document.getElementById('agentWelcomeChoices');
+            const pickLabel = { en: 'Tap a common question:', fr: 'Touchez une question fréquente :', es: 'Toque una pregunta frecuente:', zh: '点击常见问题：' };
+            if (choicesEl) {
+                const hint = document.createElement('div');
+                hint.className = 'xs mu';
+                hint.style.cssText = 'margin:4px 0 2px 2px;line-height:1.45';
+                hint.textContent = pickLabel[mappedLang] || pickLabel.en;
+                choicesEl.appendChild(hint);
+                faqs.forEach(function (faq) {
+                    choicesEl.appendChild(_awMakeChoiceBtn(faq.q, function () {
+                        _awAppendUserChoice(faq.q);
+                        _awClearChoices();
+                        _awAppendBubble(faq.a);
+                        const againEl = document.getElementById('agentWelcomeChoices');
+                        if (againEl) {
+                            faqs.forEach(function (other) {
+                                if (other.q === faq.q) return;
+                                againEl.appendChild(_awMakeChoiceBtn(other.q, function () {
+                                    _awAppendUserChoice(other.q);
+                                    _awClearChoices();
+                                    _awAppendBubble(other.a);
+                                    _awAppendPaymentProtectionFaqChoices(againEl, faqs, mappedLang);
+                                    _awFocusComposer();
+                                }));
+                            });
+                            _awAppendPaymentProtectionFaqChoices(againEl, faqs, mappedLang);
+                        }
+                        _awFocusComposer();
+                    }));
+                });
+                _awAppendMainMenuBackChoice(choicesEl);
+            }
+            _awUpdateControls(true, false);
+            const label = document.getElementById('agentCtxLabel');
+            if (label) label.textContent = 'Context: Payment protection';
+            lastAgentCtx = 'payment protection';
+        }
+
         function openAgentExplain(boxName) {
             const name = String(boxName || '').trim();
             const lower = name.toLowerCase();
@@ -13572,6 +14045,16 @@
             const langMap = { 'en': 'en', 'fr': 'fr', 'es': 'es', 'zh': 'zh' };
             const currentLang = getStoredAgentLanguage();
             const mappedLang = langMap[currentLang] || 'en';
+
+            if (lower === 'payment protection') {
+                const drawer = document.getElementById('agentDrawer');
+                if (drawer) {
+                    drawer.classList.add('open', 'vis');
+                    document.body.classList.add('modal-open');
+                }
+                _awShowPaymentProtectionAgentMenu();
+                return;
+            }
 
             if (typeof AGENT_KNOWLEDGE !== 'undefined' && AGENT_KNOWLEDGE[lower] && AGENT_KNOWLEDGE[lower][mappedLang]) {
                 const welcomeText = AGENT_KNOWLEDGE[lower][mappedLang];
@@ -15715,6 +16198,8 @@
             const defaultCcy = pendingModalCurrency || BASE_CCY || '';
             if (id === 'sendModal') {
                 window.STABLES_SEND_ROWS = [{ to: '', amt: '' }];
+                window.STABLES_SEND_SOURCE = 'manual';
+                window.STABLES_QR_HAD_AMOUNT = false;
                 if (typeof stablesRenderSendRows === 'function') stablesRenderSendRows();
                 const _r0to = document.getElementById('sendToInput'); if (_r0to) _r0to.value = '';
                 const _r0amt = document.getElementById('sendAmtInput'); if (_r0amt) _r0amt.value = '';
@@ -15747,6 +16232,7 @@
                 if (typeof renderSendContactChips === 'function') renderSendContactChips();
                 updateSendFavEq();
                 if (typeof updateSendAvailLine === 'function') updateSendAvailLine();
+                try { stablesUpdateSendTierHint(); } catch (_) { /* ignore */ }
             }
             if (id === 'recvModal') {
                 populateCurrencySelect('reqCcy', { withBalances: true });
@@ -16747,6 +17233,10 @@
             syncWalletCurrenciesFromSettings();
             updateGlobalUI();
             if (typeof renderCoverageFundPanel === 'function') renderCoverageFundPanel();
+            if (window.StablesPaymentSecurity && typeof window.StablesPaymentSecurity.renderSettingsPanel === 'function') {
+                try { window.StablesPaymentSecurity.renderSettingsPanel(); } catch (_) { /* ignore */ }
+            }
+            try { if (typeof stablesUpdateSendTierHint === 'function') stablesUpdateSendTierHint(); } catch (_) { /* ignore */ }
         }
 
         function walletDeleteCcy(code) {
@@ -19529,10 +20019,19 @@
                     '<input class="finput" type="number" id="' + amtId + '" placeholder="0.00" inputmode="decimal" style="min-width:0;margin-bottom:0" value="' + esc(r.amt) + '" oninput="stablesUpdateSendTotal();">' +
                     '</div>';
             }).join('');
-            const countEl = document.getElementById('sendRowCount');
-            if (countEl) countEl.textContent = rows.length + ' / 14';
-            const addBtn = document.getElementById('sendAddRecipientBtn');
-            if (addBtn) addBtn.style.display = rows.length >= 14 ? 'none' : '';
+            const splitRow = document.getElementById('sendSplitRow');
+            const splitBtn = document.getElementById('sendSplitBtn');
+            if (splitRow && splitBtn) {
+                if (rows.length >= 14) {
+                    splitRow.style.display = 'none';
+                } else {
+                    splitRow.style.display = '';
+                    splitBtn.textContent = multi ? '+ Add recipient' : 'Split across multiple recipients';
+                    splitBtn.title = multi
+                        ? 'Add another recipient (' + rows.length + ' of 14)'
+                        : 'Send to multiple recipients (protected pay)';
+                }
+            }
             const maxBtn = document.getElementById('sendAmtMaxBtn');
             if (maxBtn) maxBtn.style.display = multi ? 'none' : '';
             stablesUpdateSendTotal();
@@ -19736,8 +20235,13 @@
             if (toEl) toEl.value = addr;
             if (amtEl && amt) amtEl.value = amt;
             window.STABLES_SEND_QR_ROW = 0;
-            if (typeof showToast === 'function') showToast('Address scanned');
+            if (typeof showToast === 'function') showToast(amt ? 'Payment QR scanned' : 'Address scanned');
             if (typeof stablesUpdateSendTotal === 'function') stablesUpdateSendTotal();
+            if (typeof stablesTryQuickPayFromQr === 'function') {
+                setTimeout(function () { stablesTryQuickPayFromQr(!!amt); }, 60);
+            } else if (typeof stablesUpdateSendTierHint === 'function') {
+                stablesUpdateSendTierHint();
+            }
         }
 
         function stablesHandleSendPaste(e) {
@@ -19814,8 +20318,7 @@
                     totalEl.style.display = 'none';
                 }
             }
-            const confirmBtn = document.getElementById('sendConfirmBtn');
-            if (confirmBtn && !confirmBtn.disabled) confirmBtn.textContent = rows.length > 1 ? 'Confirm send to ' + rows.length : 'Confirm send';
+            try { if (typeof stablesUpdateSendTierHint === 'function') stablesUpdateSendTierHint(); } catch (_) { /* ignore */ }
         }
 
         function stablesShowSendResultModal(opts) {
@@ -20127,36 +20630,95 @@
             try { if (typeof stablesRenderReceiveQr === 'function') stablesRenderReceiveQr(); } catch (_) { /* ignore */ }
         }
 
-        function stablesConfirmSendFromModal() {
+        function stablesResetSendModal() {
+            window.STABLES_SEND_ROWS = [{ to: '', amt: '' }];
+            window.STABLES_SEND_SOURCE = 'manual';
+            if (typeof stablesRenderSendRows === 'function') stablesRenderSendRows();
+            const _r0to = document.getElementById('sendToInput'); if (_r0to) _r0to.value = '';
+            const _r0amt = document.getElementById('sendAmtInput'); if (_r0amt) _r0amt.value = '';
+            try { if (typeof updateSendFavEq === 'function') updateSendFavEq(); } catch (_) { /* ignore */ }
+            try { updateSendAvailLine(); } catch (_) { /* ignore */ }
+            try { stablesUpdateSendTierHint(); } catch (_) { /* ignore */ }
+        }
+
+        function stablesNodeWritableForSend() {
+            if (typeof MDS === 'undefined' || !MDS.cmd) return false;
+            const L = window.__STABLES_LIVE_NODE;
+            if (!L || !L.rpcOk) return false;
+            if (window.__STABLES_MDS_READONLY) return false;
+            return true;
+        }
+
+        function stablesCollectSendPayloadFromModal() {
             const sel = document.getElementById('sendCcy');
-            if (!sel) return;
+            if (!sel) return { ok: false };
             const rawCode = typeof walletParseCcySel === 'function' ? walletParseCcySel('sendCcy') : String(sel.value || '').split(/\s+/)[0].trim();
             const ccyWallet = vaultCcyFromSelectValue(rawCode);
-            // Collect all recipients from DOM
             const rows = window.STABLES_SEND_ROWS || [{ to: '', amt: '' }];
             const recipients = [];
             for (let i = 0; i < rows.length; i++) {
                 const toEl = document.getElementById(i === 0 ? 'sendToInput' : 'sendToInput_' + i);
                 const amtEl = document.getElementById(i === 0 ? 'sendAmtInput' : 'sendAmtInput_' + i);
-                if (!toEl || !amtEl) return;
+                if (!toEl || !amtEl) return { ok: false };
                 const toRaw = String(toEl.value || '').trim();
                 const amt = readVaultAmountFromInput(amtEl);
-                if (!toRaw) return showToast(rows.length > 1 ? 'Enter an address for recipient ' + (i + 1) + '.' : 'Enter a recipient.');
-                if (!(amt > 0)) return showToast(rows.length > 1 ? 'Enter an amount for recipient ' + (i + 1) + '.' : 'Enter an amount.');
+                if (!toRaw) return { ok: false, toast: rows.length > 1 ? 'Enter an address for recipient ' + (i + 1) + '.' : 'Enter a recipient.' };
+                if (!(amt > 0)) return { ok: false, toast: rows.length > 1 ? 'Enter an amount for recipient ' + (i + 1) + '.' : 'Enter an amount.' };
                 recipients.push({ toRaw: toRaw, amt: amt });
             }
             const totalAmt = recipients.reduce(function (s, r) { return s + r.amt; }, 0);
             const bal = getVaultBalance(ccyWallet);
-            if (totalAmt > bal + 1e-12) return showToast(recipients.length > 1 ? 'Insufficient balance for total of ' + totalAmt + '.' : 'Insufficient balance');
+            if (totalAmt > bal + 1e-12) return { ok: false, toast: recipients.length > 1 ? 'Insufficient balance for total of ' + totalAmt + '.' : 'Insufficient balance' };
+            return { ok: true, rawCode: rawCode, ccyWallet: ccyWallet, recipients: recipients, totalAmt: totalAmt };
+        }
 
-            function resetSendModal() {
-                window.STABLES_SEND_ROWS = [{ to: '', amt: '' }];
-                if (typeof stablesRenderSendRows === 'function') stablesRenderSendRows();
-                const _r0to = document.getElementById('sendToInput'); if (_r0to) _r0to.value = '';
-                const _r0amt = document.getElementById('sendAmtInput'); if (_r0amt) _r0amt.value = '';
-                try { if (typeof updateSendFavEq === 'function') updateSendFavEq(); } catch (_) { /* ignore */ }
-                try { updateSendAvailLine(); } catch (_) { /* ignore */ }
+        function stablesBuildSendTierContext(payload, opts) {
+            const o = opts || {};
+            const p = payload || {};
+            const ps = window.StablesPaymentSecurity;
+            const fiatTotal = ps && typeof ps.fiatEquivalent === 'function'
+                ? ps.fiatEquivalent(p.totalAmt, p.rawCode)
+                : p.totalAmt;
+            const firstTo = p.recipients && p.recipients[0] ? p.recipients[0].toRaw : '';
+            const contactTier = typeof window.stablesResolveSendContactTier === 'function'
+                ? window.stablesResolveSendContactTier(firstTo)
+                : 'inherit';
+            return {
+                fiatTotal: fiatTotal,
+                recipientCount: p.recipients ? p.recipients.length : 1,
+                source: o.source || window.STABLES_SEND_SOURCE || 'manual',
+                contactTier: contactTier,
+                qrHasAmount: !!o.qrHasAmount,
+                nodeWritable: stablesNodeWritableForSend()
+            };
+        }
+
+        function stablesUpdateSendTierHint() {
+            const hint = document.getElementById('sendTierHint');
+            if (!hint || !window.StablesPaymentSecurity) return;
+            const payload = stablesCollectSendPayloadFromModal();
+            if (!payload.ok) { hint.style.display = 'none'; return; }
+            const ctx = stablesBuildSendTierContext(payload, { qrHasAmount: window.STABLES_QR_HAD_AMOUNT });
+            const tier = window.StablesPaymentSecurity.classifyTier(ctx);
+            const label = window.StablesPaymentSecurity.tierLabel(tier);
+            hint.textContent = label + (tier === 'protected' ? ' · payment code required' : tier === 'quick' ? ' · scan with amount to send instantly' : '');
+            hint.style.display = '';
+            const btn = document.getElementById('sendConfirmBtn');
+            if (btn && !btn.disabled) {
+                const n = payload.recipients.length;
+                btn.textContent = tier === 'protected'
+                    ? (n > 1 ? 'Confirm protected send to ' + n : 'Confirm protected send')
+                    : (n > 1 ? 'Confirm send to ' + n : 'Confirm send');
             }
+        }
+        window.stablesUpdateSendTierHint = stablesUpdateSendTierHint;
+
+        function stablesExecuteSendPayload(payload, tierMeta) {
+            const rawCode = payload.rawCode;
+            const ccyWallet = payload.ccyWallet;
+            const recipients = payload.recipients;
+            const totalAmt = payload.totalAmt;
+            const tier = tierMeta && tierMeta.tier ? tierMeta.tier : 'standard';
 
             if (rawCode === 'MINIMA') {
                 stablesSetSendBusy(true);
@@ -20238,9 +20800,13 @@
                             pendingOnChain: true,
                             note: 'Balance refreshes from your Minima node.'
                         });
-                        showToast(outputs.length > 1 ? 'MINIMA sent to ' + outputs.length + ' recipients.' : 'MINIMA send submitted.', { durationMs: 4200 });
+                        if (tier === 'quick' && window.StablesPaymentSecurity) {
+                            const ctx = stablesBuildSendTierContext(payload, { source: 'qr', qrHasAmount: true });
+                            window.StablesPaymentSecurity.recordQuickPaySpend(ctx.fiatTotal);
+                        }
+                        showToast(outputs.length > 1 ? 'MINIMA sent to ' + outputs.length + ' recipients.' : (tier === 'quick' ? 'Quick pay sent.' : 'MINIMA send submitted.'), { durationMs: 4200 });
                         closeModal('sendModal');
-                        resetSendModal();
+                        stablesResetSendModal();
                     } else {
                         const err = stablesMdsSendErrorText(res);
                         if (/cannot run write|public\s*mds|write command|read.?only/i.test(err)) {
@@ -20269,7 +20835,13 @@
                 return;
             }
 
-            showToast(recipients.length > 1 ? 'Sent to ' + recipients.length + ' recipients (demo). Balances are simulated.' : 'Sent (demo). Wables and other showcase balances are simulated here.');
+            if (tier === 'quick' && window.StablesPaymentSecurity) {
+                const ctx = stablesBuildSendTierContext(payload, { source: 'qr', qrHasAmount: true });
+                window.StablesPaymentSecurity.recordQuickPaySpend(ctx.fiatTotal);
+            }
+            showToast(recipients.length > 1
+                ? 'Sent to ' + recipients.length + ' recipients (demo). Balances are simulated.'
+                : (tier === 'quick' ? 'Quick pay sent (demo).' : 'Sent (demo). Wables and other showcase balances are simulated here.'));
             closeModal('sendModal');
             try {
                 const from = ccyWallet;
@@ -20282,8 +20854,65 @@
                 saveWalletVaultState();
                 if (typeof updateGlobalUI === 'function') updateGlobalUI();
             } catch (_) { /* ignore */ }
-            resetSendModal();
+            stablesResetSendModal();
         }
+
+        function stablesProceedSendAfterTierCheck(payload, tier) {
+            if (window.StablesPaymentSecurity && window.StablesPaymentSecurity.requiresPaymentCode(tier)) {
+                window.StablesPaymentSecurity.requestPaymentCode(function (ok) {
+                    if (ok) stablesExecuteSendPayload(payload, { tier: tier });
+                });
+                return;
+            }
+            stablesExecuteSendPayload(payload, { tier: tier });
+        }
+
+        function stablesConfirmSendFromModal() {
+            const payload = stablesCollectSendPayloadFromModal();
+            if (!payload.ok) {
+                if (payload.toast) showToast(payload.toast);
+                return;
+            }
+            const ctx = stablesBuildSendTierContext(payload, { qrHasAmount: !!window.STABLES_QR_HAD_AMOUNT });
+            const tier = window.StablesPaymentSecurity
+                ? window.StablesPaymentSecurity.classifyTier(ctx)
+                : 'standard';
+            if (tier === 'quick') {
+                showToast('Quick pay only runs when you scan a payment QR. Confirm to send.', { durationMs: 4200 });
+                stablesExecuteSendPayload(payload, { tier: 'standard' });
+                return;
+            }
+            stablesProceedSendAfterTierCheck(payload, tier);
+        }
+
+        function stablesTryQuickPayFromQr(qrHadAmount) {
+            window.STABLES_QR_HAD_AMOUNT = !!qrHadAmount;
+            window.STABLES_SEND_SOURCE = 'qr';
+            const payload = stablesCollectSendPayloadFromModal();
+            if (!payload.ok) {
+                stablesUpdateSendTierHint();
+                return;
+            }
+            const ctx = stablesBuildSendTierContext(payload, { source: 'qr', qrHasAmount: qrHadAmount });
+            if (!window.StablesPaymentSecurity) {
+                stablesUpdateSendTierHint();
+                return;
+            }
+            const tier = window.StablesPaymentSecurity.classifyTier(ctx);
+            if (tier !== 'quick') {
+                if (window.StablesPaymentSecurity.wouldExceedDailyCap(ctx.fiatTotal)) {
+                    showToast('Daily quick-pay cap reached. Confirm send to continue.', { tone: 'amber', durationMs: 4800 });
+                }
+                stablesUpdateSendTierHint();
+                return;
+            }
+            const fav = window.StablesPaymentSecurity.displayFavCcy();
+            const amtLabel = payload.totalAmt + ' ' + (payload.rawCode === 'MINIMA' ? 'MINIMA' : payload.rawCode);
+            window.StablesPaymentSecurity.scheduleQuickPay(function () {
+                stablesExecuteSendPayload(payload, { tier: 'quick' });
+            }, { label: 'Quick pay ' + amtLabel });
+        }
+        window.stablesTryQuickPayFromQr = stablesTryQuickPayFromQr;
 
         function updateRecvAvailLine() {
             const el = document.getElementById('recvAvailLine');
@@ -22128,6 +22757,7 @@
             privacyMode = !privacyMode;
             const tog = document.getElementById('privacyToggle');
             if (tog) tog.classList.toggle('on', privacyMode);
+            try { localStorage.setItem(PRIVACY_MODE_KEY, privacyMode ? '1' : '0'); } catch (_) { /* ignore */ }
             showToast(privacyMode ? '\u{1F512} Privacy ON - address rotates after each receipt' : 'Privacy mode off');
         }
 
@@ -22590,7 +23220,7 @@ const APP_TAB_TITLE = 'Demo · Stables';
                     settingsPh.style.display = 'none';
                 }
                 refreshTopbarBrand();
-                showToast('Avatar loaded (not saved yet)');
+                persistCouncilMemberProfile({ silent: true });
             };
             reader.readAsDataURL(file);
         }
@@ -22656,10 +23286,21 @@ const APP_TAB_TITLE = 'Demo · Stables';
                 settingsPh.style.display = 'none';
             }
             refreshTopbarBrand();
-            showToast('Avatar URL loaded (not saved yet)');
+            persistCouncilMemberProfile({ silent: true });
         }
 
-        function saveCouncilMemberProfile() {
+        let _councilProfileSaveTimer = null;
+        function scheduleCouncilProfileSave() {
+            if (_councilProfileSaveTimer) clearTimeout(_councilProfileSaveTimer);
+            _councilProfileSaveTimer = setTimeout(function () {
+                _councilProfileSaveTimer = null;
+                persistCouncilMemberProfile({ silent: true });
+            }, 450);
+        }
+        window.scheduleCouncilProfileSave = scheduleCouncilProfileSave;
+
+        function persistCouncilMemberProfile(opts) {
+            const options = opts && typeof opts === 'object' ? opts : {};
             const name = String(document.getElementById('councilNameInput')?.value || '').trim() || 'Council Member';
             const role = String(document.getElementById('councilExecRoleSel')?.value || 'Executor').trim() || 'Executor';
 
@@ -22677,7 +23318,12 @@ const APP_TAB_TITLE = 'Demo · Stables';
 
             localStorage.setItem(COUNCIL_MEMBER_PROFILE_KEY, JSON.stringify(profile));
             applyCouncilProfileToUI(profile);
-            showToast('Council profile saved');
+            if (!options.silent) showToast('Council profile saved');
+        }
+        window.persistCouncilMemberProfile = persistCouncilMemberProfile;
+
+        function saveCouncilMemberProfile() {
+            persistCouncilMemberProfile();
         }
         window.saveCouncilMemberProfile = saveCouncilMemberProfile;
 
@@ -23058,6 +23704,7 @@ const APP_TAB_TITLE = 'Demo · Stables';
         setInterval(refreshInvoiceRecognitionAvailability, 1000);
         runBootStep('updateTreasuryUI', () => updateTreasuryUI(0));
         runBootStep('updateBudgetDraft', updateBudgetDraft);
+        runBootStep('initPrivacyModeFromStorage', initPrivacyModeFromStorage);
         runBootStep('initCcyReorder', initCcyReorder);
         runBootStep('initShowCfTokensToggle', initShowCfTokensToggle);
         runBootStep('initWalletCcyReorder', initWalletCcyReorder);
@@ -23131,6 +23778,7 @@ const APP_TAB_TITLE = 'Demo · Stables';
         })();
     </script>
     <script src="assets/theme.js"></script>
+    <script src="assets/payment-security.js"></script>
     <script src="assets/routes/activity-contacts.js"></script>
     <script src="assets/routes/trust-retro.js"></script>
     <script src="assets/routes/feedback.js"></script>

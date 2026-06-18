@@ -18,9 +18,9 @@ window.STABLES_CONFIG = {
    * each build is uniquely identifiable in the top-bar pill (e.g. v0.0.0.2.01, .02, …) and the
    * packaged zip name (Stables_v0.0.0.2.02.mds.zip). Reset to 1 when APP_BUILD_VERSION changes / published.
    */
-  APP_BUILD_ITERATION: 43,
+  APP_BUILD_ITERATION: 44,
   /** Date this build was published to GitHub (ISO YYYY-MM-DD). */
-  APP_BUILD_DATE: '2026-06-17',
+  APP_BUILD_DATE: '2026-06-18',
   /**
    * Council-side view of the newest MiniDapp. If latestPublishedVersion sorts above APP_BUILD_VERSION,
    * the Council communications page shows criticality + what changed + zip link.
@@ -28,11 +28,11 @@ window.STABLES_CONFIG = {
    * Use the same segment count as APP_BUILD_VERSION so semver-like compare is meaningful.
    */
   APP_UPDATE_POLICY: {
-    latestPublishedVersion: '0.0.0.3.42',
+    latestPublishedVersion: '0.0.0.3.44',
     whenUpdateNeeded: {
       criticality: 'medium',
       whatChanged:
-        'Six colour themes including Paper light mode, in-app Android updates from Settings and updates, home-screen branding from My profile, StablesAgent help and guided tours in one place, All links aligned with the website, and a safer wallet recovery flow.',
+        'Payment protection tiers, auto-save across settings and notes, Android biometric unlock for protected pay, and a quieter split-payment option on Send. Contact payment tier, Settings security controls, and StablesAgent FAQ for payment codes.',
       details:
         'On Android, open Settings and updates to download and install the latest APK from GitHub. On web or Minima hub, use the package link below.'
     }
@@ -78,18 +78,18 @@ window.STABLES_CONFIG = {
   FAUCET_WINIWA_COOLDOWN_MS: 3600000,
   FAUCET_WINIWA_LAST_CLAIM_STORAGE_KEY: 'stables_faucet_winiwa_last_claim_ts_v1',
   /** Public demo: direct MiniDapp package download. */
-  MDS_ZIP_URL: 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.3.42.mds.zip',
+  MDS_ZIP_URL: 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.3.44.mds.zip',
   /**
    * Feedback page → Demo roadmap block (More → Feedback). Bump on every publish so reviewers
    * see the current build label, review focus, and next modules. Keep aligned with CHANGELOG.
    */
   DEMO_FEEDBACK_ROADMAP: {
     summary:
-      'This is the 0.0.0.3 demo line: six colour themes including Paper, unified Help (StablesAgent and guided tours), All links aligned with stablescouncil.org, safer wallet recovery on Android, Network in Settings, home-screen branding from My profile, and APK update tools in Settings and updates. Native Minima send and receive stay real on a connected node or in the standalone Android app.',
+      'This is the 0.0.0.3 demo line: payment protection tiers (Quick pay, Standard pay, Protected pay), auto-save on settings and notes, Android biometric unlock for protected pay, and a quieter split-payment option on Send. Also includes contact payment tier, six colour themes, unified Help, All links aligned with stablescouncil.org, safer wallet recovery on Android, Network in Settings, and APK update tools. Native Minima send and receive stay real on a connected node or in the standalone Android app.',
     nowReview:
-      'Live Minima wallet, themes, Help, All links, Settings and updates, Network (Android), recovery safety gate, Mint demo flows, Coverage fund copy, On/Off Ramp, feedback routing',
+      'Payment protection tiers, auto-save, biometric unlock, Send split payment, contact payment tier, Settings security, live Minima wallet, themes, Help, All links, Settings and updates, recovery safety gate, Mint demo flows, feedback routing',
     comingSoon:
-      'Remote in-app APK update check (next publish), structured bug reports, roadmap votes',
+      'Favourite-chip quick pay auto-send, structured bug reports, roadmap votes',
     nextModules:
       'Merchant validation, academy lessons, notification icon, seed surface hardening',
     footnote:
