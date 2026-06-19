@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "submitted_at": "2026-06-19T11:17:28.424Z",
+  "source": {
+    "app_build": "0.0.0.3.45",
+    "client": "stables-minidapp"
+  },
+  "topic_domain": "app",
+  "topic_sub": "design",
+  "app_context": {
+    "page_id": "android:mint",
+    "section_hint": null,
+    "element_hint": null
+  },
+  "kind": "comment",
+  "title": "No automatic send",
+  "body": "Even below my threshold the automatic send is not triggered",
+  "optional_minima_address": null,
+  "public_contact": "MxG084JKKR4VAVN5T0WPQTM17RHPGJAM3PU0HCEC14RWEWC3DMG88UH6QMQCBSG",
+  "consent_public_ledger": true,
+  "flags": {
+    "low_priority_freeform": false
+  }
+}
