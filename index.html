@@ -57,7 +57,7 @@
     <!-- Social Previews (Open Graph) -->
     <meta property="og:title" content="Stables | Be your bank">
     <meta property="og:description"
-        content="Money that is truly yours. Secure, Pseudonymous and Unstoppable. Built on Minima.">
+        content="Money that is truly yours. Secure, Pseudonymous and Unstoppable.">
     <meta property="og:image" content="https://stablescouncil.org/brand/assets/twitter-header.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
@@ -70,12 +70,7 @@
     <meta name="twitter:description" content="Money that is truly yours. Secure, Pseudonymous and Unstoppable.">
     <meta name="twitter:image" content="https://stablescouncil.org/brand/assets/twitter-header.png">
 
-    <!-- Google Fonts - Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-
-    <title>Home · Stables</title>
+    <title>Stables - Be your bank</title>
     <style>
         :root {
             /* Color Palette - EXACT HEX CODES */
@@ -248,6 +243,28 @@
             text-align: center;
         }
 
+        /* Phone footer (founder 2026-09-03, "the elements must stay well aligned on all devices"):
+           the StablesAgent button is fixed bottom-right (58 px plus a 20 px margin), and one row of
+           four items ran under it. The badge now starts its own centred line, so each line stays
+           inside the width the button leaves free. */
+        @media (max-width: 700px) {
+            .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial {
+                gap: 0.6rem 1rem;
+            }
+
+            .site-chrome-footer.site-chrome-footer--minimal .site-chrome-footerSocial::after {
+                content: "";
+                flex-basis: 100%;
+                height: 0;
+                order: 1;
+            }
+
+            .site-chrome-footer.site-chrome-footer--minimal .minima-badge {
+                order: 2;
+                margin-bottom: 0;
+            }
+        }
+
         .site-chrome-footerSocial {
             display: flex;
             flex-wrap: wrap;
@@ -332,7 +349,8 @@
             }
         }
 
-        /* Hero: pull headline + tagline up toward wordmark; add space before CTAs */
+        /* Canonical homepage hero rhythm. Keep the complete message and scroll cue
+           inside the first viewport instead of layering duplicate gaps. */
         section#hero .brand-container .minima-badge {
             margin-bottom: 8px;
         }
@@ -342,16 +360,16 @@
         }
 
         section#hero .brand-container .hero-tagline {
-            margin-bottom: clamp(28px, 4.5vw, 44px);
+            margin-bottom: clamp(28px, 3.5vh, 36px);
         }
 
         section#hero .brand-container .btn-group {
-            margin-top: clamp(10px, 2vw, 20px);
+            margin-top: 0;
         }
 
         @media (max-width: 768px) {
             section#hero .brand-container .minima-badge {
-                margin-bottom: clamp(12px, 2.8vh, 18px);
+                margin-bottom: 8px;
             }
 
             section#hero .brand-container .logo-wordmark {
@@ -359,13 +377,13 @@
             }
 
             section#hero .brand-container .hero-tagline {
-                margin-bottom: clamp(28px, 5.5vh, 44px);
+                margin-bottom: clamp(22px, 3vh, 30px);
                 max-width: none;
                 width: 100%;
             }
 
             section#hero .brand-container .btn-group {
-                margin-top: clamp(12px, 3vh, 20px);
+                margin-top: 0;
                 width: min(100%, 300px);
             }
 
@@ -793,12 +811,18 @@
             margin-top: 0;
             letter-spacing: -0.02em;
             word-spacing: normal;
-            line-height: 1.1;
+            line-height: 1.08;
             background: linear-gradient(135deg, #ffffff 0%, #67e8f9 50%, #a78bfa 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             text-align: center;
+            width: fit-content;
+            max-width: 100%;
+            /* Background-clipped glyphs need painted space below the baseline for y/g descenders. */
+            padding: 0.04em 0.08em 0.16em;
+            overflow: visible;
+            text-wrap: balance;
         }
 
         @media (max-width: 768px) {
@@ -840,7 +864,7 @@
         }
 
         .scroll-indicator {
-            margin-top: 20px;
+            margin-top: 12px;
             margin-left: auto;
             margin-right: auto;
             display: flex;
@@ -856,7 +880,7 @@
 
         @media (max-width: 768px) {
             .scroll-indicator {
-                margin-top: 16px;
+                margin-top: 10px;
             }
         }
 
@@ -927,6 +951,16 @@
                 align-items: center;
             }
 
+            section .container,
+            .split-layout,
+            .split-layout > *,
+            .content-block,
+            .mockup-frame,
+            .deck-more-inner {
+                min-width: 0;
+                max-width: 100%;
+            }
+
             .content-block {
                 text-align: center;
                 display: flex;
@@ -934,8 +968,14 @@
                 align-items: center;
             }
 
-            .content-block p {
+            .content-block h2,
+            .content-block h3,
+            .content-block p,
+            .deck-more-title,
+            .deck-more-lead,
+            .mockup-frame > * {
                 width: 100%;
+                overflow-wrap: anywhere;
             }
 
             .btn-group {
@@ -944,9 +984,14 @@
         }
 
         .minima-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.32em;
+            min-height: 44px;
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(103, 232, 249, 0.5);
-            padding: 8px 18px;
+            padding: 0 18px;
             border-radius: 999px;
             font-size: 11px;
             font-weight: 600;
@@ -956,6 +1001,7 @@
             margin-top: 0;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+            line-height: 1;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             box-shadow: 0 0 20px rgba(103, 232, 249, 0.2);
@@ -971,8 +1017,42 @@
         @media (max-width: 768px) {
             .minima-badge {
                 margin-bottom: 8px;
-                padding: 6px 16px;
+                padding: 0 16px;
                 font-size: 10px;
+            }
+        }
+
+        @media (max-height: 760px) {
+            section#hero {
+                padding-top: 12px;
+                padding-bottom: 12px;
+            }
+
+            section#hero .brand-container .logo-wordmark--desktop {
+                width: min(560px, 78vw);
+            }
+
+            section#hero .brand-container .logo-wordmark--mobile {
+                margin-bottom: 10px;
+            }
+
+            section#hero .brand-container .hero-tagline {
+                margin-bottom: clamp(18px, 2.5vh, 22px);
+                line-height: 1.35;
+            }
+
+            section#hero .brand-container .btn {
+                min-height: 52px;
+                padding-block: 10px;
+            }
+
+            section#hero .scroll-indicator {
+                margin-top: 8px;
+                gap: 5px;
+            }
+
+            section#hero .scroll-indicator-icon {
+                height: 24px;
             }
         }
 
@@ -985,14 +1065,14 @@
         .logo-wordmark {
             display: block;
             width: 100%;
-            max-width: clamp(600px, 90vw, 1200px);
+            max-width: min(62vw, 880px);
             height: auto;
             margin: 8px auto 12px;
         }
 
         @media (max-width: 1023px) {
             .logo-wordmark {
-                max-width: clamp(400px, 85vw, 900px);
+                max-width: min(72vw, 680px);
             }
         }
 
@@ -1026,9 +1106,10 @@
 
             .logo-name-mobile {
                 font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
-                font-size: clamp(2.5rem, 11vw, 3.5rem);
+                /* Viewport cap keeps the unbroken name inside 320px at 200% text size. */
+                font-size: min(11vw, 3.5rem);
                 font-weight: 900;
-                letter-spacing: 0.12em;
+                letter-spacing: min(0.12em, 1.4vw);
                 color: #e6edf3;
                 line-height: 1;
                 text-transform: uppercase;
@@ -1477,9 +1558,10 @@
             text-decoration: none;
         }
     </style>
+<link rel="stylesheet" href="assets/stables-visual-authority.css">
 </head>
 
-<body>
+<body class="d028-page north-star-website-page">
     <div class="lang-switcher">
         <button class="globe-btn" onclick="toggleLangMenu()" aria-label="Select Language">
             <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"
@@ -1578,8 +1660,6 @@
         <section id="hero">
             <div class="container">
                 <div class="brand-container">
-                    <a href="https://minima.global" target="_blank" class="minima-badge">Built on
-                        <strong>MINIMA</strong></a>
                     <!-- Desktop: PNG wordmark -->
                     <img src="/brand/assets/logo-wordmark.png" alt="Stables" class="logo-wordmark logo-wordmark--desktop">
                     <!-- Mobile: symbol + CSS text  -  immune to PNG padding issues -->
@@ -1749,12 +1829,13 @@
             <div class="container">
                 <div class="btn-group" style="justify-content: center;">
                     <a href="/playing_field.html" class="btn btn-primary">
-                        <span class="btn-label" data-key="deck-next-label">Next</span>
                         <span data-key="deck-next-title">The Playing Field</span>
                     </a>
                 </div>
             </div>
         </section>
+
+    </div>
 
         <footer class="site-chrome-footer site-chrome-footer--minimal" role="contentinfo">
             <div class="site-chrome-footerSocial">
@@ -1769,10 +1850,10 @@
                     </svg>
                 </a>
                 <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--all-links" href="/links.html">All links</a>
+                <a href="https://minima.global" target="_blank" rel="noopener noreferrer" class="minima-badge">Built on MINIMA</a>
             </div>
-            <p class="site-chrome-footerMeta">Stables | Built on Minima</p>
+            <p class="site-chrome-footerMeta">Stables | Be your Bank</p>
         </footer>
-    </div>
 
     <script src="assets/presentation-main-i18n-patch.js"></script>
     <script>
@@ -1876,7 +1957,6 @@
                 "agent-offline": "Offline",
                 "agent-fallback-p": "The chat will load here directly once the secure connection is active.<br>For now, open it in a new tab:",
                 "agent-fallback-link": "Open StablesAgent \u2192",
-                "deck-next-label": "Next",
                 "deck-next-title": "The Playing Field"
             },
             "en-edgy": {
@@ -2992,7 +3072,7 @@
         async function handleShare() {
             const url = window.location.href;
             const title = 'Stables | Be your bank';
-            const text = 'Money that is truly yours. Secure, Pseudonymous and Unstoppable. Built on Minima.';
+            const text = 'Money that is truly yours. Secure, Pseudonymous and Unstoppable.';
 
             // Try native Web Share API first (mobile)
             if (navigator.share) {
@@ -3163,8 +3243,12 @@
             align-items: center;
             gap: 12px;
             cursor: pointer;
-            border: none;
-            background: none;
+            min-width: 58px;
+            min-height: 58px;
+            border: 0 !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
             padding: 0;
         }
         .agent-fab-tip {
@@ -3382,7 +3466,6 @@
 
     <!-- FAB button -->
     <button class="agent-fab" id="agentFab" onclick="toggleAgent()" aria-label="Chat with StablesAgent">
-        <span class="agent-fab-tip" data-key="agent-fab-tip">Chat with StablesAgent</span>
         <div class="agent-fab-btn">
             <span class="agent-fab-pulse"></span>
             <span class="agent-fab-pulse"></span>
@@ -3470,24 +3553,22 @@
                 <p class="muted">Using the app at this stage is a <strong>testing contribution to the whole community</strong>. Thank you for helping us harden it. We truly appreciate your contribution.</p>
                 <p class="muted">The code is fully open and accessible for you to review: <a href="https://github.com/StablesCouncil/stablescouncil.github.io" target="_blank" rel="noopener noreferrer" style="word-break:break-all;overflow-wrap:anywhere">github.com/StablesCouncil/stablescouncil.github.io</a>. If in doubt, please seek a third party opinion.</p>
             </div>
-            <p class="demo-launch-lead">There are 3 ways to access the dapp:</p>
+            <p class="demo-launch-lead">The standalone Android app is released first. The other ways follow.</p>
             <div class="demo-launch-options">
                 <div class="demo-launch-option">
                     <p><strong>1. Android app</strong> <span class="demo-launch-badge">RECOMMENDED</span><br>The standalone Stables app for Android. It runs its own Minima node, so there is nothing else to install or set up: create or recover your wallet and you are ready.</p>
-                    <a href="https://github.com/StablesCouncil/stables-app/releases" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Get the Android app</a>
+                    <a href="https://github.com/StablesCouncil/stables-app/releases" data-android-test-download="standalone" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Get the Android app</a>
                 </div>
                 <div class="demo-launch-option">
-                    <p><strong>2. MinimaOS.</strong> Download the MiniDapp package and install it on your existing Minima node.</p>
-                    <a href="/dapp/latest-version/Stables_v0.0.0.3.45.mds.zip" data-demo-download class="btn btn-secondary">Download v0.0.0.3.45</a>
+                    <p><strong>2. MinimaOS.</strong> Install the MiniDapp package on your existing Minima node. <span class="demo-launch-badge">COMING SOON</span></p>
                 </div>
                 <div class="demo-launch-option">
-                    <p><strong>3. Web version.</strong> Opens in your browser and connects to your running Minima node. This might be easier to set up the QR code reading function.</p>
-                    <a href="/dapp/2-demo/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Open the web demo</a>
+                    <p><strong>3. Web version.</strong> Opens in your browser and connects to your running Minima node. <span class="demo-launch-badge">COMING SOON</span></p>
                 </div>
             </div>
             </div>
-            <button type="button" class="demo-launch-scroll-hint" id="demoLaunchScrollHint" hidden aria-label="Scroll for MiniDapp and web demo">
-                <span class="demo-launch-scroll-hint-text">Scroll for MiniDapp and web</span>
+            <button type="button" class="demo-launch-scroll-hint" id="demoLaunchScrollHint" hidden aria-label="Scroll for the other ways to access">
+                <span class="demo-launch-scroll-hint-text">Scroll for the other ways</span>
                 <span class="demo-launch-scroll-hint-arrow" aria-hidden="true">↓</span>
             </button>
         </div>

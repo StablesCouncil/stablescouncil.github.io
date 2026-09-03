@@ -1,16 +1,56 @@
 /*
- * stables.css  -  Shared Design System
- * Source of truth: live site https://stablescouncil.github.io/ (fetched 2026-03-11)
- * All tokens and component styles are extracted verbatim from the live site CSS.
- * Never override these values locally. Never duplicate these rules.
+ * stables.css  -  Shared compatibility design system
+ * D028 visual authority is implemented through assets/stables-visual-authority.css
+ * using explicit page opt-in while existing pages are migrated in controlled waves.
  *
  * Usage: <link rel="stylesheet" href="stables.css" />
  */
 
 /* ─────────────────────────────────────────
-   1. GOOGLE FONTS (same as live site)
+   1. LOCALLY BUNDLED INTER 4.1
 ───────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+@font-face {
+  font-family: 'Inter';
+  src: url('/assets/fonts/inter/Inter-Regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/assets/fonts/inter/Inter-Medium.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/assets/fonts/inter/Inter-SemiBold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/assets/fonts/inter/Inter-Bold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/assets/fonts/inter/Inter-ExtraBold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/assets/fonts/inter/Inter-Black.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+}
 
 /* ─────────────────────────────────────────
    2. DESIGN TOKENS  (exact from live site :root)

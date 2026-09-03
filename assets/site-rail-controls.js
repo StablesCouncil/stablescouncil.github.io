@@ -191,7 +191,7 @@ if (document.readyState === "loading") {
 }
 
 /**
- * Scroll-hide / scroll-show — app-style, anti-sync:
+ * Scroll-hide / scroll-show  -  app-style, anti-sync:
  *   Header  → hides when scrolling DOWN  (sliding up,   away from top)
  *   Footer  → hides when scrolling UP    (sliding down, away from bottom)
  * Each bar reacts to the direction that moves the user away from its edge.

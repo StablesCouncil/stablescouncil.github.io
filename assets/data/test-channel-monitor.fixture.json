@@ -1,0 +1,53 @@
+{
+  "schema": "stables.test-channel-monitor.snapshot.v1",
+  "mode": "development-fixture",
+  "generated": "2026-07-10T09:00:00Z",
+  "network": "Minima mainnet",
+  "channel": "Test",
+  "block": 2194676,
+  "winiwa_usd": 0.00553,
+  "assets_usd": 93.45,
+  "assets_winiwa": 16899,
+  "liabilities_usd": 68.52,
+  "cr": 1.364,
+  "leverage": 3.75,
+  "faucet_pool_winiwa": 17866000,
+  "faucet_initial_winiwa": 20000000,
+  "usdw_circulating": 68.52,
+  "xwiniwa_circulating": 4510,
+  "winiwa_distributed": 2134000,
+  "tx_total": 284,
+  "faucet_claims": 41,
+  "holders": {
+    "usdw": 32,
+    "xwiniwa": 19,
+    "winiwa": 47
+  },
+  "breakdown": {
+    "faucet": 41,
+    "mint_usdw": 96,
+    "burn_usdw": 37,
+    "mint_xwiniwa": 78,
+    "burn_xwiniwa": 32
+  },
+  "history": [
+    { "t": "2026-07-04T09:00:00Z", "cr": 1.29, "usdw_circulating": 52.12 },
+    { "t": "2026-07-05T09:00:00Z", "cr": 1.32, "usdw_circulating": 55.31 },
+    { "t": "2026-07-06T09:00:00Z", "cr": 1.31, "usdw_circulating": 59.86 },
+    { "t": "2026-07-07T09:00:00Z", "cr": 1.35, "usdw_circulating": 61.22 },
+    { "t": "2026-07-08T09:00:00Z", "cr": 1.38, "usdw_circulating": 65.18 },
+    { "t": "2026-07-09T09:00:00Z", "cr": 1.36, "usdw_circulating": 66.94 },
+    { "t": "2026-07-10T09:00:00Z", "cr": 1.364, "usdw_circulating": 68.52 }
+  ],
+  "activity": [
+    { "type": "mint_usdw", "amount": 7.5, "ccy": "USDw", "block": 2194668, "t": "2026-07-10T08:54:00Z" },
+    { "type": "faucet", "amount": 1000, "ccy": "Winiwa", "block": 2194651, "t": "2026-07-10T08:41:00Z" },
+    { "type": "mint_xwiniwa", "amount": 120, "ccy": "xWiniwa", "block": 2194612, "t": "2026-07-10T08:12:00Z" },
+    { "type": "burn_usdw", "amount": 3.25, "ccy": "USDw", "block": 2194586, "t": "2026-07-10T07:51:00Z" }
+  ],
+  "outcomes": {
+    "successful_actions_7d": 284,
+    "active_recipient_addresses_7d": 47,
+    "holder_addresses": 98
+  }
+}

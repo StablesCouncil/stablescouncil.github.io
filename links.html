@@ -68,8 +68,6 @@
     <meta name="twitter:image:alt" content="Stables official logo">
     
     <!-- Inter + tokens: stables.css (do not duplicate in page styles) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="stables.css" />
     <link rel="stylesheet" href="assets/site-chrome.css" />
     <link rel="stylesheet" href="assets/site-map-nav.css" />
@@ -260,6 +258,18 @@
             background: linear-gradient(135deg, rgba(103, 232, 249, 0.15), rgba(15, 23, 42, 0.9));
         }
 
+        .link-item--inert {
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .link-item--inert:hover {
+            transform: none;
+            border-color: rgba(103, 232, 249, 0.25);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, rgba(103, 232, 249, 0.08), rgba(15, 23, 42, 0.8));
+        }
+
         .link-icon {
             width: 48px;
             height: 48px;
@@ -280,6 +290,7 @@
 
         .link-content {
             flex: 1;
+            min-width: 0;
         }
 
         .link-title {
@@ -427,7 +438,10 @@
             border: 1px solid rgba(251,191,36,0.35);
             border-radius: 4px;
             padding: 2px 7px;
-            white-space: nowrap;
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            text-align: center;
         }
 
         .drafting-badge--phrase {
@@ -442,12 +456,16 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: var(--accent-cyan);
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            text-align: center;
             background: rgba(103, 232, 249, 0.12);
             border: 1px solid rgba(103, 232, 249, 0.45);
             border-radius: 4px;
             padding: 2px 7px;
-            white-space: nowrap;
-            flex-shrink: 0;
+            white-space: normal;
+            flex: 0 1 auto;
         }
 
         .link-item.link-item--current {
@@ -566,7 +584,34 @@
             }
 
             .link-item {
-                padding: 1rem 1.25rem;
+                display: grid;
+                grid-template-columns: 40px minmax(0, 1fr);
+                align-items: flex-start;
+                gap: 12px;
+                padding: 14px;
+            }
+
+            .link-content {
+                grid-column: 2;
+            }
+
+            .link-item > :where(.drafting-badge, .coming-soon-badge, .link-item--current-badge) {
+                grid-column: 2;
+                justify-self: start;
+            }
+
+            .link-title-row {
+                align-items: flex-start;
+                flex-wrap: wrap;
+            }
+
+            .link-title-version {
+                white-space: normal;
+            }
+
+            .link-title,
+            .link-description {
+                overflow-wrap: anywhere;
             }
 
             .link-icon {
@@ -582,18 +627,24 @@
         }
 
     </style>
+    <link rel="stylesheet" href="assets/stables-visual-authority.css" />
+  <link rel="stylesheet" href="/assets/secondary-page-chrome.css">
 </head>
-<body class="site-chrome-body links-page-body deck-chrome-page">
-    <header class="site-chrome-header" role="banner">
-        <a class="site-chrome-header__brand" href="/">
-            <img class="site-chrome-header__mark" src="/brand/assets/logo-symbol.png" width="48" height="48" alt="Stables">
-            <span class="site-chrome-header__titles">
-                <span class="site-chrome-header__name">Stables</span>
-                <span class="site-chrome-header__slogan">Be your bank</span>
-            </span>
-        </a>
-        <a class="site-chrome-header__pill" href="https://minima.global" target="_blank" rel="noopener noreferrer">Built on MINIMA</a>
-    </header>
+<body class="d028-page north-star-website-page site-chrome-body links-page-body deck-chrome-page secondary-chrome-page">
+    <header class="secondary-chrome-header" role="banner">
+  <div class="secondary-chrome-header__inner secondary-chrome-frame">
+    <a class="secondary-chrome-brand" href="/new/" aria-label="Stables homepage">
+      <img src="/brand/assets/logo-symbol.png" width="44" height="44" alt="">
+      <span>
+        <span class="secondary-chrome-brand__name">STABLES</span>
+        <span class="secondary-chrome-brand__role">Be your bank</span>
+      </span>
+    </a>
+    <nav class="secondary-chrome-nav" aria-label="Application access">
+      <a class="secondary-chrome-access" href="/new/payment-app/">Access dApp</a>
+    </nav>
+  </div>
+</header>
 
     <aside class="site-chrome-side-rail" aria-label="Quick navigation">
         <div class="site-chrome-side-rail__stack">
@@ -689,6 +740,7 @@
     </aside>
 
     <main class="site-chrome-main site-chrome-main--links" id="main-content">
+        <h1 class="vf-visually-hidden">Stables links and release path</h1>
     <div class="links-page-stack">
 
         <section class="links-section" id="sec-dapp" data-links-section>
@@ -696,7 +748,7 @@
         <div class="links">
 
             <!-- Showcase -->
-            <a href="/dapp/1-showcase/" class="link-item">
+            <div class="link-item link-item--inert">
                 <div class="link-icon" style="background: rgba(103, 232, 249, 0.1); border-color: var(--accent-cyan);">
                     <svg viewBox="0 0 24 24" fill="var(--accent-cyan)">
                         <path d="M21 3L3 10.53v.98l6.84 2.65L12.48 21h.98L21 3z"/>
@@ -710,10 +762,10 @@
                     <div class="link-description">Preview build aimed at gathering community feedback on general direction.</div>
                 </div>
                 <span class="drafting-badge drafting-badge--phrase">Superseded</span>
-            </a>
+            </div>
 
             <!-- Demo -->
-            <a href="/dapp/2-demo/" class="link-item" onclick="openDemoLaunch(event)">
+            <div class="link-item link-item--inert">
                 <div class="link-icon" style="background: rgba(103, 232, 249, 0.1); border-color: var(--accent-cyan);">
                     <svg viewBox="0 0 24 24" fill="var(--accent-cyan)">
                         <path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/>
@@ -726,11 +778,11 @@
                     </div>
                     <div class="link-description">Live native Minima send and receive, QR payments, and the full demo flow. Recommended install on MinimaOS, or open the web version and connect your node.</div>
                 </div>
-                <span class="link-badge-active">Active</span>
-            </a>
+                <span class="drafting-badge drafting-badge--phrase">Superseded</span>
+            </div>
 
             <!-- Testing -->
-            <div class="link-item drafting">
+            <a href="/new/payment-app/" class="link-item">
                 <div class="link-icon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
@@ -743,8 +795,8 @@
                     </div>
                     <div class="link-description">Minima functionality and test tokens with full functionality.</div>
                 </div>
-                <span class="drafting-badge">Soon</span>
-            </div>
+                <span class="link-badge-active">Active</span>
+            </a>
 
             <!-- Live channel: final prod path (last in path); clearer than generic “Production” -->
             <div class="link-item drafting">
@@ -783,15 +835,15 @@
                 </div>
             </a>
 
-            <a href="/playing_field.html" class="link-item">
+            <a href="/bankingsystem.html" class="link-item">
                 <div class="link-icon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"/>
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
                     </svg>
                 </div>
                 <div class="link-content">
-                    <div class="link-title">The Playing Field</div>
-                    <div class="link-description">System structural balance</div>
+                    <div class="link-title">Our Banking System</div>
+                    <div class="link-description">An infographic presentation</div>
                 </div>
                 <span class="drafting-badge drafting-badge--phrase">Community Draft</span>
             </a>
@@ -809,15 +861,15 @@
                 <span class="drafting-badge drafting-badge--phrase">Community Draft</span>
             </a>
 
-            <a href="/bankingsystem.html" class="link-item">
+            <a href="/playing_field.html" class="link-item">
                 <div class="link-icon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                        <path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"/>
                     </svg>
                 </div>
                 <div class="link-content">
-                    <div class="link-title">Our Banking System</div>
-                    <div class="link-description">An infographic presentation</div>
+                    <div class="link-title">The Playing Field</div>
+                    <div class="link-description">System structural balance</div>
                 </div>
                 <span class="drafting-badge drafting-badge--phrase">Community Draft</span>
             </a>
@@ -833,19 +885,6 @@
                     <div class="link-description">The 16 Big Mac® Economy (V0.0.01)</div>
                 </div>
                 <span class="drafting-badge drafting-badge--phrase">Community Draft</span>
-            </a>
-
-            <a href="/links.html" class="link-item link-item--current" aria-current="page">
-                <div class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M4 8h4v4H4V8zm6 0h10v4H10V8zM4 14h4v4H4v-4zm6 0h10v4H10v-4z"/>
-                    </svg>
-                </div>
-                <div class="link-content">
-                    <div class="link-title">Website map</div>
-                    <div class="link-description">You are here.</div>
-                </div>
-                <span class="link-item--current-badge">This page</span>
             </a>
 
         </div>
@@ -1001,7 +1040,7 @@
             </a>
 
             <!-- GitHub -->
-            <a href="https://github.com/StablesCouncil" class="link-item council">
+            <a href="https://github.com/StablesCouncil/stables-app" class="link-item council">
                 <div class="link-icon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
@@ -1041,6 +1080,20 @@
                 <span class="drafting-badge drafting-badge--phrase">Community Draft</span>
             </a>
 
+            <!-- Test Channel Monitor (Council devtools) -->
+            <a href="/test-dashboard.html" class="link-item council drafting">
+                <div class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M3 3h18v2H3V3zm1 4h4v12H4V7zm6 5h4v7h-4v-7zm6-4h4v11h-4V8z"/>
+                    </svg>
+                </div>
+                <div class="link-content">
+                    <div class="link-title">Test Channel Monitor</div>
+                    <div class="link-description">Test-channel health, issuance, liquidity, and on-chain activity (Council devtools)</div>
+                </div>
+                <span class="drafting-badge drafting-badge--phrase">In development</span>
+            </a>
+
             <!-- Communication Plan -->
             <a href="communication_plan.html" class="link-item council drafting">
                 <div class="link-icon">
@@ -1052,7 +1105,10 @@
                     <div class="link-title">Communication Plan</div>
                     <div class="link-description">Platform strategy for social profiles, posts, feedback routing, and Dashboard measures</div>
                 </div>
-                <span class="drafting-badge">Drafting</span>
+                <!-- "Community Draft", not "Drafting": this one is readable now, and the badge has to
+                     say so. The Constitutional Charter below is also drafting but is NOT clickable,
+                     and two identical badges made an open document look like a closed one. -->
+                <span class="drafting-badge drafting-badge--phrase">Community Draft</span>
             </a>
 
             <!-- Constitutional Charter (internal draft) -->
@@ -1075,22 +1131,18 @@
     </div>
     </main>
 
-    <footer class="site-chrome-footer site-chrome-footer--minimal" role="contentinfo">
-        <div class="site-chrome-footerSocial">
-            <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" aria-label="Telegram community">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
-                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                </svg>
-            </a>
-            <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer" aria-label="Stables on X">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                </svg>
-            </a>
-            <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--all-links" href="/links.html">Website map</a>
-        </div>
-        <p class="site-chrome-footerMeta">Stables | Built on Minima</p>
-    </footer>
+    <footer class="secondary-chrome-footer" role="contentinfo">
+  <div class="secondary-chrome-footer__inner secondary-chrome-frame">
+    <p><a class="secondary-chrome-footer__signature" href="/new/">Stables | Be your Bank</a></p>
+    <nav class="secondary-chrome-footer__links" aria-label="Supporting links">
+      <a class="secondary-chrome-access" href="/new/payment-app/">Access dApp</a>
+      <a href="/links.html">All links</a>
+      <a href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer">X</a>
+      <a href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer">Telegram</a>
+      <a class="secondary-chrome-minima" href="https://minima.global" target="_blank" rel="noopener noreferrer">Built on MINIMA</a>
+    </nav>
+  </div>
+</footer>
 
     <script src="assets/site-rail-controls.js" defer></script>
     <script src="assets/site-rail.js" defer></script>
@@ -1152,7 +1204,6 @@
         </div>
     </div>
     <button class="agent-fab" id="agentFab" onclick="toggleAgent()" aria-label="Chat with StablesAgent">
-        <span class="agent-fab-tip">Chat with StablesAgent</span>
         <div class="agent-fab-btn">
             <span class="agent-fab-pulse"></span>
             <span class="agent-fab-pulse"></span>
@@ -1191,24 +1242,22 @@
                 <p class="muted">Using the app at this stage is a <strong>testing contribution to the whole community</strong>. Thank you for helping us harden it. We truly appreciate your contribution.</p>
                 <p class="muted">The code is fully open and accessible for you to review: <a href="https://github.com/StablesCouncil/stablescouncil.github.io" target="_blank" rel="noopener noreferrer" style="word-break:break-all;overflow-wrap:anywhere">github.com/StablesCouncil/stablescouncil.github.io</a>. If in doubt, please seek a third party opinion.</p>
             </div>
-            <p class="demo-launch-lead">There are 3 ways to access the dapp:</p>
+            <p class="demo-launch-lead">The standalone Android app is released first. The other ways follow.</p>
             <div class="demo-launch-options">
                 <div class="demo-launch-option">
                     <p><strong>1. Android app</strong> <span class="demo-launch-badge">RECOMMENDED</span><br>The standalone Stables app for Android. It runs its own Minima node, so there is nothing else to install or set up: create or recover your wallet and you are ready.</p>
-                    <a href="https://github.com/StablesCouncil/stables-app/releases" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Get the Android app</a>
+                    <a href="https://github.com/StablesCouncil/stables-app/releases" data-android-test-download="standalone" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Get the Android app</a>
                 </div>
                 <div class="demo-launch-option">
-                    <p><strong>2. MinimaOS.</strong> Download the MiniDapp package and install it on your existing Minima node.</p>
-                    <a href="/dapp/latest-version/Stables_v0.0.0.3.45.mds.zip" data-demo-download class="btn btn-secondary">Download v0.0.0.3.45</a>
+                    <p><strong>2. MinimaOS.</strong> Install the MiniDapp package on your existing Minima node. <span class="demo-launch-badge">COMING SOON</span></p>
                 </div>
                 <div class="demo-launch-option">
-                    <p><strong>3. Web version.</strong> Opens in your browser and connects to your running Minima node. This might be easier to set up the QR code reading function.</p>
-                    <a href="/dapp/2-demo/" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Open the web demo</a>
+                    <p><strong>3. Web version.</strong> Opens in your browser and connects to your running Minima node. <span class="demo-launch-badge">COMING SOON</span></p>
                 </div>
             </div>
             </div>
-            <button type="button" class="demo-launch-scroll-hint" id="demoLaunchScrollHint" hidden aria-label="Scroll for MiniDapp and web demo">
-                <span class="demo-launch-scroll-hint-text">Scroll for MiniDapp and web</span>
+            <button type="button" class="demo-launch-scroll-hint" id="demoLaunchScrollHint" hidden aria-label="Scroll for the other ways to access">
+                <span class="demo-launch-scroll-hint-text">Scroll for the other ways</span>
                 <span class="demo-launch-scroll-hint-arrow" aria-hidden="true">↓</span>
             </button>
         </div>

@@ -1,5 +1,5 @@
 /**
- * Minima holdings query UI — calls Council API when deployed.
+ * Minima holdings query UI  -  calls Council API when deployed.
  *
  * Expected GET (same-origin or STABLES_MINIMA_HOLDINGS_API):
  *   /api/devtools/minima-holdings?address=0x...|Mx...&date_from=YYYY-MM-DD&date_to=YYYY-MM-DD&interval_type=DAY
@@ -23,7 +23,7 @@
  * Override API root: set window.STABLES_MINIMA_HOLDINGS_API before this file.
  */
 (function () {
-  /* No hardcoded preset addresses — community list loads from github/community-addresses.json. */
+  /* No hardcoded preset addresses  -  community list loads from github/community-addresses.json. */
   var DEFAULT_PRESETS = [];
 
   function presets() {
@@ -292,7 +292,7 @@
     try {
       localStorage.setItem(key, JSON.stringify({ ts: Date.now(), payload: payload }));
     } catch (e) {
-      /* quota exceeded or private mode — silent */
+      /* quota exceeded or private mode  -  silent */
     }
   }
 
@@ -445,7 +445,7 @@
             callbacks: {
               label: function (ctx) {
                 var v = ctx.parsed && ctx.parsed.y != null ? ctx.parsed.y : null;
-                var n = v == null ? "—" : Number(v).toLocaleString("en-GB");
+                var n = v == null ? " - " : Number(v).toLocaleString("en-GB");
                 return String(ctx.dataset && ctx.dataset.label ? ctx.dataset.label : "") + ": " + n;
               },
               afterBody: function (tooltipItems) {
@@ -470,7 +470,7 @@
   }
 
   function fmtBlock(n) {
-    if (n == null || n === "" || Number.isNaN(Number(n))) return "—";
+    if (n == null || n === "" || Number.isNaN(Number(n))) return " - ";
     return String(n);
   }
 
@@ -557,7 +557,7 @@
       var utxoSeries = normalizeUtxoSeries(payload);
 
       if (!series.length) {
-        /* API responded but returned no rows — keep skeleton chart, show info. */
+        /* API responded but returned no rows  -  keep skeleton chart, show info. */
         setStatusBanner(statusEl, "ok", "No data returned for this address in the selected range.");
         return;
       }
@@ -575,14 +575,14 @@
     } catch (err) {
       var msg;
       if (window.location.protocol === "file:") {
-        msg = "Page opened from a local file — browser blocks outbound requests. " +
+        msg = "Page opened from a local file  -  browser blocks outbound requests. " +
               "Open from stablescouncil.org or a local server to query live data.";
       } else if (err && err.name === "AbortError") {
-        msg = "Request timed out. The API did not respond in 45 s — the query may still be running; try a narrower date range or MONTH/YEAR interval.";
+        msg = "Request timed out. The API did not respond in 45 s  -  the query may still be running; try a narrower date range or MONTH/YEAR interval.";
       } else if (err && err.message) {
         msg = err.message;
       } else {
-        msg = "Network error — check connection and try again.";
+        msg = "Network error  -  check connection and try again.";
       }
       setStatusBanner(statusEl, "error", msg);
       return; /* leave the empty chart skeleton intact */
@@ -647,7 +647,7 @@
   function displayAddressLabel(label, addr) {
     label = String(label || "").trim();
     var shortAddr = shortAddress(addr);
-    return label && label !== shortAddr ? label + " — " + shortAddr : shortAddr;
+    return label && label !== shortAddr ? label + "  -  " + shortAddr : shortAddr;
   }
 
   function selectedAddressValue(input) {
@@ -1041,7 +1041,7 @@
             callbacks: {
               label: function (ctx) {
                 var v = ctx.parsed && ctx.parsed.y != null ? ctx.parsed.y : null;
-                var n = v == null ? "—" : Number(v).toLocaleString("en-GB");
+                var n = v == null ? " - " : Number(v).toLocaleString("en-GB");
                 return String(ctx.dataset && ctx.dataset.label ? ctx.dataset.label : "") + ": " + n;
               },
             },

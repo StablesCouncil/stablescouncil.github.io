@@ -1,5 +1,5 @@
 /*
- * site-rail.css — Right vertical rail (globe, share, section dots)
+ * site-rail.css  -  Right vertical rail (globe, share, section dots)
  * for stablescouncil.github.io pages. Load with stables.css or ensure :root tokens exist.
  */
 
@@ -260,8 +260,24 @@
   }
 }
 
-/* Hide section dots on mobile — they take vertical space without adding navigation value */
+/* Hide section dots on mobile  -  they take vertical space without adding navigation value */
 @media (max-width: 767px) {
+  /* A vertical two-button rail covered long page titles. Keep the same controls
+     in one bounded utility row immediately below the mobile header. */
+  .site-chrome-side-rail {
+    position: absolute;
+    top: calc(var(--site-header-h, 0px) + 8px);
+    right: max(12px, env(safe-area-inset-right, 0px));
+    bottom: auto;
+    width: auto;
+    height: 44px;
+  }
+
+  .site-chrome-side-rail__stack,
+  .site-chrome-side-rail .lang-switcher {
+    flex-direction: row;
+  }
+
   .site-chrome-side-rail__dots {
     display: none;
   }

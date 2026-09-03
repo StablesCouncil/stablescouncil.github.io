@@ -622,7 +622,7 @@
     if (typeof calcRate === 'function') calcRate();
     window.closeAgentActionModal();
     if (typeof window.navigate === 'function') window.navigate('exchange');
-    if (typeof window.showToast === 'function') window.showToast('Amounts filled — review and tap Exchange Now');
+    if (typeof window.showToast === 'function') window.showToast('Amounts filled  -  review and tap Exchange Now');
   };
 
   window.openActivityDetail = function (id) {
@@ -846,6 +846,16 @@
     return 0;
   }
 
+  function formatDisplayVersion(rawVersion) {
+    const raw = rawVersion != null ? String(rawVersion).trim() : '';
+    if (!raw) return 'v0';
+    const parts = raw.split('.').map(function (part) {
+      const n = Number(part);
+      return Number.isFinite(n) ? String(n) : String(part).trim();
+    });
+    return 'v' + parts.join('.');
+  }
+
   function criticalityPresentation(level) {
     const x = String(level || 'medium').toLowerCase();
     const map = {
@@ -871,7 +881,7 @@
         <div style="display:flex;align-items:flex-start;gap:10px">
           <span style="font-size:22px;line-height:1;flex-shrink:0" aria-hidden="true">✅</span>
           <div style="min-width:0">
-            <div style="font-size:14px;line-height:1.55;font-weight:800;color:var(--muted)">This install is on the latest app version (${escCouncilHtml(current)}).</div>
+            <div style="font-size:14px;line-height:1.55;font-weight:800;color:var(--muted)">This install is on the latest app version (${escCouncilHtml(formatDisplayVersion(current))}).</div>
           </div>
         </div>
       </div></div>`;
@@ -882,7 +892,7 @@
     const what = escCouncilHtml(wu.whatChanged || 'See council release notes for this version.').replace(/\n/g, '<br>');
     const detRaw = typeof wu.details === 'string' ? wu.details.trim() : '';
     const det = detRaw ? escCouncilHtml(detRaw).replace(/\n/g, '<br>') : '';
-    const zipName = `Stables_v${latest}.mds.zip`;
+    const zipName = `Stables_${formatDisplayVersion(latest)}.mds.zip`;
     const zipBtn = zipUrl
       ? `<a class="btn btn-w" style="display:block;text-align:center;margin-top:14px;text-decoration:none;box-sizing:border-box;font-size:14px;font-weight:900;padding:14px 16px" href="${escAttr(zipUrl)}" target="_blank" rel="noopener">Download ${escCouncilHtml(zipName)}</a>`
       : '';
@@ -1910,9 +1920,9 @@
       const cfg = (window && window.STABLES_CONFIG) || {};
       const rawVersion = String(cfg.APP_BUILD_VERSION || 'unknown').trim();
       const versionLabel = rawVersion && rawVersion !== 'unknown'
-        ? (rawVersion.startsWith('v') ? rawVersion : `v${rawVersion}`)
+        ? formatDisplayVersion(rawVersion)
         : 'unknown';
-      const repoUrl = String(cfg.MDS_ZIP_URL || 'https://github.com/StablesCouncil/stablescouncil.github.io/tree/main/dapp/1-showcase/latest-version').trim();
+      const repoUrl = String(cfg.MDS_ZIP_URL || 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/1-showcase/latest-version/Stables_v0.0.0.0.3.mds.zip').trim();
       const introHtml = String(c.welcomeShowcaseIntroHtml || '')
         .replace(/__APP_VERSION__/g, versionLabel)
         .replace(/__MDS_REPO_URL__/g, repoUrl);

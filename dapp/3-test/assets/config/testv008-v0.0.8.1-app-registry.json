@@ -1,0 +1,181 @@
+{
+  "schema": "stables.test_app_registry_projection.v1",
+  "source_registry_id": "TV81-REGISTRY-001",
+  "source_abi_id": "TV81-ABI-001",
+  "node_name": "TestV008",
+  "protocol_version": "v0.0.8.1",
+  "generation_id": "0x5c868a0f08db73cef34907190d6db7ad7a55472834eb3aa1f8ae5db756fcaced",
+  "network": "minima-mainnet",
+  "deployment_status": "V9_GENESIS_RESET_DEPLOYED_PROVEN",
+  "rpc_url": "http://localhost:9105",
+  "participant_rpc_url": "http://localhost:9005",
+  "fallback_allowed": false,
+  "assets": {
+    "WINIWA": {
+      "display": "Winiwa",
+      "decimals": 8,
+      "token_id": "0xd4f5dd3546f25d327cbf2b6867e193ce5db6491ac9c65bbdcecaca1a6688063f",
+      "status": "FROZEN"
+    },
+    "XWINIWA": {
+      "display": "xWiniwa",
+      "decimals": 8,
+      "token_id": "0xefa53eff58616ddbdf0b6d6dbb4e18f041c4509fb3db3b7e5482b99abc72f127",
+      "status": "FROZEN"
+    },
+    "USDW": {
+      "display": "USDw",
+      "decimals": 8,
+      "token_id": "0x9174ad44c185ebe83e26d0c68086e197d45be0bd1ef15b6feda99ea1497a673a",
+      "status": "FROZEN"
+    }
+  },
+  "faucet": {
+    "status": "LIVE_PROVEN",
+    "address": "0x5e08c5dcd965b9460c4734dc6113ae747c98dfec31b13feadf5805d464f49930",
+    "miniaddress": "MxG082U132TPMB5N530ZHPKRHGH7BJKFWCDVR1HM4VUYNQZ0NA69T4P6175MZ83",
+    "claim_amount_atoms": "100000000000",
+    "claim_amount_display_units": "1000",
+    "initial_reserve_atoms": "100000000000000000",
+    "initial_reserve_display_units": "1000000000",
+    "wallet_cooldown_blocks": 72,
+    "pool_coin_id": "0x661921e443358e6fdbc15b99ebe6677073770b2f8200af103fbd0fac31f0fe1c",
+    "state_coin_id": "0xb769bc6a3a197418b4244ef2217ebea21acecf7b5cef71862f9fd457762f35d3",
+    "privileged_refill": false,
+    "tag": 9101,
+    "generation_id": "0x5c868a0f08db73cef34907190d6db7ad7a55472834eb3aa1f8ae5db756fcaced",
+    "script": "ASSERT @TOTIN EQ 2\nASSERT STATE(24) EQ 1\nASSERT STATE(20) EQ 100000000000\nASSERT STATE(21) NEQ 0x00\nASSERT STATE(23) NEQ 0x00\nLET poolatoms = STATE(22)\nLET claimamount = (STATE(20) / 100000000)\n\nIF @INPUT EQ 0 THEN\n  ASSERT @TOKENID EQ 0xd4f5dd3546f25d327cbf2b6867e193ce5db6491ac9c65bbdcecaca1a6688063f\n  ASSERT GETINADDR(1) EQ @ADDRESS\n  ASSERT GETINTOK(1) EQ 0x00\n  ASSERT poolatoms GTE 0\n  ASSERT poolatoms EQ ((@AMOUNT * 100000000) - STATE(20))\n  ASSERT VERIFYOUT(0 STATE(21) claimamount 0xd4f5dd3546f25d327cbf2b6867e193ce5db6491ac9c65bbdcecaca1a6688063f FALSE)\n  IF poolatoms GT 0 THEN\n    ASSERT @TOTOUT EQ 3\n    ASSERT VERIFYOUT(1 @ADDRESS (poolatoms / 100000000) 0xd4f5dd3546f25d327cbf2b6867e193ce5db6491ac9c65bbdcecaca1a6688063f FALSE)\n  ELSE\n    ASSERT @TOTOUT EQ 2\n  ENDIF\n  RETURN TRUE\nENDIF\n\nASSERT @INPUT EQ 1\nASSERT @TOKENID EQ 0x00\nASSERT GETINADDR(0) EQ @ADDRESS\nASSERT GETINTOK(0) EQ 0xd4f5dd3546f25d327cbf2b6867e193ce5db6491ac9c65bbdcecaca1a6688063f\nASSERT PREVSTATE(0) EQ 1\nASSERT PREVSTATE(1) EQ 0x5c868a0f08db73cef34907190d6db7ad7a55472834eb3aa1f8ae5db756fcaced\nASSERT PREVSTATE(2) EQ 9101\nASSERT PREVSTATE(4) EQ 72\nASSERT PREVSTATE(5) EQ 100000000000\nASSERT PREVSTATE(6) EQ 100000000000000000\nASSERT PREVSTATE(9) EQ 0xd4f5dd3546f25d327cbf2b6867e193ce5db6491ac9c65bbdcecaca1a6688063f\nASSERT SAMESTATE(0 2)\nASSERT STATE(3) EQ (PREVSTATE(3) + 1)\nASSERT SAMESTATE(4 6)\nASSERT STATE(7) EQ (PREVSTATE(7) + STATE(20))\nASSERT SAMESTATE(9 19)\nLET stateout = 2\nIF poolatoms GT 0 THEN\n  ASSERT STATE(8) EQ 1\nELSE\n  ASSERT STATE(8) EQ 2\n  LET stateout = 1\nENDIF\nASSERT VERIFYOUT(stateout @ADDRESS @AMOUNT 0x00 TRUE)\nRETURN TRUE",
+    "script_sha256": "84b67e7a5c735c3003854147ab5c2a62a32bc415332a0fc43b7aece0011ccbbe",
+    "note": "V9 full-supply Winiwa faucet — entire 1B in the permissionless pool; dust-proven + real claim. Address = real-newline hash. Cooldown app-layer only."
+  },
+  "markets": {
+    "XWINIWA_WINIWA": {
+      "market_id": 1,
+      "base": "XWINIWA",
+      "quote": "WINIWA",
+      "tick_atoms": "10000",
+      "order_address": "0x331503090830a4543488bb5f3e75e285569a82ab20bc177783793d3fd8d5cf58",
+      "status": "TV81_LEGACY_ORDER_ADDRESS"
+    },
+    "USDW_WINIWA": {
+      "market_id": 2,
+      "base": "USDW",
+      "quote": "WINIWA",
+      "tick_atoms": "1000000",
+      "order_address": "0x331503090830a4543488bb5f3e75e285569a82ab20bc177783793d3fd8d5cf58",
+      "status": "TV81_LEGACY_ORDER_ADDRESS"
+    }
+  },
+  "price_state": {
+    "status": "TV81_LEGACY_NOT_ON_V9",
+    "engine_id": "TV81_MARKET_ENGINE_V2",
+    "engine_address": "0x331503090830a4543488bb5f3e75e285569a82ab20bc177783793d3fd8d5cf58",
+    "engine_script_sha256": "6eae11691d0c4cd1caa009197ec9e1551deb7cb43f2baacaa28f657324f46253",
+    "tag": 8106,
+    "port_band": [
+      90,
+      199
+    ],
+    "stale_after_coin_age_blocks": 120,
+    "modes": {
+      "TOKEN_HOLDER_LAUNCH_PRICE": 1,
+      "CLOB_MARKET_PRICE": 2,
+      "CLOB_REFERENCE_ONLY": 3
+    },
+    "state_coin_ids": {
+      "XWINIWA_WINIWA": "0x310c4ba8c906f9e0845a94d04e41c195dfa1bb10c430856969b5ed2839ccf44e",
+      "USDW_WINIWA": null
+    },
+    "construction_manifest_id": "TV81-PRICE-STATE-DEPLOY-001"
+  },
+  "order_book": {
+    "engine_id": "TV81_MARKET_ENGINE_V2",
+    "engine_address": "0x331503090830a4543488bb5f3e75e285569a82ab20bc177783793d3fd8d5cf58",
+    "tag": 8111,
+    "port_band": [
+      0,
+      24
+    ],
+    "script": "LET g = 0xdbf0174452493de19d7b97d87d5b842014433e610a5cff2dbbe6da6406c8e0c8\nLET x = 0xf10014d3f53ef65bc5a3d2204db813a95c8e7fc32604d0ddd0e972153110f419\nLET u = 0x9908981ac2bf7184a26567d40f5e5ca0d0f896a0d79aff1357d40cc2eed3bd1e\nLET w = 0xaad18678a0bde2a17d77c63123ce29852e272f345cb0e60a34efad930b43fa71\nIF @TOKENID EQ 0x00 THEN\n  ASSERT @INPUT EQ 1\n  ASSERT GETINADDR(0) EQ @ADDRESS\n  ASSERT GETINTOK(0) NEQ 0x00\n  ASSERT PREVSTATE(90) EQ 1\n  ASSERT PREVSTATE(91) EQ g\n  ASSERT PREVSTATE(92) EQ 8106\n  ASSERT PREVSTATE(93) EQ STATE(3)\n  ASSERT STATE(23) EQ 1\n  LET po = 2\n  IF STATE(11) GT 0 THEN LET po = 3 ENDIF\n  ASSERT VERIFYOUT(po @ADDRESS @AMOUNT 0x00 TRUE)\n  LET e = 1\n  IF STATE(3) EQ 2 AND STATE(21) LT 100000000 THEN LET e = 0 ENDIF\n  IF e EQ 0 THEN\n    ASSERT SAMESTATE(90 199)\n    RETURN TRUE\n  ENDIF\n  ASSERT SAMESTATE(90 94)\n  ASSERT SAMESTATE(96 96)\n  ASSERT SAMESTATE(108 112)\n  ASSERT SAMESTATE(114 114)\n  ASSERT STATE(101) EQ (PREVSTATE(101) + 1)\n  ASSERT STATE(99) EQ STATE(101)\n  ASSERT STATE(100) EQ 120\n  LET n = (PREVSTATE(102) + 1)\n  IF n GT 21 THEN LET n = 21 ENDIF\n  ASSERT STATE(102) EQ n\n  LET r = PREVSTATE(103)\n  ASSERT r GTE 0\n  ASSERT r LT 21\n  LET nr = (r + 1)\n  IF nr EQ 21 THEN LET nr = 0 ENDIF\n  ASSERT STATE(103) EQ nr\n  LET q = (116 + (r * 4))\n  ASSERT STATE(q) EQ STATE(5)\n  ASSERT STATE(q + 1) EQ STATE(21)\n  ASSERT STATE(q + 2) EQ STATE(101)\n  ASSERT STATE(q + 3) EQ STATE(13)\n  IF r EQ 0 THEN\n    ASSERT SAMESTATE(120 199)\n  ELSEIF r EQ 20 THEN\n    ASSERT SAMESTATE(116 195)\n  ELSE\n    ASSERT SAMESTATE(116 (q - 1))\n    ASSERT SAMESTATE((q + 4) 199)\n  ENDIF\n  LET c = STATE(104)\n  LET tw = (MIN(STATE(117) 1000000000) + MIN(STATE(121) 1000000000) + MIN(STATE(125) 1000000000) + MIN(STATE(129) 1000000000) + MIN(STATE(133) 1000000000) + MIN(STATE(137) 1000000000) + MIN(STATE(141) 1000000000) + MIN(STATE(145) 1000000000) + MIN(STATE(149) 1000000000) + MIN(STATE(153) 1000000000) + MIN(STATE(157) 1000000000) + MIN(STATE(161) 1000000000) + MIN(STATE(165) 1000000000) + MIN(STATE(169) 1000000000) + MIN(STATE(173) 1000000000) + MIN(STATE(177) 1000000000) + MIN(STATE(181) 1000000000) + MIN(STATE(185) 1000000000) + MIN(STATE(189) 1000000000) + MIN(STATE(193) 1000000000) + MIN(STATE(197) 1000000000))\n  LET bw = ((NUMBER(STATE(116) LT c) * MIN(STATE(117) 1000000000)) + (NUMBER(STATE(120) LT c) * MIN(STATE(121) 1000000000)) + (NUMBER(STATE(124) LT c) * MIN(STATE(125) 1000000000)) + (NUMBER(STATE(128) LT c) * MIN(STATE(129) 1000000000)) + (NUMBER(STATE(132) LT c) * MIN(STATE(133) 1000000000)) + (NUMBER(STATE(136) LT c) * MIN(STATE(137) 1000000000)) + (NUMBER(STATE(140) LT c) * MIN(STATE(141) 1000000000)) + (NUMBER(STATE(144) LT c) * MIN(STATE(145) 1000000000)) + (NUMBER(STATE(148) LT c) * MIN(STATE(149) 1000000000)) + (NUMBER(STATE(152) LT c) * MIN(STATE(153) 1000000000)) + (NUMBER(STATE(156) LT c) * MIN(STATE(157) 1000000000)) + (NUMBER(STATE(160) LT c) * MIN(STATE(161) 1000000000)) + (NUMBER(STATE(164) LT c) * MIN(STATE(165) 1000000000)) + (NUMBER(STATE(168) LT c) * MIN(STATE(169) 1000000000)) + (NUMBER(STATE(172) LT c) * MIN(STATE(173) 1000000000)) + (NUMBER(STATE(176) LT c) * MIN(STATE(177) 1000000000)) + (NUMBER(STATE(180) LT c) * MIN(STATE(181) 1000000000)) + (NUMBER(STATE(184) LT c) * MIN(STATE(185) 1000000000)) + (NUMBER(STATE(188) LT c) * MIN(STATE(189) 1000000000)) + (NUMBER(STATE(192) LT c) * MIN(STATE(193) 1000000000)) + (NUMBER(STATE(196) LT c) * MIN(STATE(197) 1000000000)))\n  LET th = ((NUMBER(STATE(116) LTE c) * MIN(STATE(117) 1000000000)) + (NUMBER(STATE(120) LTE c) * MIN(STATE(121) 1000000000)) + (NUMBER(STATE(124) LTE c) * MIN(STATE(125) 1000000000)) + (NUMBER(STATE(128) LTE c) * MIN(STATE(129) 1000000000)) + (NUMBER(STATE(132) LTE c) * MIN(STATE(133) 1000000000)) + (NUMBER(STATE(136) LTE c) * MIN(STATE(137) 1000000000)) + (NUMBER(STATE(140) LTE c) * MIN(STATE(141) 1000000000)) + (NUMBER(STATE(144) LTE c) * MIN(STATE(145) 1000000000)) + (NUMBER(STATE(148) LTE c) * MIN(STATE(149) 1000000000)) + (NUMBER(STATE(152) LTE c) * MIN(STATE(153) 1000000000)) + (NUMBER(STATE(156) LTE c) * MIN(STATE(157) 1000000000)) + (NUMBER(STATE(160) LTE c) * MIN(STATE(161) 1000000000)) + (NUMBER(STATE(164) LTE c) * MIN(STATE(165) 1000000000)) + (NUMBER(STATE(168) LTE c) * MIN(STATE(169) 1000000000)) + (NUMBER(STATE(172) LTE c) * MIN(STATE(173) 1000000000)) + (NUMBER(STATE(176) LTE c) * MIN(STATE(177) 1000000000)) + (NUMBER(STATE(180) LTE c) * MIN(STATE(181) 1000000000)) + (NUMBER(STATE(184) LTE c) * MIN(STATE(185) 1000000000)) + (NUMBER(STATE(188) LTE c) * MIN(STATE(189) 1000000000)) + (NUMBER(STATE(192) LTE c) * MIN(STATE(193) 1000000000)) + (NUMBER(STATE(196) LTE c) * MIN(STATE(197) 1000000000)))\n  ASSERT th GT bw\n  ASSERT (2 * bw) LT tw\n  ASSERT (2 * th) GTE tw\n  ASSERT STATE(97) EQ c\n  ASSERT STATE(105) EQ ((PREVSTATE(105) - PREVSTATE(q + 1)) + STATE(21))\n  ASSERT STATE(106) EQ n\n  ASSERT STATE(107) GTE 1\n  ASSERT STATE(107) LTE n\n  ASSERT STATE(113) EQ SHA2(CONCAT(PREVSTATE(113) STATE(24)))\n  IF PREVSTATE(94) EQ 1 THEN\n    ASSERT STATE(95) EQ PREVSTATE(95)\n    ASSERT STATE(98) EQ PREVSTATE(98)\n    IF n EQ 21 THEN ASSERT STATE(115) EQ 2 ELSE ASSERT STATE(115) EQ 1 ENDIF\n  ELSE\n    ASSERT (PREVSTATE(94) EQ 2) OR (PREVSTATE(94) EQ 3)\n    ASSERT STATE(95) EQ c\n    ASSERT STATE(98) EQ STATE(101)\n    IF n EQ 21 THEN ASSERT STATE(115) EQ 3 ELSE ASSERT STATE(115) EQ 1 ENDIF\n  ENDIF\n  RETURN TRUE\nENDIF\n\nASSERT @INPUT EQ 0\nASSERT PREVSTATE(0) EQ 1\nASSERT PREVSTATE(1) EQ g\nASSERT PREVSTATE(2) EQ 8111\nASSERT PREVSTATE(4) GTE 1\nASSERT PREVSTATE(4) LTE 2\nASSERT PREVSTATE(5) EQ (PREVSTATE(6) * PREVSTATE(17))\nASSERT PREVSTATE(10) EQ (PREVSTATE(11) + PREVSTATE(18))\nASSERT PREVSTATE(19) EQ (@AMOUNT * 100000000)\nIF PREVSTATE(3) EQ 1 THEN\n  ASSERT PREVSTATE(6) EQ 10000\n  ASSERT PREVSTATE(7) EQ x\n  ASSERT PREVSTATE(8) EQ w\nELSE\n  ASSERT PREVSTATE(3) EQ 2\n  ASSERT PREVSTATE(6) EQ 1000000\n  ASSERT PREVSTATE(7) EQ u\n  ASSERT PREVSTATE(8) EQ w\nENDIF\nIF STATE(23) EQ 2 THEN\n  ASSERT @TOTIN EQ 1\n  ASSERT @TOTOUT EQ 1\n  ASSERT SIGNEDBY(PREVSTATE(13))\n  ASSERT VERIFYOUT(0 PREVSTATE(14) @AMOUNT @TOKENID FALSE)\n  RETURN TRUE\nENDIF\nASSERT STATE(23) EQ 1\nASSERT GETINADDR(1) EQ @ADDRESS\nASSERT GETINTOK(1) EQ 0x00\nASSERT SAMESTATE(0 10)\nASSERT SAMESTATE(12 17)\nASSERT STATE(21) GT 0\nASSERT STATE(21) LTE PREVSTATE(11)\nASSERT STATE(11) EQ (PREVSTATE(11) - STATE(21))\nASSERT STATE(18) EQ (PREVSTATE(18) + STATE(21))\nASSERT STATE(20) GTE PREVSTATE(20)\nASSERT STATE(93) EQ PREVSTATE(3)\nLET prevnumerator = (PREVSTATE(18) * PREVSTATE(5))\nLET nextnumerator = (STATE(18) * PREVSTATE(5))\nIF PREVSTATE(4) EQ 1 THEN\n  ASSERT PREVSTATE(9) EQ PREVSTATE(7)\n  ASSERT @TOKENID EQ PREVSTATE(7)\n  ASSERT PREVSTATE(19) EQ PREVSTATE(11)\n  IF prevnumerator EQ 0 THEN\n    ASSERT PREVSTATE(20) EQ 0\n  ELSE\n    ASSERT (PREVSTATE(20) * 100000000) GTE prevnumerator\n    ASSERT ((PREVSTATE(20) - 1) * 100000000) LT prevnumerator\n  ENDIF\n  ASSERT (STATE(20) * 100000000) GTE nextnumerator\n  ASSERT ((STATE(20) - 1) * 100000000) LT nextnumerator\n  LET quotedelta = (STATE(20) - PREVSTATE(20))\n  ASSERT quotedelta GT 0\n  ASSERT STATE(19) EQ STATE(11)\n  ASSERT VERIFYOUT(0 PREVSTATE(12) (quotedelta / 100000000) PREVSTATE(8) FALSE)\n  ASSERT VERIFYOUT(1 STATE(22) (STATE(21) / 100000000) PREVSTATE(7) FALSE)\nELSE\n  ASSERT PREVSTATE(9) EQ PREVSTATE(8)\n  ASSERT @TOKENID EQ PREVSTATE(8)\n  LET originalnumerator = (PREVSTATE(10) * PREVSTATE(5))\n  LET originalquote = (PREVSTATE(19) + PREVSTATE(20))\n  ASSERT (originalquote * 100000000) LTE originalnumerator\n  ASSERT ((originalquote + 1) * 100000000) GT originalnumerator\n  ASSERT (PREVSTATE(20) * 100000000) LTE prevnumerator\n  ASSERT ((PREVSTATE(20) + 1) * 100000000) GT prevnumerator\n  ASSERT (STATE(20) * 100000000) LTE nextnumerator\n  ASSERT ((STATE(20) + 1) * 100000000) GT nextnumerator\n  LET quotedelta = (STATE(20) - PREVSTATE(20))\n  ASSERT quotedelta GT 0\n  ASSERT STATE(19) EQ (PREVSTATE(19) - quotedelta)\n  ASSERT VERIFYOUT(0 PREVSTATE(12) (STATE(21) / 100000000) PREVSTATE(7) FALSE)\n  ASSERT VERIFYOUT(1 STATE(22) (quotedelta / 100000000) PREVSTATE(8) FALSE)\nENDIF\nIF STATE(11) GT 0 THEN\n  ASSERT VERIFYOUT(2 @ADDRESS (STATE(19) / 100000000) @TOKENID TRUE)\nELSE\n  ASSERT STATE(19) EQ 0\nENDIF\nRETURN TRUE",
+    "script_sha256": "6eae11691d0c4cd1caa009197ec9e1551deb7cb43f2baacaa28f657324f46253",
+    "script_note": "Exact registered TV81_MARKET_ENGINE_V2 text (newlines preserved; address = hash of this text). Shipped so FRESH nodes (phone embedded node) can newscript-track the engine and see order/price-state coins - without this the book is structurally empty on any node that did not deploy the engine (2026-07-18 founder report).",
+    "status": "TV81_LEGACY_ENGINE_NOT_ON_V9"
+  },
+  "xwiniwa_vault": {
+    "status": "LIVE_V9_PROVEN",
+    "address": "0xf4b1826c2ac2f94c5c1deb99e1da560dad98471b3c5baf58e4b6fb1083edff3c",
+    "miniaddress": "MxG087KM616ZAM2V565Z7FBJ7GTKYGDYMC4E6PSBENYHP5MVC887RFV7WRG0S1Q",
+    "reserve_coin_id": "0xBD1A6D179A98577DBF2BEAD553A07FAD48AE1F7B088849538B00729E401ABCB8",
+    "balance_state_coin_id": "0x7E6E46C21F9C3E787A385F6F26DA691A028324EE1F5FFE9F71EF7D85BCCCC971",
+    "reserve_tag": 8102,
+    "balance_tag": 8107,
+    "reserve_port_band": [
+      25,
+      34
+    ],
+    "balance_port_band": [
+      60,
+      89
+    ],
+    "par_law": "1 Winiwa = 1 xWiniwa in both directions while no stablecoin external supply exists (D13)",
+    "deposit_action": 1,
+    "burn_action": 2,
+    "reserve_seed_display_units": "100000000",
+    "script": "ASSERT STATE(29) GTE 1\nASSERT STATE(29) LTE 2\nASSERT STATE(30) NEQ 0x00\nASSERT STATE(33) NEQ 0x00\nASSERT STATE(31) GT 0\nASSERT STATE(31) EQ STATE(32)\nLET qx = STATE(31)\nLET qxamount = (qx / 100000000)\n\nIF @TOKENID EQ 0x00 THEN\n  ASSERT @INPUT EQ 1\n  ASSERT GETINADDR(0) EQ @ADDRESS\n  ASSERT GETINTOK(0) EQ 0xefa53eff58616ddbdf0b6d6dbb4e18f041c4509fb3db3b7e5482b99abc72f127\n  ASSERT PREVSTATE(60) EQ 1\n  ASSERT PREVSTATE(61) EQ 0x5c868a0f08db73cef34907190d6db7ad7a55472834eb3aa1f8ae5db756fcaced\n  ASSERT PREVSTATE(62) EQ 8107\n  ASSERT PREVSTATE(64) EQ 0\n  ASSERT PREVSTATE(66) EQ 0\n  ASSERT PREVSTATE(81) EQ 0\n  ASSERT SAMESTATE(60 62)\n  ASSERT SAMESTATE(64 64)\n  ASSERT SAMESTATE(66 66)\n  ASSERT SAMESTATE(70 78)\n  ASSERT SAMESTATE(81 81)\n  ASSERT SAMESTATE(83 87)\n  ASSERT SAMESTATE(89 89)\n  ASSERT STATE(88) EQ (PREVSTATE(88) + 1)\n  ASSERT STATE(65) EQ STATE(63)\n  ASSERT STATE(67) EQ STATE(65)\n  ASSERT STATE(79) EQ STATE(65)\n  ASSERT STATE(80) EQ 0\n  IF STATE(68) GT 0 THEN\n    ASSERT STATE(69) EQ 100000000\n  ELSE\n    ASSERT STATE(69) EQ 0\n  ENDIF\n  IF STATE(34) GT 0 THEN\n    ASSERT GETINADDR(2) EQ @ADDRESS\n    ASSERT GETINTOK(2) EQ 0xd4f5dd3546f25d327cbf2b6867e193ce5db6491ac9c65bbdcecaca1a6688063f\n  ENDIF\n  IF STATE(29) EQ 1 THEN\n    ASSERT STATE(63) EQ (STATE(34) + STATE(32))\n    ASSERT STATE(68) EQ (PREVSTATE(68) + qx)\n    ASSERT STATE(82) EQ (PREVSTATE(82) - qx)\n    ASSERT VERIFYOUT(2 @ADDRESS (STATE(63) / 100000000) 0xd4f5dd3546f25d327cbf2b6867e193ce5db6491ac9c65bbdcecaca1a6688063f FALSE)\n    ASSERT VERIFYOUT(3 @ADDRESS @AMOUNT 0x00 TRUE)\n  ELSE\n    ASSERT STATE(34) GT 0\n    ASSERT STATE(32) LTE STATE(34)\n    ASSERT qx LTE PREVSTATE(68)\n    ASSERT STATE(63) EQ (STATE(34) - STATE(32))\n    ASSERT STATE(68) EQ (PREVSTATE(68) - qx)\n    ASSERT STATE(82) EQ (PREVSTATE(82) + qx)\n    ASSERT VERIFYOUT(0 STATE(30) (STATE(32) / 100000000) 0xd4f5dd3546f25d327cbf2b6867e193ce5db6491ac9c65bbdcecaca1a6688063f FALSE)\n    LET stateout = 2\n    IF STATE(63) GT 0 THEN\n      ASSERT VERIFYOUT(2 @ADDRESS (STATE(63) / 100000000) 0xd4f5dd3546f25d327cbf2b6867e193ce5db6491ac9c65bbdcecaca1a6688063f FALSE)\n      LET stateout = 3\n    ENDIF\n    ASSERT VERIFYOUT(stateout @ADDRESS @AMOUNT 0x00 TRUE)\n  ENDIF\n  RETURN TRUE\nENDIF\n\nIF @TOKENID EQ 0xefa53eff58616ddbdf0b6d6dbb4e18f041c4509fb3db3b7e5482b99abc72f127 THEN\n  ASSERT @INPUT EQ 0\n  ASSERT GETINADDR(1) EQ @ADDRESS\n  ASSERT GETINTOK(1) EQ 0x00\n  ASSERT PREVSTATE(25) EQ 1\n  ASSERT PREVSTATE(26) EQ 0x5c868a0f08db73cef34907190d6db7ad7a55472834eb3aa1f8ae5db756fcaced\n  ASSERT PREVSTATE(27) EQ 8102\n  ASSERT SAMESTATE(25 27)\n  ASSERT STATE(28) EQ (PREVSTATE(28) + 1)\n  IF STATE(29) EQ 1 THEN\n    ASSERT VERIFYOUT(0 STATE(30) qxamount 0xefa53eff58616ddbdf0b6d6dbb4e18f041c4509fb3db3b7e5482b99abc72f127 FALSE)\n    LET remainder = (@AMOUNT - qxamount)\n    ASSERT remainder GT 0\n    ASSERT VERIFYOUT(1 @ADDRESS remainder 0xefa53eff58616ddbdf0b6d6dbb4e18f041c4509fb3db3b7e5482b99abc72f127 TRUE)\n  ELSE\n    ASSERT VERIFYOUT(1 @ADDRESS (@AMOUNT + qxamount) 0xefa53eff58616ddbdf0b6d6dbb4e18f041c4509fb3db3b7e5482b99abc72f127 TRUE)\n  ENDIF\n  RETURN TRUE\nENDIF\n\nASSERT @TOKENID EQ 0xd4f5dd3546f25d327cbf2b6867e193ce5db6491ac9c65bbdcecaca1a6688063f\nASSERT @INPUT EQ 2\nASSERT GETINADDR(1) EQ @ADDRESS\nASSERT GETINTOK(1) EQ 0x00\nASSERT (@AMOUNT * 100000000) EQ STATE(34)\nRETURN TRUE",
+    "script_sha256": "2a540746ba7e61f0b08199d6ebc8c104969544b05b7d4f97d2e4a9c9d336d3e8",
+    "note": "V9 xWiniwa PAR vault (D13). App-compatible: gen = registry generation_id, tags 8102/8107 as the app hardcodes. 100M xWiniwa reserve (from Cold via Hot). Mechanism proven; the existing v8 app xWiniwa mint/burn drives this unchanged."
+  },
+  "behavioral_tests_performed": true,
+  "batch_market": {
+    "market": "XWINIWA_WINIWA",
+    "status": "RETIRED_TV81 (not on V9)",
+    "order_address": "0xDCC1E1F7E454E9B9524F7289C8CF70166BFF47B219C160A17458A21096C41D44",
+    "result_address": "0xA212D83E348334956BA5E81406DEC61061C4482C4C8F68C2824AD6E0426CB521",
+    "base_token_id": "0xf10014d3f53ef65bc5a3d2204db813a95c8e7fc32604d0ddd0e972153110f419",
+    "quote_token_id": "0xaad18678a0bde2a17d77c63123ce29852e272f345cb0e60a34efad930b43fa71",
+    "carrier_token": "0x00",
+    "carrier": "0.0001",
+    "refund_min_coinage": 20,
+    "tick_atoms": "10000",
+    "order_script": "LET side = PREVSTATE(2)\nLET limit = PREVSTATE(3)\nLET size = PREVSTATE(4)\nLET maker = PREVSTATE(5)\nLET refund = PREVSTATE(6)\nLET basetok = PREVSTATE(8)\nLET quotetok = PREVSTATE(9)\nLET makerpub = PREVSTATE(10)\nLET escrow = PREVSTATE(11)\nLET action = STATE(23)\nIF action EQ 2 THEN\n  ASSERT @COINAGE GTE PREVSTATE(7)\n  ASSERT SIGNEDBY(makerpub)\n  ASSERT VERIFYOUT(0 refund escrow @TOKENID FALSE)\n  RETURN TRUE\nENDIF\nASSERT action EQ 1\nLET pstar = STATE(20)\nASSERT pstar GT 0\nLET pidx = (30 + @INPUT)\nLET pa = STATE(pidx)\nLET pb = (pa + 1)\nLET quotepaid = ((size * pstar) / 100000000)\nIF side EQ 2 THEN\n  IF limit LT pstar THEN\n    ASSERT VERIFYOUT(pa maker quotepaid quotetok FALSE)\n  ELSE\n    ASSERT limit GT pstar\n    ASSERT VERIFYOUT(pa refund size basetok FALSE)\n  ENDIF\nELSE\n  ASSERT side EQ 1\n  IF limit GT pstar THEN\n    ASSERT VERIFYOUT(pa maker size basetok FALSE)\n    ASSERT VERIFYOUT(pb refund (escrow - quotepaid) quotetok FALSE)\n  ELSE\n    ASSERT limit LT pstar\n    ASSERT VERIFYOUT(pa refund escrow quotetok FALSE)\n  ENDIF\nENDIF\nRETURN TRUE\n",
+    "result_script": "LET oldwin = PREVSTATE(1)\nLET oldpstar = PREVSTATE(20)\nLET oldvol = PREVSTATE(3)\nLET oldphase = PREVSTATE(4)\nLET oldlastp = PREVSTATE(7)\nLET oldlastv = PREVSTATE(8)\nLET selfaddr = PREVSTATE(5)\nLET carrier = PREVSTATE(9)\nLET rpos = STATE(25)\nLET action = STATE(23)\nIF action EQ 1 THEN\n  ASSERT oldphase EQ 0\n  ASSERT STATE(4) EQ 0\n  ASSERT STATE(1) EQ oldwin\n  ASSERT STATE(20) GT 0\n  IF oldpstar GT 0 THEN ASSERT STATE(20) EQ oldpstar ENDIF\n  ASSERT STATE(21) GTE 0\n  ASSERT STATE(3) EQ (oldvol + STATE(21))\n  ASSERT STATE(7) EQ oldlastp\n  ASSERT STATE(8) EQ oldlastv\n  ASSERT STATE(5) EQ selfaddr\n  ASSERT STATE(9) EQ carrier\n  ASSERT VERIFYOUT(rpos selfaddr carrier @TOKENID TRUE)\n  RETURN TRUE\nENDIF\nASSERT action EQ 2\nASSERT oldphase EQ 0\nASSERT STATE(1) EQ (oldwin + 1)\nASSERT STATE(7) EQ oldpstar\nASSERT STATE(8) EQ oldvol\nASSERT STATE(20) EQ 0\nASSERT STATE(3) EQ 0\nASSERT STATE(4) EQ 0\nASSERT STATE(5) EQ selfaddr\nASSERT STATE(9) EQ carrier\nASSERT VERIFYOUT(rpos selfaddr carrier @TOKENID TRUE)\nRETURN TRUE\n",
+    "note": "FBA batch market (BR4). Users submit order coins here; a permissionless keeper clears. Last price = result-coin last_pstar. RETIRED as the trading engine 2026-07-21 (uniform price rejected); kept for reference."
+  },
+  "direct_market": {
+    "market": "XWINIWA_WINIWA",
+    "status": "LIVE_V9_PROVEN",
+    "order_address": "0x0DC3263082DEE69C45D6215D614817A601376A0079E4E46D6F94F2170578BEC4",
+    "base_token_id": "0xefa53eff58616ddbdf0b6d6dbb4e18f041c4509fb3db3b7e5482b99abc72f127",
+    "quote_token_id": "0xd4f5dd3546f25d327cbf2b6867e193ce5db6491ac9c65bbdcecaca1a6688063f",
+    "refund_min_coinage": 20,
+    "tick_atoms": "10000",
+    "order_script": "LET side   = PREVSTATE ( 2 )\nLET limit  = PREVSTATE ( 3 )\nLET size   = PREVSTATE ( 4 )\nLET maker  = PREVSTATE ( 5 )\nLET refund = PREVSTATE ( 6 )\nLET basetok  = PREVSTATE ( 8 )\nLET quotetok = PREVSTATE ( 9 )\nLET mpub   = PREVSTATE ( 10 )\nLET escrow = PREVSTATE ( 11 )\nLET pa = STATE ( 30 + @INPUT )\nLET action = STATE ( 23 )\n\nIF action EQ 2 THEN\n  ASSERT SIGNEDBY ( mpub )\n  ASSERT VERIFYOUT ( pa refund escrow @TOKENID FALSE )\n  RETURN TRUE\nENDIF\n\nASSERT action EQ 1\nLET f = STATE ( 40 + @INPUT )\nASSERT f GT 0\nASSERT f LTE size\nLET quotef = ( ( f * limit ) / 100000000 )\nLET newsize = ( size - f )\n\nIF side EQ 2 THEN\n  ASSERT VERIFYOUT ( pa maker quotef quotetok FALSE )\n  IF newsize GT 0 THEN\n    ASSERT SAMESTATE ( 2 2 )\n    ASSERT SAMESTATE ( 3 3 )\n    ASSERT SAMESTATE ( 5 5 )\n    ASSERT SAMESTATE ( 6 6 )\n    ASSERT SAMESTATE ( 7 7 )\n    ASSERT SAMESTATE ( 8 8 )\n    ASSERT SAMESTATE ( 9 9 )\n    ASSERT SAMESTATE ( 10 10 )\n    ASSERT STATE ( 4 ) EQ newsize\n    ASSERT STATE ( 11 ) EQ newsize\n    ASSERT VERIFYOUT ( ( pa + 1 ) @ADDRESS newsize basetok TRUE )\n  ENDIF\n  RETURN TRUE\nENDIF\n\nASSERT side EQ 1\nASSERT VERIFYOUT ( pa maker f basetok FALSE )\nIF newsize GT 0 THEN\n  LET newescrow = ( escrow - quotef )\n  ASSERT SAMESTATE ( 2 2 )\n  ASSERT SAMESTATE ( 3 3 )\n  ASSERT SAMESTATE ( 5 5 )\n  ASSERT SAMESTATE ( 6 6 )\n  ASSERT SAMESTATE ( 7 7 )\n  ASSERT SAMESTATE ( 8 8 )\n  ASSERT SAMESTATE ( 9 9 )\n  ASSERT SAMESTATE ( 10 10 )\n  ASSERT STATE ( 4 ) EQ newsize\n  ASSERT STATE ( 11 ) EQ newescrow\n  ASSERT VERIFYOUT ( ( pa + 1 ) @ADDRESS newescrow quotetok TRUE )\nENDIF\nRETURN TRUE\n",
+    "note": "Direct-take price-time CLOB (PROVEN on-chain 2026-07-21). A taker spends the maker order coins it crosses and pays each maker its OWN limit; a market order is one sweep txn; the marginal order partial-fills and re-rests. No keeper, no clearing coin, no shared state. Order state ports: 2 side(1=BUY,2=SELL) 3 limit(1e8) 4 size 5 maker 6 refund 7 minCoinage 8 basetok 9 quotetok 10 makerpub 11 escrow. Take block: 23 action(1=take,2=cancel) 30+@INPUT maker-payment slot 40+@INPUT fill. Last price = observed trades."
+  },
+  "book_anchor": {
+    "status": "LIVE_TEST",
+    "generation_tag": "0x54563931",
+    "head_address": "0xEE2092615F1B217394B51D9F3226667DDA9FE98A4324654391A866EF942F5A33",
+    "page_address": "0xB7B8313D31E6B56ADD1DBA1A74A0C0E33956EDE4A8A71609816381551E31387A",
+    "head_script": "LET owner=PREVSTATE(10) IF PREVSTATE(0) EQ 2 THEN RETURN SIGNEDBY(owner) ENDIF",
+    "page_script": "LET owner=PREVSTATE(10) IF PREVSTATE(0) EQ 1 THEN RETURN SIGNEDBY(owner) ENDIF",
+    "schema_page": "0x53425031",
+    "schema_head": "0x53424831",
+    "bounds": {
+      "page_bytes": 32768,
+      "page_orders": 16,
+      "max_pages": 64,
+      "max_head_age_blocks": 900,
+      "max_heads_scanned": 16
+    },
+    "snapshot_interval_blocks": 600,
+    "note": "Rolling on-chain book anchor (founder-approved 2026-07-23; Phases 0-3 + delta + adversarial core PROVEN on mainnet same day - journal tools/tv81/anchor/anchor-deployment-journal.json). Publishers post bounded PAGE coins (order coinexport blobs; payload state port 20, page hash port 8) then one HEAD coin committing to the page set (pages_root port 7 = SHA2(snapId||u16 pageCount||u16 orderCount||pageHashes); page coin-id list port 20). Readers track both addresses at boot, forward-capture the next snapshot via ordinary sync, validate hashes/root locally, and import order proofs - no HTTP/Maxima/MegaMMR in the critical path; a publisher can only withhold, never forge. Family tag port 0 (1=page, 2=head) is covenant-enforced on spend. Head/page coins are owner-refreshable visibility artifacts; ORDER coins are never refreshed."
+  },
+  "book_sources": {
+    "status": "LIVE_TEST",
+    "registry_address": "0x45D60C5F0A1C8D9339EDF932BF325A2F9FE43EBE9E2AB9BDBF97BA06D4A45F04",
+    "registry_script": "LET owner=PREVSTATE(10) RETURN SIGNEDBY(owner)",
+    "pointer_tag": "21",
+    "note": "Common-book provider discovery (founder-approved 2026-07-21, PROVEN on-chain: post + third-party refusal + owner heartbeat refresh). Book sources rest heartbeat-refreshed POINTER COINS here; only the owner (state port 10 pubkey) can spend/refresh a pointer. Pointer state: 0 tag(21) 1 endpoint(hex utf8 URL) 2 coverage-since-height(0=full) 3 transport(1=http,2=maxima) 10 owner pub. Pointers refresh ~12h so the registry stays inside every fresh node's unpruned window (discovery is chain-native); ORDER coins must never be refreshed (creation height = time priority). The app gap-fills out-of-window order coins from these endpoints via coinimport track:true - blobs are self-certifying (local MMR validation), sources are untrusted for validity and interchangeable."
+  }
+}

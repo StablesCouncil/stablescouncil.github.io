@@ -114,6 +114,29 @@
             border-radius: 4px;
         }
 
+        .diagram-pan-hint {
+            display: none;
+        }
+
+        @media (max-width: 767px) {
+            .diagram-pan-hint {
+                display: block;
+                margin: 0 auto 10px;
+                padding: 0 16px;
+                color: var(--accent);
+                font-size: 12px;
+                font-weight: 700;
+                text-align: center;
+            }
+
+            .diagram-scroll {
+                justify-content: flex-start;
+                overflow-x: auto;
+                overscroll-behavior-inline: contain;
+                scrollbar-color: rgba(103,232,249,0.55) rgba(255,255,255,0.08);
+            }
+        }
+
         .diagram-canvas {
             position: relative;
             width: 1520px;
@@ -232,18 +255,24 @@
         .prose .footnote { font-size: 13px; color: var(--muted); margin-top: 0.5em; }
 
     </style>
+  <link rel="stylesheet" href="assets/stables-visual-authority.css" />
+  <link rel="stylesheet" href="/assets/secondary-page-chrome.css">
 </head>
-<body class="site-chrome-body links-page-body has-site-rail deck-chrome-page circulareconomy-page">
-  <header class="site-chrome-header" role="banner">
-    <a class="site-chrome-header__brand" href="/">
-      <img class="site-chrome-header__mark" src="/brand/assets/logo-symbol.png" width="48" height="48" alt="Stables">
-      <span class="site-chrome-header__titles">
-        <span class="site-chrome-header__name">Stables</span>
-        <span class="site-chrome-header__slogan">Be your bank</span>
+<body class="d028-page north-star-website-page site-chrome-body links-page-body has-site-rail deck-chrome-page circulareconomy-page secondary-chrome-page">
+  <header class="secondary-chrome-header" role="banner">
+  <div class="secondary-chrome-header__inner secondary-chrome-frame">
+    <a class="secondary-chrome-brand" href="/new/" aria-label="Stables homepage">
+      <img src="/brand/assets/logo-symbol.png" width="44" height="44" alt="">
+      <span>
+        <span class="secondary-chrome-brand__name">STABLES</span>
+        <span class="secondary-chrome-brand__role">Be your bank</span>
       </span>
     </a>
-    <a class="site-chrome-header__pill" href="https://minima.global" target="_blank" rel="noopener noreferrer">Built on MINIMA</a>
-  </header>
+    <nav class="secondary-chrome-nav" aria-label="Application access">
+      <a class="secondary-chrome-access" href="/new/payment-app/">Access dApp</a>
+    </nav>
+  </div>
+</header>
 
     <aside class="site-chrome-side-rail" aria-label="Quick navigation">
         <div class="site-chrome-side-rail__stack">
@@ -322,6 +351,7 @@
         <p class="subtitle">How capital, Minima, Stables, xMinima, and protocol funds interact</p>
     </div>
     <div class="ce-diagram-bleed">
+    <p class="diagram-pan-hint">Swipe sideways to explore the complete system map.</p>
     <div class="diagram-scroll" role="region" aria-label="Circular economy diagram">
         <div class="diagram-canvas">
             <svg class="diagram-svg" viewBox="0 0 1520 610" aria-hidden="true">
@@ -390,9 +420,9 @@
             </svg>
 
             <!-- exact layout from user sketch -->
-            <div class="ce-node" style="left:140px;top:96px;width:265px;" title="External capital/Oracles.">
-                <div class="ce-title">External capital/Oracles</div>
-                <div class="ce-sub">From CEX/DEX (bridges)</div>
+            <div class="ce-node" style="left:140px;top:96px;width:265px;" title="External capital through open participation.">
+                <div class="ce-title">External capital</div>
+                <div class="ce-sub">Internally priced participation</div>
             </div>
             <div class="ce-node" style="left:655px;top:66px;width:310px;" title="Economic activity.">
                 <div class="ce-title">Economic Activity</div>
@@ -468,9 +498,13 @@
                     w = window.innerWidth || document.documentElement.clientWidth;
                 }
                 var available = Math.max(320, w - 48);
+                var compact = window.matchMedia('(max-width: 767px)').matches;
                 var scale = Math.min(1, available / designW);
+                if (compact) scale = Math.max(0.75, scale);
                 canvas.style.transform = 'scale(' + scale + ')';
-                canvas.style.transformOrigin = 'top center';
+                canvas.style.transformOrigin = compact ? 'top left' : 'top center';
+                canvas.style.marginRight = compact ? (-Math.round(designW * (1 - scale))) + 'px' : 'auto';
+                canvas.style.marginLeft = compact ? '0' : 'auto';
                 scroll.style.height = Math.ceil(designH * scale) + 'px';
             }
 
@@ -490,22 +524,18 @@
 
     <nav id="siteMapNav" class="site-map-nav" data-site-map-index="2" aria-label="Previous and next in site map order"></nav>
 
-  <footer class="site-chrome-footer site-chrome-footer--minimal" role="contentinfo">
-    <div class="site-chrome-footerSocial">
-      <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" aria-label="Telegram community">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
-          <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-        </svg>
-      </a>
-      <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer" aria-label="Stables on X">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-        </svg>
-      </a>
-      <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--all-links" href="/links.html">All links</a>
-    </div>
-    <p class="site-chrome-footerMeta">Stables | Built on Minima</p>
-  </footer>
+  <footer class="secondary-chrome-footer" role="contentinfo">
+  <div class="secondary-chrome-footer__inner secondary-chrome-frame">
+    <p><a class="secondary-chrome-footer__signature" href="/new/">Stables | Be your Bank</a></p>
+    <nav class="secondary-chrome-footer__links" aria-label="Supporting links">
+      <a class="secondary-chrome-access" href="/new/payment-app/">Access dApp</a>
+      <a href="/links.html">All links</a>
+      <a href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer">X</a>
+      <a href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer">Telegram</a>
+      <a class="secondary-chrome-minima" href="https://minima.global" target="_blank" rel="noopener noreferrer">Built on MINIMA</a>
+    </nav>
+  </div>
+</footer>
 
     <script src="assets/site-rail-controls.js" defer></script>
     <script src="assets/site-rail.js" defer></script>
@@ -567,7 +597,6 @@
         </div>
     </div>
     <button class="agent-fab" id="agentFab" onclick="toggleAgent()" aria-label="Chat with StablesAgent">
-        <span class="agent-fab-tip">Chat with StablesAgent</span>
         <div class="agent-fab-btn">
             <span class="agent-fab-pulse"></span>
             <span class="agent-fab-pulse"></span>

@@ -1,0 +1,1502 @@
+        /* Stablecoin index "w": the trailing w in USDw/EURw/GBPw/CADw/CNYw renders as a
+           smaller index character app-wide (applied by the text pass below). */
+        .ccy-iw { font-size: .68em; opacity: .92; }
+
+        /* The hero total paints its text with a background-clip gradient and a transparent
+           fill; the background does NOT inherit into child spans, so the index "w" was
+           invisible there. Re-apply the same gradient on the span itself.
+           Optically smaller than the app-wide .68em: at the hero's 46px the same ratio
+           reads too large next to the small-size occurrences (founder 2026-07-07). */
+        .w-total .ccy-iw {
+            font-size: .5em;
+            background: linear-gradient(135deg, #fff 0%, var(--c) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ================================================================
+           STABLES APP UI SYSTEM v1 — EXECUTABLE NORMALIZATION LAYER
+           Authority: work/docs/ui_inventory/STABLES_APP_UI_SYSTEM_REFERENCE.md
+           This late layer intentionally wins over legacy page-local geometry.
+           State may change tone/content; it must never change component shape.
+           ================================================================ */
+        :root {
+            --ui-space-1: 4px;
+            --ui-space-2: 8px;
+            --ui-space-3: 12px;
+            --ui-space-4: 16px;
+            --ui-space-6: 24px;
+            --ui-space-8: 32px;
+            --ui-radius-sm: 8px;
+            --ui-radius-control: 12px;
+            --ui-radius-card: 16px;
+            --ui-radius-modal: 22px;
+            --ui-control-h: 48px;
+            --ui-control-lg-h: 52px;
+            --ui-touch-h: 44px;
+        }
+
+        .ui-tone-text { color: var(--t) !important; }
+        .ui-tone-muted { color: var(--m) !important; }
+        .ui-tone-accent { color: var(--c) !important; }
+        .ui-tone-danger { color: var(--rd) !important; }
+        .ui-tone-warning { color: var(--am) !important; }
+        .ui-tone-success { color: var(--gr) !important; }
+        .ui-tone-purple { color: var(--pu) !important; }
+
+        /* Small, composable layout vocabulary. These replace repeated inline
+           declarations without hiding page-specific or runtime state styles. */
+        .ui-m-0 { margin: 0 !important; }
+        .ui-flow-1 { margin: 0 0 var(--ui-space-1) !important; }
+        .ui-flow-2 { margin: 0 0 var(--ui-space-2) !important; }
+        .ui-flow-3 { margin: 0 0 var(--ui-space-3) !important; }
+        .ui-flow-4 { margin: 0 0 var(--ui-space-4) !important; }
+        .ui-flow-6 { margin: 0 0 var(--ui-space-6) !important; }
+        .ui-mb-0 { margin-bottom: 0 !important; }
+        .ui-mb-1 { margin-bottom: var(--ui-space-1) !important; }
+        .ui-mb-2 { margin-bottom: var(--ui-space-2) !important; }
+        .ui-mb-3 { margin-bottom: var(--ui-space-3) !important; }
+        .ui-mb-4 { margin-bottom: var(--ui-space-4) !important; }
+        .ui-mb-6 { margin-bottom: var(--ui-space-6) !important; }
+        .ui-mb-8 { margin-bottom: var(--ui-space-8) !important; }
+        .ui-mt-0 { margin-top: 0 !important; }
+        .ui-mt-1 { margin-top: var(--ui-space-1) !important; }
+        .ui-mt-2 { margin-top: var(--ui-space-2) !important; }
+        .ui-mt-3 { margin-top: var(--ui-space-3) !important; }
+        .ui-mt-4 { margin-top: var(--ui-space-4) !important; }
+        .ui-mt-6 { margin-top: var(--ui-space-6) !important; }
+        /* ================================================================
+           ONE GAP, ONE OWNER
+           ================================================================
+           Founder 2026-09-02: "pay attention to the space between the elements
+           across the whole app ... we can't go element by element across the
+           whole page, you need to set up rules for these that we apply across
+           the whole app."
+
+           The scale above was never the problem; the ownership was. Every
+           element carried its own margin utility AND every container carried
+           its own padding, so the gap between any two things was the SUM of
+           several independent decisions that nobody made together. Measured on
+           the Mint panel at phone width, the space under the Mint/Burn control
+           was 62px, built from three separate contributions:
+
+               24px  ui-mb-6 on the segmented control
+             + 20px  .app-section padding-block
+             + 18px  the card's inner top padding
+             = 62px  that no one chose
+
+           The rule: when an element has already declared the gap beneath it,
+           the next container does NOT add its own padding on top. The space
+           between two things is one decision, taken once, from the scale.
+
+           Deliberately narrow: it only collapses where the previous element
+           genuinely declared spacing, so a section following an unspaced
+           sibling keeps its padding and nothing collapses by accident. */
+        :where([class*="ui-mb-"], [class*="ui-flow-"], .ui-segmented, .ui-side-toggle) + .app-section {
+            padding-top: 0 !important;
+        }
+        /* Same rule one level up. A section is usually wrapped in a panel, so it
+           is not the SIBLING of the control above it and the rule above cannot
+           see them together. The first section inside any container does not set
+           the gap above itself either way: that gap belongs to whatever the
+           container follows, which has already declared it. */
+        .app-section:first-child { padding-top: 0 !important; }
+        /* A card's inner padding is for its sides and its foot. The gap above it
+           was already set by the section it opens, so it does not repeat it. */
+        .app-section > .app-section-card > .cb:first-child,
+        .app-section > .app-section-card > .cb.ui-px-0:first-child {
+            padding-top: 0 !important;
+        }
+        /* A container never pads away from its own first child's margin, nor
+           trails space after its last. Both are how a tidy stack grows an
+           unexplained edge. */
+        .app-section > :first-child,
+        .app-section-card > :first-child { margin-top: 0 !important; }
+        .app-section > :last-child,
+        .app-section-card > :last-child { margin-bottom: 0 !important; }
+
+        /* ================================================================
+           THE MONEY FIELD IS ONE COMPONENT
+           ================================================================
+           What you can spend, the shortcuts for spending it, and the box you
+           type into are read as one thing, so they are spaced as one thing:
+           tight to each other, a full step away from everything else.
+
+           Before this, each money surface re-decided that relationship on its
+           own. On Send the available line had no top margin at all and sat
+           flush against the address box above it (founder: "the available
+           amount should not touch the address box"), while Mint set its own
+           via a utility class. Same component, two answers, neither owned. */
+        .ui-amount-head {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: var(--ui-space-2) !important;
+            margin: var(--ui-space-4) 0 var(--ui-space-1) !important;
+        }
+        /* The input belongs to the head above it: nothing comes between them. */
+        .ui-amount-head + .finput,
+        .ui-amount-head + .ui-field-row { margin-top: 0 !important; }
+
+        .ui-flex-1 { flex: 1 !important; }
+        .ui-min-w-0 { min-width: 0 !important; }
+        .ui-shrink-0 { flex-shrink: 0 !important; }
+        .ui-text-center { text-align: center !important; }
+        .ui-text-right { text-align: right !important; }
+        .ui-text-left { text-align: left !important; }
+        .ui-w-full { width: 100%; }
+        .ui-px-0 { padding-inline: 0 !important; }
+        .ui-items-center { align-items: center; }
+        .ui-inline-row { display: flex; align-items: center; gap: var(--ui-space-2); }
+        /* The name of a chosen file, beside the action that chose it. One class, because the
+           bank picture and the council picture do the same job and each had inlined the same
+           four declarations. A long file name truncates rather than pushing the row. */
+        .ui-file-name { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* A settings row holds a label and one control. Founder 2026-07-26: the bottom-menu rows
+           and the custom currency controls were "really badly displayed", because every one of
+           them stated its own width inline (92, 110, 118, 130, 142 px) and a native control sizes
+           itself to its widest option, so the label was squeezed to nothing on a phone.
+           ONE width for a row control, and a stacked variant for the rows whose options are long
+           enough that no side-by-side width can hold them. */
+        .ui-row-control { flex: 0 0 auto; width: min(48%, 190px); max-width: 190px; }
+        .ui-row-stack { display: block; }
+        .ui-pt-0 { padding-top: 0 !important; }
+        .ui-row-stack > :first-child { margin-bottom: var(--ui-space-2); }
+        .ui-row-stack .ui-row-control,
+        .ui-row-stack .fsel,
+        .ui-row-stack .finput { width: 100%; max-width: none; }
+        .ui-flex-gap-2 { display: flex; gap: var(--ui-space-2); }
+        .ui-block { display: block; }
+        .ui-wrap { flex-wrap: wrap; }
+        .ui-justify-center { justify-content: center; }
+        .ui-break-all { word-break: break-all; }
+        .ui-overflow-hidden { overflow: hidden; }
+        .ui-pointer { cursor: pointer; }
+        .ui-underline { text-decoration: underline; text-underline-offset: 3px; }
+        .ui-dim { opacity: .8; }
+        .ui-overflow-x { overflow-x: auto; }
+        .ui-resize-y { resize: vertical; font-family: inherit; }
+        .ui-pad-b-2 { padding: 0 0 var(--ui-space-2); }
+        .ui-accent-warning { accent-color: var(--am) !important; }
+        .ui-support-sm { font-size: 12px; line-height: 1.5; }
+        .ui-items-start { align-items: flex-start; }
+        .ui-items-stretch { align-items: stretch; }
+        .ui-gap-1 { gap: var(--ui-space-1); }
+        .ui-gap-3 { gap: var(--ui-space-3); }
+        .ui-flex-gap-3 { display: flex; gap: var(--ui-space-3); }
+        .ui-col { display: flex; flex-direction: column; }
+        .ui-inline-center { display: inline-flex; justify-content: center; }
+        .ui-inline-block { display: inline-block; }
+        .ui-relative { position: relative; }
+        /* Floats a quiet icon action into its card's top-right corner (host card is ui-relative). */
+        .ui-float-tr { position: absolute; top: 8px; right: 8px; z-index: 2; }
+        .ui-opaque { opacity: 1 !important; }
+        .ui-dashed { border-style: dashed !important; }
+        .ui-cursor-default { cursor: default; }
+        .ui-pl-0 { padding-left: 0 !important; }
+        .ui-pr-0 { padding-right: 0 !important; }
+        .ui-no-border-bottom { border-bottom: none !important; }
+        .ui-pad-4 { padding: var(--ui-space-4) !important; }
+        .ui-noninteractive { pointer-events: none; opacity: .9; }
+        .ui-mono { font-family: monospace; }
+        .ui-glyph-lg { font-size: 26px; line-height: 1; }
+        .ui-icon-em { width: 1.05em; height: 1.05em; display: block; }
+        .ui-pr-3 { padding-right: var(--ui-space-3) !important; }
+        .ui-pad-y-3 { padding-top: var(--ui-space-3) !important; padding-bottom: var(--ui-space-3) !important; }
+
+        /* Checkbox/radio controls share one 20 px size and the accent tone. */
+        .page input[type="checkbox"],
+        .modal input[type="checkbox"],
+        .page input[type="radio"],
+        .modal input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--c);
+        }
+
+        /* Repeated data/detail composites promoted from inline duplication. */
+        .ui-list-cell { padding: var(--ui-space-2) 0; font-weight: 700; }
+        .ui-cell { padding: 6px var(--ui-space-2); font-weight: 700; }
+        .ui-list-indent { padding-left: 1.15em; line-height: 1.55; font-size: 13px; }
+        .ui-mono-value { word-break: break-all; font-family: monospace; font-size: 12px; }
+        .ui-divider-top-pad { border-top: 1px solid rgba(103, 232, 249, .14); padding-top: var(--ui-space-2); }
+        /* Section divider inside a card body: quieter line, roomier clearance than the row divider. */
+        .ui-divider-section { border-top: 1px solid rgba(103, 232, 249, .12); padding-top: 14px; }
+        .ui-row-end { display: flex; justify-content: flex-end; }
+        .ui-lh-relaxed { line-height: 1.45; }
+        /* Avatar placeholder glyph (initials or format tag inside an empty avatar frame). */
+        .ui-avatar-ph { font-size: 22px; font-weight: 900; }
+        /* Compact numeric field: a short number input sitting inside a settings row. */
+        .ui-num-field {
+            width: 90px;
+            padding: 8px 10px;
+            background: var(--surface-input);
+            border: 1px solid var(--border-accent);
+            border-radius: var(--rs);
+            font-weight: 700;
+            font-family: inherit;
+            outline: none;
+        }
+        .ui-num-field-xs {
+            width: 60px;
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 4px;
+            color: #fff;
+            font-size: 12px;
+        }
+        /* One conventional terminal workspace for command history and the optional live node log. */
+        .ui-terminal-shell {
+            overflow: hidden;
+            border: 1px solid var(--border-accent-soft);
+            border-radius: 12px;
+            background: var(--bg);
+        }
+        .ui-terminal-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border-accent-faint);
+            background: var(--panel);
+        }
+        .ui-terminal-toolbar__actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ui-terminal-toolbar .btn,
+        .ui-terminal-prompt .btn {
+            width: auto !important;
+            min-width: 0;
+            min-height: 40px;
+            padding-inline: 12px;
+        }
+        .ui-terminal-status,
+        .ui-terminal-live-label,
+        .ui-terminal-prompt {
+            font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+        }
+        .ui-terminal-status {
+            min-width: 0;
+            color: var(--m);
+            font-size: 12px;
+            line-height: 1.3;
+        }
+        .ui-terminal-viewport {
+            min-height: 320px;
+            height: clamp(320px, 52vh, 560px);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            padding: 16px;
+            background: var(--bg);
+            color: var(--t);
+            scrollbar-gutter: stable;
+        }
+        .ui-terminal-output {
+            margin: 0;
+            overflow: visible;
+            border: 0;
+            border-radius: 0;
+            padding: 0;
+            background: transparent;
+            color: inherit;
+            font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+            font-size: 13px;
+            line-height: 1.55;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            word-break: normal;
+        }
+        .ui-terminal-live {
+            margin-top: 18px;
+            border-top: 1px solid var(--border-accent-faint);
+            padding-top: 12px;
+        }
+        .ui-terminal-live-label {
+            margin-bottom: 8px;
+            color: var(--m);
+            font-size: 11px;
+        }
+        .ui-terminal-prompt {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 8px;
+            border-top: 1px solid var(--border-accent-faint);
+            padding: 10px;
+            background: var(--panel);
+        }
+        .ui-terminal-prompt__mark {
+            color: var(--c);
+            font-size: 14px;
+            font-weight: 800;
+        }
+        .ui-terminal-field,
+        .ui-terminal-prompt .ui-terminal-field {
+            width: 100%;
+            min-width: 0;
+            min-height: 42px;
+            margin: 0;
+            border: 0;
+            border-radius: 6px;
+            padding: 8px 10px;
+            background: color-mix(in srgb, var(--bg) 76%, transparent);
+            color: var(--t);
+            font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+            font-size: 14px;
+            box-shadow: inset 0 0 0 1px var(--border-accent-faint);
+        }
+        .ui-terminal-field:focus-visible {
+            outline: 2px solid var(--c);
+            outline-offset: 1px;
+        }
+        @media (max-width: 480px) {
+            .ui-terminal-toolbar {
+                align-items: stretch;
+                flex-wrap: wrap;
+            }
+            .ui-terminal-status {
+                flex-basis: 100%;
+            }
+            .ui-terminal-toolbar__actions {
+                width: 100%;
+            }
+            .ui-terminal-toolbar__actions .btn {
+                flex: 1 1 0;
+            }
+            .ui-terminal-viewport {
+                height: min(48vh, 420px);
+                padding: 12px;
+            }
+        }
+        .ui-hr { height: 1px; background: rgba(103, 232, 249, .08); }
+        .ui-hr-soft { height: 1px; background: rgba(255, 255, 255, .10); }
+        .ui-divider-bottom-soft { border-bottom: 1px solid rgba(255, 255, 255, .08); }
+        .ui-pad-cell { padding: 6px var(--ui-space-2); }
+        .ui-row-top-divided { display: flex; gap: var(--ui-space-3); padding: 10px 0; border-top: 1px solid var(--border-accent-faint); }
+        .ui-table { border-collapse: collapse; font-size: 13px; }
+        .ui-mono-field {
+            box-sizing: border-box;
+            font-family: monospace;
+            font-size: 14px;
+            padding: var(--ui-space-3);
+            border-radius: var(--ui-radius-control);
+            border: 1px solid rgba(103, 232, 249, .25);
+            background: rgba(8, 22, 36, .3);
+            resize: vertical;
+        }
+
+        /* Transaction/status glyph dots and rings (one geometry, semantic tone). */
+        .ui-status-dot {
+            display: inline-flex;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            color: var(--bg);
+            font-weight: 900;
+            line-height: 1;
+        }
+        .ui-status-dot--ok { background: var(--gr); font-size: 11px; }
+        .ui-status-dot--fail { background: var(--rd); font-size: 12px; }
+        .ui-status-ring {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, .18);
+            box-sizing: border-box;
+        }
+
+        /* Chart legend keys and chart frames (VIS family support). */
+        .ui-legend-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            background: rgba(103, 232, 249, .9);
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .ui-legend-line {
+            display: inline-block;
+            width: 14px;
+            height: 0;
+            border-top: 2px solid rgba(230, 237, 243, .85);
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .ui-legend-dash {
+            display: inline-block;
+            width: 14px;
+            height: 0;
+            border-top: 2px dashed rgba(52, 211, 153, .9);
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        /* Series-colour modifiers: a chart legend names its data series with a tone. */
+        .ui-legend-line--accent { border-top-color: rgba(103, 232, 249, .95); }
+        .ui-legend-line--purple { border-top-color: rgba(167, 139, 250, .95); }
+        .ui-legend-line--success { border-top-color: rgba(52, 211, 153, .95); }
+        .ui-chart-frame { position: relative; height: 96px; }
+        /* Daily bar strip inside a chart frame: one column per day, bars from a single baseline,
+           one hue, today emphasised. Bar height is runtime geometry (inline). */
+        .ui-bar-strip { display: flex; align-items: flex-end; justify-content: space-between; height: 100%; gap: 3px; }
+        .ui-bar-col { flex: 1 1 0; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; min-width: 0; }
+        .ui-bar { width: 100%; min-height: 2px; border-radius: 2px 2px 0 0; background: rgba(103, 232, 249, .4); }
+        .ui-bar--today { background: rgba(103, 232, 249, .95); box-shadow: 0 0 8px rgba(103, 232, 249, .32); }
+
+        /* Range controls share the accent tone. */
+        .page input[type="range"],
+        .modal input[type="range"] {
+            accent-color: var(--c);
+        }
+
+        /* Named spinner scale (base spinner is page-defined). */
+        .stables-qr-spinner--xs { width: 12px !important; height: 12px !important; border-width: 2px !important; }
+        .stables-qr-spinner--sm { width: 16px !important; height: 16px !important; border-width: 2px !important; display: inline-block; }
+
+        /* Modal handle warning tone. */
+        .mhandle--warning { background: rgba(251, 191, 36, .35) !important; }
+
+        /* StablesAgent drawer component family. */
+        .agent-dlg-shell {
+            padding: 0 !important;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .agent-dlg-head {
+            /* The drawer is full height (min-height: 100dvh), so without this its header sat under
+               the phone's status bar and the clock overlapped the agent's name (founder 2026-09-01).
+               `--safe-top` is the same inset the native shell publishes for the rest of the app. */
+            padding: calc(var(--ui-space-3) + var(--safe-top, 0px)) 14px var(--ui-space-3);
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(103, 232, 249, .12);
+        }
+        .agent-dlg-name { font-size: 14px; font-weight: 900; line-height: 1.2; }
+        .agent-dlg-ctx { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .agent-dlg-lang {
+            background: rgba(103, 232, 249, .1) !important;
+            border: 1px solid rgba(103, 232, 249, .25) !important;
+            cursor: pointer;
+        }
+        .agent-dlg-warn {
+            padding: 10px 16px;
+            background: rgba(8, 22, 36, .18);
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            border-radius: 0;
+        }
+        .agent-dlg-panel {
+            min-height: 0;
+            flex-direction: column;
+            background: var(--bg);
+            overflow: hidden;
+            position: relative;
+        }
+        .agent-dlg-bubbles { overflow-y: auto; padding: 16px 14px var(--ui-space-2); scroll-behavior: smooth; }
+        .agent-dlg-choices { padding: 0 14px var(--ui-space-2); }
+        .agent-dlg-controls {
+            padding: 10px 14px;
+            border-top: 1px solid rgba(103, 232, 249, .08);
+            justify-content: space-between;
+        }
+        .agent-dlg-composer { padding: 10px 14px; border-top: 1px solid rgba(103, 232, 249, .08); }
+        .agent-dlg-input {
+            min-height: var(--ui-touch-h);
+            border-radius: 999px;
+            border: 1px solid rgba(103, 232, 249, .12);
+            background: rgba(8, 22, 36, .3);
+            padding: 0 14px;
+            font-size: 13px;
+            font-weight: 700;
+            outline: none;
+        }
+        .agent-dlg-frame { height: 100%; border: 0; min-height: 0; background: transparent; }
+        .ui-detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: var(--ui-space-3);
+            padding: var(--ui-space-2) 0;
+            border-bottom: 1px solid rgba(103, 232, 249, .1);
+        }
+        .ui-divider-top { border-top: 1px solid rgba(103, 232, 249, .08); }
+        .ui-inset-panel {
+            padding: 10px;
+            border-radius: var(--ui-radius-sm);
+            background: rgba(22, 51, 79, .35);
+            border: 1px solid rgba(103, 232, 249, .1);
+        }
+        .ui-inset-field {
+            padding: var(--ui-space-2);
+            border-radius: var(--ui-radius-sm);
+            border: 1px solid rgba(103, 232, 249, .25);
+            background: rgba(8, 22, 36, .3);
+        }
+        .ui-inline-cluster { display: inline-flex; align-items: center; gap: var(--ui-space-2); }
+
+        /* THE QUICK-AMOUNT PAIR (founder 2026-07-26). Half and MAX are one control in two parts,
+           so they read as a pair: a 6px gap, not the 8px a general inline cluster puts between two
+           unrelated things. One definition, used by every amount field in the app. */
+        .ui-quick-amounts { display: inline-flex; align-items: center; gap: 6px; }
+
+        /* INVISIBLE SCROLLING (founder 2026-07-26, asked for on the order book). A region that
+           scrolls inside the page keeps the gesture and loses the bar: a rail drawn down the side
+           of a data region is chrome the language already stands down everywhere else, and on a
+           phone nobody drags it. The region must still SHOW that it continues, which it does by
+           cutting a row rather than ending on one. */
+        .ui-scroll-quiet { scrollbar-width: none; -ms-overflow-style: none; }
+        .ui-scroll-quiet::-webkit-scrollbar { width: 0; height: 0; }
+
+        /* ===================================================================
+           M-EL-DROPDOWN  ::  THE ONE DROPDOWN  (founder ruling 2026-07-26)
+           -------------------------------------------------------------------
+           One control for "choose exactly one option from a list", and one way
+           of showing the options. The founder chose the Mint list's format as
+           the standard: full-width rows, a generous target, the name on the
+           left and a mark on the right showing which one is chosen.
+
+           It is drawn BY THE APP, not by the platform. The list he pointed at
+           was Android's own sheet, which carries none of our theme, changes
+           with the OS version, and cannot be captured for the catalogue
+           because it has no DOM. This renders identically on Android, in the
+           MiniDapp hub and on the web, and the catalogue can show it for real.
+
+           The native <select> stays in the page as the source of truth: hidden,
+           but still holding the value, the options and every handler already
+           bound to it. Choosing a row sets its value and fires `change`, so no
+           existing behaviour had to be rewritten to change how it looks.
+           =================================================================== */
+        .mx-dropdown { position: relative; display: block; width: 100%; }
+        /* The enhancement wrapper honours the host's row-control bound (carried over by
+           mx-dropdown.js): without this, the base width above outranks the earlier
+           .ui-row-control rule by order and the label beside the control is crushed. */
+        .mx-dropdown.ui-row-control { flex: 0 0 auto; width: min(48%, 190px); max-width: 190px; }
+        /* ...but a STACKED row has no label beside the control to protect: the label is above
+           it, so the control spans the row exactly as the label does (the alignment law: a
+           control aligns to the column it lives in). The native .fsel already obeys this via
+           the .ui-row-stack rule near the top of this sheet; the enhancement wrapper carries
+           .ui-row-control onto itself and so restated the 190px bound at higher specificity,
+           which left a 190px control under a full-width label and a full-width divider. */
+        .ui-row-stack .mx-dropdown.ui-row-control { width: 100%; max-width: none; }
+
+        .mx-dropdown__trigger {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--ui-space-3);
+            width: 100%;
+            min-height: var(--ui-control-h, 48px);
+            padding: 0 16px;
+            border: 1px solid var(--border-accent-soft);
+            border-radius: var(--ui-radius-control);
+            background: var(--surface-input, rgba(22, 51, 79, .5));
+            color: var(--t);
+            font: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            text-align: left;
+            cursor: pointer;
+        }
+        .mx-dropdown__trigger:focus-visible { border-color: var(--c); outline: 2px solid var(--c); outline-offset: 2px; }
+        .mx-dropdown__trigger[aria-expanded="true"] { border-color: var(--c); }
+        .mx-dropdown__trigger[disabled] { cursor: not-allowed; opacity: .46; }
+
+        .mx-dropdown__value { display: grid; gap: 2px; min-width: 0; }
+        .mx-dropdown__value > strong { overflow-wrap: anywhere; font-weight: 700; white-space: normal; }
+        .mx-dropdown__value > small { color: var(--m); font-size: 13px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+
+        /* Drawn by us, so it is identical everywhere. A native control draws
+           this mark itself, which is how two dropdowns came to look different. */
+        .mx-dropdown__mark {
+            flex: 0 0 auto;
+            width: 9px;
+            height: 9px;
+            margin-top: -4px;
+            border-right: 2px solid currentColor;
+            border-bottom: 2px solid currentColor;
+            opacity: .75;
+            transform: rotate(45deg);
+        }
+        .mx-dropdown__trigger[aria-expanded="true"] .mx-dropdown__mark { margin-top: 3px; transform: rotate(-135deg); }
+
+        .mx-dropdown__panel {
+            position: absolute;
+            z-index: 640;
+            top: calc(100% + 6px);
+            right: 0;
+            left: 0;
+            max-height: min(58dvh, 420px);
+            overflow-y: auto;
+            padding: 0;
+            border: 1px solid var(--mx-glass-line, var(--border-accent-soft));
+            border-radius: var(--ui-radius-card);
+            /* A menu floats, so it is the one place the language allows glass. A near-black slab
+               here was the same mistake the documents made: a dark box on a lit surface. */
+            background-color: var(--mx-glass-strong, rgba(22, 51, 79, .97));
+            -webkit-backdrop-filter: blur(28px) saturate(170%);
+            backdrop-filter: blur(28px) saturate(170%);
+            box-shadow: var(--shadow-card);
+            scrollbar-width: none;
+        }
+        .mx-dropdown__panel::-webkit-scrollbar { width: 0; }
+        .mx-dropdown__panel[hidden] { display: none; }
+
+        .mx-dropdown__group {
+            padding: 12px 18px 4px;
+            color: var(--m);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .mx-dropdown__option {
+            display: grid;
+            align-items: center;
+            grid-template-columns: minmax(0, 1fr) max-content 24px;
+            gap: var(--ui-space-3);
+            width: 100%;
+            min-height: 56px !important;
+            padding: 10px 18px;
+            border: 0;
+            border-top: 1px solid var(--mx-line, var(--border-subtle));
+            background: transparent;
+            color: var(--t);
+            font: inherit;
+            font-size: 17px;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+        }
+        .mx-dropdown__option:first-of-type { border-top: 0; }
+        /* The panel is glass, so the row under the finger lifts rather than darkens: a dark fill
+           here punched a hole in the surface it floats on. */
+        .mx-dropdown__option:hover,
+        .mx-dropdown__option[data-active] { background: var(--mx-glass, rgba(255, 255, 255, .10)); }
+        .mx-dropdown__option:focus-visible { outline: 2px solid var(--c); outline-offset: -2px; }
+        .mx-dropdown__option[aria-disabled="true"] { cursor: not-allowed; opacity: .46; }
+        .mx-dropdown__option-label { min-width: 0; overflow-wrap: anywhere; white-space: normal; }
+        .mx-dropdown__option-value {
+            min-width: 0;
+            color: var(--m);
+            font-size: 13px;
+            font-variant-numeric: tabular-nums;
+            font-weight: 700;
+            line-height: 1.2;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        /* The chosen row is marked, not merely highlighted: on a list of two a
+           highlight alone reads as a hover state. */
+        .mx-dropdown__tick {
+            position: relative;
+            flex: 0 0 auto;
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--m);
+            border-radius: 50%;
+        }
+        .mx-dropdown__option[aria-selected="true"] { color: var(--t); font-weight: 800; }
+        .mx-dropdown__option[aria-selected="true"] .mx-dropdown__tick { border-color: var(--c); }
+        .mx-dropdown__option[aria-selected="true"] .mx-dropdown__tick::after {
+            content: "";
+            position: absolute;
+            inset: 4px;
+            border-radius: 50%;
+            background: var(--c);
+        }
+        .ui-grid-equal { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ui-space-2); }
+        .ui-center-row { display: flex; justify-content: center; }
+
+        /* Page rhythm and text roles */
+        .page {
+            padding-inline: var(--ui-space-4);
+        }
+
+        .app-page-header {
+            gap: var(--ui-space-3) !important;
+            margin-bottom: var(--ui-space-4) !important;
+        }
+
+        .app-page-header__title,
+        .mttl {
+            font-size: 18px !important;
+            line-height: 1.3 !important;
+            font-weight: 900 !important;
+        }
+
+        .app-page-header__sub {
+            margin-top: var(--ui-space-1) !important;
+            font-size: 13px !important;
+            line-height: 1.5 !important;
+            font-weight: 700 !important;
+        }
+
+        .stitle,
+        .pool-section-title {
+            font-size: 12px !important;
+            line-height: 1.35 !important;
+            font-weight: 700 !important;
+            letter-spacing: .08em !important;
+        }
+
+        .stitle-row {
+            gap: var(--ui-space-3) !important;
+            margin: var(--ui-space-6) 0 var(--ui-space-2) !important;
+        }
+
+        .stitle-inline,
+        .stitle-row--in-card .stitle-inline {
+            font-size: 16px !important;
+            line-height: 1.35 !important;
+            font-weight: 900 !important;
+        }
+
+        .sec-body {
+            font-size: 15px !important;
+            line-height: 1.55 !important;
+            font-weight: 500 !important;
+        }
+
+        .sm {
+            font-size: 14px !important;
+            line-height: 1.35 !important;
+        }
+
+        .xs,
+        .msub {
+            font-size: 13px !important;
+            line-height: 1.5 !important;
+            font-weight: 600 !important;
+        }
+
+        .ui-body-strong { font-weight: 700 !important; }
+        .ui-support-strong { font-weight: 700 !important; }
+        .ui-emph-800 { font-weight: 800 !important; }
+        .ui-emph-900 { font-weight: 900 !important; }
+        .ui-label-strong { font-size: 14px !important; line-height: 1.35 !important; font-weight: 800 !important; }
+        .ui-feature-title { font-size: 16px !important; line-height: 1.4 !important; font-weight: 900 !important; }
+        .ui-micro-label {
+            font-size: 11px !important;
+            line-height: 1.35 !important;
+            font-weight: 700 !important;
+            letter-spacing: .06em !important;
+            text-transform: uppercase !important;
+        }
+
+        .flabel {
+            margin-bottom: 6px !important;
+            font-size: 12px !important;
+            line-height: 1.35 !important;
+            font-weight: 700 !important;
+            letter-spacing: .06em !important;
+        }
+
+        .app-section--caption-bottom {
+            margin-bottom: var(--ui-space-6) !important;
+        }
+
+        /* Section bodies share the app's flat vertical rhythm. Domain cards may
+           carry chrome; app-section-card itself never creates a page exception. */
+        .app-section-card.app-section-card {
+            border-radius: 0 !important;
+        }
+
+        /* Action role × size × layout axes */
+        .btn[hidden] {
+            display: none !important;
+        }
+
+        .btn {
+            display: inline-flex;
+            width: auto !important;
+            min-width: 0 !important;
+            max-width: 100%;
+            height: auto !important;
+            min-height: var(--ui-control-h) !important;
+            padding: 12px 16px !important;
+            border-radius: var(--ui-radius-control) !important;
+            font-size: 14px !important;
+            line-height: 1.35 !important;
+            font-weight: 800 !important;
+            letter-spacing: .01em !important;
+            text-align: center;
+            text-decoration: none;
+            box-sizing: border-box;
+        }
+
+        .btn-w {
+            width: 100% !important;
+        }
+
+        .btn-lg {
+            min-height: var(--ui-control-lg-h) !important;
+            padding: 14px 20px !important;
+            border-radius: var(--ui-radius-control) !important;
+            font-size: 15px !important;
+        }
+
+        /* Semantic family for any action that creates, submits, or confirms a
+           financial transaction. Labels and roles may vary; geometry may not. */
+        .action-transaction.btn {
+            width: 100% !important;
+            min-height: var(--ui-control-lg-h) !important;
+            padding: 14px 20px !important;
+            border-radius: var(--ui-radius-control) !important;
+            font-size: 15px !important;
+        }
+
+        .btn-compact {
+            min-height: var(--ui-touch-h) !important;
+            padding: 8px 12px !important;
+            font-size: 13px !important;
+        }
+
+        .btn-icon,
+        button.btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: var(--ui-touch-h) !important;
+            min-width: var(--ui-touch-h) !important;
+            height: var(--ui-touch-h) !important;
+            min-height: var(--ui-touch-h) !important;
+            padding: 10px !important;
+            border-radius: var(--ui-radius-control) !important;
+            box-sizing: border-box;
+        }
+
+        .btn-choice.active,
+        .btn-choice[aria-pressed="true"] {
+            color: var(--c);
+            border-color: color-mix(in srgb, var(--c) 38%, transparent);
+            background: color-mix(in srgb, var(--c) 14%, var(--surface-btn));
+            box-shadow: none;
+        }
+
+        .btn:focus-visible,
+        .ui-segment:focus-visible,
+        .tab-btn:focus-visible,
+        .lp-shape-btn:focus-visible,
+        .ccy-pill:focus-visible,
+        .act-btn:focus-visible,
+        .show-more-btn:focus-visible,
+        .max-link:focus-visible,
+        .ui-text-action:focus-visible,
+        .flip-btn:focus-visible,
+        .ntab:focus-visible,
+        .ex-ccy-dd__btn:focus-visible,
+        .ex-ccy-dd__row:focus-visible,
+        .finput:focus-visible,
+        .fsel:focus-visible {
+            outline: 2px solid var(--c) !important;
+            outline-offset: 2px !important;
+        }
+
+        /* One peer-selector component across the app. Page tabs and compact
+           mutually-exclusive choices share this shell and item geometry.
+           Semantic market direction may change tone, never shape. */
+        .ui-segmented {
+            display: grid !important;
+            grid-auto-flow: column;
+            grid-auto-columns: minmax(0, 1fr);
+            gap: var(--ui-space-1) !important;
+            margin: 0;
+            padding: var(--ui-space-1) !important;
+            border: 1px solid var(--border-subtle) !important;
+            border-radius: var(--ui-radius-control) !important;
+            background: var(--surface-input) !important;
+            box-shadow: none !important;
+        }
+
+        /* ONE selector definition (SEL-001, founder decision 2026-07-17): every unselected
+           option keeps readable text, a neutral filled surface, and a visible border, so no
+           choice can ever look disabled. The retired --section variant folded in here. */
+        .mx-seg-icon { margin-right: 7px; font-size: 1.05em; line-height: 1; }
+        .ui-segment {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-width: 0 !important;
+            min-height: var(--ui-touch-h) !important;
+            padding: 10px 12px !important;
+            border: 1px solid color-mix(in srgb, var(--m) 42%, transparent) !important;
+            border-radius: 10px !important;
+            background: color-mix(in srgb, var(--m) 10%, var(--surface-btn)) !important;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, .03) !important;
+            color: var(--t) !important;
+            font-size: 13px !important;
+            line-height: 1.35 !important;
+            font-weight: 800 !important;
+            font-family: inherit;
+            text-align: center;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        .ui-segment:hover {
+            color: var(--t) !important;
+            border-color: color-mix(in srgb, var(--c) 30%, transparent) !important;
+            background: color-mix(in srgb, var(--c) 9%, var(--surface-btn)) !important;
+        }
+
+        .ui-segment.active,
+        .ui-segment[aria-pressed="true"] {
+            color: var(--c) !important;
+            border-color: color-mix(in srgb, var(--c) 38%, transparent) !important;
+            background: color-mix(in srgb, var(--c) 14%, var(--surface-btn)) !important;
+            box-shadow: none !important;
+        }
+
+        /* SEL-005 Ticket tabs (founder-approved 2026-07-17): quiet in-form configuration
+           choice. Text tabs on a shared baseline rule; the active tab gets primary text
+           and an accent underline. Deliberately the LOWEST-weight selector. */
+        .ui-tabs {
+            display: flex;
+            gap: var(--ui-space-4);
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: var(--ui-space-3);
+        }
+        .ui-tab {
+            appearance: none;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            min-height: var(--ui-touch-h);
+            padding: 10px 2px;
+            color: var(--m);
+            font-family: inherit;
+            font-size: 13px;
+            line-height: 1.35;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .ui-tab:hover { color: var(--t); }
+        .ui-tab.active,
+        .ui-tab[aria-pressed="true"] {
+            color: var(--t);
+            border-bottom-color: var(--c);
+        }
+        .ui-tab:focus-visible {
+            outline: 2px solid var(--c) !important;
+            outline-offset: 2px !important;
+        }
+
+        /* SEL-006 Side toggle (founder-approved 2026-07-17): the market-direction choice.
+           The LOUDEST selector in the app — the selected side solid-fills its semantic
+           tone with app-background text. Used only for Buy/Sell. */
+        .ui-side-toggle {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: var(--ui-space-2);
+        }
+        .ui-side {
+            appearance: none;
+            min-height: var(--ui-touch-h);
+            border-radius: var(--ui-radius-control);
+            border: 1px solid var(--border-subtle);
+            background: var(--surface-btn);
+            color: var(--m);
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.35;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .ui-side:hover { color: var(--t); }
+        .ui-side.active[data-side="buy"],
+        .ui-side[aria-pressed="true"][data-side="buy"],
+        .ui-side.active[data-side="mint"],
+        .ui-side[aria-pressed="true"][data-side="mint"] {
+            background: var(--gr);
+            border-color: var(--gr);
+            color: var(--bg);
+        }
+        .ui-side.active[data-side="sell"],
+        .ui-side[aria-pressed="true"][data-side="sell"],
+        .ui-side.active[data-side="burn"],
+        .ui-side[aria-pressed="true"][data-side="burn"] {
+            background: var(--rd);
+            border-color: var(--rd);
+            color: var(--bg);
+        }
+        .ui-side:focus-visible {
+            outline: 2px solid var(--c) !important;
+            outline-offset: 2px !important;
+        }
+
+        .ccy-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: var(--ui-touch-h) !important;
+            padding: 8px 12px !important;
+            border-radius: 999px !important;
+            font-size: 13px !important;
+            line-height: 1.35 !important;
+            box-sizing: border-box;
+        }
+
+        .act-btn {
+            min-height: 72px;
+            padding: 12px 8px !important;
+            border-radius: var(--ui-radius-control) !important;
+        }
+
+        .page button {
+            min-width: var(--ui-touch-h);
+            min-height: var(--ui-touch-h);
+        }
+
+        .show-more-btn {
+            min-height: var(--ui-touch-h) !important;
+            padding: 10px 12px !important;
+            border-radius: var(--ui-radius-control) !important;
+            font-size: 13px !important;
+            line-height: 1.35 !important;
+            font-weight: 800 !important;
+            box-sizing: border-box;
+        }
+
+        .flip-btn {
+            width: var(--ui-touch-h) !important;
+            min-width: var(--ui-touch-h) !important;
+            height: var(--ui-touch-h) !important;
+            min-height: var(--ui-touch-h) !important;
+            padding: 0 !important;
+            border-radius: var(--ui-radius-control) !important;
+            margin: var(--ui-space-2) auto !important;
+            font-family: inherit;
+        }
+
+        .circle-orb,
+        .step-action-link,
+        .exchange-link {
+            min-width: var(--ui-touch-h) !important;
+            min-height: var(--ui-touch-h) !important;
+            box-sizing: border-box;
+        }
+
+        .step-action-link,
+        .exchange-link {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .max-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: var(--ui-touch-h);
+            min-height: var(--ui-touch-h);
+            margin-block: -12px;
+            padding: 0 4px;
+            font-size: 13px !important;
+            line-height: 1.35 !important;
+            box-sizing: border-box;
+        }
+
+        /* Text action (ACT-008): the named low-risk local command. Accent by default;
+           compose semantic tone classes where the role differs. */
+        .ui-text-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: var(--ui-touch-h);
+            min-height: var(--ui-touch-h);
+            margin: 0;
+            padding: 0 4px;
+            border: none;
+            background: none;
+            color: var(--c);
+            font-family: inherit;
+            font-size: 13px !important;
+            line-height: 1.35 !important;
+            font-weight: 800;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+        .ui-text-action:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+        /* Fields and dropdowns */
+        /* The browser default follows the field text colour, which made the insertion point
+           disappear into white text on Android. The registered field focus colour is the one
+           stable, high-contrast locator for every editable text surface. */
+        input:is([type="text"], [type="email"], [type="password"], [type="url"], [type="tel"], [type="number"], [type="search"]):not(:disabled):not([readonly]),
+        textarea:not(:disabled):not([readonly]),
+        [contenteditable="true"] {
+            caret-color: var(--c) !important;
+        }
+
+        .finput,
+        .fsel,
+        .ex-ccy-dd__btn,
+        .page input:is([type="text"], [type="email"], [type="password"], [type="url"], [type="tel"], [type="number"], [type="search"]),
+        .modal input:is([type="text"], [type="email"], [type="password"], [type="url"], [type="tel"], [type="number"], [type="search"]),
+        .page select,
+        .modal select {
+            min-height: var(--ui-control-h) !important;
+            padding: 12px 14px !important;
+            border-radius: var(--ui-radius-control) !important;
+            font-size: 15px !important;
+            line-height: 1.5 !important;
+            font-weight: 700 !important;
+            box-sizing: border-box;
+        }
+
+        .fsel,
+        .page select,
+        .modal select {
+            padding-right: 40px !important;
+        }
+
+        .ex-input {
+            min-height: var(--ui-control-lg-h) !important;
+            padding: 12px 14px !important;
+            border-radius: var(--ui-radius-control) !important;
+            box-sizing: border-box;
+        }
+
+        textarea,
+        textarea.finput {
+            min-height: 104px !important;
+            padding: 12px 14px !important;
+            border-radius: var(--ui-radius-control) !important;
+            font-size: 15px !important;
+            line-height: 1.5 !important;
+            box-sizing: border-box;
+        }
+
+        .ex-ccy-dd__panel,
+        .app-lang-menu,
+        .topbar-channel-menu {
+            padding: var(--ui-space-2) !important;
+            border-radius: var(--ui-radius-card) !important;
+        }
+
+        .ex-ccy-dd__row,
+        .app-lang-option,
+        .topbar-channel-option {
+            min-height: var(--ui-touch-h) !important;
+            padding: 10px 12px !important;
+            border-radius: 10px !important;
+            font-size: 13px !important;
+            line-height: 1.35 !important;
+            box-sizing: border-box;
+        }
+
+        /* Surfaces, overlays, and data rows */
+        .merchant-promo-card,
+        .mcard,
+        .prop-card,
+        .treasury-snap-card,
+        .liab-visual-card,
+        .faucet-token-card,
+        .tv81-chart-panel,
+        .tv81-book-panel,
+        .tv81-ticket-panel,
+        .tv81-truth-panel,
+        .tv81-liquidity-card {
+            border-radius: var(--ui-radius-card) !important;
+        }
+
+        .modal,
+        .modal.welcome,
+        .mback.centered .modal,
+        .stables-msgbox {
+            border-radius: var(--ui-radius-modal) !important;
+            padding: 20px 18px 24px !important;
+        }
+
+        .tx-row,
+        .ccy-sec-row,
+        .ccy-row,
+        .invest-row,
+        .contact-row {
+            min-height: 52px;
+            border-radius: var(--ui-radius-control) !important;
+        }
+
+        .tv81-book-row,
+        .tv81-truth-row {
+            min-height: 40px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Repeated icon-only actions share one touch target. */
+        .ccy-edit-pen,
+        .app-lang-globe-btn,
+        .faucet-pour-status-card__close {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: var(--ui-touch-h) !important;
+            min-width: var(--ui-touch-h) !important;
+            height: var(--ui-touch-h) !important;
+            min-height: var(--ui-touch-h) !important;
+            padding: 10px !important;
+            border-radius: var(--ui-radius-control) !important;
+            box-sizing: border-box;
+        }
+
+        /* Wallet edit-mode row controls share the icon-action touch target but keep
+           their state-driven visibility: they render only while wallet edit is on. */
+        .ccy-row-toggle,
+        .ccy-row-star {
+            align-items: center !important;
+            justify-content: center !important;
+            width: var(--ui-touch-h) !important;
+            min-width: var(--ui-touch-h) !important;
+            height: var(--ui-touch-h) !important;
+            min-height: var(--ui-touch-h) !important;
+            padding: 10px !important;
+            border-radius: var(--ui-radius-control) !important;
+            box-sizing: border-box;
+        }
+
+        /* The pinned 44 px hide-toggle needs matching reserved row space in edit mode. */
+        body.wallet-edit-on #ccyList .ccy-sec-row {
+            padding-right: 64px !important;
+        }
+
+        .sync-pill,
+        .stables-node-cluster-pill {
+            min-height: var(--ui-touch-h) !important;
+            border-radius: var(--ui-radius-control) !important;
+        }
+
+        .ntab {
+            min-width: var(--ui-touch-h);
+            min-height: 56px;
+            padding: 6px 8px !important;
+            border-radius: var(--ui-radius-control) !important;
+        }
+
+        .nlabel {
+            font-size: 11px !important;
+            line-height: 1.2;
+        }
+
+        [data-flag] img,
+        .ccy-pill img[src*="flagcdn.com"] {
+            width: 16px !important;
+            height: 12px !important;
+            border-radius: 2px !important;
+            object-fit: cover;
+        }
+
+        /* Named asset scale: sizing belongs to the asset role, not the page. */
+        .asset-brand-shell {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .asset-brand-modal {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            object-fit: contain;
+        }
+
+        .asset-icon-inline,
+        .currency-prefix-icon {
+            width: 16px;
+            height: 16px;
+            object-fit: contain;
+        }
+
+        .asset-control-icon {
+            display: block;
+            width: 20px;
+            height: 20px;
+            border-radius: var(--ui-radius-sm);
+            object-fit: contain;
+        }
+
+        .asset-token-icon {
+            display: block;
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        .asset-avatar-small {
+            display: block;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--ui-radius-sm);
+            object-fit: cover;
+        }
+
+        .asset-avatar-standard {
+            display: block;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .currency-prefix-icon,
+        .currency-prefix-flag,
+        .currency-prefix-fallback {
+            display: inline-flex;
+            margin-right: 6px;
+            vertical-align: -2px;
+        }
+
+        .currency-prefix-icon {
+            border-radius: var(--ui-space-1);
+        }
+
+        .currency-prefix-icon--custom {
+            object-fit: cover;
+        }
+
+        .currency-prefix-flag {
+            width: 16px;
+            height: 12px;
+            border-radius: 2px;
+            object-fit: cover;
+            vertical-align: -1px;
+        }
+
+        .currency-prefix-fallback {
+            align-items: center;
+            justify-content: center;
+            min-width: 16px;
+            height: 16px;
+            padding: 0 var(--ui-space-1);
+            border: 1px solid var(--border-accent-soft);
+            border-radius: var(--ui-space-1);
+            background: var(--surface-accent-soft);
+            color: var(--t);
+            font-size: 10px;
+            line-height: 1;
+            font-weight: 900;
+        }
+
+        .asset-media-responsive {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .asset-media-contain {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+
+        .asset-avatar-fill {
+            display: none;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 519px) {
+            .page {
+                padding-inline: var(--ui-space-4) !important;
+            }
+
+            .btn-w {
+                flex-basis: 100% !important;
+            }
+
+            .ui-field-row {
+                grid-template-columns: minmax(0, 1fr) auto;
+            }
+
+            .modal .ui-action-stack,
+            .modal [style*="flex-direction:column"] {
+                gap: var(--ui-space-2) !important;
+            }
+        }
+
+        @media (min-width: 760px) {
+            .btn-compact {
+                min-height: 40px !important;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .btn,
+            .ui-segment,
+            .tab-btn,
+            .lp-shape-btn,
+            .act-btn,
+            .flip-btn,
+            .ntab {
+                transition-duration: .01ms !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+
+/* A platform that carries its own node has nothing to connect to. Surfaces whose whole
+   purpose is reaching a node over the network are removed there, never shown inert.
+   Set by stablesApplySelfHostedNodeUi() from stablesHostsOwnNodeChannel(). */
+html.stables-self-hosted-node [data-requires-node-connection] { display: none !important; }
+
+        /* ---- DAT-002 Data table (registered 2026-09-03): rows a person compares and picks from. -- */
+        .ui-data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .ui-data-table__th {
+            color: var(--m);
+            font-size: 10px;
+            font-weight: 750;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            text-align: left;
+            padding: 6px 8px;
+            white-space: nowrap;
+        }
+        .ui-data-table__th.ui-data-table__num { text-align: right; }
+        .ui-data-table__row > td {
+            padding: 8px;
+            min-height: 44px;
+            height: 44px;
+            border-top: 1px solid var(--border-accent-faint);
+            vertical-align: middle;
+            color: var(--t);
+        }
+        .ui-data-table__num { text-align: right; font-variant-numeric: tabular-nums; }
+        .ui-data-table__pick { width: 44px; text-align: center; }
+        .ui-data-table__pick input[type="checkbox"] { margin: 0; }
+        .ui-data-table__row.is-picked > td { background: rgba(103, 232, 249, .06); }
+        .ui-data-table__muted { color: var(--m); font-size: 12px; }
+
+        /* A row of the notes list on Wallet management: one token, its count and total, and the
+           row's trailing action (law 33). BLK-008 rhythm, hairline tops. */
+        .wm-note-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            min-height: 52px;
+            padding: 8px 0;
+            border-top: 1px solid var(--border-accent-faint);
+        }
+        .wm-note-row:first-child { border-top: 0; }
+        .wm-note-row__text { min-width: 0; flex: 1 1 auto; }
+        .wm-note-row__sub { display: block; margin-top: 2px; }
+
+        /* A transaction between this wallet and itself (combining or splitting notes): neither
+           incoming nor outgoing, so neither the green nor the red, and no sign. */
+        .tx-ic.self-ic { background: rgba(103, 232, 249, .10); }
+        .tx-amt.self { color: var(--t); }

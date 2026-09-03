@@ -14,7 +14,13 @@
   ];
   const KIND_ACTIVE = ['comment', 'improvement', 'bug', 'other'];
 
-  const APP_PAGE_OPTIONS = [
+  const PLATFORM_OPTIONS = [
+    { id: 'web', label: 'Web app (browser)' },
+    { id: 'minidapp', label: 'MiniDapp (Minima hub zip)' },
+    { id: 'android', label: 'Android app (APK)' }
+  ];
+
+  const MINIDAPP_PAGE_OPTIONS = [
     { id: 'wallet', label: 'Wallet' },
     { id: 'invest', label: 'Invest' },
     { id: 'exchange', label: 'Exchange' },
@@ -38,26 +44,34 @@
     { id: 'feedback', label: 'Feedback' }
   ];
 
-  const ANDROID_EXTRA_PAGE_OPTIONS = [
+  const ANDROID_PAGE_OPTIONS = MINIDAPP_PAGE_OPTIONS.map(function (o) {
+    return { id: 'android:' + o.id, label: o.label };
+  }).concat([
     { id: 'android:native-shell', label: 'Native shell (install, permissions)' },
     { id: 'android:apk-update', label: 'APK update (Settings)' },
     { id: 'android:embedded-node', label: 'Embedded Minima node' }
-  ];
+  ]);
 
   const WEB_PAGE_OPTIONS = [
-    { id: 'web:homepage', label: 'Homepage' },
-    { id: 'web:links', label: 'Links hub' },
-    { id: 'web:playing-field', label: 'Playing field' },
-    { id: 'web:circular-economy', label: 'Circular economy' },
-    { id: 'web:banking-system', label: 'Banking system infographic' },
-    { id: 'web:ambassadors-program', label: 'Ambassadors program' },
-    { id: 'web:onchain-watch', label: 'Minima onchain watch' },
-    { id: 'web:agent-chat', label: 'StablesAgent web chat' },
-    { id: 'web:council-navigation', label: 'Council navigation system' },
-    { id: 'web:council-dashboard', label: 'Council dashboard' },
-    { id: 'web:communication-plan', label: 'Communication plan' },
-    { id: 'web:brand-assets', label: 'Brand assets' }
+    { id: 'homepage', label: 'Homepage' },
+    { id: 'links', label: 'Links hub' },
+    { id: 'playing-field', label: 'Playing field' },
+    { id: 'circular-economy', label: 'Circular economy' },
+    { id: 'banking-system', label: 'Banking system infographic' },
+    { id: 'ambassadors-program', label: 'Ambassadors program' },
+    { id: 'onchain-watch', label: 'Minima onchain watch' },
+    { id: 'agent-chat', label: 'StablesAgent web chat' },
+    { id: 'council-navigation', label: 'Council navigation system' },
+    { id: 'council-dashboard', label: 'Council dashboard' },
+    { id: 'communication-plan', label: 'Communication plan' },
+    { id: 'brand-assets', label: 'Brand assets' }
   ];
+
+  const PAGE_OPTIONS_BY_PLATFORM = {
+    web: WEB_PAGE_OPTIONS,
+    minidapp: MINIDAPP_PAGE_OPTIONS,
+    android: ANDROID_PAGE_OPTIONS
+  };
 
   function getFeedbackDbUrl() {
     var c = window.STABLES_CONFIG || {};
@@ -167,28 +181,45 @@
     setDisplay('feedbackGroupOtherHint', domain === 'other');
   }
 
-  function buildPageSelectOptions() {
-    function optionRows(pages) {
-      return pages
-        .map(function (o) {
-          return '<option value="' + o.id + '">' + o.label + '</option>';
-        })
-        .join('');
+  function buildPlatformSelectOptions() {
+    return PLATFORM_OPTIONS.map(function (o) {
+      return '<option value="' + o.id + '">' + o.label + '</option>';
+    }).join('');
+  }
+
+  function buildPageSelectOptions(platform) {
+    var pages = PAGE_OPTIONS_BY_PLATFORM[platform] || [];
+    return pages.map(function (o) {
+      return '<option value="' + o.id + '">' + o.label + '</option>';
+    }).join('');
+  }
+
+  function updateFeedbackSendButtonTone() {
+    var consent = el('feedbackStructConsent');
+    var btn = el('feedbackStructSend');
+    if (!btn) return;
+    var canSend = !!(consent && consent.checked) && !!getFeedbackSubmitUrl();
+    btn.disabled = !canSend;
+    btn.classList.remove('btn-primary', 'btn-disabled');
+    btn.classList.add(canSend ? 'btn-primary' : 'btn-disabled');
+    btn.setAttribute('aria-disabled', canSend ? 'false' : 'true');
+  }
+
+  function updateFeedbackAppPageSelect() {
+    var platformEl = el('feedbackStructAppPlatform');
+    var pageEl = el('feedbackStructAppPage');
+    if (!platformEl || !pageEl) return;
+    var platform = platformEl.value || '';
+    var prev = pageEl.value;
+    pageEl.innerHTML =
+      '<option value="">Choose page…</option>' + (platform ? buildPageSelectOptions(platform) : '');
+    pageEl.disabled = !platform;
+    if (prev && platform) {
+      var still = Array.prototype.some.call(pageEl.options, function (opt) {
+        return opt.value === prev;
+      });
+      if (still) pageEl.value = prev;
     }
-    var androidPages = APP_PAGE_OPTIONS.map(function (o) {
-      return { id: 'android:' + o.id, label: o.label };
-    }).concat(ANDROID_EXTRA_PAGE_OPTIONS);
-    return (
-      '<optgroup label="Android app">' +
-      optionRows(androidPages) +
-      '</optgroup>' +
-      '<optgroup label="MiniDapp">' +
-      optionRows(APP_PAGE_OPTIONS) +
-      '</optgroup>' +
-      '<optgroup label="Web">' +
-      optionRows(WEB_PAGE_OPTIONS) +
-      '</optgroup>'
-    );
   }
 
   function buildFeedbackFormHtml() {
@@ -227,10 +258,14 @@
       '<option value="smart_contract">Smart contract</option>' +
       '<option value="other">Other</option></select></div>' +
       '<div id="feedbackGroupApp"  style="display:none">' +
-      '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Platform and page</label>' +
-      '<select class="fsel" id="feedbackStructAppPage" style="width:100%;margin-bottom:10px" aria-label="Platform and page">' +
-      '<option value="">Choose platform and page…</option>' +
-      buildPageSelectOptions() +
+      '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Platform</label>' +
+      '<select class="fsel" id="feedbackStructAppPlatform" style="width:100%;margin-bottom:10px" aria-label="Platform">' +
+      '<option value="">Choose platform…</option>' +
+      buildPlatformSelectOptions() +
+      '</select>' +
+      '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Page</label>' +
+      '<select class="fsel" id="feedbackStructAppPage" style="width:100%;margin-bottom:10px" aria-label="Page" disabled>' +
+      '<option value="">Choose page…</option>' +
       '</select>' +
       '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Section (short hint)</label>' +
       '<input class="finput" id="feedbackStructAppSection" type="text" placeholder="e.g. Coverage fund card" style="width:100%;margin-bottom:10px" />' +
@@ -265,7 +300,7 @@
       '<label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:14px">' +
       '<input type="checkbox" id="feedbackStructConsent" style="margin-top:4px;flex-shrink:0" />' +
       '<span class="xs mu" style="line-height:1.45;font-weight:800;color:var(--t)">I confirm this message is OK to publish on GitHub, contains no personal secrets, and I understand anyone can read it (including any optional address or contact I add).</span></label>' +
-      '<button type="button" id="feedbackStructSend" class="btn btn-w" style="width:100%;margin-bottom:10px" onclick="window.feedbackSend()">Send</button>' +
+      '<button type="button" id="feedbackStructSend" class="btn btn-w btn-disabled" style="width:100%;margin-bottom:10px" disabled onclick="window.feedbackSend()">Send</button>' +
       '<a href="' +
       dbUrl +
       '" id="feedbackPublicDbLink" target="_blank" rel="noopener noreferrer" class="btn btn-g btn-w" style="display:block;width:100%;text-align:center;box-sizing:border-box;text-decoration:none;padding:14px 16px;font-size:14px;font-weight:900;border-radius:16px">See what others sent (GitHub)</a>' +
@@ -316,9 +351,17 @@
 
     var appCtx = { page_id: null, section_hint: null, element_hint: null };
     if (domain === 'app') {
-      var pid = el('feedbackStructAppPage').value;
-      if (!pid) return { error: 'Choose a platform and page.' };
-      appCtx.page_id = pid;
+      var platform = (el('feedbackStructAppPlatform') && el('feedbackStructAppPlatform').value) || '';
+      var page = (el('feedbackStructAppPage') && el('feedbackStructAppPage').value) || '';
+      if (!platform) return { error: 'Choose a platform.' };
+      if (!page) return { error: 'Choose a page.' };
+      if (platform === 'web') {
+        appCtx.page_id = 'web:' + page;
+      } else if (platform === 'android') {
+        appCtx.page_id = page.indexOf('android:') === 0 ? page : 'android:' + page;
+      } else {
+        appCtx.page_id = page;
+      }
       appCtx.section_hint = (el('feedbackStructAppSection').value || '').trim() || null;
       appCtx.element_hint = (el('feedbackStructAppElement').value || '').trim() || null;
     }
@@ -481,6 +524,7 @@
         el('feedbackStructContact').value = '';
         el('feedbackStructMinimaAddr').value = '';
         el('feedbackStructConsent').checked = false;
+        updateFeedbackSendButtonTone();
       })
       .catch(function (e) {
         var msg = e && e.message ? String(e.message) : 'Send failed';
@@ -493,8 +537,8 @@
       })
       .finally(function () {
         if (btn) {
-          btn.disabled = !getFeedbackSubmitUrl();
           btn.textContent = 'Send';
+          updateFeedbackSendButtonTone();
         }
       });
   };
@@ -514,7 +558,13 @@
     var d = root.querySelector('#feedbackStructDomain');
     if (d) d.addEventListener('change', updateFeedbackTopicUI);
     if (d && !d.value) d.value = 'general_concept';
+    var platform = root.querySelector('#feedbackStructAppPlatform');
+    if (platform) platform.addEventListener('change', updateFeedbackAppPageSelect);
+    var consent = root.querySelector('#feedbackStructConsent');
+    if (consent) consent.addEventListener('change', updateFeedbackSendButtonTone);
     updateFeedbackTopicUI();
+    updateFeedbackAppPageSelect();
+    updateFeedbackSendButtonTone();
   }
 
   window.renderFeedbackPage = function renderFeedbackPage() {

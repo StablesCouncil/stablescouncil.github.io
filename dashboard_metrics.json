@@ -23,7 +23,8 @@
     "Public Feedback",
     "StablesAgent Interaction",
     "Navi Progress",
-    "Council Formation"
+    "Council Formation",
+    "Merchant Network"
   ],
   "metrics": [
     {
@@ -1294,6 +1295,1155 @@
       "indicatorGroups": [
         "Users"
       ]
+    },
+    {
+      "id": "channel_selector_implemented",
+      "category": "App Demo Readiness",
+      "name": "Channel selector implemented",
+      "description": "Whether the Showcase / Demo selector is implemented in the Demo app.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-network-mds-runtime-truth",
+        "technical-next-demo-cycle"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "channel_selector_confirmed",
+      "category": "App Demo Readiness",
+      "name": "Channel selector confirmed",
+      "description": "Whether the Showcase / Demo selector has been reviewed and confirmed in the Core release board.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-network-mds-runtime-truth",
+        "technical-next-demo-cycle"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "channel_truth_model_defined",
+      "category": "App Demo Readiness",
+      "name": "Channel truth model defined",
+      "description": "Whether the Showcase versus Demo truth model is implemented and visible enough for review.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-network-mds-runtime-truth",
+        "technical-next-demo-cycle",
+        "financial-demo-token-ui-scope"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "demo_minima_wallet_baseline_verified",
+      "category": "App Demo Readiness",
+      "name": "Demo MINIMA wallet baseline verified",
+      "description": "Whether native MINIMA send / receive has been reviewed with a connected node and protected from regression.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-demo-minima-wallet-baseline",
+        "technical-wallet-send-receive-qr-surface"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "demo_onboarding_message_ready",
+      "category": "App Demo Readiness",
+      "name": "Demo onboarding message ready",
+      "description": "Whether the first Demo onboarding message explains zip install, MINIMA wallet scope, and mint / burn UI test scope.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-demo-minima-wallet-baseline",
+        "technical-next-demo-cycle"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "demo_release_notes_ready",
+      "category": "App Demo Readiness",
+      "name": "Demo release notes ready",
+      "description": "Whether the next Demo review package has release notes or changelog summary ready.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-next-demo-cycle",
+        "community-demo-release-rhythm"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "send_cleanup_review_state",
+      "category": "App UX Review",
+      "name": "Send cleanup review state",
+      "description": "Review state for the Send modal cleanup in the Core release board.",
+      "unit": "state",
+      "latestValue": "Confirmed",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-demo-minima-wallet-baseline",
+        "technical-wallet-send-receive-qr-surface"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "fx_activity_visibility_review_state",
+      "category": "App UX Review",
+      "name": "FX activity visibility review state",
+      "description": "Review state for showing exchange activity in wallet recent activity and Activity history.",
+      "unit": "state",
+      "latestValue": "Confirmed",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-demo-minima-wallet-baseline",
+        "technical-demo-activity-history-surface"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "activity_filters_review_state",
+      "category": "App UX Review",
+      "name": "Activity filters review state",
+      "description": "Review state for Activity date, period, and timeframe filters.",
+      "unit": "state",
+      "latestValue": "Confirmed",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-demo-activity-history-surface",
+        "technical-demo-minima-wallet-baseline"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "amount_selector_review_state",
+      "category": "App UX Review",
+      "name": "Amount selector review state",
+      "description": "Review state for amount selector, dropdown, and rising menu behavior across Demo flows.",
+      "unit": "state",
+      "latestValue": "Ready for review",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-demo-minima-wallet-baseline",
+        "technical-wallet-send-receive-qr-surface"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "coverage_fund_summary_order_ready",
+      "category": "Protocol Copy Alignment",
+      "name": "Coverage Fund summary order ready",
+      "description": "Whether Coverage Fund shows fund size, accumulated fees, and annualized historical return first.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-invest-coverage-fund-ui",
+        "technical-coverage-fund-performance-surface",
+        "financial-coverage-fund-cf-tokens"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "coverage_fund_label_aligned",
+      "category": "Protocol Copy Alignment",
+      "name": "Coverage Fund label aligned",
+      "description": "Whether selector and visible copy use the aligned Coverage fund label.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-invest-coverage-fund-ui",
+        "technical-coverage-fund-performance-surface"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "coverage_fund_truth_copy_aligned",
+      "category": "Protocol Copy Alignment",
+      "name": "Coverage Fund truth copy aligned",
+      "description": "Review state for junior / first-loss, cf-holder yield, and illustrative-vs-live Coverage Fund copy.",
+      "unit": "state",
+      "latestValue": "Ready for review",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-invest-coverage-fund-ui",
+        "financial-coverage-fund-cf-tokens",
+        "financial-protocol-truth-guard"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "demo_token_truth_copy_ready",
+      "category": "Protocol Copy Alignment",
+      "name": "Demo token truth copy ready",
+      "description": "Whether Demo token copy distinguishes real node data from demo-only Winiwa / Wables flows.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "financial-demo-token-ui-scope",
+        "technical-network-mds-runtime-truth"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "merchant_ramp_structure_ready",
+      "category": "App Demo Readiness",
+      "name": "Merchant-first ramp structure ready",
+      "description": "Whether On/Off Ramp is structured merchant-first before the current technical route.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-onoff-ramp-surface",
+        "technical-merchant-ramp-shops-ux",
+        "financial-merchant-first-ramp-ux"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Ambassadors / Merchant networks",
+      "indicatorGroups": [
+        "Ambassadors / Merchant networks"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "merchant_channel_ready",
+      "category": "App Demo Readiness",
+      "name": "Merchant channel ready",
+      "description": "Whether the Demo contains the baseline merchant channel surfaces needed for review.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-shops-directory-surface",
+        "technical-my-shop-merchant-tools-surface"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Ambassadors / Merchant networks",
+      "indicatorGroups": [
+        "Ambassadors / Merchant networks"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "merchant_profiles_ready",
+      "category": "App Demo Readiness",
+      "name": "Merchant profiles ready",
+      "description": "Whether Demo merchant profile code exists for the merchant directory surface.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-shops-directory-surface",
+        "community-merchant-preparation"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Ambassadors / Merchant networks",
+      "indicatorGroups": [
+        "Ambassadors / Merchant networks"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "merchant_rating_surface_ready",
+      "category": "App Demo Readiness",
+      "name": "Merchant rating surface ready",
+      "description": "Whether Demo merchant rating / review surface code exists.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-merchant-wallet-validation-ux",
+        "technical-shops-directory-surface"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Ambassadors / Merchant networks",
+      "indicatorGroups": [
+        "Ambassadors / Merchant networks"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "merchant_validation_surface_ready",
+      "category": "App Demo Readiness",
+      "name": "Merchant validation surface ready",
+      "description": "Whether Demo merchant validation surface code exists.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-merchant-wallet-validation-ux",
+        "community-merchant-preparation"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Ambassadors / Merchant networks",
+      "indicatorGroups": [
+        "Ambassadors / Merchant networks"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "merchant_payment_request_surface_ready",
+      "category": "App Demo Readiness",
+      "name": "Merchant payment request surface ready",
+      "description": "Whether Demo invoice / merchant payment request surface exists.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-demo-invoice-merchant-qr",
+        "technical-merchant-pos-path"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Ambassadors / Merchant networks",
+      "indicatorGroups": [
+        "Ambassadors / Merchant networks"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "community_telegram_ready",
+      "category": "Group Readiness",
+      "name": "Community Telegram ready",
+      "description": "Whether the public links surface includes the community Telegram route.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-public-presence-reach"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Community / Council development",
+      "indicatorGroups": [
+        "Community / Council development"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "council_official_ready",
+      "category": "Group Readiness",
+      "name": "Council Official route ready",
+      "description": "Whether the public links surface includes the Council Official route.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-council-creation-charter"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Community / Council development",
+      "indicatorGroups": [
+        "Community / Council development"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "social_profiles_ready",
+      "category": "Group Readiness",
+      "name": "Social profiles ready",
+      "description": "Whether social profile and communication plan surfaces exist locally.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-public-presence-reach"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Community / Council development",
+      "indicatorGroups": [
+        "Community / Council development"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "communication_plan_page_ready",
+      "category": "Group Readiness",
+      "name": "Communication plan page ready",
+      "description": "Whether the public Communication Plan page exists locally.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "community-communication-plan",
+        "community-communication-platform-strategy"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Community / Council development",
+      "indicatorGroups": [
+        "Community / Council development"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "ambassador_topic_ready",
+      "category": "Ambassador Momentum",
+      "name": "Ambassador topic ready",
+      "description": "Whether the ambassador topic is present as a ready planning surface.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "community-ambassador-network"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Ambassadors / Merchant networks",
+      "indicatorGroups": [
+        "Ambassadors / Merchant networks"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "feedback_destination_ready",
+      "category": "Public Feedback",
+      "name": "Feedback destination ready",
+      "description": "Whether the Demo feedback schema / destination exists locally.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "community-public-feedback-intake",
+        "technical-feedback-submission-surface"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "github_feedback_ready",
+      "category": "Public Feedback",
+      "name": "GitHub feedback ready",
+      "description": "Whether the public feedback repository route exists locally.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "community-public-feedback-intake"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "stablesagent_ready",
+      "category": "StablesAgent Interaction",
+      "name": "StablesAgent route ready",
+      "description": "Whether the public links surface includes StablesAgent routing.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "community-social-profiles-live-registry",
+        "community-stablesagent-knowledge-loop"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "dashboard_metric_sources_ready",
+      "category": "Navi Progress",
+      "name": "Dashboard metric sources ready",
+      "description": "Share of Dashboard metric source definitions wired for this draft.",
+      "unit": "state",
+      "latestValue": 100,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-dev-infra-tooling",
+        "technical-deployment-verification"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Community / Council development",
+      "indicatorGroups": [
+        "Community / Council development"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "showcase_live",
+      "category": "App Demo Readiness",
+      "name": "Showcase route live locally",
+      "description": "Whether the Showcase route exists in the active website tree.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-deployment-verification"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "showcase_version",
+      "category": "App Demo Readiness",
+      "name": "Showcase version",
+      "description": "Current Showcase version derived from MiniDapp versioning docs.",
+      "unit": "state",
+      "latestValue": "v00.00.00.00.03",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-network-mds-runtime-truth"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "demo_status",
+      "category": "App Demo Readiness",
+      "name": "Demo status",
+      "description": "Current overall Demo status for the next review cycle.",
+      "unit": "state",
+      "latestValue": "In progress",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "technical-next-demo-cycle",
+        "technical-network-mds-runtime-truth"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "feedback_categories_ready",
+      "category": "Public Feedback",
+      "name": "Feedback categories ready",
+      "description": "Whether structured feedback categories are ready for Demo review intake.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "community-public-feedback-intake",
+        "technical-feedback-submission-surface"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "feedback_triage_categories_ready",
+      "category": "Public Feedback",
+      "name": "Feedback triage categories ready",
+      "description": "Whether feedback triage categories are ready to route review items.",
+      "unit": "state",
+      "latestValue": "yes",
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": "2026-05-07",
+      "source": "dapp/COMMUNITY_DEMO_TASK_TRACKER.md",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "community-public-feedback-intake"
+      ],
+      "notes": "",
+      "indicatorType": "Operational Signal",
+      "indicatorRule": "Controlled internal readiness signal derived from project files, not a community outcome KPI.",
+      "valueMode": "computed",
+      "sourceDetail": "Generated from local website/Navi/Dapp sources.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Local computed",
+      "feedCadence": "On dashboard generation",
+      "dataPullStatus": "wired-local",
+      "feedNextStep": "Keep this wired through tools/generate-dashboard-state.mjs and extend the parser when the source file becomes richer."
+    },
+    {
+      "id": "test_channel_successful_actions_7d",
+      "category": "Test Channel Participation",
+      "name": "Successful Test actions (7d)",
+      "description": "Successful faucet, mint, burn, and swap actions recorded during the latest seven-day Test window.",
+      "unit": "actions",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "Test Channel collector (test-dashboard.html)",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "financial-test-channel-preparation"
+      ],
+      "notes": "Exclude identified Council automation and failed actions.",
+      "indicatorType": "KPI",
+      "indicatorRule": "Outcome signal: community Test use is not fully controlled by Stables. Count only verified successful on-chain actions and exclude identified Council automation.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Collector rollup",
+      "feedCadence": "Every 30 seconds after collector launch",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Connect the verified Test token registry and publish a sanitized collector snapshot before displaying a value.",
+      "detailUrl": "test-dashboard.html#activity",
+      "detailLabel": "Open activity detail"
+    },
+    {
+      "id": "test_channel_active_recipient_addresses_7d",
+      "category": "Test Channel Participation",
+      "name": "Active Test addresses (7d)",
+      "description": "Unique non-system addresses participating in successful Test actions during the latest seven-day window.",
+      "unit": "addresses",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "Test Channel collector (test-dashboard.html)",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "financial-test-channel-preparation"
+      ],
+      "notes": "Addresses are not people. Exclude treasury, faucet, and identified Council automation addresses.",
+      "indicatorType": "KPI",
+      "indicatorRule": "Outcome signal: participant-address activity is not fully controlled by Stables. Treat addresses as on-chain activity units, never as a people count.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Collector rollup",
+      "feedCadence": "Every 30 seconds after collector launch",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Connect the verified Test token registry and publish a sanitized collector snapshot before displaying a value.",
+      "detailUrl": "test-dashboard.html#adoption",
+      "detailLabel": "Open adoption detail"
+    },
+    {
+      "id": "test_channel_holder_addresses",
+      "category": "Test Channel Participation",
+      "name": "Test token holder addresses",
+      "description": "Unique non-treasury addresses holding one or more current Test-channel assets.",
+      "unit": "addresses",
+      "latestValue": null,
+      "previousValue": null,
+      "weeklyChange": null,
+      "history": [],
+      "lastMeasured": null,
+      "source": "Test Channel collector (test-dashboard.html)",
+      "sourceType": "local-file",
+      "relatedNaviItems": [
+        "financial-test-channel-preparation"
+      ],
+      "notes": "Addresses are not people. Deduplicate addresses across Test assets and exclude treasury-controlled holdings.",
+      "indicatorType": "KPI",
+      "indicatorRule": "Outcome signal: distribution across external addresses is not fully controlled by Stables. Do not interpret an address count as a tester count.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "primaryIndicatorGroup": "Users",
+      "indicatorGroups": [
+        "Users"
+      ],
+      "feedMode": "Collector rollup",
+      "feedCadence": "Every 30 seconds after collector launch",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Connect the verified Test token registry and publish a sanitized collector snapshot before displaying a value.",
+      "detailUrl": "test-dashboard.html#adoption",
+      "detailLabel": "Open holder detail"
     }
   ],
   "framework": {

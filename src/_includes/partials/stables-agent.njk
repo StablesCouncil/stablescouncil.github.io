@@ -1,5 +1,5 @@
 <style>
-  .agent-fab { position: fixed; bottom: 32px; right: 32px; z-index: 9000; display: flex; align-items: center; gap: 12px; cursor: pointer; border: none; background: none; padding: 0; }
+  .agent-fab { position: fixed; bottom: 32px; right: 32px; z-index: 9000; display: flex; align-items: center; gap: 12px; min-width: 58px; min-height: 58px; cursor: pointer; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; padding: 0; }
   .agent-fab-tip { background: rgba(10,14,20,0.92); border: 1px solid rgba(103,232,249,0.3); color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; padding: 8px 14px; border-radius: 10px; white-space: nowrap; opacity: 0; transform: translateX(8px); transition: all 0.25s ease; pointer-events: none; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
   .agent-fab:hover .agent-fab-tip { opacity: 1; transform: translateX(0); }
   .agent-fab-btn { width: 58px; height: 58px; border-radius: 50%; background: linear-gradient(135deg, rgba(103,232,249,0.25), rgba(167,139,250,0.25)); border: 1px solid rgba(103,232,249,0.45); box-shadow: 0 0 24px rgba(103,232,249,0.2); display: flex; align-items: center; justify-content: center; transition: transform 0.25s ease, box-shadow 0.25s ease; flex-shrink: 0; position: relative; }
@@ -54,7 +54,6 @@
   </div>
 </div>
 <button class="agent-fab" id="agentFab" onclick="toggleAgent()" aria-label="Chat with StablesAgent">
-  <span class="agent-fab-tip">Chat with StablesAgent</span>
   <div class="agent-fab-btn">
     <span class="agent-fab-pulse"></span>
     <span class="agent-fab-pulse"></span>

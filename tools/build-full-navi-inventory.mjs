@@ -9,7 +9,7 @@ const current = JSON.parse(fs.readFileSync(naviPath, "utf8"));
 const previous = new Map((current.items || []).map((item) => [item.id, item]));
 const today = "2026-05-04";
 
-const dashboardSuccessMetrics = new Set([
+const dashboardKpiMetrics = new Set([
   "x_followers",
   "x_engagement_actions",
   "instagram_followers",
@@ -49,6 +49,48 @@ const dashboardSuccessMetrics = new Set([
   "merchant_payment_requests_created",
   "merchant_validations_issued",
   "merchant_reviews_submitted",
+]);
+
+const dashboardOperationalSignals = new Set([
+  "channel_selector_implemented",
+  "channel_selector_confirmed",
+  "channel_truth_model_defined",
+  "demo_minima_wallet_baseline_verified",
+  "demo_onboarding_message_ready",
+  "demo_release_notes_ready",
+  "send_cleanup_review_state",
+  "fx_activity_visibility_review_state",
+  "activity_filters_review_state",
+  "amount_selector_review_state",
+  "coverage_fund_summary_order_ready",
+  "coverage_fund_label_aligned",
+  "coverage_fund_truth_copy_aligned",
+  "demo_token_truth_copy_ready",
+  "merchant_ramp_structure_ready",
+  "merchant_channel_ready",
+  "merchant_profiles_ready",
+  "merchant_rating_surface_ready",
+  "merchant_validation_surface_ready",
+  "merchant_payment_request_surface_ready",
+  "community_telegram_ready",
+  "council_official_ready",
+  "social_profiles_ready",
+  "communication_plan_page_ready",
+  "ambassador_topic_ready",
+  "feedback_destination_ready",
+  "github_feedback_ready",
+  "stablesagent_ready",
+  "dashboard_metric_sources_ready",
+  "showcase_live",
+  "showcase_version",
+  "demo_status",
+  "feedback_categories_ready",
+  "feedback_triage_categories_ready",
+]);
+
+const dashboardMetricIds = new Set([
+  ...dashboardKpiMetrics,
+  ...dashboardOperationalSignals,
 ]);
 
 const categories = [
@@ -178,7 +220,7 @@ const link = {
   charterGovernanceAnnex: { label: "Charter draft (internal - public shortly): Annex C governance transition", path: "2_current/stream_3_governance/prod_stables_charter/stables_charter.md#annex-c--governance-transition-roadmap" },
   charterAnchoringAnnex: { label: "Charter draft (internal - public shortly): Annex D anchoring protocol", path: "2_current/stream_3_governance/prod_stables_charter/stables_charter.md#annex-d--anchoring-protocol-specification" },
   charterCompanionFounding: { label: "Charter companion (internal): founding decisions and Council limits", path: "2_current/stream_3_governance/prod_stables_charter/stables_charter_companion.md#3-foundational-decisions-taken" },
-  /** Extended charter draft (internal governance papers) — L1 truth, Instant Balance, Omnia evaluation, fee integrity */
+  /** Extended charter draft (internal governance papers)  -  L1 truth, Instant Balance, Omnia evaluation, fee integrity */
   charterFeeIntegrity210: { label: "Charter draft (extended internal): Article II.10 no trusted balances and fee integrity", path: "1_development/stream_3_governance/prod_governance_papers/stables_charter.md#ii10-no-trusted-balances-and-fee-integrity" },
   charterOmniaEval335: { label: "Charter draft (extended internal): Article III.3.5 Omnia and Instant Balance evaluation", path: "1_development/stream_3_governance/prod_governance_papers/stables_charter.md#iii35-payment-capacity-instant-balance-and-omnia-evaluation" },
   charterAnnexEOmnia: { label: "Charter draft (extended internal): Annex E payment capacity and Omnia handover", path: "1_development/stream_3_governance/prod_governance_papers/stables_charter.md#annex-e--payment-capacity-instant-balance-and-omnia-handover" },
@@ -598,7 +640,7 @@ function card(input) {
     charterRefs: input.charterRefs || charterRefsFor(input),
     dappRefs: input.dappRefs || dappRefsFor(input),
     riskRefs: input.riskRefs || riskRefsFor(input),
-    metrics: (input.metrics || prior.metrics || []).filter((metricId) => dashboardSuccessMetrics.has(metricId)),
+    metrics: (input.metrics || prior.metrics || []).filter((metricId) => dashboardMetricIds.has(metricId)),
     lastUpdated: today,
     appPhases,
     streams: input.streams || [input.stream],

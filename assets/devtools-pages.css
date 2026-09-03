@@ -1,4 +1,4 @@
-/* Onchain tooling page styles — panels, forms, and utilities. Title stack (h1 + .subtitle)
+/* Onchain tooling page styles  -  panels, forms, and utilities. Title stack (h1 + .subtitle)
    comes from site-chrome.css via main > .container > .title-block. */
 
 body.site-chrome-body {
@@ -258,7 +258,7 @@ body.site-chrome-body {
     margin: 0 auto 1rem;
 }
 
-/* Query row under chart — same panel, left-aligned fields */
+/* Query row under chart  -  same panel, left-aligned fields */
 .devtools-holdings-query-inline {
     text-align: left;
     max-width: 640px;

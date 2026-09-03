@@ -491,7 +491,12 @@
     persistUserActivityToStorage();
     if (typeof window.renderActivity === 'function') window.renderActivity();
     if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
-    if (typeof window.stablesRenderPendingIncomingIndicator === 'function') window.stablesRenderPendingIncomingIndicator();
+    if (typeof window.stablesRenderPendingBalanceState === 'function') window.stablesRenderPendingBalanceState();
+    try {
+      if (changed > 0 && typeof window.stablesPullBlockAndBalanceFromMds === 'function') {
+        window.stablesPullBlockAndBalanceFromMds();
+      }
+    } catch (_) { /* ignore */ }
     return changed;
   }
   window.stablesUpsertUserActivityRows = upsertUserActivityRows;
@@ -971,6 +976,10 @@
     _txSyncInFlight = false;
     if (typeof window.renderActivity === 'function') window.renderActivity();
     if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
+    try {
+      if (typeof window.stablesPullBlockAndBalanceFromMds === 'function') window.stablesPullBlockAndBalanceFromMds();
+    } catch (_) { /* ignore */ }
+    if (typeof window.stablesRenderPendingBalanceState === 'function') window.stablesRenderPendingBalanceState();
 
     if (!silent) {
       if (status) {
@@ -1200,41 +1209,93 @@
     return { ok: false, reason: 'notfound' };
   };
 
+  /** True when an on-chain MINIMA row is still awaiting the user's confirmation target. */
+  function isMinimaTxProcessing(x) {
+    if (!x || x.ccy !== 'MINIMA' || !x.minimaOnChain || deletedTx.has(x.id)) return false;
+    if (String(x.status) === 'Pending') return true;
+    const c = txConfirmations(x);
+    return c !== null && c < CONFIRM_TARGET;
+  }
+
   /**
-   * Shows a small indicator under the hero balance when there are incoming MINIMA payments
-   * detected on the network but not yet confirmed (so the user knows the pending amount is
-   * NOT included in the total balance yet). Hides itself once everything is confirmed.
+   * Pending MINIMA balance adjustments while txs confirm.
+   * incoming: add when not yet mined (conf 0 / Pending).
+   * outgoing: subtract when node may still show pre-send balance (conf 0 / Pending / optimistic row).
+   * Once mined (conf >= 1), node sendable already reflects the tx; no double adjustment.
    */
-  function renderPendingIncomingIndicator() {
-    const el = document.getElementById('wHeroPendingIncoming');
-    if (!el) return;
-    let sum = 0;
+  function getPendingMinimaBalanceAdjustments() {
+    let incoming = 0;
+    let outgoing = 0;
     let count = 0;
+    let minConf = CONFIRM_TARGET;
+    let maxConf = 0;
     activitySource().forEach(x => {
-      if (!x || deletedTx.has(x.id)) return;
-      if (x.ccy === 'MINIMA' && x.dir === 'in' && String(x.status) === 'Pending') {
-        const v = Math.abs(Number(x.amt) || 0);
-        if (v > 0) { sum += v; count++; }
+      if (!isMinimaTxProcessing(x)) return;
+      const v = Math.abs(Number(x.amt) || 0);
+      if (!(v > 0)) return;
+      count++;
+      const c = txConfirmations(x);
+      const conf = c === null ? 0 : c;
+      const unmined = conf === 0 || String(x.status) === 'Pending';
+      if (x.dir === 'in' && unmined) incoming += v;
+      else if (x.dir === 'out' && (unmined || isOptimisticOutRow(x))) outgoing += v;
+      if (c !== null) {
+        minConf = Math.min(minConf, c);
+        maxConf = Math.max(maxConf, c);
       }
     });
-    if (count > 0 && sum > 0) {
-      const amtStr = sum >= 1
-        ? sum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-        : sum.toFixed(6);
-      const label = count > 1 ? (count + ' incoming payments') : 'Incoming';
-      el.textContent = label + ' +' + amtStr + ' MINIMA, not yet in your total';
-      el.style.display = 'block';
-    } else {
+    return {
+      incoming: incoming,
+      outgoing: outgoing,
+      count: count,
+      processing: count > 0,
+      minConf: count > 0 ? minConf : CONFIRM_TARGET,
+      maxConf: maxConf,
+      target: CONFIRM_TARGET
+    };
+  }
+  window.stablesGetPendingMinimaBalanceAdjustments = getPendingMinimaBalanceAdjustments;
+
+  function fmtPendingMinimaAmt(n) {
+    const v = Math.abs(Number(n) || 0);
+    if (v >= 1) return v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return v.toFixed(6);
+  }
+
+  /**
+   * Pulse hero balance while MINIMA txs confirm; show status line with block progress.
+   */
+  function renderPendingBalanceState() {
+    const el = document.getElementById('wHeroPendingIncoming');
+    const wTotal = document.querySelector('.w-total');
+    const adj = getPendingMinimaBalanceAdjustments();
+    if (wTotal) {
+      wTotal.classList.toggle('w-total--processing', !!adj.processing);
+    }
+    if (!el) return;
+    if (!adj.processing) {
       el.style.display = 'none';
       el.textContent = '';
+    } else {
+      const parts = [];
+      if (adj.incoming > 0) {
+        parts.push('+' + fmtPendingMinimaAmt(adj.incoming) + ' MINIMA incoming');
+      }
+      if (adj.outgoing > 0) {
+        parts.push('-' + fmtPendingMinimaAmt(adj.outgoing) + ' MINIMA outgoing');
+      }
+      const confShown = Math.min(Math.max(0, adj.maxConf), adj.target);
+      const confLine = 'Confirming · ' + confShown + '/' + adj.target + ' blocks';
+      el.textContent = (parts.length ? parts.join(' · ') + ' · ' : '') + confLine;
+      el.style.display = 'block';
     }
-    // Respect the hide-amounts toggle (mirror the hero balance's blur state).
     try {
       const total = document.querySelector('.w-total');
       el.classList.toggle('bal-hidden', !!(total && total.classList.contains('bal-hidden')));
     } catch (_) { /* ignore */ }
   }
-  window.stablesRenderPendingIncomingIndicator = renderPendingIncomingIndicator;
+  window.stablesRenderPendingBalanceState = renderPendingBalanceState;
+  window.stablesRenderPendingIncomingIndicator = renderPendingBalanceState;
 
   // Debounced live re-sync of node history, fired on NEWBALANCE / NEWBLOCK.
   let _liveResyncTid = null;
@@ -1889,6 +1950,8 @@
         : ((_confN === 0 ? 'Awaiting confirmation' : 'Confirming') + ' · ' + _confN + '/' + CONFIRM_TARGET + ' blocks'));
     const canRateMerchant = !!SHOP_PROFILES[tx.counterparty] && tx.dir === 'out';
     const feeDisp = (Number(tx.fee) || 0).toFixed(2);
+    const txIcon = String(tx.icon || (tx.dir === 'in' ? '↙' : '↗'));
+    const txIconClass = tx.dir === 'in' ? 'in-ic' : 'out-ic';
     const txHash = String(tx.explorerTxId || '');
     const hasRealExplorer = !!tx.minimaOnChain && isExplorerTxpowId(txHash);
     const tradeIdBlock = hasRealExplorer
@@ -1901,7 +1964,7 @@
         : `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Trade ID</div><button class="btn" style="width:auto;padding:0;border:none;background:none;font-size:12px;font-weight:900;word-break:break-all;color:var(--c);text-decoration:underline;text-align:left" onclick="openTxExplorer()">${escUi(tx.explorerTxId || tx.id)}</button></div>`);
     const body = `<div  style="margin-bottom:8px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:${statusColor};display:inline-block"></span><span class="xs mu">${statusText}</span></div>
       <div  style="margin-bottom:16px;padding:0 4px">
-        <div class="fbet"><div><div  style="font-size:16px;font-weight:900;color:var(--t)">${tx.title}</div><div class="xs mu"  style="margin-top:2px">${tx.date}</div></div><div  style="text-align:right"><div class="tx-amt ${tx.amt >= 0 ? 'pos' : 'neg'} bal-amount">${tx.amt >= 0 ? '+' : '−'}${Math.abs(tx.amt).toFixed(2)} ${tx.ccy}</div><div class="xs mu">Fee ${feeDisp} ${tx.ccy}</div></div></div>
+        <div class="fbet"><div style="display:flex;align-items:center;gap:10px"><div class="tx-ic ${txIconClass}" style="flex-shrink:0">${escUi(txIcon)}</div><div><div  style="font-size:16px;font-weight:900;color:var(--t)">${tx.title}</div><div class="xs mu"  style="margin-top:2px">${tx.date}</div></div></div><div  style="text-align:right"><div class="tx-amt ${tx.amt >= 0 ? 'pos' : 'neg'} bal-amount">${tx.amt >= 0 ? '+' : '−'}${Math.abs(tx.amt).toFixed(2)} ${tx.ccy}</div><div class="xs mu">Fee ${feeDisp} ${tx.ccy}</div></div></div>
       </div>
       <div  style="margin-bottom:16px;padding:0 4px">
         <div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Contact / Address</div>

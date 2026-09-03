@@ -16,7 +16,7 @@ window.STABLES_CONFIG = {
       whatChanged:
         'Example when an update ships: security fixes, mandatory protocol UI changes, or critical Minima MDS fixes.',
       details:
-        'Install the current showcase package from dapp/1-showcase/latest-version (zip name matches the published five-segment label), or use Settings and updates.'
+        'Install the current showcase package from the direct download link below, or use Settings and updates.'
     }
   },
   ACTIVITY_PAGE_SIZE: 25,
@@ -39,8 +39,8 @@ window.STABLES_CONFIG = {
   VAULT_SOFT_REMINDER_LAST_KEY: 'stables_vault_soft_reminder_last_ts_v1',
   /** Days between soft reminders when user opted in. */
   VAULT_SOFT_REMINDER_INTERVAL_DAYS: 60,
-  /** Public demo: placeholder location for latest MiniDapp package (opens GitHub for now). */
-  MDS_ZIP_URL: 'https://github.com/StablesCouncil/stablescouncil.github.io/tree/main/dapp/1-showcase/latest-version',
+  /** Public showcase: direct MiniDapp package download. */
+  MDS_ZIP_URL: 'https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/1-showcase/latest-version/Stables_v0.0.0.0.3.mds.zip',
   /**
    * Stables Charter on GitHub (Markdown). Governing text for how the Council and community run the protocol.
    * Point this at the published file in your org repo when it is live (path below is a placeholder you can change).
@@ -92,7 +92,7 @@ window.STABLES_CONFIG = {
   /** How often to refresh spot price for Treasury stress slider (ms). */
   WINIWA_PRICE_POLL_MS: 120000,
   /**
-   * When true (default), Mint/Burn vault actions skip Council Executive role — for browser/local demo.
+   * When true (default), Mint/Burn vault actions skip Council Executive role  -  for browser/local demo.
    * Set false in builds where multisig gating should apply.
    */
   DEMO_VAULT_UNLOCK: true,

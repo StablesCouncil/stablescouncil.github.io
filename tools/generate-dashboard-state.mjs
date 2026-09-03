@@ -25,7 +25,7 @@ const INDICATOR_GROUPS = [
   "Ambassadors / Merchant networks",
 ];
 
-const SUCCESS_METRIC_IDS = new Set([
+const KPI_METRIC_IDS = new Set([
   "x_followers",
   "x_engagement_actions",
   "instagram_followers",
@@ -66,6 +66,51 @@ const SUCCESS_METRIC_IDS = new Set([
   "merchant_payment_requests_created",
   "merchant_validations_issued",
   "merchant_reviews_submitted",
+  "test_channel_successful_actions_7d",
+  "test_channel_active_recipient_addresses_7d",
+  "test_channel_holder_addresses",
+]);
+
+const OPERATIONAL_SIGNAL_IDS = new Set([
+  "channel_selector_implemented",
+  "channel_selector_confirmed",
+  "channel_truth_model_defined",
+  "demo_minima_wallet_baseline_verified",
+  "demo_onboarding_message_ready",
+  "demo_release_notes_ready",
+  "send_cleanup_review_state",
+  "fx_activity_visibility_review_state",
+  "activity_filters_review_state",
+  "amount_selector_review_state",
+  "coverage_fund_summary_order_ready",
+  "coverage_fund_label_aligned",
+  "coverage_fund_truth_copy_aligned",
+  "demo_token_truth_copy_ready",
+  "merchant_ramp_structure_ready",
+  "merchant_channel_ready",
+  "merchant_profiles_ready",
+  "merchant_rating_surface_ready",
+  "merchant_validation_surface_ready",
+  "merchant_payment_request_surface_ready",
+  "community_telegram_ready",
+  "council_official_ready",
+  "social_profiles_ready",
+  "communication_plan_page_ready",
+  "ambassador_topic_ready",
+  "feedback_destination_ready",
+  "github_feedback_ready",
+  "stablesagent_ready",
+  "dashboard_metric_sources_ready",
+  "showcase_live",
+  "showcase_version",
+  "demo_status",
+  "feedback_categories_ready",
+  "feedback_triage_categories_ready",
+]);
+
+const DASHBOARD_METRIC_IDS = new Set([
+  ...KPI_METRIC_IDS,
+  ...OPERATIONAL_SIGNAL_IDS,
 ]);
 
 function readJson(file) {
@@ -189,6 +234,15 @@ function feedPlan(metric) {
   const source = String(metric.source || "");
   const sourceType = metric.sourceType || "manual-weekly-snapshot";
   const valueMode = metric.valueMode || "manual-missing";
+
+  if (/Test Channel collector/i.test(source)) {
+    return {
+      feedMode: "Collector rollup",
+      feedCadence: "Every 30 seconds after collector launch",
+      dataPullStatus: "api-candidate",
+      feedNextStep: "Connect the verified Test token registry and publish a sanitized collector snapshot before displaying a value.",
+    };
+  }
 
   if (valueMode === "computed") {
     if (sourceType === "file" || sourceType === "local-file") {
@@ -405,7 +459,7 @@ function main() {
   const measuredAt = manual.measurementDate || "manual-date-missing";
   const snapshotMeasuredAt = snapshot.measurementDate || snapshot.generatedAt || measuredAt;
   const items = navi.items || [];
-  metricsData.metrics = (metricsData.metrics || []).filter((metric) => SUCCESS_METRIC_IDS.has(metric.id));
+  metricsData.metrics = (metricsData.metrics || []).filter((metric) => DASHBOARD_METRIC_IDS.has(metric.id));
   const metrics = metricsData.metrics;
   for (const metric of metrics) resetRuntimeMetric(metric);
   const metricsById = new Map(metrics.map((metric) => [metric.id, metric]));

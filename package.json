@@ -1,10 +1,20 @@
 {
   "name": "stablescouncil-github-io",
   "private": true,
-  "description": "Static site sources for StablesCouncil/stablescouncil.github.io (Eleventy)",
+  "description": "Canonical Stables website and local application preview source",
   "scripts": {
     "build": "eleventy",
-    "start": "eleventy --serve",
+    "start": "node ../work/tools/website/serve-local.mjs ../../website 8080",
+    "start:eleventy": "eleventy --serve",
+    "sync:secondary-chrome": "node ../work/task_merchant_owned_payment_system_repositioning/tools/sync-secondary-page-chrome.mjs",
+    "verify:secondary-chrome": "node ../work/task_merchant_owned_payment_system_repositioning/tools/verify-secondary-page-chrome.mjs",
+    "verify:secondary-chrome-runtime": "node ../work/task_merchant_owned_payment_system_repositioning/tools/verify-secondary-page-chrome-runtime.mjs",
+    "verify:new-routes": "node ../work/task_merchant_owned_payment_system_repositioning/tools/verify-new-website-route-contract.mjs",
+    "verify:review": "node ../work/task_merchant_owned_payment_system_repositioning/tools/verify-website-review-hub.mjs",
+    "verify:new-homepage": "node ../work/task_merchant_owned_payment_system_repositioning/tools/verify-new-homepage.mjs",
+    "verify:app-access": "node ../work/task_merchant_owned_payment_system_repositioning/tools/verify-app-access-page.mjs",
+    "verify:brand": "node ../work/tools/audit-brand-continuity.mjs",
+    "verify:website-candidate": "npm run verify:secondary-chrome && npm run verify:secondary-chrome-runtime && npm run verify:new-routes && npm run verify:review && npm run verify:new-homepage && npm run verify:app-access && npm run verify:brand",
     "dashboard:collect": "node tools/collect-dashboard-snapshots.mjs",
     "dashboard:generate": "node tools/generate-dashboard-state.mjs",
     "dashboard:update": "node tools/collect-dashboard-snapshots.mjs && node tools/generate-dashboard-state.mjs"

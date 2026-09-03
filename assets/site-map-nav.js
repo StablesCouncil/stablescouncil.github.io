@@ -1,17 +1,32 @@
 /**
- * Previous / Next navigation — same order as All links (links.html):
- * Home → Playing Field → Circular economy → Banking system → Ambassador Program → All links (this hub).
+ * Previous / Next navigation for the public narrative and Council sequences.
  */
 (function () {
-  var ORDER = [
-    { href: "/", label: "Home Page" },
-    { href: "/playing_field.html", label: "The Playing Field" },
-    { href: "/circulareconomy.html", label: "Stables circular economy" },
-    { href: "/bankingsystem.html", label: "Our Banking System" },
-    { href: "/ambassadorsprogramdesc.html", label: "Ambassador Program" },
-    { href: "/links.html", label: "All links" },
-    { href: "/onchain-watch.html", label: "Minima Onchain Watch" },
-  ];
+  var SEQUENCES = {
+    public: {
+      wrap: true,
+      items: [
+        { href: "/", label: "Home Page" },
+        { href: "/playing_field.html", label: "The Playing Field" },
+        { href: "/circulareconomy.html", label: "Stables circular economy" },
+        { href: "/bankingsystem.html", label: "Our Banking System" },
+        { href: "/ambassadorsprogramdesc.html", label: "Ambassador Program" },
+        { href: "/links.html", label: "All links" },
+        { href: "/onchain-watch.html", label: "Minima Onchain Watch" },
+      ],
+    },
+    council: {
+      wrap: false,
+      items: [
+        { href: "/links.html", label: "Website map" },
+        { href: "/council_navigation_system.html", label: "Navigation System" },
+        { href: "/council_dashboard.html", label: "Dashboard" },
+        { href: "/test-dashboard.html", label: "Test Channel Monitor" },
+        { href: "/communication_plan.html", label: "Communication Plan" },
+        { href: null, label: "Constitutional Charter", status: "Drafting" },
+      ],
+    },
+  };
 
   function el(tag, cls, attrs) {
     var n = document.createElement(tag);
@@ -41,24 +56,29 @@
     return a;
   }
 
-  function btnDisabled(dirLabel, targetLabel) {
+  function btnDisabled(dirLabel, targetLabel, status) {
     var s = el("span", "btn btn-secondary site-map-nav__disabled");
     s.setAttribute("aria-disabled", "true");
     s.appendChild(textSpan("site-map-nav__dir", dirLabel));
     s.appendChild(textSpan("site-map-nav__target", targetLabel));
+    if (status) s.appendChild(textSpan("site-map-nav__status", status));
     return s;
   }
 
 function resolvePrevNext(nav) {
+    var sequenceName = nav.getAttribute("data-site-map-sequence") || "public";
+    var sequence = SEQUENCES[sequenceName];
+    if (!sequence) return null;
+    var order = sequence.items;
     var raw = nav.getAttribute("data-site-map-index");
     var idx = raw != null && raw !== "" ? parseInt(raw, 10) : NaN;
-    if (isNaN(idx) || idx < 0 || idx >= ORDER.length) {
+    if (isNaN(idx) || idx < 0 || idx >= order.length) {
       return null;
     }
-    var last = ORDER.length - 1;
+    var last = order.length - 1;
     return {
-      prev: idx === 0 ? null : ORDER[idx - 1],
-      next: idx === last ? ORDER[0] : ORDER[idx + 1],
+      prev: idx === 0 ? (sequence.wrap ? order[last] : null) : order[idx - 1],
+      next: idx === last ? (sequence.wrap ? order[0] : null) : order[idx + 1],
     };
   }
 
@@ -72,16 +92,20 @@ function resolvePrevNext(nav) {
 
     var row = el("div", "buttons site-map-nav__buttons");
 
-    if (pair.prev) {
+    if (pair.prev && pair.prev.href) {
       row.appendChild(btnLink(pair.prev.href, "Previous", pair.prev.label, false));
+    } else if (pair.prev) {
+      row.appendChild(btnDisabled("Previous", pair.prev.label, pair.prev.status));
     } else {
-      row.appendChild(btnDisabled("Previous", "—"));
+      row.appendChild(btnDisabled("Previous", " - "));
     }
 
-    if (pair.next) {
+    if (pair.next && pair.next.href) {
       row.appendChild(btnLink(pair.next.href, "Next", pair.next.label, true));
+    } else if (pair.next) {
+      row.appendChild(btnDisabled("Next", pair.next.label, pair.next.status));
     } else {
-      row.appendChild(btnDisabled("Next", "—"));
+      row.appendChild(btnDisabled("Next", " - "));
     }
 
     nav.appendChild(row);

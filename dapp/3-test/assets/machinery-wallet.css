@@ -1,0 +1,642 @@
+/*
+ * Machinery wallet adoption, open and lit, MIG-005.
+ *
+ * Contract: work/Machinery/projects/stables-current-app/migrations/wallet-open-and-lit-migration.v1.json
+ * Language: D021, recorded in projects/stables-north-star/visual-language.json 0.2.0
+ * Reference: projects/stables-north-star/explorations/wallet-modern.html
+ *
+ * FOLDED ONTO THE SHARED LANGUAGE LAYER (2026-07-25, founder rule).
+ * The wallet was the proof of the language and carried its own copy of the shared rules. The founder
+ * then set the general rule that elements sit directly on the app background rather than inside
+ * defined sections, and that the screen's full width is used, which had to reach the wallet as well
+ * as new pages. Keeping two copies of one language would have meant fixing it twice, so the shared
+ * rules now live in `machinery-language.css` and the wallet opts in with `data-machinery-lit`.
+ *
+ * What remains in this file is only what is genuinely particular to the Wallet: the bare screen the
+ * founder asked for, the balance hero, the two verbs, and the dialogs the wallet owns. Everything
+ * removed from here is not lost, it is the same rule now stated once for every page.
+ *
+ * This sheet still loads last, so a wallet-specific decision keeps ownership over the shared layer.
+ *
+ * Presentation only: no structure, id, route, handler, money, MDS or node change.
+ */
+
+/* ---- Bare minimum, owner direction 2026-07-25 --------------------------
+ * On the wallet the screen carries the money and nothing else. No logo, no
+ * product name, no section label above the balance, no editing affordance
+ * competing with it. Everything removed here stays present and reachable on
+ * every other page, so nothing is hidden from the product, only from this
+ * screen where it earns no place.
+ */
+
+/* ---- The mark, quietly (founder 2026-07-25) ----------------------------
+ * The wallet header was removed entirely because it competed with the balance.
+ * The founder then asked for the name and mark to be present, "simple, in the
+ * size the Connected is shown" in the reference: a small quiet line at the top
+ * corner, not a brand block. So the bar comes back at the weight of a status
+ * line. The tagline stands down, since the app does not need to sell itself to
+ * someone already looking at their money.
+ */
+body:has(#page-wallet.active) .topbar {
+  height: auto !important;
+  min-height: 0 !important;
+  padding-top: calc(var(--safe-top) + 10px) !important;
+  padding-bottom: 10px !important;
+  /* Only the name, sitting directly on the background: no bar, no glass, no
+     boundary (founder 2026-07-25). */
+  border: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+/* No connection indicator on the wallet. The connect dialog still opens by itself
+   when the node is not live, so the path stays reachable. */
+body:has(#page-wallet.active) .topbar-trailing { display: none !important; }
+
+/* The mark, the name and the line keep their own size and treatment (founder
+   2026-07-25). They are simply not in a bar: they sit on the background, on the
+   wallet only. Every other page keeps its header exactly as before. */
+
+/* Connection state stays silent while healthy and speaks only when it can change
+ * a decision, so a person is never asked to monitor infrastructure. The rule used
+ * to hide the pill outright, which also hid it in its "Connect" state, exactly
+ * when it is the thing a person needs. It now stands down only when it is a live
+ * status, never when it is an offer to act. */
+body:has(#page-wallet.active) #stablesSyncPill { display: none !important; }
+
+/* The bar carries the mark, not a boundary: no rule under it on this screen. */
+body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
+
+/* The balance needs no label above it: the hero already names the unit. */
+[data-machinery-scope="wallet"] .app-section:has(.w-hero) > .stitle-row:first-child { display: none !important; }
+
+/* The holdings list needs no name: the balance above it and the rows themselves
+   already say what they are. */
+[data-machinery-scope="wallet"] #walletCurrenciesSection > .stitle-row:first-child { display: none !important; }
+
+/* The list editing pen stands down; currencies are managed from settings. */
+[data-machinery-scope="wallet"] .ccy-edit-pen { display: none !important; }
+
+/* The activity section title row is the way into the full list; the separate
+   "View all" control is redundant once a transaction returns there by itself. */
+[data-machinery-scope="wallet"] #walletRecentList ~ * .max-link,
+[data-machinery-scope="wallet"] .stitle-row .max-link { display: none !important; }
+
+/* ---- The balance is the one large thing on the screen ------------------ *
+ * Proportions adopted from the reference (founder 2026-07-25, "I prefer the
+ * proportion presented on explorations/wallet-modern.html"): the hero is given
+ * real room above and below, and the amount is genuinely large rather than
+ * merely larger than the rows. Those two together are what make the balance
+ * read as the subject of the screen instead of the first item in a list.
+ */
+
+[data-machinery-scope="wallet"] .w-hero { padding: 62px 0 0 !important; }
+
+/* The total is painted with a gradient text fill, which ignores `color` entirely.
+   D021 gives the accent to the primary action alone, so the balance is solid white. */
+[data-machinery-scope="wallet"] .w-total {
+  background: none !important;
+  -webkit-text-fill-color: var(--mx-ink) !important;
+  color: var(--mx-ink) !important;
+  font-size: 60px !important;
+  font-weight: 750 !important;
+  letter-spacing: -.04em !important;
+  line-height: 1.02 !important;
+}
+
+/* When the total has no honest figure it says why, in the same words as the rows
+   ("Syncing…", "Proof unavailable", "Stale"). A sentence does not want the 60px
+   weight a number does, so the state word drops to a readable support size. The
+   scope prefix and !important are required to beat the rule above, which is where
+   the hero's real size is set. */
+[data-machinery-scope="wallet"] .w-total.w-total--state {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  letter-spacing: .01em !important;
+  line-height: 1.3 !important;
+  color: var(--mx-ink-muted, rgba(255, 255, 255, .62)) !important;
+  -webkit-text-fill-color: var(--mx-ink-muted, rgba(255, 255, 255, .62)) !important;
+}
+
+/* The unit is named even while the amount is still arriving, so a person always
+   knows what they are looking at rather than watching an unlabelled placeholder. */
+[data-machinery-scope="wallet"] .w-ccy {
+  display: block !important;
+  margin-top: 14px !important;
+  color: var(--mx-ink-soft) !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+}
+
+/* The balance visibility control is a real target, not a speck, and it sits
+   directly on the surface like everything else. */
+/* The founder asked for the circle to go, not for the target to shrink. It keeps
+ * the registered icon-action geometry (48 px, 10 px padding, 12 px radius, which
+ * is invisible on a transparent background) so it is one of the family rather
+ * than a local variant, and it still sits bare on the surface. */
+[data-machinery-scope="wallet"] #balHideBtn {
+  display: grid !important;
+  width: 48px !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  place-items: center !important;
+  padding: 10px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--mx-ink-soft) !important;
+  font-size: 22px !important;
+  opacity: 1 !important;
+}
+
+[data-machinery-scope="wallet"] #balHideBtn:focus-visible {
+  border-radius: 50% !important;
+  outline: 3px solid color-mix(in srgb, var(--c) 55%, transparent) !important;
+  outline-offset: 2px !important;
+}
+
+/* ---- Two verbs, side by side, one of them primary ---------------------- */
+
+/* The reference gives the two verbs the full width of the page, a 14px gap, and
+ * real air beneath them before the holdings begin. The 40px above and 44px below
+ * are what stop the balance, the verbs and the list from reading as one stack. */
+[data-machinery-scope="wallet"] .act-row {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 14px !important;
+  max-width: none !important;
+  margin: 40px 0 44px !important;
+}
+
+[data-machinery-scope="wallet"] .act-btn {
+  display: inline-flex !important;
+  min-height: 60px !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 18px !important;
+  border: 1px solid var(--mx-glass-line) !important;
+  border-radius: 16px !important;
+  background: var(--mx-glass) !important;
+  color: var(--mx-ink) !important;
+}
+
+[data-machinery-scope="wallet"] .act-btn .act-icon { display: none !important; }
+
+[data-machinery-scope="wallet"] .act-lbl {
+  color: inherit !important;
+  font-size: 17px !important;
+  font-weight: 750 !important;
+}
+
+[data-machinery-scope="wallet"] #walletSendReceiveRow .act-btn:first-child {
+  border-color: transparent !important;
+  background: var(--mx-accent) !important;
+  color: var(--mx-on-accent) !important;
+}
+
+/* ---- Holdings read as one family --------------------------------------- *
+ * Row geometry, separators and full width come from the shared language layer.
+ * What is particular here is that the primary holding is not three times the
+ * size of the others, and that no per-currency colour survives, because the
+ * accent belongs to the primary action alone.
+ */
+
+[data-machinery-scope="wallet"] .bal-amount,
+[data-machinery-scope="wallet"] .ccy-pri-bal,
+[data-machinery-scope="wallet"] .ccy-sec-usd {
+  color: var(--mx-ink) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Reference proportions: the name is 16px at 650, its qualifier 13.5px muted,
+ * the amount 16px at 700 with its converted value 13.5px muted underneath. One
+ * type scale for both the main holding and the rest, because they are the same
+ * kind of thing. */
+
+[data-machinery-scope="wallet"] .ccy-pri-name,
+[data-machinery-scope="wallet"] .ccy-sec-tag {
+  color: var(--mx-ink) !important;
+  font-size: 16px !important;
+  font-weight: 650 !important;
+  letter-spacing: -.01em !important;
+}
+
+[data-machinery-scope="wallet"] .ccy-pri-full,
+[data-machinery-scope="wallet"] .ccy-sec-name {
+  margin-top: 2px !important;
+  color: var(--mx-ink-faint) !important;
+  font-size: 13.5px !important;
+  font-weight: 400 !important;
+}
+
+[data-machinery-scope="wallet"] .ccy-pri-bal,
+[data-machinery-scope="wallet"] .ccy-sec-amt {
+  margin: 0 !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+}
+
+[data-machinery-scope="wallet"] .ccy-sec-usd {
+  margin-top: 2px !important;
+  color: var(--mx-ink-faint) !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+}
+
+/* The currency mark is a uniform glass disc, the size the reference uses, so the
+ * list reads as one family rather than as a row of differently-shaped badges.
+ * It floats so both lines of the label sit beside it, which is what the
+ * reference shows; our markup renders the mark inside the name line. */
+[data-machinery-scope="wallet"] .currency-prefix-fallback,
+[data-machinery-scope="wallet"] .currency-prefix-flag {
+  float: left;
+  box-sizing: border-box !important;
+  width: 38px !important;
+  height: 38px !important;
+  margin: 0 12px 0 0 !important;
+  border: 1px solid var(--mx-glass-line) !important;
+  border-radius: 50% !important;
+  background: var(--mx-glass) !important;
+}
+
+[data-machinery-scope="wallet"] .currency-prefix-fallback {
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+  color: var(--mx-ink) !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+}
+
+/* A flag is our identity for a fiat currency, so it keeps its own picture and
+ * simply wears the same disc as every other mark. It is held at its natural
+ * size inside the disc rather than blown up to fill it, which would be a blur:
+ * the source is a 16x12 image. */
+[data-machinery-scope="wallet"] .currency-prefix-flag {
+  padding: 12px 11px !important;
+  object-fit: contain !important;
+}
+
+/* Any residual panel behind the primary holding stands down with the rest. */
+[data-machinery-scope="wallet"] .ccy-pri-flex,
+[data-machinery-scope="wallet"] .wallet-right { background: transparent !important; }
+
+/* ---- The faucet nudge is a dialog, dismissed by clicking outside --------
+ * House rule (owner 2026-07-25): no close or X control. A person leaves a
+ * dialog by clicking away from it, the same gesture everywhere in the app.
+ * Glass needs light behind it, so the dialog carries its own small light field
+ * rather than sitting on flat dark.
+ */
+
+#walletGetWiniwaHint.mback {
+  background: color-mix(in srgb, var(--bg) 58%, transparent);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+/* The card class carries its own display:none from when it was toggled inline.
+   Inside the modal shell the overlay controls visibility, so the card must show. */
+/* A pop-up is not page content: it sits ON the page, so it needs free space at its
+ * sides to read as something lifted off the surface (founder 2026-07-25, "for
+ * element like pop-ups, it doesnt look good without a free space on the side").
+ * Full width belongs to rows and page sections, not to dialogs. */
+#walletGetWiniwaHint .ui-modal-frame,
+#walletGetWiniwaHint .wallet-onboarding-card {
+  width: auto !important;
+  max-width: none !important;
+  margin-right: 22px !important;
+  margin-left: 22px !important;
+}
+
+/* The dialog keeps the app's modal padding and radius. Bespoke numbers here made
+ * it a third modal geometry for no reason a person could see. */
+#walletGetWiniwaHint .wallet-onboarding-card {
+  display: block !important;
+  border: 1px solid var(--mx-glass-line) !important;
+  background-color: var(--mx-base) !important;
+  background-image:
+    radial-gradient(70% 50% at 12% 0%, color-mix(in srgb, var(--c) 40%, transparent), transparent 68%),
+    radial-gradient(80% 55% at 90% 100%, color-mix(in srgb, var(--pu, var(--c)) 34%, transparent), transparent 70%) !important;
+  box-shadow: inset 0 1px 0 var(--mx-glass-strong), 0 24px 60px rgba(0, 0, 0, .45) !important;
+  text-align: center;
+}
+
+#walletGetWiniwaHint .wallet-onboarding-card__icon {
+  margin-bottom: 6px;
+  font-size: 40px !important;
+}
+
+#walletGetWiniwaHint .wallet-onboarding-card__title {
+  color: var(--mx-ink) !important;
+  font-size: 22px !important;
+  font-weight: 750 !important;
+  letter-spacing: -.015em !important;
+}
+
+#walletGetWiniwaHint .wallet-onboarding-card__body {
+  margin: 10px 0 22px !important;
+  color: var(--mx-ink-soft) !important;
+  font-size: 15px !important;
+}
+
+/* One accent, used once: the only action in the dialog is the primary one. */
+#walletGetWiniwaHint .wallet-onboarding-card .btn {
+  min-height: 56px !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  background: var(--mx-accent) !important;
+  background-image: none !important;
+  color: var(--mx-on-accent) !important;
+  box-shadow: none !important;
+  font-size: 17px !important;
+  font-weight: 750 !important;
+}
+
+/* ========================================================================
+ * MIG-005 extension: the Send and Receive dialogs.
+ *
+ * These are the two verbs the wallet exists for, so they carry the same
+ * language as the page that launches them. They live outside #page-wallet
+ * in the shared modal layer, so they are addressed by id rather than by the
+ * wallet scope, and the treatment applies wherever they are opened from.
+ * Presentation only: no field, handler, id or transaction path is touched.
+ * ====================================================================== */
+
+/* Send and Receive screen presentation now lives in machinery-language.css, keyed on
+ * data-modal-shape="screen", because the currency and transaction detail screens use the
+ * same pattern. Only what is particular to these two dialogs stays below.
+ */
+
+/* The camera preview is a surface like any other, not a black hole in the page. */
+#sendModal .send-camera-strip > div {
+  border: 1px solid var(--mx-glass-line) !important;
+  background: var(--mx-glass) !important;
+}
+
+/* Back control and title, on one line, like the reference. */
+#sendModal .mx-screen-head,
+#recvModal .mx-screen-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 26px;
+}
+
+#sendModal .mx-screen-back,
+#recvModal .mx-screen-back {
+  display: grid !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  place-items: center !important;
+  margin-left: -12px !important;
+  padding: 10px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--mx-ink-soft) !important;
+  font-size: 30px !important;
+  line-height: 1 !important;
+}
+
+#sendModal .mx-screen-head .mttl,
+#recvModal .mx-screen-head .mttl { text-align: left !important; }
+
+/* Colour only. The weight stays the app's modal-title weight, because these are
+ * modal titles like the other twenty-two and a lighter one here would be a local
+ * variant of a registered type. */
+#sendModal .mttl,
+#recvModal .mttl { color: var(--mx-ink) !important; }
+
+/* Containers stand down inside the dialogs too. */
+#sendModal .card,
+#recvModal .card,
+#sendModal .app-section-card,
+#recvModal .app-section-card {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+/* Labels are labels; the accent is reserved for the commitment. */
+#sendModal .flabel,
+#recvModal .flabel,
+#sendModal .stitle,
+#recvModal .stitle,
+#sendModal .mu,
+#recvModal .mu { color: var(--mx-ink-faint) !important; }
+
+#sendModal .sec-body,
+#recvModal .sec-body,
+#sendModal .xs,
+#recvModal .xs { color: var(--mx-ink-soft) !important; }
+
+/* Fields read as glass on the lit surface, and stay clearly editable. */
+#sendModal .finput,
+#recvModal .finput,
+#sendModal select,
+#recvModal select,
+#sendModal textarea,
+#recvModal textarea {
+  border: 1px solid var(--mx-glass-line) !important;
+  background: var(--mx-glass) !important;
+  color: var(--mx-ink) !important;
+}
+
+#sendModal .finput::placeholder,
+#recvModal .finput::placeholder { color: var(--mx-ink-faint) !important; }
+
+/* Selections use the same glass, with the chosen one lifted rather than tinted. */
+#sendModal .ui-segmented,
+#recvModal .ui-segmented {
+  border: 1px solid var(--mx-glass-line) !important;
+  background: var(--mx-glass) !important;
+}
+
+#sendModal .ui-segment,
+#recvModal .ui-segment { color: rgba(255, 255, 255, .70) !important; }
+
+#sendModal .ui-segment.active,
+#recvModal .ui-segment.active {
+  border-color: transparent !important;
+  background: var(--mx-glass-strong) !important;
+  color: var(--mx-ink) !important;
+}
+
+/* One accent, used once: the action that moves money. */
+#sendModal .btn-primary,
+#recvModal .btn-primary,
+#sendModal .action-transaction,
+#recvModal .action-transaction {
+  border: 0 !important;
+  background: var(--mx-accent) !important;
+  background-image: none !important;
+  color: var(--mx-on-accent) !important;
+  box-shadow: none !important;
+  font-weight: 750 !important;
+}
+
+#sendModal .btn-secondary,
+#recvModal .btn-secondary,
+#sendModal .btn-choice,
+#recvModal .btn-choice {
+  border: 1px solid var(--mx-glass-line) !important;
+  background: var(--mx-glass) !important;
+  color: var(--mx-ink) !important;
+  box-shadow: none !important;
+}
+
+/* ---- Receive: the code is the subject, and the code is the control ------
+ * Founder direction 2026-07-25: "Large QR should not be a button, only
+ * clicking it should be the way to make it bigger." The duplicate button is
+ * gone from the markup, so the code itself has to look and behave like the
+ * control it now is: a real target, a visible press, a focus ring, and a
+ * button role announced to assistive technology.
+ */
+
+#recvModal .recv-qr-host {
+  /* It is a real button now, and a button is inline level, so it has to be made
+     block level before auto margins can centre it. */
+  display: flex !important;
+  width: 100% !important;
+  max-width: 232px !important;
+  margin: 8px auto 30px !important;
+  /* The code needs a quiet margin of its own white, or the black modules run into
+     the rounded corner and the whole thing reads as a cut-out rather than a card. */
+  padding: 14px !important;
+  border: 1px solid var(--mx-glass-line) !important;
+  border-radius: 20px !important;
+  background: var(--mx-glass) !important;
+  color: var(--mx-ink-faint) !important;
+  cursor: pointer;
+  transition: transform 120ms ease-out, background 120ms ease-out;
+}
+
+#recvModal .recv-qr-host:hover { background: rgba(255, 255, 255, .17) !important; }
+#recvModal .recv-qr-host:active { transform: scale(.985); }
+
+#recvModal .recv-qr-host:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--c) 55%, transparent) !important;
+  outline-offset: 3px !important;
+}
+
+/* While there is no address yet the frame explains itself quietly. It is a
+ * lifecycle state, not a headline. */
+#recvModal .recv-qr-host:not(.recv-qr-host--ready) {
+  cursor: default;
+  font-size: 13.5px !important;
+  line-height: 1.45 !important;
+}
+
+/* Once the code is drawn it sits on white, so a camera can always read it. */
+#recvModal .recv-qr-host--ready { background: var(--mx-ink) !important; }
+#recvModal .receive-qr { background: transparent !important; border: 0 !important; }
+
+/* ---- Receive, cleaned up ------------------------------------------------
+ * Founder 2026-07-25: the screen was a stack of equally loud boxes. It now has
+ * one subject (the code), one line of identity (the address), one optional
+ * input (the amount), and two quiet commands. Nothing else competes.
+ */
+
+/* The address is one line, not a boxed field with a button bolted to its side. */
+#recvModal .recv-addr-row {
+  align-items: center !important;
+  gap: 4px !important;
+  margin-bottom: 4px !important;
+  padding: 0 2px !important;
+  border-bottom: 1px solid var(--mx-line) !important;
+}
+
+/* Colour only. The field keeps the one registered field geometry (height, padding,
+ * radius, type size); making it look like a line is done by taking its surface
+ * away, not by giving it a size no other field in the app has. */
+#recvModal #recvAddrInput {
+  border-color: transparent !important;
+  background: transparent !important;
+  color: var(--mx-ink) !important;
+  text-align: left !important;
+}
+
+#recvModal .recv-copy-btn {
+  flex: 0 0 auto !important;
+  padding: 0 6px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--mx-accent) !important;
+  font-size: 13.5px !important;
+}
+
+/* The check is a reassurance, not a headline. */
+#recvModal #recvAddrValidateHint {
+  margin: 0 0 22px !important;
+  color: var(--mx-ink-faint) !important;
+  text-align: left !important;
+}
+
+/* Amount and its unit read as one control. */
+#recvModal .ui-field-row--mb10 { margin-bottom: 26px !important; }
+
+/* The two commands sit quietly at the end, side by side, carrying no surface. */
+#recvModal .recv-actions-row {
+  justify-content: flex-start !important;
+  gap: 18px !important;
+}
+
+#recvModal .recv-actions-row .btn {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: rgba(255, 255, 255, .72) !important;
+  font-size: 14px !important;
+  font-weight: 650 !important;
+}
+
+#recvModal .recv-actions-row .btn:hover { color: var(--mx-ink) !important; }
+
+/* ---- Send and Receive dialogs: fewer controls ---------------------------
+ * Founder direction 2026-07-25. The dialog you opened is the dialog you
+ * wanted, so it does not offer to become the other one at the top. Scanning
+ * from a saved photo is rare, so it stops looking like a primary route.
+ */
+
+/* The Send / Receive switcher at the head of each dialog stands down. */
+#sendModal > .ui-modal-frame > .modal > .ui-segmented,
+#recvModal > .ui-modal-frame > .modal > .ui-segmented { display: none !important; }
+
+/* Quick-size chips: REINSTATED in Send (founder 2026-09-02, "we need the 1/2 and
+ * max in the sending page too as we have else where, in the minting page for
+ * exemple"), reversing the 2026-07-25 direction that removed them here.
+ *
+ * The rule, so this stops being a per-dialog opinion: quick amounts belong to a
+ * field that SPENDS a balance you already hold, because halving or maxing only
+ * means something against a known available figure. Mint, Burn and Send all
+ * spend, so all three carry them. Receive asks someone else for an amount, has
+ * no available figure of its own, and therefore has no chips to hide — it
+ * carries no .max-link markup at all, which is why no rule is needed for it. */
+
+/* Scanning from a photo is a fallback, not an offer: plain text, no button. */
+#sendModal #sendCamPhotoBtn {
+  width: auto !important;
+  min-height: 44px !important;
+  padding: 0 4px !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--mx-ink-faint) !important;
+  font-size: 14px !important;
+  font-weight: 650 !important;
+  text-decoration: underline;
+}

@@ -13,7 +13,7 @@
  *   GITHUB_FEEDBACK_OWNER   (default StablesCouncil)
  *   GITHUB_FEEDBACK_REPO    (default stablescouncil.github.io)
  *   GITHUB_FEEDBACK_PATH    (default feedback/submissions)
- *   FEEDBACK_SUBMISSIONS_DIR — if set, used as source when no CLI path is given
+ *   FEEDBACK_SUBMISSIONS_DIR  -  if set, used as source when no CLI path is given
  *
  * Exit 0 always unless fatal misconfig; prints summary of uploaded / skipped / failed.
  */

@@ -1,0 +1,505 @@
+/*
+ * Stables Machinery product adapter v1
+ * Source contracts:
+ *   work/Machinery/elements/element-registry.v1.json
+ *   work/Machinery/projects/stables-current-app/migrations/trade-journey-migration.v1.json
+ *
+ * The active app palette remains authoritative. This layer standardizes reusable element identity,
+ * typography, geometry, interaction targets, scrolling, states, and zoom behavior. Legacy classes
+ * remain during controlled migration because runtime code still uses some of them as hooks.
+ */
+
+:root {
+    --mx-background: var(--bg);
+    --mx-surface: var(--surface-card);
+    --mx-surface-strong: var(--surface-elevated);
+    --mx-text: var(--t);
+    --mx-text-secondary: var(--m);
+    --mx-accent: var(--c);
+    --mx-border: var(--border-subtle);
+    --mx-focus: var(--c);
+    --mx-danger: var(--rd);
+    --mx-success: var(--gr);
+    --mx-warning: var(--am);
+    --mx-touch: 48px;
+    --mx-control: 56px;
+    --mx-row: 64px;
+    --mx-radius-control: 12px;
+    --mx-radius-panel: 18px;
+}
+
+.mx-action,
+.mx-segment,
+.mx-tab,
+.mx-side {
+    touch-action: manipulation;
+}
+
+.mx-action:focus-visible,
+.mx-segment:focus-visible,
+.mx-tab:focus-visible,
+.mx-side:focus-visible,
+.mx-field__control:focus-visible,
+.mx-range__control:focus-visible {
+    outline: 3px solid var(--mx-focus);
+    outline-offset: 2px;
+}
+
+.mx-segments {
+    min-height: var(--mx-control);
+}
+
+.mx-segments > .mx-segment {
+    min-height: var(--mx-touch);
+    font-size: 16px;
+    font-weight: 750;
+}
+
+[data-machinery-scope="trade"] {
+    min-width: 0;
+    color: var(--mx-text);
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+[data-machinery-scope="trade"] .mx-section-surface {
+    min-width: 0;
+}
+
+[data-machinery-scope="trade"] .mx-section-surface[data-treatment="open"] {
+    box-shadow: none;
+}
+
+[data-machinery-scope="trade"] .mx-type {
+    min-width: 0;
+}
+
+[data-machinery-scope="trade"] .mx-type[data-role="section-title"] {
+    color: var(--mx-text);
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-transform: none;
+}
+
+[data-machinery-scope="trade"] .stitle.mx-type[data-role="section-title"] {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+}
+
+[data-machinery-scope="trade"] .mx-type[data-role="support"],
+[data-machinery-scope="trade"] .mx-field__message {
+    color: var(--mx-text-secondary);
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+[data-machinery-scope="trade"] .mx-type[data-role="field-label"],
+[data-machinery-scope="trade"] .mx-field__label {
+    color: var(--mx-text);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+[data-machinery-scope="trade"] .mx-type[data-role="micro"] {
+    color: var(--mx-text-secondary);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+[data-machinery-scope="trade"] .mx-num {
+    font-variant-numeric: tabular-nums;
+}
+
+[data-machinery-scope="trade"] .mx-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--mx-touch);
+    min-height: var(--mx-control) !important;
+    padding: 0 20px;
+    border-radius: var(--mx-radius-control);
+    font-size: 16px !important;
+    font-weight: 750;
+    line-height: 1.2;
+}
+
+[data-machinery-scope="trade"] .mx-action[data-size="compact"] {
+    min-height: var(--mx-touch) !important;
+}
+
+[data-machinery-scope="trade"] .mx-action[data-layout="full"] {
+    width: 100%;
+}
+
+[data-machinery-scope="trade"] .mx-action[data-role="quiet"] {
+    width: auto;
+    padding-inline: 4px;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    color: var(--mx-accent);
+}
+
+[data-machinery-scope="trade"] .mx-action[data-role="quick-amount"] {
+    min-height: var(--mx-touch) !important;
+    padding-inline: 12px;
+    border: 1px solid var(--mx-border);
+    background: var(--surface-input);
+    box-shadow: none;
+    color: var(--mx-accent);
+    font-size: 14px !important;
+}
+
+[data-machinery-scope="trade"] .mx-action[disabled],
+[data-machinery-scope="trade"] .mx-action[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: .48;
+}
+
+[data-machinery-scope="trade"] .mx-field {
+    display: grid;
+    gap: 8px;
+}
+
+[data-machinery-scope="trade"] .mx-field__control {
+    width: 100%;
+    min-width: 0;
+    min-height: var(--mx-control) !important;
+    margin: 0;
+    padding: 10px 16px;
+    border: 1px solid var(--mx-border);
+    border-radius: var(--mx-radius-control);
+    background: var(--surface-input);
+    color: var(--mx-text);
+}
+
+/* The amount was set to scale with the viewport, reaching 32px, which made an input
+ * inside a form shout louder than anything around it (founder 2026-07-25: "big ugly
+ * font numbers"). An amount deserves emphasis, not the size of a page title: the
+ * balance on the wallet is the one large number in the product. Fixed at 20px, still
+ * tabular and still the heaviest thing in its own row. */
+[data-machinery-scope="trade"] .mx-field__control[data-role="financial-amount"] {
+    font-size: 20px !important;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+[data-machinery-scope="trade"] .mx-field__control:focus {
+    border-color: var(--mx-focus);
+    box-shadow: 0 0 0 1px var(--mx-focus);
+}
+
+[data-machinery-scope="trade"] .mx-tabs,
+[data-machinery-scope="trade"] .mx-side-choice {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+[data-machinery-scope="trade"] .mx-tab,
+[data-machinery-scope="trade"] .mx-side {
+    min-width: 0;
+    min-height: var(--mx-touch);
+    padding: 8px 12px;
+    border-radius: var(--mx-radius-control);
+    font-size: 16px;
+    font-weight: 750;
+}
+
+[data-machinery-scope="trade"] .mx-range {
+    min-width: 0;
+}
+
+[data-machinery-scope="trade"] .mx-range__control {
+    min-width: 0;
+    min-height: var(--mx-touch);
+    accent-color: var(--mx-accent);
+}
+
+[data-machinery-scope="trade"] .mx-range__value {
+    color: var(--mx-text);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+    font-weight: 750;
+}
+
+[data-machinery-scope="trade"] .mx-scroll {
+    overscroll-behavior: contain;
+    scrollbar-color: var(--mx-border) transparent;
+    scrollbar-width: thin;
+}
+
+[data-machinery-scope="trade"] .mx-scroll--y {
+    overflow-y: auto;
+}
+
+[data-machinery-scope="trade"] .mx-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+[data-machinery-scope="trade"] .mx-scroll::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: var(--mx-border);
+    background-clip: padding-box;
+}
+
+[data-machinery-scope="trade"] .mx-status {
+    color: var(--mx-text-secondary);
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+[data-machinery-scope="trade"] .mx-status[data-tone="warning"] {
+    color: var(--mx-warning);
+}
+
+[data-machinery-scope="trade"] .tv81-market-bar {
+    gap: 12px;
+    padding: 14px 16px;
+}
+
+[data-machinery-scope="trade"] .tv81-pair-btn.mx-action {
+    min-height: var(--mx-touch);
+    padding-inline: 0;
+}
+
+[data-machinery-scope="trade"] .tv81-pair-name {
+    font-size: 18px;
+}
+
+[data-machinery-scope="trade"] .tv81-market-stat-value.mx-type {
+    margin-top: 4px;
+    color: var(--mx-text);
+    font-size: 16px;
+    font-weight: 750;
+}
+
+[data-machinery-scope="trade"] .tv81-chart-panel,
+[data-machinery-scope="trade"] .tv81-book-panel,
+[data-machinery-scope="trade"] .tv81-ticket-panel {
+    padding: 16px;
+}
+
+[data-machinery-scope="trade"] .tv81-panel-head {
+    min-height: 32px;
+    margin-bottom: 12px;
+}
+
+[data-machinery-scope="trade"] .tv81-chart-empty,
+[data-machinery-scope="trade"] .tv81-book-empty,
+[data-machinery-scope="trade"] .tv81-empty-state {
+    padding: 16px 8px;
+    font-size: 14px;
+}
+
+[data-machinery-scope="trade"] .tv81-chart-range,
+[data-machinery-scope="trade"] .tv81-liquidity-range {
+    font-size: 12px;
+}
+
+[data-machinery-scope="trade"] .tv81-book-head {
+    padding: 0 8px 8px;
+    letter-spacing: .04em;
+}
+
+[data-machinery-scope="trade"] .tv81-book-row {
+    align-items: center;
+    min-height: var(--mx-touch);
+    padding: 8px;
+    font-size: 14px;
+    line-height: 1.25;
+}
+
+[data-machinery-scope="trade"] .tv81-book-mid {
+    min-height: var(--mx-touch);
+    padding: 10px 8px;
+    font-size: 14px;
+}
+
+[data-machinery-scope="trade"] .tv81-book-mid strong {
+    font-size: 16px;
+}
+
+[data-machinery-scope="trade"] .tv81-ticket-heading {
+    margin-bottom: 12px;
+}
+
+[data-machinery-scope="trade"] .tv81-ticket-field {
+    margin-bottom: 16px;
+}
+
+[data-machinery-scope="trade"] .tv81-ticket-field .mx-field__label {
+    margin: 0;
+    font-size: 14px;
+}
+
+[data-machinery-scope="trade"] .tv81-ticket-field .mx-field__control {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-height: var(--mx-control) !important;
+    padding: 10px 16px;
+    font-size: 20px !important;
+}
+
+[data-machinery-scope="trade"] .tv81-ticket-balance.mx-field__message {
+    margin-top: 0;
+    font-size: 14px;
+}
+
+[data-machinery-scope="trade"] .ui-amount-chips {
+    gap: 8px;
+    margin-top: 8px;
+}
+
+[data-machinery-scope="trade"] .ui-amount-chip.mx-action {
+    min-width: 0;
+    min-height: var(--mx-touch);
+    padding-inline: 4px;
+}
+
+[data-machinery-scope="trade"] .tv81-ticket-quote {
+    min-height: var(--mx-control);
+    margin: 0 0 12px;
+    padding: 12px;
+    border-radius: var(--mx-radius-control);
+    font-size: 14px;
+}
+
+[data-machinery-scope="trade"] .tv81-ticket-panel > .mx-action[data-role="transaction"],
+[data-machinery-scope="trade"] .tv81-liquidity-form > .mx-action[data-role="transaction"] {
+    min-height: var(--mx-control) !important;
+    font-size: 16px !important;
+}
+
+[data-machinery-scope="trade"] .tv81-truth-panel {
+    padding: 16px;
+    border-radius: var(--mx-radius-panel);
+}
+
+[data-machinery-scope="trade"] .tv81-truth-list {
+    max-height: 256px;
+}
+
+[data-machinery-scope="trade"] .tv81-order-row,
+[data-machinery-scope="trade"] .tv81-trade-row {
+    min-height: var(--mx-row);
+    padding: 10px 0;
+    font-size: 14px;
+}
+
+[data-machinery-scope="trade"] .tv81-row-meta,
+[data-machinery-scope="trade"] .tv81-row-action.btn {
+    font-size: 12px;
+}
+
+[data-machinery-scope="trade"] .tv81-row-action.btn {
+    min-height: var(--mx-touch);
+    min-width: var(--mx-touch);
+}
+
+[data-machinery-scope="trade"] .tv81-liquidity-section > .mx-type[data-role="section-title"] {
+    margin-bottom: 12px !important;
+}
+
+[data-machinery-scope="trade"] .tv81-liquidity-card {
+    padding: 16px;
+    border-radius: var(--mx-radius-panel);
+}
+
+[data-machinery-scope="trade"] .tv81-liquidity-display {
+    padding: 16px;
+    border-radius: var(--mx-radius-panel);
+}
+
+[data-machinery-scope="trade"] .tv81-liquidity-bins.mx-range {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) 28px;
+    align-items: center;
+    gap: 12px;
+    margin-block: 12px;
+    font-size: 14px;
+}
+
+[data-machinery-scope="trade"] .tv81-liquidity-form {
+    gap: 20px;
+    margin-top: 20px;
+}
+
+[data-machinery-scope="trade"] .tv81-liquidity-field .mx-field__label {
+    margin: 0;
+    font-size: 14px;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+[data-machinery-scope="trade"] .tv81-liquidity-field .mx-field__control {
+    min-height: var(--mx-control) !important;
+    font-size: 20px !important;
+}
+
+[data-machinery-scope="trade"] .tv81-liquidity-balance.mx-field__message {
+    margin-top: 0;
+    font-size: 14px;
+}
+
+[data-machinery-scope="trade"] .tv81-liquidity-balance .mx-action {
+    min-height: var(--mx-touch);
+    padding-inline: 12px;
+}
+
+@media (max-width: 520px) {
+    [data-machinery-scope="trade"] .tv81-market-bar {
+        padding: 12px 16px;
+    }
+
+    [data-machinery-scope="trade"] .tv81-market-stats {
+        gap: 10px;
+        padding-top: 10px;
+    }
+
+    [data-machinery-scope="trade"] .tv81-chart-panel,
+    [data-machinery-scope="trade"] .tv81-book-panel,
+    [data-machinery-scope="trade"] .tv81-ticket-panel,
+    [data-machinery-scope="trade"] .tv81-liquidity-card,
+    [data-machinery-scope="trade"] .tv81-liquidity-display {
+        padding: 16px;
+    }
+
+    [data-machinery-scope="trade"] .tv81-liquidity-range {
+        font-size: 12px;
+    }
+
+    [data-machinery-scope="trade"] .tv81-ticket-balance.mx-field__message {
+        flex-wrap: wrap;
+        gap: 4px 8px;
+    }
+
+    [data-machinery-scope="trade"] .tv81-ticket-balance .ui-inline-cluster {
+        width: 100%;
+        max-width: 100%;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    [data-machinery-scope="trade"] *,
+    [data-machinery-scope="trade"] *::before,
+    [data-machinery-scope="trade"] *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+    }
+}

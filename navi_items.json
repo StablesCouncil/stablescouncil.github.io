@@ -169,7 +169,15 @@
         "Operational Risk - key management, infrastructure failure",
         "Confidence Risk - prolonged loss of merchant and participant confidence"
       ],
-      "metrics": [],
+      "metrics": [
+        "demo_minima_wallet_baseline_verified",
+        "demo_onboarding_message_ready",
+        "send_cleanup_review_state",
+        "fx_activity_visibility_review_state",
+        "activity_filters_review_state",
+        "amount_selector_review_state",
+        "demo_status"
+      ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
         "Demo"
@@ -284,7 +292,10 @@
         "Operational Risk - key management, infrastructure failure",
         "Confidence Risk - prolonged loss of merchant and participant confidence"
       ],
-      "metrics": [],
+      "metrics": [
+        "activity_filters_review_state",
+        "fx_activity_visibility_review_state"
+      ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
         "Demo"
@@ -796,7 +807,11 @@
         "Market Depth Risk - insufficient Minima liquidity for large redemptions",
         "Early-Stage Volatility - low collateral base amplifying backing ratio swings"
       ],
-      "metrics": [],
+      "metrics": [
+        "coverage_fund_summary_order_ready",
+        "coverage_fund_label_aligned",
+        "coverage_fund_truth_copy_aligned"
+      ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
         "Demo"
@@ -1666,7 +1681,9 @@
         "Operational Risk - key management, infrastructure failure",
         "Transition Risk - dependencies on external systems during the bridge period"
       ],
-      "metrics": [],
+      "metrics": [
+        "dashboard_metric_sources_ready"
+      ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
         "Showcase",
@@ -1953,7 +1970,10 @@
         "Competitive Attack - regulatory pressure, merchant disruption, MINIMA price manipulation, FUD campaigns",
         "Confidence Risk - prolonged loss of merchant and participant confidence"
       ],
-      "metrics": [],
+      "metrics": [
+        "demo_status",
+        "dashboard_metric_sources_ready"
+      ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
         "Showcase",
@@ -2088,7 +2108,10 @@
         "Operational Risk - key management, infrastructure failure",
         "Transition Risk - dependencies on external systems during the bridge period"
       ],
-      "metrics": [],
+      "metrics": [
+        "channel_truth_model_defined",
+        "demo_status"
+      ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
         "Showcase",
@@ -2213,8 +2236,12 @@
         "Transition Risk - dependencies on external systems during the bridge period"
       ],
       "metrics": [
+        "channel_truth_model_defined",
+        "demo_onboarding_message_ready",
+        "demo_release_notes_ready",
         "feedback_items_routed_to_tracker",
-        "github_feedback_open"
+        "github_feedback_open",
+        "demo_status"
       ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
@@ -2359,6 +2386,308 @@
       "navigationRole": "later-work",
       "nextStep": "Create the Test readiness row that records the selected standalone-node path, owner, and decision status.",
       "proof": "This card is complete only when the Test readiness row names the chosen node path, the source of the decision, and the package criterion it unlocks.",
+      "phaseSummary": "Test"
+    },
+    {
+      "id": "technical-standalone-app-embedded-node",
+      "title": "Standalone Stables App With Embedded Node",
+      "stream": "Technical Stream",
+      "phase": "Standalone Stables App With Embedded Node",
+      "type": "work-item",
+      "status": "Not started",
+      "progress": 0,
+      "category": "Dapp Channels And Development Infrastructure",
+      "objective": "Prototype a self-contained Stables app that embeds the clean Minima core node and serves the Stables UI to it over local RPC, removing the dependency on a separately installed MDS host.",
+      "summary": "Use the clean minima-core node (no MDS, no Maxima) as an embedded engine: node, wallet, and Stables UI in one application, desktop first then Android, bootstrapped from a MegaMMR archive.",
+      "compactSignal": "Embedded node app",
+      "kpis": [
+        "Clean core node version evaluated against the VPS node",
+        "Local RPC connection from the Stables UI proven on one platform",
+        "Seed create and restore flow validated in the embedded app",
+        "MegaMMR fast bootstrap from an archive node validated",
+        "Desktop versus Android prototype path chosen"
+      ],
+      "dependencies": [
+        "technical-test-standalone-node-requirement",
+        "technical-network-mds-runtime-truth"
+      ],
+      "links": [
+        {
+          "label": "Public Dapp release path",
+          "url": "links.html#sec-dapp"
+        },
+        {
+          "label": "Website banking system explainer",
+          "url": "bankingsystem.html"
+        },
+        {
+          "label": "Telegram Community",
+          "url": "https://t.me/stablescommunity"
+        },
+        {
+          "label": "Discord working groups",
+          "url": "https://discord.gg/rTdqwRGPXR"
+        },
+        {
+          "label": "StablesCouncil GitHub",
+          "url": "https://github.com/StablesCouncil"
+        }
+      ],
+      "linkGroups": {
+        "charter": [
+          {
+            "label": "Charter notes: Distribution and Sovereignty Doctrine",
+            "path": "1_development/stream_3_governance/prod_governance_papers/stables_charter_notes.md#distribution-and-sovereignty-doctrine-raw-thinking-2026-06-11"
+          },
+          {
+            "label": "Minima core integration plan",
+            "path": "1_development/stream_3_governance/task_minima_core_integration/minima_core_integration_plan.md"
+          }
+        ],
+        "website": [
+          {
+            "label": "Public Dapp release path",
+            "url": "links.html#sec-dapp"
+          },
+          {
+            "label": "Website banking system explainer",
+            "url": "bankingsystem.html"
+          }
+        ],
+        "socials": [
+          {
+            "label": "Telegram Community",
+            "url": "https://t.me/stablescommunity"
+          },
+          {
+            "label": "Discord working groups",
+            "url": "https://discord.gg/rTdqwRGPXR"
+          }
+        ]
+      },
+      "charterRefs": [
+        "Article I - Mission And Three Destinations",
+        "Article III - Structural Layers"
+      ],
+      "dappRefs": [
+        "Welcome and channel selector - node connection state",
+        "Wallet - balance/actions, currencies, recent activity"
+      ],
+      "riskRefs": [
+        "Transition Risk - dependencies on external systems during the bridge period",
+        "Operational Risk - key management, infrastructure failure",
+        "Smart Contract Risk - code vulnerabilities, upgrade failures"
+      ],
+      "metrics": [],
+      "lastUpdated": "2026-06-11",
+      "appPhases": [
+        "Test",
+        "Prod"
+      ],
+      "streams": [
+        "Technical Stream"
+      ],
+      "workState": "later",
+      "navigationRole": "later-work",
+      "nextStep": "Run a local proof of concept: launch minima-core with RPC on localhost and point a local copy of the website dapp at it.",
+      "proof": "This card is complete only when one platform runs the embedded node with the Stables UI connected over local RPC, with seed restore and archive bootstrap demonstrated.",
+      "phaseSummary": "Test"
+    },
+    {
+      "id": "technical-multi-channel-distribution",
+      "title": "Multi-Channel Distribution And Sovereignty",
+      "stream": "Technical Stream",
+      "phase": "Multi-Channel Distribution And Sovereignty",
+      "type": "milestone",
+      "status": "Not started",
+      "progress": 0,
+      "category": "Dapp Channels And Development Infrastructure",
+      "objective": "Ensure Stables stays obtainable, verifiable, and installable even if any single platform disappears, by maintaining redundant distribution channels.",
+      "summary": "PWA as the primary interface, standalone APK as the secondary channel, plus GitHub releases, independent mirrors, and an onion mirror, with Minima-native distribution as the long-term horizon.",
+      "compactSignal": "Distribution redundancy",
+      "kpis": [
+        "PWA installable path defined",
+        "Standalone APK distribution path defined",
+        "Independent mirror and onion mirror paths defined",
+        "Release verification by hash or signature documented",
+        "No single channel is a single point of failure"
+      ],
+      "dependencies": [
+        "technical-standalone-app-embedded-node"
+      ],
+      "links": [
+        {
+          "label": "Public Dapp release path",
+          "url": "links.html#sec-dapp"
+        },
+        {
+          "label": "Official links page",
+          "url": "links.html"
+        },
+        {
+          "label": "Telegram Community",
+          "url": "https://t.me/stablescommunity"
+        },
+        {
+          "label": "Discord working groups",
+          "url": "https://discord.gg/rTdqwRGPXR"
+        },
+        {
+          "label": "StablesCouncil GitHub",
+          "url": "https://github.com/StablesCouncil"
+        }
+      ],
+      "linkGroups": {
+        "charter": [
+          {
+            "label": "Charter notes: Distribution and Sovereignty Doctrine",
+            "path": "1_development/stream_3_governance/prod_governance_papers/stables_charter_notes.md#distribution-and-sovereignty-doctrine-raw-thinking-2026-06-11"
+          },
+          {
+            "label": "Onion resilience site source",
+            "path": "1_development/stream_1_app/website/onion-resilience/"
+          }
+        ],
+        "website": [
+          {
+            "label": "Public Dapp release path",
+            "url": "links.html#sec-dapp"
+          },
+          {
+            "label": "Official links page",
+            "url": "links.html"
+          }
+        ],
+        "socials": [
+          {
+            "label": "Telegram Community",
+            "url": "https://t.me/stablescommunity"
+          },
+          {
+            "label": "Discord working groups",
+            "url": "https://discord.gg/rTdqwRGPXR"
+          }
+        ]
+      },
+      "charterRefs": [
+        "Article I - Mission And Three Destinations",
+        "Article VI - Transparency Doctrine"
+      ],
+      "dappRefs": [
+        "All links - official domains, GitHub, emails, socials"
+      ],
+      "riskRefs": [
+        "Transition Risk - dependencies on external systems during the bridge period",
+        "Operational Risk - key management, infrastructure failure",
+        "Confidence Risk - prolonged loss of merchant and participant confidence"
+      ],
+      "metrics": [],
+      "lastUpdated": "2026-06-11",
+      "appPhases": [
+        "Demo",
+        "Test",
+        "Prod"
+      ],
+      "streams": [
+        "Technical Stream",
+        "Community Stream"
+      ],
+      "workState": "later",
+      "navigationRole": "later-work",
+      "nextStep": "Document each distribution channel and its verification method, then confirm none is a single point of failure.",
+      "proof": "This card is complete only when each distribution channel is documented with a verification method and the loss of any single channel still leaves a working install path.",
+      "phaseSummary": "Test"
+    },
+    {
+      "id": "technical-deep-wallet-recovery",
+      "title": "Deep Wallet Recovery And Key-Use Scanning",
+      "stream": "Technical Stream",
+      "phase": "Deep Wallet Recovery And Key-Use Scanning",
+      "type": "work-item",
+      "status": "Not started",
+      "progress": 0,
+      "category": "Wallet And User Banking",
+      "objective": "Guarantee that users never lose visibility of funds because a seed import scanned too few key uses.",
+      "summary": "Recovery must not assume a seed phrase alone is sufficient. Support configurable recovery depth, key-use scanning, and automatic deep recovery, given Minima's signing-key usage model.",
+      "compactSignal": "No lost funds on recovery",
+      "kpis": [
+        "Minima key-use model documented for recovery",
+        "Configurable recovery depth exposed in the wallet",
+        "Automatic deep recovery procedure defined",
+        "Recovery validated against a wallet with many key uses"
+      ],
+      "dependencies": [
+        "technical-security-vault-key-surface"
+      ],
+      "links": [
+        {
+          "label": "Demo Dapp security screen",
+          "url": "dapp/2-demo/#settings-security"
+        },
+        {
+          "label": "Website banking system explainer",
+          "url": "bankingsystem.html"
+        },
+        {
+          "label": "Telegram Community",
+          "url": "https://t.me/stablescommunity"
+        },
+        {
+          "label": "Discord working groups",
+          "url": "https://discord.gg/rTdqwRGPXR"
+        },
+        {
+          "label": "StablesCouncil GitHub",
+          "url": "https://github.com/StablesCouncil"
+        }
+      ],
+      "linkGroups": {
+        "dapp": [
+          {
+            "label": "Demo Dapp security screen",
+            "url": "dapp/2-demo/#settings-security"
+          }
+        ],
+        "charter": [
+          {
+            "label": "Charter notes: Distribution and Sovereignty Doctrine",
+            "path": "1_development/stream_3_governance/prod_governance_papers/stables_charter_notes.md#distribution-and-sovereignty-doctrine-raw-thinking-2026-06-11"
+          }
+        ],
+        "socials": [
+          {
+            "label": "Telegram Community",
+            "url": "https://t.me/stablescommunity"
+          },
+          {
+            "label": "Discord working groups",
+            "url": "https://discord.gg/rTdqwRGPXR"
+          }
+        ]
+      },
+      "charterRefs": [
+        "Article VI - Transparency Doctrine"
+      ],
+      "dappRefs": [
+        "Security and vault - keys, recovery, backup"
+      ],
+      "riskRefs": [
+        "Operational Risk - key management, infrastructure failure",
+        "Confidence Risk - prolonged loss of merchant and participant confidence"
+      ],
+      "metrics": [],
+      "lastUpdated": "2026-06-11",
+      "appPhases": [
+        "Test",
+        "Prod"
+      ],
+      "streams": [
+        "Technical Stream"
+      ],
+      "workState": "later",
+      "navigationRole": "later-work",
+      "nextStep": "Document Minima's key-use recovery model and define the configurable recovery depth the wallet must expose.",
+      "proof": "This card is complete only when recovery is validated against a wallet with many key uses and no funds remain invisible after import.",
       "phaseSummary": "Test"
     },
     {
@@ -2726,7 +3055,9 @@
         "Operational Risk - key management, infrastructure failure",
         "Confidence Risk - prolonged loss of merchant and participant confidence"
       ],
-      "metrics": [],
+      "metrics": [
+        "demo_minima_wallet_baseline_verified"
+      ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
         "Demo",
@@ -3519,7 +3850,10 @@
         "Market Depth Risk - insufficient Minima liquidity for large redemptions",
         "Early-Stage Volatility - low collateral base amplifying backing ratio swings"
       ],
-      "metrics": [],
+      "metrics": [
+        "coverage_fund_summary_order_ready",
+        "coverage_fund_label_aligned"
+      ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
         "Showcase",
@@ -3927,7 +4261,9 @@
         "Operational Risk - key management, infrastructure failure"
       ],
       "metrics": [
-        "merchant_directory_listings"
+        "merchant_directory_listings",
+        "merchant_profiles_ready",
+        "merchant_ramp_structure_ready"
       ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
@@ -4079,7 +4415,9 @@
         "Liquidity Risk - shallow secondary markets, xMinima exit constraints",
         "Market Depth Risk - insufficient Minima liquidity for large redemptions"
       ],
-      "metrics": [],
+      "metrics": [
+        "merchant_ramp_structure_ready"
+      ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
         "Demo",
@@ -4669,7 +5007,9 @@
         "Competitive Attack - regulatory pressure, merchant disruption, MINIMA price manipulation, FUD campaigns",
         "Operational Risk - key management, infrastructure failure"
       ],
-      "metrics": [],
+      "metrics": [
+        "merchant_ramp_structure_ready"
+      ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
         "Demo",
@@ -5776,6 +6116,8 @@
       ],
       "dependencies": [
         "technical-test-standalone-node-requirement",
+        "technical-standalone-app-embedded-node",
+        "technical-multi-channel-distribution",
         "technical-network-mds-runtime-truth",
         "financial-destination",
         "community-council-handover"
@@ -7912,31 +8254,31 @@
     },
     {
       "id": "financial-test-channel-preparation",
-      "title": "Test Channel Preparation",
+      "title": "Test Channel Development",
       "stream": "Financial Stream",
-      "phase": "Test Channel Preparation",
+      "phase": "Test",
       "type": "work-item",
-      "status": "Drafting",
-      "progress": 0,
+      "status": "Active",
+      "progress": 25,
       "category": "Mint, Burn And Token Scope",
-      "objective": "Prepare the future Test channel after Demo is truthful and reviewed.",
-      "summary": "Prepare the financial requirements for Test: real on-chain test tokens, no official value, standalone-node dependency, bridge/x402 watch, and clear user warnings.",
+      "objective": "Develop and validate the live Test channel with real on-chain no-value assets, forward-priced protocol actions, transparent balance-sheet monitoring, and standalone-node parity.",
+      "summary": "Active Test development covers the on-chain test-token registry, mint and burn paths, faucet availability, standalone-node behaviour, and a public operational monitor. Test assets have no official value.",
       "compactSignal": "Mint, Burn And Token Scope",
       "kpis": [
-        "Test financial warnings drafted",
-        "No official-value language included",
-        "Standalone-node dependency linked",
-        "Bridge/x402 constraints tracked"
+        "Final Test token registry connected",
+        "Mint, burn, swap, and Coverage Fund paths validated",
+        "Web, Android, and MiniDapp behaviour aligned",
+        "Public Test Channel Monitor backed by a live collector"
       ],
       "dependencies": [],
       "links": [
         {
-          "label": "Showcase Dapp wallet screen",
-          "url": "dapp/1-showcase/#wallet"
+          "label": "Test Channel Monitor",
+          "url": "test-dashboard.html"
         },
         {
-          "label": "Demo Dapp official links screen",
-          "url": "dapp/2-demo/#help-links"
+          "label": "Test Dapp",
+          "url": "dapp/3-test/"
         },
         {
           "label": "Public Dapp release path",
@@ -7958,12 +8300,8 @@
       "linkGroups": {
         "dapp": [
           {
-            "label": "Showcase Dapp wallet screen",
-            "url": "dapp/1-showcase/#wallet"
-          },
-          {
-            "label": "Demo Dapp official links screen",
-            "url": "dapp/2-demo/#help-links"
+            "label": "Test Dapp",
+            "url": "dapp/3-test/"
           }
         ],
         "charter": [
@@ -7981,6 +8319,10 @@
           }
         ],
         "website": [
+          {
+            "label": "Test Channel Monitor",
+            "url": "test-dashboard.html"
+          },
           {
             "label": "Public Dapp release path",
             "url": "links.html#sec-dapp"
@@ -8014,20 +8356,23 @@
         "Economic Attack Vectors - oracle manipulation for profit, deliberate price depression, competitive disruption",
         "Early-Stage Volatility - low collateral base amplifying backing ratio swings"
       ],
-      "metrics": [],
-      "lastUpdated": "2026-05-04",
+      "metrics": [
+        "test_channel_successful_actions_7d",
+        "test_channel_active_recipient_addresses_7d",
+        "test_channel_holder_addresses"
+      ],
+      "lastUpdated": "2026-07-10",
       "appPhases": [
-        "Showcase",
         "Test"
       ],
       "streams": [
         "Financial Stream"
       ],
-      "workState": "later",
-      "navigationRole": "later-work",
-      "nextStep": "Define the Test financial readiness checklist after Demo truth is stable.",
-      "proof": "Dapp phase definitions and standalone-node dependency set the boundary for future Test readiness.",
-      "phaseSummary": "Showcase + Test"
+      "workState": "active",
+      "navigationRole": "active-work",
+      "nextStep": "Connect the final Test token registry and collector endpoint, then validate the monitor against Web, Android, and MiniDapp actions.",
+      "proof": "The active Test Dapp and Test Channel Monitor expose the current Test boundary; the monitor remains development-only until its collector supplies verified on-chain snapshots.",
+      "phaseSummary": "Test"
     },
     {
       "id": "financial-destination",
@@ -8782,7 +9127,11 @@
         "Competitive Attack - regulatory pressure, merchant disruption, MINIMA price manipulation, FUD campaigns",
         "Governance Risk - Council capture, founder dominance, voter apathy"
       ],
-      "metrics": [],
+      "metrics": [
+        "community_telegram_ready",
+        "council_official_ready",
+        "social_profiles_ready"
+      ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
         "Showcase",
@@ -8990,6 +9339,7 @@
         "Governance Risk - Council capture, founder dominance, voter apathy"
       ],
       "metrics": [
+        "social_profiles_ready",
         "x_followers",
         "instagram_followers",
         "facebook_page_followers",
@@ -8998,8 +9348,7 @@
         "tiktok_followers",
         "twitch_followers",
         "moltbook_followers",
-        "discord_members",
-        "simplex_group_support_members"
+        "discord_members"
       ],
       "lastUpdated": "2026-05-04",
       "appPhases": [
@@ -9407,6 +9756,7 @@
         "Governance Risk - Council capture, founder dominance, voter apathy"
       ],
       "metrics": [
+        "communication_plan_page_ready",
         "agent_total_questions",
         "agent_answer_gaps"
       ],
@@ -9623,6 +9973,8 @@
         "Governance Risk - Council capture, founder dominance, voter apathy"
       ],
       "metrics": [
+        "communication_plan_page_ready",
+        "social_profiles_ready",
         "facebook_page_followers",
         "facebook_group_members",
         "youtube_recent_views",
@@ -11685,7 +12037,6 @@
       ],
       "metrics": [
         "telegram_community_members",
-        "simplex_group_support_members",
         "x_followers",
         "instagram_followers"
       ],

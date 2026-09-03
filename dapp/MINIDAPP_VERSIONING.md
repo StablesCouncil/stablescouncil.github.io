@@ -2,6 +2,10 @@
 
 **For the community.** This page explains how we name builds and what **showcase**, **demo**, **test**, and **prod** mean for on-chain scope. It stays aligned with Council handshake **`0_handshake/minidapp_version.md`** in the main Stables workspace.
 
+**Current test candidate:** **`v0.0.10.01`**, distributed as one coordinated set across Web, MDS,
+standalone Android, and Core-connected Android. The final `01` is intentionally two digits and is
+preserved in every public filename and version label.
+
 **Authoring and ship:** Edit this file under **`1_development/stream_1_app/website/dapp/`** (same tree as **`https://stablescouncil.org/dapp/`**). Serve the parent **`website/`** tree directly for preview, then publish the validated **`website/`** tree to GitHub Pages.
 
 **Read on GitHub (rendered):**  
@@ -14,7 +18,7 @@
 - **One shell, one UX direction:** the same app routes and design system across stages. **Channels differ by functionality** (what may run: simulation vs demo mint semantics vs real test tokens vs prod), plus the **data and backends** those features require, not by maintaining unrelated product UIs.
 - **Showcase** mirrors the **most advanced** experience the Council wants visitors to see, with **rich synthetic / sample data** so the surface reads like a finished product. It stays **synthetic-safe**: changes port from **demo** only when wiring does not imply chain or token truth that showcase does not have (see **Routing (agents)** in handshake **`minidapp_version.md`**).
 - **Test** and **prod** use the same stage names in **`APP_STAGE`** and policy. On Pages, placeholder shells live at **`dapp/3-test/`** and **`dapp/4-prod/`** ( **`latest-version/`** per channel when used) until Council ships those lines. Token and environment truth per stage are in the table below and in **Demo vs test**.
-- **Identifiers vs display:** folder names, zips, **`APP_BUILD_VERSION`**, and **`dapp.conf`** use the **canonical two-digit** five-segment form (e.g. **`v00.00.00.00.03`**). Marketing or in-app copy may use a shorter human-readable spelling **only as display**, without changing Council paths or artifact names.
+- **Identifiers vs display:** **`APP_BUILD_VERSION`** and **`dapp.conf`** keep the canonical two-digit five-segment form (for example **`v00.00.00.00.03`**) for comparisons and release bookkeeping. Public zip filenames and visible app labels use the short human-facing form (for example **`v0.0.0.0.3`**) to avoid double-zero noise.
 
 ### Pages `dapp/` layout (four channels)
 
@@ -23,7 +27,7 @@ Under **`1_development/stream_1_app/website/dapp/`**, routes are grouped **by ch
 | Folder | Stage | Live URL | Notes |
 |--------|-------|----------|--------|
 | **`1-showcase/`** | showcase | **`/dapp/1-showcase/`** | Main preview shell; **`1-showcase/latest-version/`** holds the current **showcase** **`.mds.zip`**. Older-label docs: **`3_archive/.../task_archived_dapp_channel_previous_versions_2026-04-16/dapp/1-showcase/`**; historical **`.mds.zip`** binaries: **`3_archive/stream_1_app/task_archived_dapp_showcase_previous_mds_2026-04-16/`**. Resource URLs use **`../assets/`**, **`../agent.png`**, etc. |
-| **`2-demo/`** | demo | **`/dapp/2-demo/`** | Full demo tree. Demo **`.mds.zip`** recipe and **`build/`** output: **`dapp/2-demo/build/README.md`**. Retired empty **`latest-version`** / **`latest version`** placeholders: **`3_archive/stream_1_app/task_archived_dapp_2_demo_latest_placeholders_2026-04-16/`**. Other archived notes: **`3_archive/.../task_archived_dapp_channel_previous_versions_2026-04-16/dapp/2-demo/`**. |
+| **`2-demo/`** | demo | **`/dapp/2-demo/`** | Full demo tree. Published hub zip: **`dapp/latest-version/Stables_v<iteration>.mds.zip`** (**one file** at folder root). Superseded demo zips: **`dapp/latest-version/archive/`** (moved on each publish; **`build-demo-zip.ps1`**). Recipe and **`build/`** output: **`dapp/2-demo/build/README.md`**. Retired empty **`latest-version`** / **`latest version`** placeholders under **`2-demo/`**: **`3_archive/stream_1_app/task_archived_dapp_2_demo_latest_placeholders_2026-04-16/`**. |
 | **`3-test/`** | test | **`/dapp/3-test/`** | Placeholder shell until a **test** zip ships; **`3-test/latest-version/`** reserved. Archived notes: **`3_archive/.../task_archived_dapp_channel_previous_versions_2026-04-16/dapp/3-test/`**. |
 | **`4-prod/`** | prod | **`/dapp/4-prod/`** | Placeholder shell until first **prod** ship; **`4-prod/latest-version/`** reserved. Archived notes: **`3_archive/.../task_archived_dapp_channel_previous_versions_2026-04-16/dapp/4-prod/`**. |
 
@@ -60,8 +64,12 @@ Read **left to right**. **Showcase** line keeps **`PM.Pn.TT.DD`** at **`00`** an
 
 ### Zip naming
 
-We recommend: **`Stables_vPM.Pn.TT.DD.SS_<stage>.mds.zip`**  
-Examples: **`Stables_v00.00.00.00.03.mds.zip`** (current **showcase** **`1-showcase/latest-version/`**), **`Stables_v00.00.02.mds.zip`** / legacy **`Stables_v0.01.01.mds.zip`** (older **showcase** drops, binaries in **`3_archive/.../task_archived_dapp_showcase_previous_mds_2026-04-16/`**).
+Public filenames use the short display version:
+
+- **Showcase:** `Stables_v0.0.0.0.3.mds.zip`
+- **Demo:** `Stables_v0.0.0.1.mds.zip`
+
+Internal app config keeps the canonical two-digit values (`00.00.00.00.03`, `00.00.00.01.00`).
 
 ### Zip contents (Pages `dapp/` vs packager zip from `prod_*`)
 
@@ -75,7 +83,8 @@ Examples: **`Stables_v00.00.00.00.03.mds.zip`** (current **showcase** **`1-showc
 
 - **Showcase latest zip:** [dapp/1-showcase/latest-version/](https://github.com/StablesCouncil/stablescouncil.github.io/tree/main/dapp/1-showcase/latest-version)
 - **Showcase history:** [VERSION_HISTORY.md](https://github.com/StablesCouncil/stablescouncil.github.io/blob/main/dapp/1-showcase/latest-version/VERSION_HISTORY.md)
-- **Demo zip build:** **`dapp/2-demo/build/README.md`** (local **`build/`** folder). When Council publishes a demo line to Pages, a **`latest-version/`** folder may appear in the Pages repo again; dev no longer keeps empty placeholders.
+- **Current public mirror:** [dapp/latest-version/](https://github.com/StablesCouncil/stablescouncil.github.io/tree/main/dapp/latest-version)
+- **Demo zip build:** **`dapp/2-demo/build/README.md`** and **`dapp/2-demo/build/Stables_v0.0.0.1.mds.zip`**.
 - **Test / prod zips (when published):** [dapp/3-test/latest-version/](https://github.com/StablesCouncil/stablescouncil.github.io/tree/main/dapp/3-test/latest-version) · [dapp/4-prod/latest-version/](https://github.com/StablesCouncil/stablescouncil.github.io/tree/main/dapp/4-prod/latest-version)
 
 ---

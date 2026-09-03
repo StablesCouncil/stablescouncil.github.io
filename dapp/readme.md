@@ -17,8 +17,9 @@ It maps to:
 - `2-demo/` - demo channel
 - `3-test/` - test channel placeholder
 - `4-prod/` - prod channel placeholder
+- `latest-version/` - current public demo install package only
 
-Published zips go under each channel's `latest-version/` folder when shipped.
+Keep active package surfaces lean. Only the current validated `.mds.zip` belongs in `latest-version/` or `2-demo/build/`. Older zips, old alias routes, and retired package archives belong under `3_archive/stream_1_app/`.
 
 ## Workflow
 
@@ -29,4 +30,3 @@ node 1_development/stream_1_app/work/tools/website/serve-local.mjs ../../website
 ```
 
 Policy and stage details live in `0_handshake/minidapp_version.md` and `MINIDAPP_VERSIONING.md`.
-

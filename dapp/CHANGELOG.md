@@ -1,4 +1,4 @@
-# Changelog — Stables MiniDapp
+# Changelog  -  Stables MiniDapp
 
 **Purpose:** Every change worth telling users, Council, or social channels gets a line here **when you merge the change** into this version. At release, copy the section for that version into release notes, Telegram, and X.
 
@@ -8,9 +8,13 @@
 
 ## [Unreleased]
 
+### Changed
+
+- **Public package filenames:** current public `.mds.zip` filenames now use short display versions to avoid double-zero noise: showcase `Stables_v0.0.0.0.3.mds.zip`, demo `Stables_v0.0.0.1.mds.zip`. Internal `APP_BUILD_VERSION` / `dapp.conf` values keep canonical two-digit version bodies for comparisons.
+
 **Parallel demo channel:** demo line lives in **`dapp/2-demo/`** (label **`v00.00.00.01.00`**, **`APP_STAGE: demo`**). **Default new product work** happens there; **`dapp/`** at repo root also holds the **showcase** Pages shell. See **`0_handshake/minidapp_version.md`**.
 
-Post–**v00.00.03** work in the active dev folder. **Do not** describe these items as part of showcase **v00.00.03** in public posts until this section is merged into a new released label and zip.
+Post–**v0.0.0.0.3** work in the active dev folder. **Do not** describe these items as part of showcase **v0.0.0.0.3** in public posts until this section is merged into a new released label and zip.
 
 ### Added
 
@@ -38,7 +42,7 @@ Post–**v00.00.03** work in the active dev folder. **Do not** describe these it
 
 - **Root `dapp/latest-version/`** and **`dapp/previous-versions/`** (redirect-only **`index.html`** stubs to **`showcase/`**). **Moved** to **`3_archive/stream_1_app/task_archived_dapp_root_redirect_stubs_2026-04-16/`**. Bookmarks must use **`dapp/1-showcase/latest-version/`**; old root URLs **404** on Pages after ship. **`handshake.md`**, **`minidapp_version.md`**, **`MINIDAPP_VERSIONING.md`**, **`dapp/readme.md`**, **`stream_1_app/README.md`**, **`VERSION_HISTORY.md`** updated.
 
-- **`dapp/v00.00.00.00.03/`** and **`dapp/v00.00.00.01.00/`** (redirect-only **`index.html`** stubs). **Showcase** and **demo** each have a single shell: **`dapp/1-showcase/index.html`** and **`dapp/2-demo/index.html`**. Old **`/dapp/v00.00.00.00.03/`** and **`/dapp/v00.00.00.01.00/`** URLs will **404** on static Pages unless you add another redirect mechanism. **`MINIDAPP_VERSIONING.md`**, **`minidapp_version.md`**, **`session_map.md`**, **`handover_document.md`**, **`stream_1_app/README.md`**, **`dapp/README.md`**, **`latest-version/README.md`** updated.
+- **`dapp/v0.0.0.0.3/`** and **`dapp/v00.00.00.01.00/`** (redirect-only **`index.html`** stubs). **Showcase** and **demo** each have a single shell: **`dapp/1-showcase/index.html`** and **`dapp/2-demo/index.html`**. Old **`/dapp/v0.0.0.0.3/`** and **`/dapp/v00.00.00.01.00/`** URLs will **404** on static Pages unless you add another redirect mechanism. **`MINIDAPP_VERSIONING.md`**, **`minidapp_version.md`**, **`session_map.md`**, **`handover_document.md`**, **`stream_1_app/README.md`**, **`dapp/README.md`**, **`latest-version/README.md`** updated.
 
 ### Changed
 
@@ -46,7 +50,7 @@ Post–**v00.00.03** work in the active dev folder. **Do not** describe these it
 
 - **Showcase historical zips (2026-04-16):** Older showcase **`.mds.zip`** files (**`Stables_v00.00.01.mds.zip`**, **`Stables_v00.00.02.mds.zip`**, **`Stables_v0.01.01.mds.zip`**) **moved** to **`3_archive/stream_1_app/task_archived_dapp_showcase_previous_mds_2026-04-16/`**. **`VERSION_HISTORY.md`** rows updated.
 
-- **Showcase consolidation (2026-04-15):** **`prod_stables_app_v00.00.00.00.03/`** **moved** to **`3_archive/stream_1_app/task_archived_prod_stables_app_v00_00_00_00_03_2026-04-15/`** ( **`FROZEN.md`** ); **`dapp/`** (**`showcase/`**, root **`assets/`**, **`dapp.conf`**) is the **only** active showcase hub path. Added **`dapp/build/README.md`** (staging zip recipe) and operator **`dapp/README.md`** ( **`readme.md`** remains legacy copy from the old prod tree). **`minidapp_version.md`**, **`handshake.md`**, **`minidapp_version_log.md`**, **`web_component_spec.md`**, **`latest-version/README.md`**, **`MINIDAPP_VERSIONING.md`**, **`.cursor/rules/stables-handshake.mdc`**, **`global_knowledge_base.md`**, **`stream_1_app/README.md`**, **`handover_document.md`**, **`ui_inventory`**, **`FEEDBACK_CLICK_BY_CLICK_GITHUB.md`**, **`HANDOVER_agent_adapt_on_off_ramp_page.md`**, **`dapp/2-demo/CHANGELOG.md`**, **`dapp/latest-version/VERSION_HISTORY.md`**.
+- **Showcase consolidation (2026-04-15):** **`prod_stables_app_v0.0.0.0.3/`** **moved** to **`3_archive/stream_1_app/task_archived_prod_stables_app_v00_00_00_00_03_2026-04-15/`** ( **`FROZEN.md`** ); **`dapp/`** (**`showcase/`**, root **`assets/`**, **`dapp.conf`**) is the **only** active showcase hub path. Added **`dapp/build/README.md`** (staging zip recipe) and operator **`dapp/README.md`** ( **`readme.md`** remains legacy copy from the old prod tree). **`minidapp_version.md`**, **`handshake.md`**, **`minidapp_version_log.md`**, **`web_component_spec.md`**, **`latest-version/README.md`**, **`MINIDAPP_VERSIONING.md`**, **`.cursor/rules/stables-handshake.mdc`**, **`global_knowledge_base.md`**, **`stream_1_app/README.md`**, **`handover_document.md`**, **`ui_inventory`**, **`FEEDBACK_CLICK_BY_CLICK_GITHUB.md`**, **`HANDOVER_agent_adapt_on_off_ramp_page.md`**, **`dapp/2-demo/CHANGELOG.md`**, **`dapp/latest-version/VERSION_HISTORY.md`**.
 
 - **Demo consolidation (2026-04-15):** **`prod_stables_app_demo/`** **moved** to **`3_archive/stream_1_app/task_archived_prod_stables_app_demo_2026-04-15/`** ( **`FROZEN.md`** ); **`dapp/2-demo/`** is the **only** active demo product path. **`minidapp_version.md`**, **`handshake.md`** (Packaging Rule), **`.cursor/rules/stables-handshake.mdc`**, **`global_knowledge_base.md`**, **`stream_1_app/README.md`**, **`handover_document.md`**, **`ui_inventory`**, **`MINIDAPP_VERSIONING.md`**, **`minidapp_version_log.md`**, **`dapp/2-demo/build/README.md`**, **`dapp/2-demo/CHANGELOG.md`**.
 
@@ -65,9 +69,9 @@ Post–**v00.00.03** work in the active dev folder. **Do not** describe these it
 
 - **Docs (zip = Pages):** **`MINIDAPP_VERSIONING.md`** adds *Zip contents (same as GitHub Pages `dapp/`)* ( **`dapp.conf`**, **`showcase/index.html`**, **`assets/`**, root images, optional root redirect). **`latest-version/README.md`** links that section and **`../build/README.md`** for build steps.
 
-- **Dev folder rename (showcase):** **`prod_stables_app_v00.00.02`** → **`prod_stables_app_v00.00.00.00.03`** so the path matches the canonical five-segment label. Handshake, **`minidapp_version.md`**, UI inventory, and Cursor rules point at the new folder. **GitHub Pages** working copy: **`1_development/stream_1_app/website/dapp/`** was refreshed from this tree (excluding **`build/`** and **`latest version/`**); **`MINIDAPP_VERSIONING.md`** and **`latest-version/VERSION_HISTORY.md`** note the alignment. *(Later: **`prod_stables_app_v00.00.00.00.03/`** archived **2026-04-15**; active path **`dapp/`**.)*
+- **Dev folder rename (showcase):** **`prod_stables_app_v00.00.02`** → **`prod_stables_app_v0.0.0.0.3`** so the path matches the canonical five-segment label. Handshake, **`minidapp_version.md`**, UI inventory, and Cursor rules point at the new folder. **GitHub Pages** working copy: **`1_development/stream_1_app/website/dapp/`** was refreshed from this tree (excluding **`build/`** and **`latest version/`**); **`MINIDAPP_VERSIONING.md`** and **`latest-version/VERSION_HISTORY.md`** note the alignment. *(Later: **`prod_stables_app_v0.0.0.0.3/`** archived **2026-04-15**; active path **`dapp/`**.)*
 
-- **Version label (showcase):** **`APP_BUILD_VERSION`**, **`dapp.conf` `version`**, and top bar default use the canonical **five-segment** body **`00.00.00.00.03`** (`vPM.Pn.TT.DD.SS`, see **`0_handshake/minidapp_version.md`**). **`APP_UPDATE_POLICY.latestPublishedVersion`** matches this label; Council comms compares legacy **three-segment** labels as **`a.b.c` → `a.b.0.0.c`** in **`activity-contacts.js`**.
+- **Version label (showcase):** **`APP_BUILD_VERSION`**, **`dapp.conf` `version`**, and top bar default use the canonical **five-segment** body **`0.0.0.0.3`** (`vPM.Pn.TT.DD.SS`, see **`0_handshake/minidapp_version.md`**). **`APP_UPDATE_POLICY.latestPublishedVersion`** matches this label; Council comms compares legacy **three-segment** labels as **`a.b.c` → `a.b.0.0.c`** in **`activity-contacts.js`**.
 
 ### Added
 
@@ -119,18 +123,18 @@ Post–**v00.00.03** work in the active dev folder. **Do not** describe these it
 
 ---
 
-## [00.00.00.00.03] — 2026-04-09 (showcase published, third showcase drop)
+## [0.0.0.0.3]  -  2026-04-09 (showcase published, third showcase drop)
 
-Third published showcase line build (**short `v00.00.03`**, five-segment **`v00.00.00.00.03`**). **`Stables_v00.00.00.00.03.mds.zip`** was the current package under **`dapp/1-showcase/latest-version/`** on GitHub Pages; **`Stables_v00.00.02.mds.zip`** and earlier showcase zips are in **`3_archive/stream_1_app/task_archived_dapp_showcase_previous_mds_2026-04-16/`** (supersedes older **`dapp/previous-versions/`** paths).
+Third published showcase line build (**short `v0.0.0.0.3`**, five-segment **`v0.0.0.0.3`**). **`Stables_v0.0.0.0.3.mds.zip`** was the current package under **`dapp/1-showcase/latest-version/`** on GitHub Pages; **`Stables_v00.00.02.mds.zip`** and earlier showcase zips are in **`3_archive/stream_1_app/task_archived_dapp_showcase_previous_mds_2026-04-16/`** (supersedes older **`dapp/previous-versions/`** paths).
 
 ### Changed
 
-- Bumped **`APP_BUILD_VERSION`**, **`dapp.conf`**, top bar pill, and **`latestPublishedVersion`** to **`00.00.00.00.03`**.
-- Dev folder path **`prod_stables_app_v00.00.00.00.03`** matched the shipped label; handshake and versioning docs aligned. *(Superseded **2026-04-15**: active showcase hub path is **`dapp/`**.)*
+- Bumped **`APP_BUILD_VERSION`**, **`dapp.conf`**, top bar pill, and **`latestPublishedVersion`** to **`0.0.0.0.3`**.
+- Dev folder path **`prod_stables_app_v0.0.0.0.3`** matched the shipped label; handshake and versioning docs aligned. *(Superseded **2026-04-15**: active showcase hub path is **`dapp/`**.)*
 
 ---
 
-## [00.00.02] — 2026-04-02 (showcase published)
+## [00.00.02]  -  2026-04-02 (showcase published)
 
 Released showcase build **v00.00.02** (“v2”). See `0_handshake/minidapp_version_log.md` for scope vs later dev-only features (**Academy is not in this release**).
 
@@ -152,7 +156,7 @@ Released showcase build **v00.00.02** (“v2”). See `0_handshake/minidapp_vers
 ### Added
 
 - **Invest scope correction:** removed the Maximize staking surface from Stables scope. MINIMA is presented for Stables/xWiniwa minting and explicitly labelled native wallet use, not as a Stables staking product.
-- **Mint xWiniwa**: chart **below** the Mint xWiniwa button: **three** traces — **Winiwa · USD** (spot), **xWiniwa · USD** (spot × leverage), **Leverage** (right axis from **CR% / (CR% − 100%)**, e.g. 130% → 130/30); historical leg interpolates **`CR_HIST_DATA`** with **today** = live `#protocolCRBig`; **Current leverage** row + `SIM_XWM` / mint math use same formula. ~365d CoinGecko Winiwa spot; hover/touch tooltip; tighter margins, taller plot.
+- **Mint xWiniwa**: chart **below** the Mint xWiniwa button: **three** traces  -  **Winiwa · USD** (spot), **xWiniwa · USD** (spot × leverage), **Leverage** (right axis from **CR% / (CR% − 100%)**, e.g. 130% → 130/30); historical leg interpolates **`CR_HIST_DATA`** with **today** = live `#protocolCRBig`; **Current leverage** row + `SIM_XWM` / mint math use same formula. ~365d CoinGecko Winiwa spot; hover/touch tooltip; tighter margins, taller plot.
 - **Welcome → currencies/personalisation**: **Unselect all** next to **Select all**; **Save and continue** into optional personalisation (**Step 1–4 of 4**: bank name, profile picture, contacts onboarding, directory preview); **Finish** saves council profile (name + avatar when set) and closes welcome. Bank-name copy clarifies **private vs on transactions**, changeable anytime in **My profile**.
 - **Branding**: MiniDapp **headline** / page **title** / default top bar tagline **By Stables on Minima** (replaces “Be your bank” in those places). **Top bar** shows **My profile** picture and display name (or welcome bank name) when set; when the title is **personalised** (not the default **Stables** wordmark), the subtitle switches to **by Stables/Minima**. **Brand hover**: custom panel (cyan–purple gradient text, dark frame) **“My bank made possible by Stables on Minima”** replaces the old **Home** `title` tooltip; keyboard focus shows the same panel. **Touch (`hover: none`)**: tap the **tagline** to toggle that panel; tap the tooltip, outside the bar, or the logo/title row to dismiss / go home. Center pill **Showcase · v…** tracks **`APP_BUILD_VERSION`** from `runtime-config.js` (currently **00.00.02**).
 - **Legal & notices**: **Minima dependencies** section (foundation + corporate independence + open networks + **unstoppable** framing + non-custodial seizure/blocking; not legal advice).
@@ -161,7 +165,7 @@ Released showcase build **v00.00.02** (“v2”). See `0_handshake/minidapp_vers
 
 ---
 
-## [0.01.01] — 2026-03-31 (frozen)
+## [0.01.01]  -  2026-03-31 (frozen)
 
 **Frozen snapshot:** `3_archive/stream_1_app/prod_stables_app_v0.01.01/`  
 **Public:** Web Showcase at `https://stablescouncil.org/dapp/`; node package `Stables_v0.01.01.mds.zip` in `stablescouncil.github.io` → `dapp/latest-version/`.

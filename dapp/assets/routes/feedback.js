@@ -21,7 +21,7 @@
     { id: 'council', label: 'Council' },
     { id: 'treasury', label: 'Treasury' },
     { id: 'faucet', label: 'Get Winiwa' },
-    { id: 'settings-profile', label: 'Settings — My profile' },
+    { id: 'settings-profile', label: 'Settings  -  My profile' },
     { id: 'settings-updates', label: 'Settings and updates' },
     { id: 'settings-security', label: 'Security' },
     { id: 'settings-legal', label: 'Legal & notices' },

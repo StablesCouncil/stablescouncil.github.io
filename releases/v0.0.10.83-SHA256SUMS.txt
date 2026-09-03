@@ -1,0 +1,3 @@
+cc283f37b2c7c64d1b112e9d6427fb7f9b379b7ef6a8d6ca7e3969c4fec99fcd  Stables_v0.0.10.83.apk
+fa4c574d7dbf26fb7e55dbb40e73c559f2361fd264d421b3252d67f030eb9a63  StablesCore_v0.0.10.83.apk
+b8af57bf4afaeee7ebc6b663ee0b9fb7ac16ee62a3ad474a829e36814a24822a  Stables_v0.0.10.83.mds.zip

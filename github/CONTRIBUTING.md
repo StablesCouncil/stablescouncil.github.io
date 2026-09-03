@@ -5,7 +5,7 @@
 ## How to contribute
 
 1. Fork `StablesCouncil/stablescouncil.github.io`.
-2. Edit `github/community-addresses.json` — add one object to the array following the schema below.
+2. Edit `github/community-addresses.json`  -  add one object to the array following the schema below.
 3. Open a PR with the title `[address] <your label>`.
 4. The Council will verify the address on-chain, then merge.
 
@@ -13,7 +13,7 @@
 
 ```json
 {
-  "label":       "Short name shown in the dropdown — max 40 chars",
+  "label":       "Short name shown in the dropdown  -  max 40 chars",
   "address":     "0x… full Minima address (64 hex chars after 0x)",
   "contributor": "Your GitHub username",
   "notes":       "Optional: operator context, no private info",

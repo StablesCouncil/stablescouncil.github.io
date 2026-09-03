@@ -22,12 +22,18 @@ body.links-page-body.deck-chrome-page:has(> .site-map-nav) .site-chrome-main--do
 }
 
 .site-map-nav .buttons.site-map-nav__buttons {
+  display: flex;
+  align-items: stretch;
   justify-content: space-between;
   width: 100%;
   gap: 12px;
 }
 
 .site-map-nav .btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   /* Row layout: share horizontal space. In column layout, override flex (see mobile) or flex-basis becomes height and flex-grow stretches buttons. */
   flex: 1 1 160px;
   max-width: 260px;
@@ -35,6 +41,7 @@ body.links-page-body.deck-chrome-page:has(> .site-map-nav) .site-chrome-main--do
   height: auto;
   padding: 10px 12px;
   text-align: center;
+  text-decoration: none;
 }
 
 .site-map-nav__dir {
@@ -52,6 +59,16 @@ body.links-page-body.deck-chrome-page:has(> .site-map-nav) .site-chrome-main--do
   font-size: 0.95rem;
   font-weight: 700;
   line-height: 1.25;
+}
+
+.site-map-nav__status {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--accent-amber, #fbbf24);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
 }
 
 .site-map-nav__disabled {

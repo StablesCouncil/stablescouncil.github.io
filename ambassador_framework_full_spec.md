@@ -201,7 +201,7 @@ To ensure the protocol remains "Unstoppable," the control of the Treasury is div
 - **Real-Time Audit:** Because Stables is built on the Minima ledger, every Big Mac® equivalent that enters or leaves the Treasury is **fully visible on-chain**. Anyone can audit the Treasury’s health at any time.
 
 ### **The Investment Principle: Participant Ownership**
-The entire Stables structure is owned collectively by its participants. The Council Treasury is the property of the collectivity, meaning the 16 Big Mac® fee is neither a payment nor a donation—it is a **100% investment** into the Stables infrastructure. While the funds may change wallet addresses as they move through the protocol, they remain in the hands of the participants and are utilized exclusively for the platform's stability, arbitrage, and community-voted growth.
+The entire Stables structure is owned collectively by its participants. The Council Treasury is the property of the collectivity, meaning the 16 Big Mac® fee is neither a payment nor a donation - it is a **100% investment** into the Stables infrastructure. While the funds may change wallet addresses as they move through the protocol, they remain in the hands of the participants and are utilized exclusively for the platform's stability, arbitrage, and community-voted growth.
 
 ---
 
@@ -217,7 +217,7 @@ Ambassadors carry the "frontline" reputational risk. If the protocol fails to ac
 
 ### **Protections Built into the Code**
 To mitigate this risk logically (rather than emotionally), we rely on the primary mottos:
-- **Sovereignty is the Shield:** Even if the "Stables" brand or community disperses, you remain in control of your Minima node and your private keys. The system is designed so that no central authority—not even the original developers—can "rug pull" your funds or your data.
+- **Sovereignty is the Shield:** Even if the "Stables" brand or community disperses, you remain in control of your Minima node and your private keys. The system is designed so that no central authority - not even the original developers - can "rug pull" your funds or your data.
 - **Protocol vs. Platform:** Stables is an open protocol first, and an app second. Your participation is a commitment to a decentralized standard of exchange that exists independently of its marketing.
 - **Skin in the Game:** The entry fee is a transparent contribution to the global Council Treasury, which is itself governed by the protocol’s autonomous rules.
 

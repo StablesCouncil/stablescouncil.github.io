@@ -1,0 +1,416 @@
+/*
+ * Machinery whole-app presentation adoption — MIG-003.
+ *
+ * Contract: work/Machinery/projects/stables-current-app/migrations/whole-app-presentation-migration.v1.json
+ * Decision: D019 (owner, 2026-07-25), resolving decision-sheet Groups A and B.
+ * Baseline:  the approved North Star golden baseline.
+ *
+ * WHAT THIS FILE DOES
+ * Raises the whole application to the North Star mobile presentation floor: the minimum touch
+ * target and the minimum legible text size. It is layered over the legacy app UI system layer
+ * (assets/app-ui-system.css) and scoped to [data-machinery-scope="app"] on <body>.
+ *
+ * WHY IT USES !important
+ * The legacy layer declares its geometry with !important (238 declarations). The MIG-001 trade
+ * adapter already established the convention for this codebase: an adoption stylesheet overrides
+ * the legacy layer with !important rather than editing it, so the migration stays reversible by
+ * deleting one file. MIG-003 follows that proven pattern.
+ *
+ * WHAT IT DOES NOT DO
+ * - No structure, id, route, handler, or script change (DEC-002: presentation only).
+ * - No colour is set anywhere in this file, so no theme language can be defeated
+ *   (DEC-003: all themes kept; adoption CSS drives from tokens, never colour literals).
+ * - No narrative copy change (DEC-004).
+ * - The MIG-001 trade region and the MIG-002 shell keep ownership of what they migrated.
+ *
+ * Full per-role typography (section-title scale, financial-amount treatment) is adopted surface
+ * by surface during the element reviews. This file is the floor, not the ceiling.
+ */
+
+/* ---- The touch-target lever ------------------------------------------------
+ * The legacy system already routes every control's height through one token and set it to 44px,
+ * below the 48px North Star minimum. Correcting the token raises all 35 rules that consume it at
+ * once, which is why this is a token change and not a list of per-class overrides.
+ */
+[data-machinery-scope="app"] {
+  --ui-touch-h: 48px;
+}
+
+/* ---- The legible-text floor ------------------------------------------------
+ * The North Star support-text minimum is 14px. These are the systematic classes the all-page
+ * audit found below it (2026-07-25: 1,113 text elements under 14px across 24 pages).
+ */
+[data-machinery-scope="app"] .xs,
+[data-machinery-scope="app"] .msub,
+[data-machinery-scope="app"] .flabel,
+[data-machinery-scope="app"] .stitle,
+[data-machinery-scope="app"] .pool-section-title,
+[data-machinery-scope="app"] .ccy-pill,
+[data-machinery-scope="app"] .max-link,
+[data-machinery-scope="app"] .app-page-header__sub,
+[data-machinery-scope="app"] .exchange-link,
+[data-machinery-scope="app"] .ex-ccy-dd__row-code,
+[data-machinery-scope="app"] .ex-ccy-dd__row-amt,
+[data-machinery-scope="app"] .ex-ccy-dd__row-soon,
+[data-machinery-scope="app"] .ccy-sec-tag,
+[data-machinery-scope="app"] .ccy-sec-name,
+[data-machinery-scope="app"] .ccy-sec-usd,
+[data-machinery-scope="app"] .set-sub,
+[data-machinery-scope="app"] .ui-tone-accent {
+  font-size: 14px !important;
+}
+
+/* ============================================================================
+ * MIG-004 — Action family adoption (M-EL-ACTION)
+ *
+ * Every action in the application now carries the registered identity
+ * (.mx-action + data-role, with data-size and data-layout axes) and this block
+ * implements the definition: "trigger one explicit command with a visible
+ * priority and consequence level."
+ *
+ * Registered geometry: default height 56px, compact 48px, radius 12px,
+ * horizontal padding 20px, minimum width 48px, gap 8px.
+ * The legacy layer used 48px default and 52px large, so commitment actions
+ * genuinely grow to the registered 56px.
+ *
+ * Colour is taken from the same --mx-* tokens MIG-001 defined, which resolve to
+ * the live theme variables, so every theme keeps its own language (DEC-003).
+ * This file loads BEFORE machinery-ui.css so the MIG-001 trade adapter keeps
+ * ownership of the trade region at equal specificity.
+ * ========================================================================== */
+
+[data-machinery-scope="app"] .mx-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 48px;
+  min-height: 56px !important;
+  padding: 0 20px !important;
+  border-radius: 12px !important;
+  font-size: 16px !important;
+  font-weight: 750;
+  line-height: 1.2;
+  text-align: center;
+  touch-action: manipulation;
+}
+
+/*
+ * The floating StablesAgent action is also a draggable control. The generic
+ * action gesture above intentionally permits viewport panning, which made a
+ * finger drag scroll the page instead of moving the control in Android
+ * WebViews. A draggable action owns its pointer stream until release.
+ */
+[data-machinery-scope="app"] .mx-action.agent-fab {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Activity uses the registered M-CMP-DATA-INDEX and M-CMP-FILTER-BAR sequence.
+ * Search leads. Primary filters remain together. Optional sorting is the final control on mobile,
+ * then moves beside Direction only when both groups have enough width to remain coherent. */
+[data-machinery-scope="app"] #page-activity.mx-cmp-data-index {
+  align-content: start;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-index-section {
+  margin-top: 0;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-filter-bar.mx-cmp-filter-bar {
+  display: grid;
+  gap: var(--ui-space-3);
+  min-width: 0;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-filter-search,
+[data-machinery-scope="app"] #page-activity .activity-filter-group,
+[data-machinery-scope="app"] #page-activity .activity-filter-field {
+  display: grid;
+  gap: var(--ui-space-2);
+  min-width: 0;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-filter-options {
+  display: grid;
+  grid-template-areas:
+    "direction"
+    "fields"
+    "sort";
+  gap: var(--ui-space-3);
+  min-width: 0;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-filter-direction {
+  grid-area: direction;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-filter-fields {
+  grid-area: fields;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ui-space-2);
+  min-width: 0;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-filter-sort {
+  grid-area: sort;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-filter-bar .ui-segmented {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-filter-bar .ui-segment {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-filter-bar .finput,
+[data-machinery-scope="app"] #page-activity .activity-filter-bar .fsel {
+  width: 100%;
+  margin: 0 !important;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-date-range {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ui-space-3);
+}
+
+/* Each bound is a labeled group of three app-drawn dropdowns (day, month, year). They share one
+   row so the date reads left to right, and the columns are weighted by what each part has to
+   show, which keeps every trigger label unclipped down to 320px. */
+[data-machinery-scope="app"] #page-activity .activity-date-field {
+  display: grid;
+  gap: var(--ui-space-2);
+  min-width: 0;
+}
+
+/* An MNU-001 panel spends about 84px on padding, the chosen mark and its gaps before any label is
+   drawn, so a trigger narrower than roughly 115px produces a list nobody can read. Three across
+   breaks that at every phone width; two across with the year beneath holds it from 360px up, and
+   below that the parts stack full width. */
+[data-machinery-scope="app"] #page-activity .activity-date-parts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ui-space-2);
+  min-width: 0;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-date-parts > *:nth-child(3) {
+  grid-column: 1 / -1;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-date-parts .mx-dropdown {
+  min-width: 0;
+}
+
+@media (max-width: 359px) {
+  [data-machinery-scope="app"] #page-activity .activity-date-parts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+[data-machinery-scope="app"] #page-activity .activity-date-range[hidden] {
+  display: none;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-pager {
+  margin-top: var(--ui-space-3);
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 640px) {
+  [data-machinery-scope="app"] #page-activity .activity-filter-options {
+    grid-template-columns: minmax(0, 1.35fr) minmax(220px, .65fr);
+    grid-template-areas:
+      "direction sort"
+      "fields fields";
+  }
+
+  /* Wide enough for both bounds to sit on one line without narrowing any part. */
+  [data-machinery-scope="app"] #page-activity .activity-date-range {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Compact actions: the registered 48px secondary size. */
+[data-machinery-scope="app"] .mx-action[data-size="compact"] {
+  min-height: 48px !important;
+  font-size: 15px !important;
+}
+
+/* Layout axis: full-width actions keep their own width rule. */
+[data-machinery-scope="app"] .mx-action[data-layout="full"] {
+  width: 100% !important;
+}
+
+/*
+ * Commitment actions (transaction role) are the definition's full 56px and never
+ * compact: they carry irreversible financial consequence.
+ */
+[data-machinery-scope="app"] .mx-action[data-role="transaction"] {
+  min-height: 56px !important;
+  font-size: 16px !important;
+  font-weight: 800;
+}
+
+/*
+ * Icon actions: a square target holding a glyph, at the definition's 48px. The role was in the
+ * registry's allowed axes from the start but was never implemented here, so icon-only controls were
+ * marked "secondary compact" and inherited the horizontal padding of a text button. That padding is
+ * meaningless around a glyph and it split the icon family into two geometries.
+ */
+[data-machinery-scope="app"] .mx-action[data-role="icon"] {
+  min-height: 48px !important;
+  padding: 10px !important;
+}
+
+/* Quiet actions: a local command with no surface of its own. */
+[data-machinery-scope="app"] .mx-action[data-role="quiet"] {
+  min-height: 48px !important;
+  padding: 0 4px !important;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  color: var(--mx-accent, var(--c));
+  font-weight: 650 !important;
+}
+
+/* Every action shows the same focus and disabled truth. */
+[data-machinery-scope="app"] .mx-action:focus-visible {
+  outline: 3px solid var(--mx-focus, var(--c));
+  outline-offset: 2px;
+}
+
+[data-machinery-scope="app"] .mx-action[disabled],
+[data-machinery-scope="app"] .mx-action[aria-disabled="true"] {
+  opacity: .48;
+  cursor: not-allowed;
+}
+
+/* ---- Status treatment adoption -------------------------------------------
+ * M-EL-STATUS owns network truth and recovery. The banner is one stable shape
+ * for the global connection notice and the connection screen itself.
+ */
+[data-machinery-scope="app"] .mx-status {
+  color: var(--mx-ink-soft, var(--m));
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+[data-machinery-scope="app"] .mx-status-banner {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 12px;
+  border: 1px solid var(--mx-glass-line, var(--bo));
+  border-radius: 12px;
+  background: var(--mx-glass, var(--card));
+  color: var(--mx-ink, var(--t));
+}
+
+[data-machinery-scope="app"] .mx-status-banner__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  color: var(--mx-accent, var(--c));
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+[data-machinery-scope="app"] .mx-status-banner[data-tone="warning"] .mx-status-banner__icon {
+  color: var(--am);
+}
+
+[data-machinery-scope="app"] .mx-status-banner[data-tone="danger"] .mx-status-banner__icon {
+  color: var(--mx-danger, var(--rd));
+}
+
+[data-machinery-scope="app"] .mx-status-banner__body {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+[data-machinery-scope="app"] .mx-status-banner__body strong,
+[data-machinery-scope="app"] .mx-status-banner__body small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+[data-machinery-scope="app"] .mx-status-banner__body strong {
+  color: var(--mx-ink, var(--t));
+  font-size: 15px;
+  font-weight: 850;
+  line-height: 1.3;
+}
+
+[data-machinery-scope="app"] .mx-status-banner__body small {
+  color: var(--mx-ink-soft, var(--m));
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+[data-machinery-scope="app"] .stables-node-banner {
+  margin: 0 16px 12px;
+}
+
+[data-machinery-scope="app"] .stables-node-banner[hidden] {
+  display: none !important;
+}
+
+[data-machinery-scope="app"] .node-connect-state {
+  margin-bottom: 18px;
+  grid-template-columns: 28px minmax(0, 1fr);
+}
+
+[data-machinery-scope="app"] .node-connect-intro {
+  margin: 0 0 20px;
+}
+
+[data-machinery-scope="app"] .node-connect-field-help {
+  margin-top: 7px;
+  color: var(--mx-ink-soft, var(--m));
+}
+
+@media (max-width: 460px) {
+  [data-machinery-scope="app"] .stables-node-banner {
+    grid-template-columns: 28px minmax(0, 1fr);
+  }
+
+  [data-machinery-scope="app"] .stables-node-banner > .mx-action {
+    grid-column: 1 / -1;
+    width: 100% !important;
+  }
+}
+
+/*
+ * RECORDED EXEMPTIONS, deliberate and evidence-based (audit of all 24 pages, 2026-07-25):
+ *
+ * 1. Inline prose links (.ui-tone-accent, .step-action-link and similar sitting inside a
+ *    sentence) keep their intrinsic height. M-EL-NAVIGATION-LINK distinguishes an inline link
+ *    from a row link; the 48px rule governs the row form, and forcing inline links to 48px would
+ *    break the sentences they live in. Their text still meets the 14px floor.
+ * 2. .circle-orb diagram nodes are absolutely positioned with negative-margin centring: they are
+ *    illustration geometry, not controls in the reachability sense.
+ * 3. Native range inputs and checkboxes keep platform geometry; they carry their own element
+ *    definitions and are reviewed with them.
+ * 4. .toggle switches keep their visual size; the tap area belongs to the settings row that
+ *    contains them.
+ * 5. .ccy-iw currency glyph wrappers are icon geometry, not text.
+ *
+ * Each exemption is revisited during the per-element reviews.
+ */

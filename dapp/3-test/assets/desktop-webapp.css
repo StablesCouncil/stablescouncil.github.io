@@ -1,0 +1,392 @@
+/*
+ * RETIRED 2026-08-09 (founder direction): the desktop web integration was rebuilt from scratch
+ * as assets/desktop-web.css + assets/desktop-web.js. This file is no longer linked from
+ * index.html and is kept on disk as history only. Do not re-link it.
+ *
+ * D029 desktop composition, web surface only.
+ *
+ * Founder direction 2026-08-08: the web version is the desktop target. The MiniDapp and the APK
+ * are mobile surfaces and "look pretty good on their side", so they must not change. Everything
+ * here is gated on BOTH:
+ *   html[data-stables-surface="webapp"]   the web surface, set by the preview bootstrap
+ *   @media (min-width: 1024px)            the D029 desktop threshold
+ * so ?preview=dapp and ?preview=apk keep the shipped mobile composition at every width, and the
+ * mobile web composition below 1024px is untouched.
+ *
+ * PARITY LAW: this file moves things. It never invents them. No destination, action, figure or
+ * surface exists here that the mobile composition does not already have. The bottom navigation
+ * becomes a left rail carrying the same tabs in the same order with Wallet still fixed at its
+ * centre position in the list.
+ */
+
+@media (min-width: 1024px) {
+  html[data-stables-surface="webapp"] {
+    --stables-desktop-rail: 300px;
+    --stables-desktop-frame: 1180px;
+    /* The composed page measure. A page opts out only by earning a real desktop composition. */
+    --stables-desktop-page: 580px;
+  }
+
+  /* ONE menu on desktop (founder direction 2026-08-08). Mobile has two navigation surfaces: five
+     bottom tabs, and a More drawer that lists every page. On a wide screen both were on screen at
+     once, which is two menus doing one job. Desktop keeps the drawer, because it is the one that
+     lists every page, and drops the bottom tabs.
+     The drawer is PINNED OPEN as the rail rather than rebuilt as one. Reusing the real menu markup
+     means every destination, group heading, order and handler stays the app's own. A rebuilt rail
+     would be a second copy of the navigation, free to drift from it. */
+  html[data-stables-surface="webapp"] .bnav {
+    display: none;
+  }
+
+  html[data-stables-surface="webapp"] .dback#drawer {
+    /* Pinned regardless of .open, so closeMore() cannot dismiss the only navigation. */
+    display: block !important;
+    opacity: 1 !important;
+    inset: 0 0 0 auto;
+    width: var(--stables-desktop-rail);
+    z-index: 90;
+    background: transparent;
+    backdrop-filter: none;
+    transition: none;
+  }
+
+  html[data-stables-surface="webapp"] .dback#drawer > .drawer {
+    position: static;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding-bottom: 32px;
+    border-radius: 0;
+    border-left: 1px solid var(--border-subtle);
+    transform: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* The ground now extends across the viewport. The working content stays bounded to the shared
+     website frame and centres in the region beside the rail, so width buys structure and never
+     longer lines. */
+  html[data-stables-surface="webapp"] .scroll-area {
+    max-width: none;
+    margin-right: calc(var(--stables-desktop-rail) + var(--safe-right));
+    padding-bottom: 64px;
+  }
+
+  /* north-star-adoption.css sets `.page[data-machinery-lit] { width: min(580px, 100%) }` and a
+     `padding-inline: 16px !important`. A max-width alone loses to an explicit width, which is why
+     the first attempt produced a correct rail beside a still-580px column. Both are restated. */
+  /* NO PAGE STRETCHES (founder direction 2026-08-08: "we cant have just an UI where we stretched
+     the page"). Giving every page the full 1180px frame simply widened mobile rows until fields,
+     dropdowns and commit buttons ran the width of the screen. Until a page has a real desktop
+     composition of its own, it keeps its composed measure and sits in the frame rather than
+     filling it. Wallet already worked this way; this generalises it to all 25 pages, so the
+     desktop shell is honest everywhere and no page pretends to a layout it does not have. */
+  html[data-stables-surface="webapp"] .page,
+  html[data-stables-surface="webapp"] .page[data-machinery-lit] {
+    width: min(var(--stables-desktop-page), 100%);
+    max-width: var(--stables-desktop-page);
+    margin-inline: auto;
+    padding-inline: 28px !important;
+    padding-block: 8px 48px;
+  }
+
+  /* App-wide surfaces that sit outside the route host follow the same frame. */
+  html[data-stables-surface="webapp"] .scroll-area > .stables-node-banner {
+    max-width: var(--stables-desktop-frame);
+    margin-inline: auto;
+  }
+
+  /* The floating agent control belongs to the content region, not the viewport edge. */
+  html[data-stables-surface="webapp"] .fab-container {
+    left: auto;
+    margin-inline: 0;
+  }
+
+  /* Rail rows are compact. Each row carries a two-line description written for a full-width
+     mobile drawer; at 300px that description pushed the page list past the bottom of the window,
+     so the menu could not do the one job it is here for. The name and its icon stay, the
+     description and the "opens elsewhere" chevron stand down. Nothing is removed from the app:
+     the same rows, in the same order, with the same handlers. */
+  html[data-stables-surface="webapp"] .dback#drawer .ddesc {
+    display: none;
+  }
+
+  html[data-stables-surface="webapp"] .dback#drawer .ditem > span.ui-tone-muted {
+    display: none;
+  }
+
+  html[data-stables-surface="webapp"] .dback#drawer .ditem {
+    min-height: 44px;
+    padding-block: 6px;
+  }
+
+  html[data-stables-surface="webapp"] .dback#drawer .dsect {
+    margin-block: 4px;
+  }
+
+  /* Where you are. The rail is the only navigation on desktop and it marked nothing, so all 25
+     routes looked identical in the menu; the bottom tabs it replaced had always lit one slot.
+     `M-CMP-NAV-RAIL` registers exactly one current marker. Scoped to the web surface so the mobile
+     drawer is untouched, where the bottom tabs already carry the state. The accent bar is the
+     app's own accent used once, not a new colour. */
+  html[data-stables-surface="webapp"] .dback#drawer .ditem.is-current {
+    position: relative;
+    background: var(--surface-accent-soft);
+    border-color: var(--border-accent-soft);
+  }
+
+  html[data-stables-surface="webapp"] .dback#drawer .ditem.is-current::before {
+    content: "";
+    position: absolute;
+    inset-block: 8px;
+    left: 0;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--c);
+  }
+
+  html[data-stables-surface="webapp"] .dback#drawer .ditem.is-current .dname {
+    font-weight: 800;
+  }
+
+  /* A full-width action is a mobile layout, where full width IS a natural width. Carried into a
+     1140px frame it becomes a half-screen slab, which is the single loudest reason the desktop
+     pages read as stretched mobile. An action returns to its own size. */
+  html[data-stables-surface="webapp"] .page .btn-w {
+    max-width: 320px;
+  }
+
+  /* The wallet's Send/Receive row carries an inline max-width:280px, which a later !important rule
+     overrides, so at 1140px the pair became two half-screen slabs. Restored at desktop width. */
+  html[data-stables-surface="webapp"] #walletSendReceiveRow {
+    max-width: 320px !important;
+    margin-inline: 0 !important;
+  }
+
+  /* Wallet keeps its mobile alignment (founder direction 2026-08-08). Desktop gave the page a
+     1140px frame, and the balance, the asset rows and their amounts spread across it until the
+     page read as stretched rather than composed. The wallet content returns to the mobile column
+     and the mobile alignment; the desktop frame still owns the ground and the navigation. */
+  /* Wallet's bound is now the rule for every page, above. */
+
+  html[data-stables-surface="webapp"] #walletSendReceiveRow {
+    margin-inline: auto !important;
+  }
+
+  /* The brand stays left. `.topbar` is max-width:580px with margin:0 auto, which centres it in a
+     wide viewport, so the logo and name drifted to the middle of the screen. The bar spans the
+     content region instead and its grid keeps the brand in column one. */
+  html[data-stables-surface="webapp"] .topbar {
+    max-width: none;
+    margin: 0;
+    right: calc(var(--stables-desktop-rail) + var(--safe-right));
+  }
+
+  /* The name and tagline stack left, not centred: the inner wrapper is a centred row reused as a
+     column, which centres its text once the bar is wide. */
+  html[data-stables-surface="webapp"] .brand .ui-center-row {
+    align-items: flex-start;
+  }
+
+  /* One box, not two (D022: no container inside a container). A dialog is `.mback` >
+     `.ui-modal-frame` > `.modal`, and both the frame and the modal carry a surface. On a narrow
+     screen the frame is edge to edge so only one box reads; in a wide viewport the frame becomes a
+     visible second box around the dialog. The frame is a positioning wrapper, so it stops
+     painting. */
+  /* The direct-child form did not win: the frame is painted by rules the audit proved still
+     applied on every page. The frame is a positioning wrapper and never a surface. */
+  html[data-stables-surface="webapp"] .mback .ui-modal-frame {
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* The desktop-only Wallet row. Hidden on every mobile surface by the rule outside this media
+     query; revealed here because desktop has no bottom tabs to carry Wallet. */
+  html[data-stables-surface="webapp"] .dback#drawer .dsect[data-desktop-only] {
+    display: block;
+  }
+
+  /* .ditem is a flex row (icon, name, chevron). Revealing it with `display: block` stacked the
+     icon above the label, so the row must be restored to its own display, not a generic one. */
+  html[data-stables-surface="webapp"] .dback#drawer .ditem[data-desktop-only] {
+    display: flex;
+  }
+}
+
+/* Desktop-only navigation rows are invisible everywhere else, including the web surface below
+   1024px, so the mobile composition is byte-for-byte what it was. */
+[data-desktop-only] {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  /* A dialog centres on the content region, not on the monitor. `.mback` is a fixed inset:0
+     backdrop, so with the rail on the right every pop-up sat centred on the viewport while the
+     page behind it centred in the narrower content region, and the two never lined up. The
+     backdrop now ends where the content region ends. `.dback` (the pinned rail) is a different
+     class and is untouched. */
+  html[data-stables-surface="webapp"] .mback {
+    right: calc(var(--stables-desktop-rail) + var(--safe-right));
+  }
+
+  /* M-EL-ACTION pairRule, implemented once for the whole app rather than per page: two actions of
+     equal weight sit on one row at natural width, not stacked full width. Registered in the
+     element registry at 1.1.0-candidate; the desktop audit fails on any stacked pair.
+
+     `display` deliberately carries no !important. It used to, on the recorded belief that utility
+     stacks such as `ui-action-stack` force a grid column. No such rule exists anywhere in the app
+     CSS, and rewriting the declaration to normal priority in the live cascade left all 13
+     legitimate pair rows at `flex` and changed exactly one element: `#invRecognitionForm`, the
+     checkout-recognition form the app hides with an inline `display:none` until merchant mode, a
+     settled sale and a 45s delay all hold. An !important declaration outranks an inline style, so
+     a desktop ARRANGEMENT rule was deciding AVAILABILITY, and three controls were reachable on
+     desktop that no mobile user could reach. P2 lets a wider screen arrange differently and never
+     offer differently, so this rule must lose to any state that hides its container. `:not([hidden])`
+     closes the same hole for the attribute, which any author rule beats with or without !important.
+     Found by `audit-capability-parity.mjs`; keep both guards or it returns. */
+  html[data-stables-surface="webapp"] .page *:has(> .btn ~ .btn):not([hidden]) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+
+  /* The pair shares the row. Natural width alone is not enough: these containers are about
+     320px, so two 320px actions simply wrapped and stayed stacked. They divide the row instead. */
+  html[data-stables-surface="webapp"] .page *:has(> .btn ~ .btn) > .btn {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0;
+    max-width: 320px;
+  }
+
+  /* P6, one function one appearance: an action's height comes from its definition and its label,
+     never from a sibling. In a flex row the default align-items:stretch made a compact action grow
+     to match a taller neighbour, so the same registered role measured 48px beside one control and
+     56px beside another on the same page. Enumerating row utilities only moved the defect to the
+     next container that was not on the list, so the rule is general. It is safe for full-width
+     actions because `data-layout="full"` already forces width:100%, so centring on the cross axis
+     cannot shrink them. */
+  html[data-stables-surface="webapp"] .page .mx-action {
+    align-self: center;
+  }
+
+  /* The registered compact minimum, restated without a scope precondition. machinery-app.css sets
+     it only under [data-machinery-scope="app"], so any subtree missing that marker fell back to the
+     56px default and the same registered role measured two heights. This is the definition's own
+     number, not a correction to it. */
+  html[data-stables-surface="webapp"] .page .mx-action[data-size="compact"] {
+    min-height: 48px !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------
+ * Pages with a real desktop composition, rather than the mobile page in a wider window.
+ *
+ * Keyed to the REGISTERED ARCHETYPE, never to a page. A page declares which archetype it is with
+ * `data-mx-composition`, names the element holding both regions with `data-mx-regions`, and marks
+ * its supporting truth with `data-mx-region="context"`. Everything below then applies to any page
+ * that makes those three declarations, so composing the next page is three attributes and no new
+ * CSS. Writing this per page would have produced one bespoke block each, which is the per-page
+ * layout invention the composition law forbids.
+ *
+ * Mint went first because it is the registered transaction canon, so the other money pages align
+ * to it rather than each inventing an answer. Which pages have earned a composition is registered
+ * in Machinery/projects/stables-desktop-composition/desktop-page-composition.v1.json, which the
+ * desktop audit reads: a listed page stops being held to the 580px mobile measure and starts being
+ * held to its archetype, which is stricter.
+ *
+ * P3 is why width is allowed at all and P7 is the shape of it. Width buys STRUCTURE: supporting
+ * truth moves out of the person's way and sits beside the task. Width does not buy SIZE: on a
+ * transaction the amount, the direction and the commit action stay inside a 560px task column at
+ * 1024, 1280, 1440 and 1920, because separating an amount from its consequence is a safety
+ * property and not a preference.
+ *
+ * Nothing moves in the DOM. These are attributes and a grid; reading order, runtime hooks and the
+ * accessibility tree are exactly what they were on mobile.
+ * ------------------------------------------------------------------------------------------- */
+@media (min-width: 1024px) {
+  /* Opt out of the shared page measure, the way its own comment anticipates. */
+  html[data-stables-surface="webapp"] .page[data-mx-composition] {
+    --stables-desktop-page: var(--stables-desktop-frame);
+  }
+
+  /* Whatever the page does with its width, anything a person types into or chooses from stays
+     inside the task column. Declared by what the control IS rather than where it sits, so a
+     control added later inherits the bound instead of escaping it. */
+  html[data-stables-surface="webapp"] .page[data-mx-composition] .finput,
+  html[data-stables-surface="webapp"] .page[data-mx-composition] .fsel,
+  html[data-stables-surface="webapp"] .page[data-mx-composition] .ex-input,
+  html[data-stables-surface="webapp"] .page[data-mx-composition] input,
+  html[data-stables-surface="webapp"] .page[data-mx-composition] select,
+  html[data-stables-surface="webapp"] .page[data-mx-composition] textarea,
+  html[data-stables-surface="webapp"] .page[data-mx-composition="transaction"] .mx-mode-row,
+  html[data-stables-surface="webapp"] .page[data-mx-composition="transaction"] > label {
+    max-width: 560px;
+  }
+}
+
+@media (min-width: 1280px) {
+  /* Two regions. Below 1280 the same page is one column with its context beneath, which is the
+     archetype's own rule and not a fallback.
+
+     `grid-auto-flow: row dense` is load-bearing. Context comes last in the DOM, and the sparse
+     placement algorithm advances a cursor that never moves back up, so column 2 would start on the
+     row after the last task block and the pane would hang below the thing it is meant to sit
+     beside. Dense places each definite-column item from row 1. */
+  /* `.active` is not decoration on the second selector, it is the whole safety of it. When the
+     region host IS the page element, `display: grid` competes with the `display: none` that hides
+     every inactive page, and wins on specificity. Wallet and Legal both declare their regions on
+     the page itself, so without `.active` BOTH pages render on every route: the Wallet balance and
+     the Legal heading appeared stacked above whatever you had actually navigated to.
+
+     This is the same defect as the pair rule forcing `display: flex` over an inline `display: none`
+     a few iterations ago, reintroduced while generalising that fix. A layout rule may never decide
+     whether something is on screen. `audit-desktop-webapp.mjs` now fails when any page other than
+     the active one is visible, which is the check that was missing both times: it only ever
+     inspected `.page.active`, so it could not see a page that should not have been there at all.
+
+     The first selector needs no guard: a host INSIDE a hidden page is hidden with it. */
+  html[data-stables-surface="webapp"] .page[data-mx-composition] [data-mx-regions],
+  html[data-stables-surface="webapp"] .page[data-mx-composition][data-mx-regions].active {
+    display: grid;
+    grid-auto-flow: row dense;
+    gap: 16px 32px;
+    align-items: start;
+  }
+
+  /* A money form refuses width; an account home spends it. Same mechanism, different registered
+     rule, which is exactly why this keys off the archetype and not off the page. */
+  html[data-stables-surface="webapp"] .page[data-mx-composition="transaction"] [data-mx-regions] {
+    grid-template-columns: minmax(0, 560px) minmax(300px, 1fr);
+  }
+
+  html[data-stables-surface="webapp"] .page[data-mx-composition="account-home"][data-mx-regions].active,
+  html[data-stables-surface="webapp"] .page[data-mx-composition="account-home"] [data-mx-regions] {
+    grid-template-columns: minmax(0, 1.6fr) minmax(300px, 1fr);
+  }
+
+  /* A document's text column is bounded in px, not in fr. P4 fixes the reading measure, and a
+     fractional column does not: at 1920 a 1.6fr primary inside the 1180 frame resolves to about
+     727px, which is over the 720 limit the audit enforces. The index takes the rest. */
+  html[data-stables-surface="webapp"] .page[data-mx-composition="document"][data-mx-regions].active,
+  html[data-stables-surface="webapp"] .page[data-mx-composition="document"] [data-mx-regions] {
+    grid-template-columns: minmax(0, 680px) minmax(260px, 1fr);
+  }
+
+  html[data-stables-surface="webapp"] .page[data-mx-composition] [data-mx-regions] > *,
+  html[data-stables-surface="webapp"] .page[data-mx-composition][data-mx-regions].active > * {
+    grid-column: 1;
+    min-width: 0;
+  }
+
+  html[data-stables-surface="webapp"] .page[data-mx-composition] [data-mx-regions] > [data-mx-region="context"],
+  html[data-stables-surface="webapp"] .page[data-mx-composition][data-mx-regions].active > [data-mx-region="context"] {
+    grid-column: 2;
+  }
+}

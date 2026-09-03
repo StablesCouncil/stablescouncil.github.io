@@ -4,6 +4,9 @@
 **Scope:** `1_development/stream_1_app/website/dapp/`  
 **Primary target:** `dapp/2-demo/`  
 **Purpose:** Keep the MiniDapp moving toward a community-built product, with a clear release bar, visible roadmap, and a shared reference for ongoing work.
+**Coherence audit:** `COMMUNITY_DEMO_COHERENCE_AUDIT.md`
+**Visual quality reference:** `0_handshake/visual_quality_system.md`
+**Button system audit:** `BUTTON_SYSTEM_AUDIT.md`
 
 ---
 
@@ -35,7 +38,7 @@ This file is the current high-level source for:
 | **Coverage Fund rework** | Planned | Needs metric order and naming cleanup |
 | **On/Off Ramp restructure** | Planned | Merchant-first path needs to lead |
 | **Links / copy cleanup** | Planned | Includes Faucet / acquisition wording fixes |
-| **Personalization module scaffold** | Planned | “Make my bank look mine” |
+| **Personalization module scaffold** | Ready for review | “Make my bank look mine” added after App updates |
 | **Release cadence framework** | Defined | Frequent public demo releases with clear changelog and feedback loop |
 
 ### Current milestone
@@ -44,14 +47,17 @@ This file is the current high-level source for:
 
 ### Immediate next implementation block
 
+0. [x] Fix operational-signal plumbing between the tracker, Navi cards, and Dashboard - completed 2026-05-14  
 1. Showcase / Demo selector on the top pill  
 2. Channel truth model for showcase versus demo  
 3. Wallet / Send / Activity cleanup  
 4. Coverage Fund rework  
 5. On/Off Ramp restructure  
 6. Links and Faucet / acquisition copy cleanup  
-7. “Make my bank look mine” scaffold  
-8. Release notes and changelog summary
+7. [x] “Make my bank look mine” scaffold  
+8. [x] Website presentation-quality operating-loop section  
+9. [x] Visible roadmap surface on Feedback  
+10. [x] Release notes and changelog summary
 
 ---
 
@@ -100,7 +106,7 @@ The MiniDapp should use the same product surface across channels, with different
 - The top app version indicator should become a **channel selector**
 - The user should be able to switch between **Showcase** and **Demo**
 - Internal canonical versioning remains per handshake policy
-- Display formatting can be simplified for humans, for example `v0.0.0.0.3` instead of `v00.00.00.00.03`
+- Display formatting is simplified for humans: use `v0.0.0.0.3` / `v0.0.0.1` in visible labels and public zip filenames, while internal config keeps canonical two-digit values
 
 ---
 
@@ -115,6 +121,7 @@ This first community demo does **not** need to feel finished. It **does** need t
 - No obvious dead-end interactions presented as ready
 - Preserve and clearly communicate that **demo already functions as a MINIMA wallet** for node-connected send / receive
 - Strong enough polish that community members can explore, react, and give feedback
+- Visual rhythm, spacing, hierarchy, and proportion must feel intentional per `0_handshake/visual_quality_system.md`. Beautiful, coherent rendering is part of trust and product quality, not decoration.
 - Visible roadmap inside the product
 - Changelog discipline and regular communication rhythm
 
@@ -130,6 +137,7 @@ This first community demo does **not** need to feel finished. It **does** need t
 - Stale copy that describes the wrong channel
 - Unclear asset truth
 - Broken navigation between major sections
+- Random-looking spacing, crowded text, weak hierarchy, or inconsistent visual rhythm that makes the app feel amateur
 - Release artifacts and docs that contradict the app
 
 ---
@@ -432,6 +440,7 @@ The Demo line should move on a frequent public cadence.
 - Personalization module scaffold: **Make my bank look mine**
 - Better presentation logic in the web base version
 - Cleaner roadmap presentation for coming modules
+- Demo release review package with changelog summary, feedback ask, known limits, and next step
 
 ### Can remain visible as coming soon
 

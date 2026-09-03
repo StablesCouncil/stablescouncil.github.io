@@ -67,9 +67,7 @@
     <meta name="twitter:description" content="Stables community assets and official design materials.">
     <meta name="twitter:image" content="/brand/assets/twitter-header.png">
     
-    <!-- Inter + tokens: stables.css -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Shared compatibility CSS followed by the Brand resource layer -->
     <link rel="stylesheet" href="stables.css" />
     <link rel="stylesheet" href="assets/site-chrome.css" />
     
@@ -520,25 +518,31 @@
         .agent-popup-fallback a:hover { box-shadow: 0 0 20px rgba(103,232,249,0.3); }
         @media (max-width: 640px) { .agent-fab { bottom: 20px; right: 20px; } .agent-fab-tip { display: none; } .agent-popup { bottom: 0; right: 0; left: 0; width: 100%; height: 75vh; border-radius: 20px 20px 0 0; border-bottom: none; } }
     </style>
+    <link rel="stylesheet" href="assets/stables-visual-authority.css" />
+    <link rel="stylesheet" href="assets/brand-assets-d028.css" />
+  <link rel="stylesheet" href="/assets/secondary-page-chrome.css">
 </head>
 
-<body class="site-chrome-body links-page-body deck-chrome-page">
+<body class="d028-page d028-brand-page secondary-chrome-page">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
 
-    <!-- Global Header -->
-    <header class="site-chrome-header" role="banner">
-                <a class="site-chrome-header__brand" href="/">
-            <img class="site-chrome-header__mark" src="/brand/assets/logo-symbol.png" width="48" height="48" alt="Stables">
-            <span class="site-chrome-header__titles">
-                <span class="site-chrome-header__name">Stables</span>
-                <span class="site-chrome-header__slogan">Be your bank</span>
-            </span>
-        </a>
-        <a class="site-chrome-header__pill" href="https://minima.global" target="_blank" rel="noopener noreferrer">Built on MINIMA</a>
-    </header>
-
-    <!-- Side Language/Share Rail -->
-    <aside class="site-chrome-side-rail" aria-label="Quick navigation">
-        <div class="site-chrome-side-rail__stack">
+    <header class="secondary-chrome-header" role="banner">
+  <div class="secondary-chrome-header__inner secondary-chrome-frame">
+    <a class="secondary-chrome-brand" href="/new/" aria-label="Stables homepage">
+      <img src="/brand/assets/logo-symbol.png" width="44" height="44" alt="">
+      <span>
+        <span class="secondary-chrome-brand__name">STABLES</span>
+        <span class="secondary-chrome-brand__role">Be your bank</span>
+      </span>
+    </a>
+    <nav class="secondary-chrome-nav" aria-label="Application access">
+      <a class="secondary-chrome-access" href="/new/payment-app/">Access dApp</a>
+    </nav>
+  </div>
+</header>
+<div class="vf-secondary-utilities secondary-chrome-frame">
+<nav class="vf-site-nav" aria-label="Brand resource navigation">
+                <a class="vf-site-link" href="/design/authority/">Visual authority</a>
             <div class="lang-switcher">
                 <button type="button" class="globe-btn" onclick="toggleLangMenu()" aria-label="Select language">
                     <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -553,7 +557,6 @@
                     <button type="button" role="menuitem" onclick="goPresentationLang('fr')">Français</button>
                 </div>
             </div>
-            
             <div class="share-switcher">
                 <button type="button" class="share-btn" onclick="toggleShareMenu()" aria-label="Share">
                     <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -569,142 +572,160 @@
                     <button type="button" onclick="copyLink()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>Copy Link</button>
                 </div>
             </div>
-        </div>
-    </aside>
+                <a class="vf-site-link" href="/links.html">All links</a>
+            </nav>
+</div>
 
-    <!-- Main Content Area -->
-    <main class="site-chrome-main site-chrome-main--document" id="main-content">
-        <div class="container" style="max-width: 900px; margin: 0 auto; width: 100%;">
-            
-            <div class="title-block">
-                <h1>Brand & Identity.</h1>
-                <p class="subtitle philosophy-text">
-                    Stables community assets and official design materials for free use by contributors, ambassadors, and merchants worldwide. All formatting rules strictly adhere to the Visual Identity Specifications v1.0.
-                </p>
-            </div>
-
-            <h2 class="section-title">Official Logos</h2>
-            <div class="card-grid">
-                <div class="asset-card">
-                    <div class="asset-preview">
-                        <img src="/brand/assets/logo-symbol.png" alt="Stables Symbol Logo" style="height: 100px;">
-                    </div>
-                    <div class="asset-info">
-                        <div class="asset-name">Stables Symbol</div>
-                        <div class="asset-desc">Primary brand mark. Used for avatars, icons, and primary identification.</div>
-                        <a href="/brand/assets/logo-symbol.png" target="_blank" class="asset-link">Open Image</a>
-                    </div>
+    <main class="vf-site-main" id="main-content">
+        <div class="vf-frame">
+            <section class="vf-hero" aria-labelledby="brand-title">
+                <div>
+                    <p class="vf-eyebrow">Official brand resources</p>
+                    <h1 id="brand-title">The Stables identity, ready to use.</h1>
+                    <p class="vf-lede">Official marks, exact language, and print-ready materials for contributors, ambassadors, and merchants. Use the supplied masters as they are. Do not redraw or approximate them.</p>
                 </div>
-                
-                <div class="asset-card">
-                    <div class="asset-preview" style="padding: 2rem;">
-                        <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.3rem;">
-                            <img src="/brand/assets/logo-symbol.png" alt="Stables logo" style="height: 48px; filter: drop-shadow(0 0 3px rgba(103,232,249,0.35));" />
-                            <div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.05;">
-                                <div style="font-family: 'Inter', sans-serif; font-size: 24px; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; color: #e6edf3;">STABLES</div>
-                                <div style="font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; color: #67e8f9; text-transform: uppercase; letter-spacing: 0.18em; margin-top: 2px;">BE YOUR BANK</div>
+                <div class="vf-hero-mark">
+                    <img src="/brand/assets/logo-symbol.png" alt="The official Stables symbol">
+                </div>
+            </section>
+
+            <section class="vf-section" aria-labelledby="official-marks-title">
+                <div class="vf-section-heading">
+                    <p class="vf-eyebrow">01. Official marks</p>
+                    <h2 id="official-marks-title">Use the repository masters</h2>
+                    <p>The symbol and wordmark below are the approved image assets. Their proportions, spacing, and lettering are part of the mark.</p>
+                </div>
+                <div class="vf-grid">
+                    <article class="vf-card vf-card--accent">
+                        <div class="vf-card-preview">
+                            <img class="vf-brand-symbol" src="/brand/assets/logo-symbol.png" alt="Stables symbol">
+                        </div>
+                        <div class="vf-card-body">
+                            <h3>Stables symbol</h3>
+                            <p>Primary identification mark for avatars, icons, compact placements, and approved brand applications.</p>
+                            <div class="vf-card-actions">
+                                <a class="vf-action vf-action--primary" href="/brand/assets/logo-symbol.png" target="_blank" rel="noopener">Open symbol</a>
+                                <a class="vf-action" href="/brand/assets/logo-symbol.png" download="Stables_Symbol.png">Download PNG</a>
                             </div>
                         </div>
-                    </div>
-                    <div class="asset-info">
-                        <div class="asset-name">Stables Wordmark Lockup (CSS)</div>
-                        <div class="asset-desc">The official STABLES + BE YOUR BANK header lockup. Rendered natively via CSS using the <strong>Inter</strong> font without images.</div>
-                        <button class="copy-btn" style="width: fit-content;" onclick="copyToClipboard('cssWordmark')">Copy HTML/CSS</button>
-                        <div id="cssWordmark" style="display: none;">&lt;div style="display: flex; align-items: center; gap: 0.8rem;"&gt;
-    &lt;img src="/brand/assets/logo-symbol.png" alt="Stables logo" style="height: 48px; filter: drop-shadow(0 0 3px rgba(103,232,249,0.35));" /&gt;
-    &lt;div style="display: flex; flex-direction: column; justify-content: center; line-height: 1.05;"&gt;
-        &lt;div style="font-family: 'Inter', sans-serif; font-size: 24px; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; color: #e6edf3;"&gt;STABLES&lt;/div&gt;
-        &lt;div style="font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; color: #67e8f9; text-transform: uppercase; letter-spacing: 0.18em; margin-top: 2px;"&gt;BE YOUR BANK&lt;/div&gt;
-    &lt;/div&gt;
-&lt;/div&gt;</div>
-                    </div>
-                </div>
-            </div>
+                    </article>
 
-            <h2 class="section-title">Typography & Copy</h2>
-            <div class="proof-box">
-                <div class="proof-grid">
-                    <div class="proof-item">
-                        <h4>Exact Brand Name</h4>
-                        <div class="copyable-text" id="copyText1">Stables</div>
-                        <button class="copy-btn" onclick="copyToClipboard('copyText1')">Copy</button>
-                    </div>
-                    <div class="proof-item">
-                        <h4>Core Tagline</h4>
-                        <div class="copyable-text small" id="copyText2">Be your bank.</div>
-                        <button class="copy-btn" onclick="copyToClipboard('copyText2')">Copy</button>
-                    </div>
-                    <div class="proof-item">
-                        <h4>Sub-Tagline</h4>
-                        <div class="copyable-text small" id="copyText3" style="font-size: 0.95rem; line-height: 1.4;">Secure, Pseudonymous and Unstoppable.</div>
-                        <button class="copy-btn" onclick="copyToClipboard('copyText3')">Copy</button>
-                    </div>
-                </div>
-            </div>
-
-            <h2 class="section-title">Print Materials</h2>
-            <div class="card-grid" style="margin-bottom: 6rem;">
-                
-                <div class="asset-card">
-                    <a href="/brand/business_card/Stables_Business_Card_Front.png" target="_blank" class="asset-preview" style="background: #101826; padding: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 280px; position: relative; text-decoration: none; cursor: pointer;" title="Click to open full size for saving or printing">
-                        <img src="/brand/business_card/Stables_Business_Card_Front.png" alt="Business Card Front" style="width: 85mm; height: 55mm; object-fit: cover; transform: scale(0.68); border-radius: 3.5mm; box-shadow: 0 16px 56px rgba(0,0,0,0.75); transition: transform 0.2s ease;" onmouseover="this.style.transform='scale(0.7)'" onmouseout="this.style.transform='scale(0.68)'">
-                    </a>
-                    <div class="asset-info">
-                        <div class="asset-name">Business Card (Front)</div>
-
-                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                            <a href="/brand/business_card/Stables_Business_Card_Front.png" download="Stables_Business_Card_Front.png" class="asset-link" style="flex: 1; text-align: center;">Download Print-Ready PNG ↗</a>
+                    <article class="vf-card">
+                        <div class="vf-card-preview">
+                            <img class="vf-brand-wordmark" src="/brand/assets/logo-wordmark.png" alt="Official Stables wordmark">
                         </div>
-                    </div>
-                </div>
-
-                <div class="asset-card">
-                    <a href="/brand/business_card/Stables_Business_Card_Back.png" target="_blank" class="asset-preview" style="background: #101826; padding: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 280px; position: relative; text-decoration: none; cursor: pointer;" title="Click to open full size for saving or printing">
-                        <img src="/brand/business_card/Stables_Business_Card_Back.png" alt="Business Card Back" style="width: 85mm; height: 55mm; object-fit: cover; transform: scale(0.68); border-radius: 3.5mm; box-shadow: 0 16px 56px rgba(0,0,0,0.75); transition: transform 0.2s ease;" onmouseover="this.style.transform='scale(0.7)'" onmouseout="this.style.transform='scale(0.68)'">
-                    </a>
-                    <div class="asset-info">
-                        <div class="asset-name">Business Card (Back)</div>
-
-                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                            <a href="/brand/business_card/Stables_Business_Card_Back.png" download="Stables_Business_Card_Back.png" class="asset-link" style="flex: 1; text-align: center;">Download Print-Ready PNG ↗</a>
+                        <div class="vf-card-body">
+                            <h3>Stables wordmark</h3>
+                            <p>Approved wordmark master with its lettering and spacing intact. Use this asset instead of recreating the lockup with live text or CSS.</p>
+                            <div class="vf-card-actions">
+                                <a class="vf-action vf-action--primary" href="/brand/assets/logo-wordmark.png" target="_blank" rel="noopener">Open wordmark</a>
+                                <a class="vf-action" href="/brand/assets/logo-wordmark.png" download="Stables_Wordmark.png">Download PNG</a>
+                            </div>
                         </div>
-                    </div>
+                    </article>
                 </div>
-            </div>
-            
+            </section>
+
+            <section class="vf-section" aria-labelledby="language-title">
+                <div class="vf-section-heading">
+                    <p class="vf-eyebrow">02. Exact language</p>
+                    <h2 id="language-title">Copy without transcription errors</h2>
+                    <p>These approved phrases are ready for contributor and merchant materials.</p>
+                </div>
+                <div class="vf-grid vf-grid--three">
+                    <article class="vf-card">
+                        <div class="vf-card-body">
+                            <span class="vf-copy-label">Brand name</span>
+                            <div class="vf-copy-value" id="copyText1">Stables</div>
+                            <div class="vf-card-actions"><button class="vf-action" type="button" onclick="copyToClipboard('copyText1', this)">Copy</button></div>
+                            <span class="vf-copy-status" aria-live="polite"></span>
+                        </div>
+                    </article>
+                    <article class="vf-card">
+                        <div class="vf-card-body">
+                            <span class="vf-copy-label">Core tagline</span>
+                            <div class="vf-copy-value" id="copyText2">Be your bank.</div>
+                            <div class="vf-card-actions"><button class="vf-action" type="button" onclick="copyToClipboard('copyText2', this)">Copy</button></div>
+                            <span class="vf-copy-status" aria-live="polite"></span>
+                        </div>
+                    </article>
+                    <article class="vf-card">
+                        <div class="vf-card-body">
+                            <span class="vf-copy-label">Supporting line</span>
+                            <div class="vf-copy-value" id="copyText3">Secure, Pseudonymous and Unstoppable.</div>
+                            <div class="vf-card-actions"><button class="vf-action" type="button" onclick="copyToClipboard('copyText3', this)">Copy</button></div>
+                            <span class="vf-copy-status" aria-live="polite"></span>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="vf-section" aria-labelledby="print-title">
+                <div class="vf-section-heading">
+                    <p class="vf-eyebrow">03. Print materials</p>
+                    <h2 id="print-title">Business cards at production resolution</h2>
+                    <p>Open a card to inspect the full-size artwork or download the print-ready PNG directly.</p>
+                </div>
+                <div class="vf-grid">
+                    <article class="vf-card">
+                        <a class="vf-card-preview vf-print-preview" href="/brand/business_card/Stables_Business_Card_Front.png" target="_blank" rel="noopener" aria-label="Open the full-size front business card">
+                            <img src="/brand/business_card/Stables_Business_Card_Front.png" alt="Front of the Stables business card">
+                        </a>
+                        <div class="vf-card-body">
+                            <h3>Business card, front</h3>
+                            <p>Primary brand face, formatted for the approved 85 by 55 millimetre card.</p>
+                            <div class="vf-card-actions"><a class="vf-action vf-action--primary" href="/brand/business_card/Stables_Business_Card_Front.png" download="Stables_Business_Card_Front.png">Download front PNG</a></div>
+                        </div>
+                    </article>
+                    <article class="vf-card">
+                        <a class="vf-card-preview vf-print-preview" href="/brand/business_card/Stables_Business_Card_Back.png" target="_blank" rel="noopener" aria-label="Open the full-size back business card">
+                            <img src="/brand/business_card/Stables_Business_Card_Back.png" alt="Back of the Stables business card">
+                        </a>
+                        <div class="vf-card-body">
+                            <h3>Business card, back</h3>
+                            <p>Contact and QR face, formatted for the approved 85 by 55 millimetre card.</p>
+                            <div class="vf-card-actions"><a class="vf-action vf-action--primary" href="/brand/business_card/Stables_Business_Card_Back.png" download="Stables_Business_Card_Back.png">Download back PNG</a></div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="vf-section" aria-labelledby="authority-title">
+                <div class="vf-notice">
+                    <strong id="authority-title">Visual authority.</strong> This resource page follows the founder-approved Stables Visual Framework and North Star direction. Machinery remains the executable authority for product components, behavior, states, accessibility, and compositions.
+                </div>
+            </section>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="site-chrome-footer site-chrome-footer--minimal" role="contentinfo">
-        <div class="site-chrome-footerSocial">
-            <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer" aria-label="Telegram community">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-            </a>
-            <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--icon" href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer" aria-label="Stables on X">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            </a>
-        <a class="site-chrome-footerSocial__link site-chrome-footerSocial__link--all-links" href="/links.html">All links</a>
-        </div>
-        <p class="site-chrome-footerMeta">Stables Brand Assets v1.0 | Built on Minima</p>
-    </footer>
+    <footer class="secondary-chrome-footer" role="contentinfo">
+  <div class="secondary-chrome-footer__inner secondary-chrome-frame">
+    <p><a class="secondary-chrome-footer__signature" href="/new/">Stables | Be your Bank</a></p>
+    <nav class="secondary-chrome-footer__links" aria-label="Supporting links">
+      <a class="secondary-chrome-access" href="/new/payment-app/">Access dApp</a>
+      <a href="/links.html">All links</a>
+      <a href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer">X</a>
+      <a href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer">Telegram</a>
+      <a class="secondary-chrome-minima" href="https://minima.global" target="_blank" rel="noopener noreferrer">Built on MINIMA</a>
+    </nav>
+  </div>
+</footer>
 
     <script>
-        function copyToClipboard(elementId) {
+        function copyToClipboard(elementId, button) {
             var text = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(text).then(function() {
-                var btn = event.target;
-                var oldText = btn.innerText;
-                btn.innerText = "Copied!";
-                btn.style.background = "rgba(34, 197, 94, 0.2)";
-                btn.style.color = "#22c55e";
-                btn.style.borderColor = "rgba(34, 197, 94, 0.5)";
+                var oldText = button.innerText;
+                var status = button.closest('.vf-card-body').querySelector('.vf-copy-status');
+                button.innerText = "Copied";
+                status.textContent = text + " copied to clipboard.";
                 setTimeout(function() {
-                    btn.innerText = oldText;
-                    btn.style.background = "";
-                    btn.style.color = "";
-                    btn.style.borderColor = "";
+                    button.innerText = oldText;
+                    status.textContent = "";
                 }, 2000);
+            }).catch(function() {
+                var status = button.closest('.vf-card-body').querySelector('.vf-copy-status');
+                status.textContent = "Clipboard access was unavailable. Select and copy the text manually.";
             });
         }
     </script>
@@ -718,7 +739,7 @@
     <!-- Agent Popup -->
     <div class="agent-popup" id="agentPopup">
         <div class="agent-popup-header">
-            <div class="agent-popup-logo"><img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" /></div>
+            <div class="agent-popup-logo"><img src="/stables_agent_avatar.png" alt="StablesAgent" /></div>
             <div class="agent-popup-title">
                 <div class="agent-popup-title-main">StablesAgent</div>
                 <div class="agent-popup-title-sub">Ask anything about Stables</div>
@@ -729,7 +750,7 @@
         <div class="agent-popup-body">
             <iframe id="agentFrame" title="StablesAgent Chat"></iframe>
             <div class="agent-popup-fallback" id="agentFallback">
-                <img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;" />
+                <img src="/stables_agent_avatar.png" alt="StablesAgent" style="width:48px;height:48px;opacity:0.7;" />
                 <p>The chat will load here directly once the secure connection is active.<br>For now, open it in a new tab:</p>
                 <a href="https://agent.stablescouncil.org/chat" target="_blank" rel="noopener noreferrer">Open StablesAgent ↗</a>
             </div>
@@ -738,12 +759,11 @@
 
     <!-- Agent FAB -->
     <button class="agent-fab" id="agentFab" onclick="toggleAgent()" aria-label="Chat with StablesAgent">
-        <span class="agent-fab-tip">Chat with StablesAgent</span>
         <div class="agent-fab-btn">
             <span class="agent-fab-pulse"></span>
             <span class="agent-fab-pulse"></span>
             <span class="agent-fab-pulse"></span>
-            <img src="https://stablescouncil.github.io/stables_agent_avatar.png" alt="StablesAgent" />
+            <img src="/stables_agent_avatar.png" alt="StablesAgent" />
             <span class="agent-fab-dot"></span>
         </div>
     </button>

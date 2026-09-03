@@ -20,7 +20,7 @@
 
 ## How to use it
 
-1. **Implement** in the **lead** channel only (or in demo + port up—your call—but record the gap here).
+1. **Implement** in the **lead** channel only (or in demo + port up - your call - but record the gap here).
 2. **Add a row** per feature / fix / refactor (short id + one-line scope).
 3. **Mark** each downstream cell: `done` · `n/a` (not applicable at that stage) · `open` (still to port).
 4. When you order **apply downstream**, port in order **test → demo → showcase** (or skip stages marked `n/a`), then flip **`open` → `done`** and note the date in **Evidence** if useful (PR, commit, CHANGELOG section).

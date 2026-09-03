@@ -1,11 +1,11 @@
-# Stables — April 1st Showcase Comms
+# Stables  -  April 1st Showcase Comms
 
 > Planned release: **April 1st** · Drafted: March 23rd
 > Attach the 3 screenshots to every post.
 
 ---
 
-## 🐦 Twitter / X — Thread
+## 🐦 Twitter / X  -  Thread
 
 **Tweet 1 (hook)**
 ```
@@ -83,25 +83,25 @@ Please mark April 1st on your calendar.
 ## 💬 Discord
 
 ```
-📢 **Stables Showcase — April 1st**
+📢 **Stables Showcase  -  April 1st**
 
 Hey Stables community 👋
 
 We're locking in a date and going public: **April 1st**, we drop the first showcase build of the Stables MiniDapp.
 
 **What you'll see:**
-> 🏦 Multi-currency wallet — EURs, USDs, Minima — held on your own Minima node
-> ⚡ Instant send / receive — flat $0.01 max fee, recipient gets every cent
-> ⭐ Contact book with favourites — pin your go-to contacts for one-tap transfers
-> 📖 Full contact picker — search, star, select — no more copy-pasting addresses
+> 🏦 Multi-currency wallet  -  EURs, USDs, Minima  -  held on your own Minima node
+> ⚡ Instant send / receive  -  flat $0.01 max fee, recipient gets every cent
+> ⭐ Contact book with favourites  -  pin your go-to contacts for one-tap transfers
+> 📖 Full contact picker  -  search, star, select  -  no more copy-pasting addresses
 
-This is a **showcase** — demo balances, no real value. But everything you see is running on real self-custody infrastructure.
+This is a **showcase**  -  demo balances, no real value. But everything you see is running on real self-custody infrastructure.
 
 No bank. No middleman. Your keys, your money.
 
 **April 1st. No joke. 🎯**
 
-— The Stables team
+ -  The Stables team
 
 ---
 *Screenshots below ↓*
@@ -112,8 +112,8 @@ No bank. No middleman. Your keys, your money.
 
 ## 📸 Screenshots to attach
 
-![Wallet page — balance, currencies, Send/Receive](/C:/Users/Charles/.gemini/antigravity/brain/75c3a93a-3114-4710-a74f-81cfbde5b324/comms_wallet_1774255290626.png)
+![Wallet page  -  balance, currencies, Send/Receive](/C:/Users/Charles/.gemini/antigravity/brain/75c3a93a-3114-4710-a74f-81cfbde5b324/comms_wallet_1774255290626.png)
 
-![Send modal — ⭐ Alex, Maria, Sam favourites in chip row](/C:/Users/Charles/.gemini/antigravity/brain/75c3a93a-3114-4710-a74f-81cfbde5b324/comms_send_1774255362719.png)
+![Send modal  -  ⭐ Alex, Maria, Sam favourites in chip row](/C:/Users/Charles/.gemini/antigravity/brain/75c3a93a-3114-4710-a74f-81cfbde5b324/comms_send_1774255362719.png)
 
-![Contact picker — Favourites section with Alex, Maria, Sam](/C:/Users/Charles/.gemini/antigravity/brain/75c3a93a-3114-4710-a74f-81cfbde5b324/comms_picker_1774255346848.png)
+![Contact picker  -  Favourites section with Alex, Maria, Sam](/C:/Users/Charles/.gemini/antigravity/brain/75c3a93a-3114-4710-a74f-81cfbde5b324/comms_picker_1774255346848.png)

@@ -67,10 +67,10 @@ The script lives at **`tools/build_feedback_index.mjs`** in this repository.
 
 ### What `index.json` contains
 
-- **`items`** — lightweight row per submission (`file`, `submitted_at`, `topic_domain`, `kind`, `title`, …), sorted **newest first**.
-- **`groups.by_topic_domain`** — filenames grouped by `topic_domain`.
-- **`groups.by_kind`** — grouped by `kind`.
-- **`groups.by_month`** — grouped by `YYYY-MM` from `submitted_at`.
+- **`items`**  -  lightweight row per submission (`file`, `submitted_at`, `topic_domain`, `kind`, `title`, …), sorted **newest first**.
+- **`groups.by_topic_domain`**  -  filenames grouped by `topic_domain`.
+- **`groups.by_kind`**  -  grouped by `kind`.
+- **`groups.by_month`**  -  grouped by `YYYY-MM` from `submitted_at`.
 
 Each `file` value is relative to **`feedback/`** (e.g. `submissions/stables-feedback-….json`).
 

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true">
+  <!-- Flat, saturated shapes to sit next to menu emoji (no thin strokes) -->
+  <path fill="#D7CCC8" d="M12 30c0-9.5 10-15 20-15s20 5.5 20 15v6H12z"/>
+  <path fill="#8D6E63" d="M10 35h44a2 2 0 012 2v20a6 6 0 01-6 6H14a6 6 0 01-6-6V37a2 2 0 012-2z"/>
+  <rect x="10" y="37" width="44" height="8" fill="#FFCA28"/>
+  <rect x="24" y="37" width="16" height="20" rx="3" fill="#6D4C41"/>
+  <rect x="28" y="42" width="8" height="6" rx="2" fill="#455A64"/>
+  <rect x="30" y="45" width="4" height="6" rx="1" fill="#4DD0E1"/>
+  <ellipse cx="20" cy="26" rx="3.8" ry="2.4" fill="#FFF59D"/>
+  <ellipse cx="44" cy="26" rx="3.8" ry="2.4" fill="#FFF59D"/>
+</svg>

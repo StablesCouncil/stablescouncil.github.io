@@ -1,0 +1,1064 @@
+/*
+ * The "open and lit" visual language, as a reusable layer.
+ *
+ * Language:  D021, recorded in work/Machinery/projects/stables-north-star/visual-language.json 0.2.0
+ * Reference: work/Machinery/projects/stables-north-star/explorations/wallet-modern.html
+ * First use: MIG-006, the Activities page
+ *   contract: work/Machinery/projects/stables-current-app/migrations/activity-open-and-lit-migration.v1.json
+ *
+ * WHY THIS FILE EXISTS
+ * MIG-005 proved the language on the Wallet with a page-specific sheet, which was right for a
+ * proof. Doing that again per page would produce one bespoke sheet per screen and, before long,
+ * several implementations of one language, which the reuse law forbids. So the shared rules are
+ * written once here and a page opts in by carrying `data-machinery-lit`. Migrating the next screen
+ * becomes: add the attribute, then record only what is genuinely particular to that screen.
+ *
+ * TWO ATTRIBUTES, TWO AXES (deliberate, not redundant)
+ *   data-machinery-scope="<name>"  which migration owns this region; the contract verifier reads it
+ *   data-machinery-lit             which visual language the region renders in
+ * A page carries both. They answer different questions and are expected to diverge as more
+ * migrations land.
+ *
+ * SCOPE NOTE
+ * The Wallet is deliberately NOT on this layer yet. It keeps `machinery-wallet.css` exactly as the
+ * founder reviewed it. Folding the wallet in, and deleting the rules that this file then duplicates,
+ * is the named next step in the MIG-006 contract, and it is a separate verifiable change.
+ *
+ * Presentation only: no structure, id, route, handler, money, MDS or node change.
+ */
+
+/* ---- 0. The language speaks every theme ---------------------------------
+ * Founder 2026-07-25: the colour themes must have full effect, including on the
+ * background. The language used to state its own colours as literals, so all six
+ * themes rendered the same lit blue surface and the theme choice stopped at the
+ * chrome. Every value is now derived from the theme's own variables, so the field,
+ * the ink, the glass and the accent are the theme's, and a light theme becomes a
+ * genuinely light surface rather than a dark one wearing a light badge.
+ *
+ *   --bg  the theme background      --t  its text
+ *   --c   its accent                --m  its muted text
+ */
+
+:root,
+[data-theme] {
+  /* R001 fixed identity. Previous selectable palettes do not carry forward. */
+  --mx-base: #16334f;
+  --mx-lit-a: rgba(103, 232, 249, .62);
+  --mx-lit-b: rgba(96, 165, 250, .52);
+  --mx-ink: #ffffff;
+  --mx-ink-soft: rgba(255, 255, 255, .80);
+  --mx-ink-faint: rgba(255, 255, 255, .58);
+  --mx-line: rgba(255, 255, 255, .16);
+  --mx-glass: rgba(255, 255, 255, .12);
+  --mx-glass-strong: rgba(255, 255, 255, .17);
+  --mx-glass-line: rgba(255, 255, 255, .24);
+  --mx-accent: #67e8f9;
+  --mx-on-accent: #07222c;
+  --mx-danger: #ff9aa6;
+}
+
+/* ---- 1. One continuous illuminated surface ----------------------------- *
+ * The field is the surface, not decoration. Exactly two tones: our cyan and
+ * its blue neighbour. It lights only while a lit page is the active page, so
+ * every screen that has not been migrated renders exactly as it does today.
+ * A browser without :has() simply keeps the current look, which is safe.
+ *
+ * THE FIELD BELONGS TO THE APP, NOT TO A PAGE BOX (founder rule 2026-07-25).
+ * Painting it on the page element made it stop where that element stopped, so
+ * a hard seam appeared above the content and again past its edges: the screen
+ * read as a lit section sitting on a darker app rather than as one surface.
+ * It is now painted on a fixed layer that is the app column at full height, so
+ * every element sits directly on one continuous background with no edge
+ * anywhere. Constraining that layer to the app column also keeps the earlier
+ * fix intact: on a window wider than the column, no seam appears where the
+ * column ends, because the base tone continues behind it at any width.
+ */
+
+body:has(.page.active[data-machinery-lit]) {
+  background-color: var(--mx-base);
+  background-image: none !important;
+}
+
+body:has(.page.active[data-machinery-lit])::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  z-index: -1;
+  width: 100%;
+  max-width: 580px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background-image:
+    radial-gradient(64% 26% at 14% 2%, var(--mx-lit-a), transparent 66%),
+    radial-gradient(72% 30% at 86% 98%, var(--mx-lit-b), transparent 70%);
+}
+
+/* The page itself paints nothing: it is a position on the surface, not a panel. */
+body:has(.page.active[data-machinery-lit]) .page.active[data-machinery-lit] {
+  background: transparent !important;
+}
+
+/* ---- 2. Glass for chrome only ------------------------------------------ *
+ * Translucent surfaces are reserved for the things that must float above the
+ * field: the top and bottom chrome, and controls.
+ */
+
+/* No header bar on any page (founder 2026-07-25). The bar existed to carry the
+ * brand and the connection control. The brand now sits directly on the background
+ * of the wallet, and the connect dialog opens by itself when the node is not live,
+ * so on every other page the bar has nothing left to hold and only costs a row of
+ * screen. The wallet keeps its bar because that is where the mark lives, and it is
+ * already transparent, so it reads as the background too. */
+body:has(.page.active[data-machinery-lit]):not(:has(#page-wallet.active)) .topbar {
+  display: none !important;
+}
+
+/* The scroll area reserves the bar's height at the top. With no bar, that reserve is
+ * just an empty band above every page, so it collapses to the safe area plus a
+ * breath. */
+body:has(.page.active[data-machinery-lit]):not(:has(#page-wallet.active)) .scroll-area {
+  padding-top: calc(var(--safe-top) + 10px) !important;
+}
+
+body:has(.page.active[data-machinery-lit]) .topbar,
+body:has(.page.active[data-machinery-lit]) .bnav {
+  border-color: var(--mx-glass-line);
+  background-color: var(--mx-glass);
+  background-image: none;
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+  backdrop-filter: blur(28px) saturate(170%);
+}
+
+/* The mark is content, not chrome (founder 2026-07-26).
+ *
+ * The wallet was the one page that kept a bar, and a bar stays put: the mark and
+ * the bank name hung there while the balance and the holdings slid underneath,
+ * which is the header behaviour the language had already removed everywhere else.
+ * They belong to the page, so they leave with it.
+ *
+ * The document is the scroller here (.scroll-area sets no overflow of its own),
+ * so dropping the bar from `fixed` to `absolute` is the whole change: it keeps the
+ * band the scroll area already reserves, keeps its markup, its click target and
+ * its handlers, and simply travels with the content. It also stops being a
+ * surface: no glass, no blur, no hairline, because there is nothing to float over
+ * once it is sitting on the background. */
+body:has(#page-wallet.active) .topbar {
+  position: absolute !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border-bottom: 0 !important;
+}
+
+/* D021 requires glass to ship with a fallback. Where the browser cannot blur,
+ * the chrome becomes a solid lifted surface rather than a transparent smear
+ * that page content reads through. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  body:has(.page.active[data-machinery-lit]) .topbar,
+  body:has(.page.active[data-machinery-lit]) .bnav {
+    background-color: color-mix(in srgb, var(--mx-base) 88%, var(--t) 12%);
+  }
+}
+
+/* ---- 2b. Chrome text belongs to the surface it floats over -------------- *
+ * The top and bottom chrome are shared by every page, so their text colour
+ * still comes from the active theme. Over the lit field a light theme paints
+ * near-black labels on mid blue, which is unreadable. While a lit page is
+ * active the chrome takes the language's own text colours instead. Six themes
+ * keep their own language everywhere else; this is only the chrome, and only
+ * while it is floating over this surface.
+ *
+ * The ACTIVE destination is deliberately left alone: MIG-002 owns the shell's
+ * active pill in every theme, and a filled pill reads correctly over the field.
+ */
+
+body:has(.page.active[data-machinery-lit]) .bnav .ntab:not(.active),
+body:has(.page.active[data-machinery-lit]) .bnav .ntab:not(.active) .nicon,
+body:has(.page.active[data-machinery-lit]) .bnav .ntab:not(.active) .nlabel {
+  color: var(--mx-ink-soft) !important;
+}
+
+/* The active destination was blue text on a ten-percent blue pill. On the old dark
+ * page that read; on the lit field it is blue on blue, in every theme. The language
+ * already answers this: the accent marks the one thing that is current, and it is
+ * spelled with its own ink so it cannot depend on the theme underneath. Geometry is
+ * untouched, so the shell keeps the shape MIG-002 gave it. */
+body:has(.page.active[data-machinery-lit]) .bnav .ntab.active,
+body:has(.page.active[data-machinery-lit]) .bnav .ntab.active .nicon,
+body:has(.page.active[data-machinery-lit]) .bnav .ntab.active .nlabel {
+  color: var(--mx-on-accent) !important;
+}
+
+body:has(.page.active[data-machinery-lit]) .bnav .ntab.active {
+  border-color: transparent !important;
+  background: var(--mx-accent) !important;
+  background-image: none !important;
+}
+
+body:has(.page.active[data-machinery-lit]) .topbar,
+body:has(.page.active[data-machinery-lit]) .topbar .brand-name { color: var(--mx-ink) !important; }
+
+body:has(.page.active[data-machinery-lit]) .topbar .brand-sub {
+  color: var(--mx-ink-soft) !important;
+}
+
+/* ---- 2c. Screens, not pop-ups ------------------------------------------ *
+ * Founder direction 2026-07-25: Send, Receive, and the currency and transaction
+ * detail are full pages with a back control, not dialogs floating over the app.
+ * They keep their modal ids, openers and close handlers, so no route or hook
+ * moved; only the presentation changed. A surface marked as a screen fills the
+ * app column and carries the same lit field as a page.
+ */
+
+.mback:has(> * > .modal[data-modal-shape="screen"]),
+.mback:has(> .modal[data-modal-shape="screen"]) {
+  padding: 0 !important;
+  background: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* A screen is centred by the column, never by whatever the backdrop happens to be doing.
+ * `.mback.centered` adds `align-items:center` and a 48px top pad for small dialogs; a screen that
+ * inherits those sits short and can drift off the app's centre line, so the screen states its own
+ * placement and the dialog variant stops applying to it (founder 2026-07-26, Send after a scan). */
+.mback.centered:has(.modal[data-modal-shape="screen"]) {
+  align-items: stretch !important;
+  justify-content: center !important;
+  padding-top: 0 !important;
+}
+.mback.centered:has(.modal[data-modal-shape="screen"]) .modal {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.mback:has(.modal[data-modal-shape="screen"]) > .ui-modal-frame {
+  width: 100% !important;
+  max-width: 580px !important;
+  height: 100% !important;
+  max-height: none !important;
+  margin: 0 auto !important;
+}
+
+/* Keep the screen geometry above the generic centered-dialog geometry in
+ * app-ui-system.css. The backdrop qualifier is intentional: without it the
+ * generic `.mback.centered .modal` rule wins on specificity and replaces the
+ * safe-area padding with a fixed 20px, placing screen headers under Android's
+ * clock and battery row. */
+.mback .modal[data-modal-shape="screen"] {
+  width: 100% !important;
+  max-width: 580px !important;
+  height: 100% !important;
+  max-height: none !important;
+  margin: 0 auto !important;
+  /* The Wallet mark begins 14px below the safe inset after optical centring.
+     Full-screen content uses that same boundary, so no screen control can sit
+     higher than the mark that defines the app's canonical top edge. */
+  padding: calc(var(--safe-top) + 14px) 24px calc(var(--nh) + var(--safe-bottom) + 24px) !important;
+  overflow-y: auto !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background-color: var(--mx-base) !important;
+  background-image:
+    radial-gradient(64% 26% at 14% 2%, var(--mx-lit-a), transparent 66%),
+    radial-gradient(72% 30% at 86% 98%, var(--mx-lit-b), transparent 70%) !important;
+  box-shadow: none !important;
+}
+
+/* A screen is not dragged down by a handle. */
+.modal[data-modal-shape="screen"] .mhandle { display: none !important; }
+
+/* Back control and title on one line. The chevron is optically centred against
+ * the title rather than sitting on its own baseline, and it hangs into the
+ * gutter so the title starts on the page's text edge. */
+.modal[data-modal-shape="screen"] .mx-screen-head {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 0 0 26px !important;
+}
+
+.modal[data-modal-shape="screen"] .mx-screen-back {
+  display: grid !important;
+  flex: 0 0 auto !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-height: 44px !important;
+  place-items: center !important;
+  margin-left: -14px !important;
+  padding: 10px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--mx-ink-soft) !important;
+  font-size: 30px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+}
+
+/* Keep the 44 px control centred while correcting the font's low chevron
+ * baseline. The title and the visible arrow then share the same optical
+ * centre without moving or shrinking the touch target. */
+.modal[data-modal-shape="screen"] .mx-screen-back__glyph {
+  display: block !important;
+  line-height: 1 !important;
+  transform: translateY(-3px) !important;
+}
+
+.modal[data-modal-shape="screen"] .mx-screen-head .mttl {
+  flex: 1 1 auto !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+.modal[data-modal-shape="screen"] .mx-screen-head__right {
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+}
+
+/* ---- 2d. The side menu ------------------------------------------------- *
+ * A menu is a list of destinations, so it is built from the same open rows the
+ * holdings and the activity use: a uniform glass mark, a name, a quiet line of
+ * explanation, and a hairline. It carries the lit surface because it covers the
+ * app rather than floating a small dialog over it.
+ */
+
+.drawer[data-machinery-lit] {
+  border-color: var(--mx-line) !important;
+  background-color: var(--mx-base) !important;
+  background-image:
+    radial-gradient(64% 26% at 14% 2%, var(--mx-lit-a), transparent 66%),
+    radial-gradient(72% 30% at 86% 98%, var(--mx-lit-b), transparent 70%) !important;
+}
+
+[data-machinery-lit] .dsect-t {
+  color: var(--mx-ink-faint) !important;
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  letter-spacing: .1em !important;
+  text-transform: uppercase !important;
+}
+
+[data-machinery-lit] .ditem {
+  gap: 14px !important;
+  padding: 16px 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--mx-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-machinery-lit] .dsect .ditem:last-child { border-bottom: 0 !important; }
+
+/* One mark for every destination, so the menu reads as one list. */
+[data-machinery-lit] .ditem .dic {
+  width: 38px !important;
+  height: 38px !important;
+  flex: 0 0 auto !important;
+  border: 1px solid var(--mx-glass-line) !important;
+  border-radius: 50% !important;
+  background: var(--mx-glass) !important;
+  box-shadow: none !important;
+  font-size: 17px !important;
+}
+
+[data-machinery-lit] .dname {
+  color: var(--mx-ink) !important;
+  font-size: 16px !important;
+  font-weight: 650 !important;
+  letter-spacing: -.01em !important;
+}
+
+[data-machinery-lit] .ddesc {
+  margin-top: 2px !important;
+  color: var(--mx-ink-faint) !important;
+  font-size: 13.5px !important;
+}
+
+/* The rule between sections is carried by the rows themselves. */
+[data-machinery-lit] .ddiv { display: none !important; }
+
+/* Exchange and Trade are reached from the menu, so the in-page tab bar that used
+ * to switch between them is a second way to answer a question already answered. */
+[data-machinery-lit] #tv81ExTabBtnSwap,
+[data-machinery-lit] #tv81ExTabBtnLiq { display: none !important; }
+[data-machinery-lit] .ui-segmented:has(#tv81ExTabBtnSwap) { display: none !important; }
+
+/* The agent panel is a surface of the app, so it wears the app's language: the same
+ * lit field, a head that sits on it rather than in a bar, and text that reads
+ * against the field instead of against the old dark panel. */
+[data-machinery-lit].agent-drawer-panel .dhead,
+[data-machinery-lit] .agent-dlg-head {
+  border-bottom: 1px solid var(--mx-line) !important;
+  background: transparent !important;
+  color: var(--mx-ink) !important;
+}
+
+[data-machinery-lit].agent-drawer-panel { color: var(--mx-ink) !important; }
+
+/* ---- The agent header, on one line -------------------------------------
+ * It was two stacked rows 129px tall: the language select had grown to full
+ * field width, which pushed the two icon controls onto a line of their own and
+ * left the header looking like a pile. Identity on the left, the three controls
+ * on the right, one row, nothing wrapping. The name and context truncate rather
+ * than forcing the controls to move.
+ */
+[data-machinery-lit] .agent-dlg-head {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+[data-machinery-lit] .agent-dlg-head > :first-child {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  min-width: 0 !important;
+}
+
+/* The mark holds its size; the words beside it truncate instead of dropping below. */
+[data-machinery-lit] .agent-dlg-head > :first-child > img { flex: 0 0 auto !important; }
+[data-machinery-lit] .agent-dlg-head > :first-child > :last-child { min-width: 0 !important; }
+
+[data-machinery-lit] .agent-dlg-head > :last-child {
+  flex: 0 0 auto !important;
+  gap: 6px !important;
+}
+
+[data-machinery-lit] .agent-dlg-name,
+[data-machinery-lit] .agent-dlg-ctx {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+[data-machinery-lit] .agent-dlg-name { color: var(--mx-ink) !important; font-weight: 700 !important; }
+[data-machinery-lit] .agent-dlg-ctx { color: var(--mx-ink-faint) !important; font-size: 13px !important; }
+
+/* The language is a two-letter choice, not a full-width field. Only its width is
+ * constrained: height, padding, radius and type stay the one registered field
+ * geometry, because a narrower box is still a field and must not become a second
+ * definition of one. */
+[data-machinery-lit] .agent-dlg-lang {
+  width: 70px !important;
+  min-width: 0 !important;
+  flex: 0 0 auto !important;
+  border: 1px solid var(--mx-glass-line) !important;
+  background-color: var(--mx-glass) !important;
+  color: var(--mx-ink) !important;
+}
+
+/* The conversation panel painted its own near-black surface over the lit field, so
+ * the dialog stayed dark from the head down. It stands down like every other
+ * container and lets the field through. */
+[data-machinery-lit] .agent-dlg-panel {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Where you type reads as glass, like every other field on the surface. */
+[data-machinery-lit] .agent-dlg-input {
+  border: 1px solid var(--mx-glass-line) !important;
+  background: var(--mx-glass) !important;
+  color: var(--mx-ink) !important;
+}
+
+[data-machinery-lit] .agent-dlg-input::placeholder { color: var(--mx-ink-faint) !important; }
+
+/* The privacy warning keeps its meaning and loses its slab. */
+[data-machinery-lit] .agent-dlg-warn,
+[data-machinery-lit] .agent-drawer-panel .ui-tone-warning {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* The sticky menu head is an opaque boundary. Destination rows scroll underneath it, so a
+   transparent or glass fill makes two independent layers read at once. */
+[data-machinery-lit] .drawer-lang-bar {
+  border-bottom: 1px solid var(--mx-line) !important;
+  background-color: var(--mx-base) !important;
+  background-image: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  isolation: isolate;
+}
+
+[data-machinery-lit] .drawer-version-status {
+  border: 1px solid var(--mx-glass-line) !important;
+  background: var(--mx-glass) !important;
+  box-shadow: none !important;
+}
+
+[data-machinery-lit] .drawer-version-status__version,
+[data-machinery-lit] .app-lang-globe-btn { color: var(--mx-ink) !important; }
+
+[data-machinery-lit] .app-lang-globe-btn {
+  border: 1px solid var(--mx-glass-line) !important;
+  background: var(--mx-glass) !important;
+  box-shadow: none !important;
+}
+
+/* ---- 3. Containers stand down ------------------------------------------ *
+ * Grouping comes from spacing, alignment and type. A visible container must
+ * earn its place; the default is no container at all.
+ */
+
+/* Every container family stands down, not just the two the wallet happened to use
+ * (founder 2026-07-25: pages like On/Off Ramp were still full of boxes, and the
+ * whole app should feel like the wallet). These carried dark legacy fills, which
+ * on a lit surface read as holes punched in the page. Diagram nodes, fields,
+ * chrome and meaningful state surfaces keep their boundaries: they earn them. */
+[data-machinery-lit] .mx-section-surface,
+[data-machinery-lit] .tv81-truth-panel,
+[data-machinery-lit] .tv81-terminal-grid,
+[data-machinery-lit] .tv81-market-bar,
+[data-machinery-lit] .ui-inset-panel,
+[data-machinery-lit] .mcard,
+[data-machinery-lit] .merchant-promo-card,
+[data-machinery-lit] .prop-card,
+[data-machinery-lit] .addr-box,
+[data-machinery-lit] .xwm-card,
+[data-machinery-lit] .cp-card,
+[data-machinery-lit] .lp-card,
+[data-machinery-lit] .pool-card,
+[data-machinery-lit] .liab-visual-card,
+[data-machinery-lit] .card,
+[data-machinery-lit] .app-section-card {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  /* A card clips its children to a rounded box. With the box gone that clip
+   * only survives as a cut across the top and sides of the content inside it,
+   * which is precisely the section edge this language removes. */
+  overflow: visible !important;
+}
+
+/* ---- 4. Type carries the hierarchy ------------------------------------- *
+ * Titles are white, support is muted, and the accent is never spent on a label.
+ */
+
+[data-machinery-lit] .app-page-header__title {
+  color: var(--mx-ink) !important;
+  font-weight: 750 !important;
+  letter-spacing: -.015em !important;
+}
+
+[data-machinery-lit] .app-page-header__sub,
+[data-machinery-lit] .stitle,
+[data-machinery-lit] .flabel,
+[data-machinery-lit] .mu {
+  color: var(--mx-ink-faint) !important;
+}
+
+[data-machinery-lit] .xs,
+[data-machinery-lit] .sec-body { color: var(--mx-ink-soft) !important; }
+
+/* The floating agent sits in the top right corner, so the page header keeps that
+ * corner clear rather than running its subtitle underneath it. Only the header that
+ * heads the page: a header used as an item inside a row has a neighbour to fit
+ * beside, and reserving the corner there squeezes it to nothing. */
+[data-machinery-lit] > .app-page-header { padding-right: 62px !important; }
+
+/* The page mark keeps its glyph and loses its box, like every other element. */
+[data-machinery-lit] .app-page-header .dic {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* ---- 5. Rows are open, held by a hairline ------------------------------ *
+ * Containers were removed, so something must hold the reading rhythm. D021
+ * revised the earlier ban and permits hairline separators where they carry
+ * scan structure. The last row does not need one: the list has ended.
+ */
+
+[data-machinery-lit] .tx-list {
+  display: block !important;
+  gap: 0 !important;
+}
+
+[data-machinery-lit] .tx-row,
+[data-machinery-lit] .ccy-primary,
+[data-machinery-lit] .ccy-sec-row {
+  /* 18px, the reference's row rhythm. */
+  padding-top: 18px !important;
+  padding-bottom: 18px !important;
+  margin-bottom: 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--mx-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-machinery-lit] .tx-row:last-child,
+[data-machinery-lit] .ccy-sec-row:last-child { border-bottom: 0 !important; }
+
+/* A holding row carried a decorative glow and a per-asset tint. D021 permits the
+ * ambient field as the surface and forbids decorative glow on elements. */
+[data-machinery-lit] .ccy-primary::before { display: none !important; }
+[data-machinery-lit] .ccy-primary[data-ccy] { background: transparent !important; }
+
+/* Hover tinted the border, which no longer exists as an edge to tint. */
+[data-machinery-lit] .tx-row:hover { border-color: var(--mx-glass-line) !important; }
+
+/* The mark is uniform glass. Per-asset and per-direction tinting stands down,
+ * because direction is already carried by the glyph and the sign. */
+[data-machinery-lit] .tx-ic,
+[data-machinery-lit] .tx-ic.in-ic,
+[data-machinery-lit] .tx-ic.out-ic {
+  border: 1px solid var(--mx-glass-line) !important;
+  background: var(--mx-glass) !important;
+}
+
+[data-machinery-lit] .tx-t { color: var(--mx-ink) !important; }
+[data-machinery-lit] .tx-d { color: var(--mx-ink-faint) !important; }
+
+/* ---- 6. One accent, used once, plus incoming value --------------------- *
+ * D021 gives cyan to the single most likely action on a screen and to value
+ * arriving. Outgoing amounts are white: the minus sign and the glyph already
+ * say the direction, so red would be colour used as decoration.
+ */
+
+[data-machinery-lit] .tx-amt {
+  color: var(--mx-ink) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+[data-machinery-lit] .tx-amt.pos { color: var(--mx-accent) !important; }
+[data-machinery-lit] .tx-amt.neg { color: var(--mx-ink) !important; }
+
+/* ---- 7. Financial inputs stay bounded, and read as glass ---------------- *
+ * Fields and selections keep their boundary on purpose: it is one of the
+ * retained boundaries in the language, because a person must always see where
+ * they may type.
+ */
+
+/* The custom asset/pair triggers were left out of this rule, so while every native field became
+   glass they kept the old opaque slab — which is what the founder recognised on the trade pair
+   selector as "the old style of V8" (2026-07-26). A selector is a field you choose from, so it takes
+   the same surface as the field beside it, and adding it here updates every asset picker at once. */
+[data-machinery-lit] .ex-ccy-dd__btn,
+[data-machinery-lit] .finput,
+[data-machinery-lit] .fsel,
+[data-machinery-lit] select,
+[data-machinery-lit] textarea {
+  border: 1px solid var(--mx-glass-line) !important;
+  /* background-COLOR, not the shorthand: the shorthand also clears background-image, and that is
+     what a native select draws its chevron with. Using it here silently erased the one mark that
+     said "this opens" (founder 2026-07-25: a box has to look like a dropdown). */
+  background-color: var(--mx-glass) !important;
+  color: var(--mx-ink) !important;
+}
+
+/* ---- A dropdown says it is a dropdown ----------------------------------
+ * Founder 2026-07-25: "I know it, but most people will miss it." A select and a
+ * plain field are the same rectangle until something marks the difference, so
+ * every dropdown in the app carries the same chevron, at a size meant to be seen,
+ * in the theme's own ink. The 40px of right padding the field already reserves is
+ * what it sits in, so no geometry changes.
+ */
+[data-machinery-lit] .fsel,
+[data-machinery-lit] select {
+  cursor: pointer !important;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--mx-ink-soft) 50%),
+    linear-gradient(135deg, var(--mx-ink-soft) 50%, transparent 50%) !important;
+  background-position:
+    calc(100% - 21px) calc(50% - 3px),
+    calc(100% - 14px) calc(50% - 3px) !important;
+  background-size: 7px 7px, 7px 7px !important;
+  background-repeat: no-repeat !important;
+}
+
+/* The custom asset dropdowns use a real element for their mark; it reads at the
+   same weight as the native one rather than as a faint hairline. */
+[data-machinery-lit] .ex-ccy-dd__chev {
+  opacity: 1 !important;
+  /* ONLY the top edge. The mark is a CSS triangle: its left and right borders must stay
+     transparent or the shape fills in and every selector in the app wears a small block
+     instead of a caret. Measured on the running app 2026-07-26 while checking why the
+     trade pair control did not read as a dropdown; the shorthand here was recolouring
+     all four edges. */
+  border-top-color: var(--mx-ink-soft) !important;
+  color: var(--mx-ink-soft) !important;
+}
+
+[data-machinery-lit] .finput::placeholder,
+[data-machinery-lit] textarea::placeholder { color: var(--mx-ink-faint) !important; }
+
+[data-machinery-lit] .finput:focus-visible,
+[data-machinery-lit] .fsel:focus-visible,
+[data-machinery-lit] select:focus-visible,
+[data-machinery-lit] textarea:focus-visible {
+  outline: 3px solid rgba(103, 232, 249, .55) !important;
+  outline-offset: 2px !important;
+}
+
+/* A native dropdown paints its own options with the system palette, so the
+ * option text must stay legible against it rather than inheriting white. */
+[data-machinery-lit] .fsel option,
+[data-machinery-lit] select option { color: #0b0f14; }
+
+/* ---- 8. Choosing: glass, with the chosen one lifted rather than tinted -- */
+
+[data-machinery-lit] .ccy-pill {
+  border: 1px solid var(--mx-glass-line) !important;
+  background: var(--mx-glass) !important;
+  color: var(--mx-ink-faint) !important;
+}
+
+[data-machinery-lit] .ccy-pill.on {
+  border-color: transparent !important;
+  background: var(--mx-glass-strong) !important;
+  color: var(--mx-ink) !important;
+}
+
+/* When a chip group wraps onto a second line, a push-right rule leaves the
+ * wrapped pair marooned at the far edge with a void beside it. Grouping in this
+ * language comes from alignment, so the whole control group keeps one left edge,
+ * the same edge the rows below it use. */
+[data-machinery-lit] .ui-wrap > div:has(> .ccy-pill) { margin-left: 0 !important; }
+
+/* Direction is a switch, not a pair of commitments (founder 2026-07-25). Mint and
+ * Burn choose what the page is for; the commitment is the action at the bottom.
+ * So the switch is small and quiet, and the per-asset copies of it stand down,
+ * because one page has one direction. */
+[data-machinery-lit] .mx-mode-row {
+  display: flex !important;
+  justify-content: flex-start !important;
+}
+
+[data-machinery-lit] #panelXwm > .app-section .ui-side-toggle,
+[data-machinery-lit] #panelIssue > .app-section .ui-side-toggle { display: none !important; }
+
+/* The asset is chosen once, at the top of the page. The per-form currency pickers
+ * would be a second place to answer the same question. */
+[data-machinery-lit] #panelIssue .ex-ccy-dd:has(#issueCcyVaultDdBtn),
+[data-machinery-lit] #panelIssue .ex-ccy-dd:has(#reclaimCcyVaultDdBtn) { display: none !important; }
+
+/* Segmented control on a lit surface (founder 2026-08-10: the faint glass active state read as
+ * confusing; make the selected segment a SOLID fill, like The Pool, so the choice reads at a
+ * glance). A recessed track holds the segments; the selected one fills the accent, and a
+ * destructive DIRECTION (burn / sell) fills the light-red consequence instead. */
+[data-machinery-lit] .ui-segmented,
+[data-machinery-lit] .ui-side-toggle {
+  border: 1px solid rgba(255, 255, 255, .10) !important;
+  border-radius: 14px !important;
+  background: rgba(8, 22, 36, .24) !important;
+  padding: 4px !important;
+  gap: 4px !important;
+}
+
+[data-machinery-lit] .ui-segment,
+[data-machinery-lit] .ui-side,
+[data-machinery-lit] .mx-side {
+  color: var(--mx-ink-faint) !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+}
+
+[data-machinery-lit] .ui-segment.active,
+[data-machinery-lit] .ui-side.active,
+[data-machinery-lit] .mx-side.active {
+  border-color: transparent !important;
+  background: var(--mx-accent) !important;
+  color: var(--mx-on-accent) !important;
+  box-shadow: none !important;
+}
+
+[data-machinery-lit] .ui-segment.active[data-side="burn"],
+[data-machinery-lit] .ui-segment.active[data-side="sell"],
+[data-machinery-lit] .ui-side.active[data-side="burn"],
+[data-machinery-lit] .ui-side.active[data-side="sell"],
+[data-machinery-lit] .mx-side.active[data-side="burn"],
+[data-machinery-lit] .mx-side.active[data-side="sell"] {
+  background: #fb7185 !important;
+  color: #2c070e !important;
+}
+
+/* ---- 9. Actions --------------------------------------------------------- *
+ * Role and geometry stay owned by the registered M-EL-ACTION identity from
+ * MIG-004. This layer only states what each role looks like on a lit surface.
+ */
+
+[data-machinery-lit] .btn-primary:not(.btn-danger),
+[data-machinery-lit] .action-transaction:not(.btn-danger):not(.btn-choice) {
+  border: 0 !important;
+  background: var(--mx-accent) !important;
+  background-image: none !important;
+  color: var(--mx-on-accent) !important;
+  box-shadow: none !important;
+  font-weight: 750 !important;
+}
+
+/* The commit of a destructive DIRECTION wears the consequence, not the accent (founder
+ * 2026-08-10: burn, sell and every other-side action box go light red). The same law the
+ * .btn-danger rule below states for destructive OPERATIONS, keyed off the direction the
+ * control carries; the :not() chain mirrors the accent rule so this stays the heavier voice. */
+[data-machinery-lit] .action-transaction[data-side="burn"]:not(.btn-choice),
+[data-machinery-lit] .action-transaction[data-side="sell"]:not(.btn-choice) {
+  background: #fb7185 !important;
+  color: #2c070e !important;
+}
+
+/* A destructive action is never the accent. The accent means "this is the thing to
+ * do"; burning your tokens is not that, even when it is the only action on screen. */
+[data-machinery-lit] .btn-danger {
+  border: 1px solid rgba(255, 127, 140, .55) !important;
+  background: rgba(255, 127, 140, .16) !important;
+  background-image: none !important;
+  color: #ff9aa4 !important;
+  box-shadow: none !important;
+  font-weight: 750 !important;
+}
+
+[data-machinery-lit] .btn-secondary,
+[data-machinery-lit] .btn-choice {
+  border: 1px solid var(--mx-glass-line) !important;
+  background: var(--mx-glass) !important;
+  color: var(--mx-ink) !important;
+  box-shadow: none !important;
+}
+
+/* A dashed edge reads as a placeholder. A paging control is a real control. */
+[data-machinery-lit] .show-more-btn {
+  border: 1px solid var(--mx-glass-line) !important;
+  background: var(--mx-glass) !important;
+  color: var(--mx-ink) !important;
+}
+
+/* ---- 10. One gutter, one text edge, and rows that reach the screen ------ *
+ * Screen width is scarce on a phone. The page holds a single gutter, nothing
+ * nests another inside it, and no section may narrow itself further.
+ */
+
+/* The gutter is the reference's own (founder 2026-07-25: adopt the proportions of
+ * explorations/wallet-modern.html). Everything on the page shares this one edge:
+ * text, separators and controls, so nothing is a narrower section inside it. */
+[data-machinery-lit] { --mx-gutter: 24px; }
+
+body:has(.page.active[data-machinery-lit]) .page.active[data-machinery-lit] {
+  padding-left: var(--mx-gutter) !important;
+  padding-right: var(--mx-gutter) !important;
+}
+
+/* A step is a row on the page, not a card (founder 2026-07-25). The sequence is
+ * already carried by the numbers and the rail beside them; boxing each step adds
+ * an outline that says nothing the number has not already said. */
+[data-machinery-lit] .route-step {
+  padding: 16px 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-machinery-lit] .route-step .step-num {
+  border: 1px solid var(--mx-glass-line) !important;
+  background: var(--mx-glass) !important;
+  box-shadow: none !important;
+  color: var(--mx-ink) !important;
+}
+
+[data-machinery-lit] .route-step .step-title { color: var(--mx-ink) !important; }
+[data-machinery-lit] .route-step .step-desc { color: var(--mx-ink-faint) !important; }
+
+/* An unchosen side is glass, not a dark slab. On a lit surface a near-black fill
+ * reads as a hole punched in the page rather than as "not selected". The chosen
+ * side keeps its own semantic tone, which the language permits for direction. */
+[data-machinery-lit] .ui-side:not(.active),
+[data-machinery-lit] .mx-side:not(.active) {
+  border: 1px solid var(--mx-glass-line) !important;
+  background: var(--mx-glass) !important;
+  color: var(--mx-ink-soft) !important;
+}
+
+/* ---- Trade: a market bar, not a second header --------------------------
+ * Founder 2026-07-25. The pair selector took five eighths of the page for a
+ * two-word label, and the bar holding it was sticky, so it followed you down the
+ * screen like a header the page already has. A pair is a choice, so it takes the
+ * width of its own name; and the market bar scrolls with the market it describes.
+ */
+[data-machinery-lit] .tv81-market-bar {
+  position: static !important;
+  top: auto !important;
+}
+
+[data-machinery-lit] .tv81-pair-dd {
+  width: auto !important;
+  min-width: 0 !important;
+  justify-self: start !important;
+}
+
+[data-machinery-lit] #tv81PairBtn {
+  /* It sits in a single-column grid, so it has to be told to start rather than
+     stretch: flex rules do not reach a grid item. Its remaining width is simply
+     the length of "xWiniwa / Winiwa", which is honest.
+     AMENDED 2026-07-26: taking the surface away went too far. Without a border it
+     read as a heading, so the founder could not see there was a second market to
+     choose, and reported the control "is not a dropdown". Narrow was right; edgeless
+     was not. It keeps its own width and now wears the app's own selector surface
+     (ex-ccy-dd), which is what every other choice in the app looks like. */
+  width: auto !important;
+  min-width: 0 !important;
+  flex: 0 0 auto !important;
+  color: var(--mx-ink) !important;
+  /* Weight, not size: the action family has one type size, and a heading feel is
+     worth less than keeping this control one of the family. */
+  font-weight: 750 !important;
+}
+
+/* The direction control belongs between the two amounts, not beside one of them
+ * (founder 2026-07-25). It sits on the centre line, which is where the eye goes
+ * when it asks "which way round is this?". And it sits on the SEAM (founder
+ * 2026-08-09, M-CMP-AMOUNT-ENTRY 1.2.0): equidistant from the two field boxes it
+ * swaps, edge to edge. The receive block's label row lives in the band below the
+ * control, so the space above must equal the label row's full below-space
+ * (gap + label line + label-to-box gap); with the registered 13px label line that
+ * is 4 + 21 + 4 = 29px, mirrored as margin-top. The desktop audit measures the
+ * midpoints and fails if they drift. */
+[data-machinery-lit] .flip-btn {
+  display: flex !important;
+  margin: 29px auto 4px !important;
+}
+
+/* One quick-amount control, one place (founder 2026-07-25). Whatever the set is,
+ * a half, a MAX, or a row of percentages, it reads as text actions on the line
+ * above the field, right of the balance, and never as a row of boxed chips
+ * underneath it. */
+[data-machinery-lit] .ui-quick-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+}
+
+[data-machinery-lit] .ui-quick-row .ui-inline-cluster {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+/* Any chip that survives elsewhere reads the same as the text action it duplicates. */
+[data-machinery-lit] .ui-amount-chip,
+[data-machinery-lit] .max-link {
+  flex: 0 0 auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--mx-accent) !important;
+  /* 14px: the app-wide legibility floor MIG-003 set for support text. A quick amount
+     is a text action, so it lives at that size rather than inventing a smaller one. */
+  font-size: 14px !important;
+  font-weight: 750 !important;
+}
+
+/* The amount keypad was removed on 2026-09-01. Android never honoured the suppression it relied
+ * on, so the app's keypad appeared ALONGSIDE the phone's rather than instead of it. The platform
+ * keyboard is now the only one. Amount fields keep their right alignment and thousands grouping. */
+
+/* A group of fields is held by space and a hairline, not by a tinted box around
+ * them. This is what a repeated location or shop block used to be: a card holding
+ * six fields, each with its own boundary, inside a page that already has none. */
+[data-machinery-lit] .mx-group {
+  padding: 0 0 18px !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--mx-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-machinery-lit] .mx-group:last-of-type { border-bottom: 0 !important; }
+
+/* No container inside a container. A field already has a boundary, so a wrapper
+ * drawn around it is a second box saying the same thing, which is what made the
+ * confirmation policy read as a stack of nested slabs (founder 2026-07-25). The
+ * wrapper keeps its job of holding the field and its unit side by side; it just
+ * stops painting. */
+[data-machinery-lit] .paysec-rule-value,
+[data-machinery-lit] .paysec-input-wrap,
+[data-machinery-lit] .paysec-divider,
+[data-machinery-lit] .paysec-primary-unit {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+[data-machinery-lit] .paysec-primary-unit__badge {
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--mx-ink-faint) !important;
+}
+
+/* Nothing may push past the page's own edge. A wider gutter reveals content that
+ * was already overflowing on narrow phones; it is clamped here rather than left
+ * to run off the side of the screen. */
+[data-machinery-lit] .ui-inline-row,
+[data-machinery-lit] .orb-label {
+  max-width: 100% !important;
+}
+
+[data-machinery-lit] .ui-inline-row {
+  flex-wrap: wrap !important;
+  row-gap: 8px !important;
+}
+
+/* A diagram has intrinsic geometry and cannot simply reflow. The zoomability rule
+ * allows a labelled figure to scroll inside itself while the page around it stays
+ * reachable, which is what happens here rather than the page running off screen. */
+[data-machinery-lit] .circle-stage {
+  max-width: 100% !important;
+  overflow-x: auto !important;
+}
+
+[data-machinery-lit] .app-section,
+[data-machinery-lit] .app-section-card,
+[data-machinery-lit] .ui-card-pad,
+[data-machinery-lit] .ccy-sec-list,
+[data-machinery-lit] .cb,
+[data-machinery-lit] .tx-list {
+  max-width: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* A row is the width of the page, no wider and no narrower. Its separator ends
+ * on the same edge as the text above it, which is how the reference reads: one
+ * alignment carries the whole screen, so nothing has to draw a box to be a
+ * group. (Earlier in the same day the rows were run out to the screen edge; the
+ * founder's reference showed the separator sitting on the gutter instead, and
+ * the reference wins.)
+ *
+ * The width is stated rather than left to `auto`, because an activity row is a
+ * <button>, and a button sizes itself to its content: on a narrow phone that
+ * happens to look right, and on a wide window the separator stops in mid air.
+ */
+[data-machinery-lit] .tx-row,
+[data-machinery-lit] .ccy-primary,
+[data-machinery-lit] .ccy-sec-row {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}

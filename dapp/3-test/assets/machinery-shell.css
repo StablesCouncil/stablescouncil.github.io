@@ -1,0 +1,37 @@
+/*
+ * Machinery shell migration overrides — MIG-002 (shell and navigation).
+ *
+ * Layered over the base index.html styles, scoped to [data-machinery-scope="shell"] so it
+ * touches only the application shell and never a page's own content. Presentation only:
+ * no structure, id, route, handler, or script is changed by this file.
+ *
+ * Contract: work/Machinery/projects/stables-current-app/migrations/shell-navigation-migration.v1.json
+ * Baseline target: North Star SHELL-001 (work/Machinery/projects/stables-north-star).
+ * Decision: preserve the shipped five-tab information architecture, align presentation only.
+ *
+ * Slice 1 — bottom navigation:
+ *   - Active tab is a clean filled pill (North Star --mint-soft fill, no competing outline),
+ *     replacing the base .1 fill plus .2 outline border.
+ *   - Nav icon uses the North Star 18px size (base is 20px) for a label-forward balance.
+ * The shipped accent hue (#67e8f9) is identical to the North Star accent, so no re-hueing occurs.
+ */
+
+[data-machinery-scope="shell"] .ntab.active {
+  background: rgba(103, 232, 249, .12);
+  border-color: transparent;
+}
+
+/*
+ * DEC-003 (2026-07-25): the owner keeps the full multi-theme system. The paper (light) theme
+ * defines its own active-tab language in index.html; this file loads later and would defeat it
+ * by cascade order, so paper's values are restated here verbatim. Future shell work (MIG-003)
+ * must drive colors from theme variables instead of literals.
+ */
+[data-theme="paper"] [data-machinery-scope="shell"] .ntab.active {
+  background: var(--surface-accent-soft);
+  border-color: var(--border-accent-soft);
+}
+
+[data-machinery-scope="shell"] .nicon {
+  font-size: 18px;
+}

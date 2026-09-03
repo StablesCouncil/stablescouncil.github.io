@@ -4,20 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Business Card · Stables</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../stables.css" />
 
   <style>
     /* ─── Reset ─── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ─── Stables Design Tokens · Visual Identity v1.0 LOCKED ─── */
+    /* Founder-approved North Star visual identity */
     :root {
-      --bg:      #0b0f14;
-      --panel:   #101826;
-      --text:    #e6edf3;
-      --muted:   #9fb0c0;
+      --bg:      #16334f;
+      --panel:   #16334f;
+      --text:    #ffffff;
+      --muted:   rgba(255,255,255,0.80);
       --accent:  #67e8f9;
       --purple:  #a78bfa;
       --border:  rgba(103,232,249,0.38);
@@ -25,7 +23,10 @@
 
     /* ─── Screen wrapper ─── */
     body {
-      background: #0d1117;
+      background:
+        radial-gradient(720px 420px at 6% -6%, rgba(103,232,249,.42), transparent 62%),
+        radial-gradient(900px 620px at 108% 104%, rgba(96,165,250,.36), transparent 58%),
+        var(--bg);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -65,7 +66,7 @@
 
     .dl-btn {
       background: rgba(103,232,249,0.1); border: 1px solid var(--border); color: var(--accent);
-      padding: 7px 18px; border-radius: 99px; font-family: 'Inter', sans-serif; font-size: 11px;
+      min-height: 44px; padding: 7px 18px; border-radius: 99px; font-family: 'Inter', sans-serif; font-size: 11px;
       font-weight: 700; cursor: pointer; transition: all 0.2s; letter-spacing: 0.05em; text-transform: uppercase;
     }
     .dl-btn:hover { background: rgba(103,232,249,0.2); box-shadow: 0 0 14px rgba(103,232,249,0.25); border-color: var(--accent); }
@@ -82,7 +83,7 @@
     }
 
     /* ─────────────────────────────────────────
-       CARD SHELL — Standard EU: 85 × 55 mm
+       CARD SHELL  -  Standard EU: 85 × 55 mm
     ───────────────────────────────────────── */
     .card {
       width: 85mm;
@@ -92,7 +93,7 @@
       position: relative;
       display: flex;
       align-items: stretch;
-      background: var(--panel);
+      background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.06)), var(--panel);
       box-shadow:
         0 0 0 0.4mm rgba(103,232,249,0.48),
         0 16px 56px rgba(0,0,0,0.75),
@@ -144,7 +145,7 @@
     .tagline {
       font-size: 8pt; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.18em; margin-top: 0.5mm;
     }
-    /* Sub-tagline — smaller, muted */
+    /* Sub-tagline  -  smaller, muted */
     .sub {
       font-size: 5.8pt;
       font-weight: 500;
@@ -201,7 +202,7 @@
       width: 26mm;
     }
 
-    /* The SVG QR — fully contained */
+    /* The SVG QR  -  fully contained */
     .qr-svg {
       display: block;
       width: 22mm;
@@ -221,7 +222,7 @@
 
     /* ─── BACK of card ─── */
     .card-back {
-      background: var(--panel);
+      background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.06)), var(--panel);
     }
     .back-inner {
       width: 100%; height: 100%;
@@ -280,7 +281,7 @@
       box-shadow: 0 0 0 0.5px rgba(103,232,249,0.06), 0 0 6px rgba(103,232,249,0.18);
     }
 
-    /* ─── @media print — front card only, full-bleed ─── */
+    /* ─── @media print  -  front card only, full-bleed ─── */
     @media print {
       @page { size: 85mm 55mm; margin: 0; }
       body {
@@ -302,10 +303,10 @@
     }
   </style>
 </head>
-<body>
+<body class="north-star-print-page">
 
 <div class="top-nav" style="text-align: center; margin-bottom: 12px; display: flex; flex-direction: column; gap: 14px; align-items: center;">
-  <span class="screen-label" style="display:block;">Stables · Print-Ready HTML/CSS Business Card</span>
+  <h1 class="screen-label" style="display:block;">Stables · Print-Ready HTML/CSS Business Card</h1>
   <span class="screen-hint">File → Print · Paper: 85 × 55 mm · Zero margins · Enable "Background graphics"</span>
   <div style="display: flex; gap: 16px; margin-top: 4px;">
     <button class="dl-btn" id="btnFront" onclick="captureCard('print-front', 'Stables_Business_Card_Front.png', 'btnFront')">Download Front PNG</button>
@@ -349,7 +350,7 @@
       <!-- divider -->
       <div class="divider"></div>
 
-      <!-- RIGHT: QR code (static SVG — no JS dependency) -->
+      <!-- RIGHT: QR code (static SVG  -  no JS dependency) -->
       <div class="right">
         <div class="qr-panel">
           <!-- QR SVG for https://stablescouncil.org (ECC Level H, generated 2026-04-19) -->

@@ -8,7 +8,38 @@
 
 ### [Unreleased], next daily build
 
-Ongoing demo line. Changes are logged here as they are made, then move into a dated, published section on release. Build identity is the `APP_BUILD_ITERATION` counter, shown in the pill, `dapp.conf`, and the zip name (e.g. `Stables_v0.0.0.3.45.mds.zip`).
+Ongoing demo line. Changes are logged here as they are made, then move into a dated, published section on release. Build identity is the `APP_BUILD_ITERATION` counter, shown in the pill, `dapp.conf`, and the zip name (e.g. `Stables_v0.0.0.3.50.mds.zip`).
+
+#### Changed
+
+- **Balance hide eye on right of total.** The eye icon for toggling balance visibility now sits directly to the right of the main balance amount in the wallet hero.
+
+- **Receive tab simplified.** Removed the "Receiver (optional)" label, name/account ID input, and contact picker from the Receive tab (no longer needed).
+
+- **Preview selector now shows the live build version.** The local PREVIEW bar now displays the current build version (from APP_BUILD_VERSION + APP_BUILD_ITERATION), so every run surfaces exact build identity in the selector itself.
+
+- **Transaction detail popup now shows the transaction icon.** The detail modal header now includes the same directional/currency context icon shown in the activity list row, so popup context matches list context.
+
+- **Platform selector is now web-preview only.** The floating PREVIEW platform selector no longer renders in APK mode or MiniDapp hub/zip context. It remains available on local web preview only.
+
+- **StablesAgent icon repositioned on all boxes.** The agent icon now sits on top of each card at the top-right corner, overlapping the border edge, for better visual integration and accessibility across the entire app.
+
+- **Feedback Send button follows consent checkbox.** Send stays muted and disabled until you tick the public ledger confirmation; it then switches to the primary action style. Unchecking returns it to the disabled tone.
+
+- **Feedback app topic: separate platform and page menus.** When topic is App, choose platform first (web, MiniDapp, Android), then page in a second dropdown filtered to that surface. Section and element hints remain for finer detail.
+
+#### Added
+
+- **Live pending balance with confirmation pulse.** While MINIMA transactions are processing, the hero balance reflects the expected final amount (incoming adds, outgoing subtracts) and pulses until the user's confirmation target is reached. A status line under the total shows progress (e.g. "Confirming · 2/3 blocks").
+
+#### Fixed
+
+- **Balance no longer requires reopening the app after a tx completes.** Node balance is pulled automatically when history sync finishes, when blocks advance with pending txs, and when activity rows update. Outgoing sends no longer bounce back to the pre-send node balance while the tx is still confirming.
+
+#### Reconstructed (from prior session summaries)
+
+- Incorporated hardened transaction lifecycle patterns for real on-chain behavior: optimistic rows on actions, live x/y block counters with auto-settle, per-currency pending overlays, balance preservation during sync lag, infra coin filtering for clean activity, instant NEWTXPOW ingest, try/finally history sync protection, and comma thousand separators. These ensure wallet and activity views behave like the native Minima wallet (instant display, no phantom rows, no balance wipes). Ported key guards to maintain parity with test channel learnings while keeping demo focus.
+- NEWBLOCK and live events now force extra re-renders of x/y progress and settling UI for more reliable live counters (port of test channel improvements). Bumped to iteration 52.
 
 ---
 
