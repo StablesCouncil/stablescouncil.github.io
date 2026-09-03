@@ -470,8 +470,7 @@
             border: 1px solid rgba(103, 232, 249, 0.45);
             border-radius: 4px;
             padding: 2px 7px;
-            white-space: normal;
-            flex: 0 1 auto;
+            flex: 0 0 auto;
         }
 
         .link-item.link-item--current {
@@ -601,7 +600,7 @@
                 grid-column: 2;
             }
 
-            .link-item > :where(.drafting-badge, .coming-soon-badge, .link-item--current-badge) {
+            .link-item > :where(.drafting-badge, .coming-soon-badge, .link-item--current-badge, .link-badge-active) {
                 grid-column: 2;
                 justify-self: start;
             }
