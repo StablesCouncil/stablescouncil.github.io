@@ -1,5 +1,5 @@
-@import url("../assets/fonts/inter.css");
-@import url("../assets/stables-visual-authority.css");
+@import url("fonts/inter.css");
+@import url("stables-visual-authority.css");
 
 :root {
   color-scheme: dark;
@@ -1538,7 +1538,7 @@ a {
   }
 
   .new-footer__links a {
-    min-height: 40px;
+    min-height: 44px; /* the same 44px target on every width */
     padding: 0.4rem 0.7rem;
   }
 

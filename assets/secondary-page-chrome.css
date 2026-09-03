@@ -274,7 +274,7 @@ html:has(body.secondary-chrome-page) {
   }
 
   .secondary-chrome-footer__links a {
-    min-height: 40px;
+    min-height: 44px; /* the same 44px target on every width */
     padding: 0.4rem 0.7rem;
   }
 

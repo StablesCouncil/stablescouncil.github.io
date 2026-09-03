@@ -6,7 +6,7 @@
 // people to a build we no longer stand behind. The demo version is kept here because the links hub
 // still labels the demo track honestly as superseded, but it is no longer a download target.
 //
-// THE TEST CHANNEL IS THE ACTIVE OFFER, and it is reached through /new/payment-app/ rather than as
+// THE TEST CHANNEL IS THE ACTIVE OFFER, and it is reached through /payment-app/ (the access page, at the site root since 2026-09-03) rather than as
 // a bare zip link. That page states which Minima node each package needs, which is the thing a
 // person has to understand before installing anything; a naked zip link answers none of it.
 //
@@ -30,7 +30,7 @@
   var ANDROID_TEST_VERSION = '0.0.11.38';
   var ANDROID_APK_URL = 'https://github.com/StablesCouncil/stables-app/releases/download/app-v'
     + ANDROID_TEST_VERSION + '/Stables_v' + ANDROID_TEST_VERSION + '.apk';
-  var ACCESS_PAGE = '/new/payment-app/';
+  var ACCESS_PAGE = '/payment-app/';
   var TEST_ZIP_PATH = '/dapp/3-test/build/Stables_v' + TEST_CHANNEL_VERSION + '.mds.zip';
 
   function apply() {

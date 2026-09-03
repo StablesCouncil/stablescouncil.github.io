@@ -450,6 +450,13 @@
             font-size: 0.58rem;
         }
 
+        /* On phones the shared chrome parks the StablesAgent button under the header and, on pages with a
+           side rail, 120px in from the right to leave room for the rail controls. This page hides those
+           controls below 768px, so the button was sitting over the first section title. Keep it at the edge. */
+        @media (max-width: 767px) {
+            body.d028-page.north-star-website-page.site-chrome-body.links-page-body .agent-fab { right: 12px !important; }
+        }
+
         .link-badge-active {
             font-size: 0.6rem;
             font-weight: 700;
@@ -457,8 +464,7 @@
             letter-spacing: 0.1em;
             color: var(--accent-cyan);
             max-width: 100%;
-            white-space: normal;
-            overflow-wrap: anywhere;
+            white-space: nowrap; /* ACTIVE is one word; it never breaks into ACT / IVE */
             text-align: center;
             background: rgba(103, 232, 249, 0.12);
             border: 1px solid rgba(103, 232, 249, 0.45);
@@ -633,7 +639,7 @@
 <body class="d028-page north-star-website-page site-chrome-body links-page-body deck-chrome-page secondary-chrome-page">
     <header class="secondary-chrome-header" role="banner">
   <div class="secondary-chrome-header__inner secondary-chrome-frame">
-    <a class="secondary-chrome-brand" href="/new/" aria-label="Stables homepage">
+    <a class="secondary-chrome-brand" href="/" aria-label="Stables homepage">
       <img src="/brand/assets/logo-symbol.png" width="44" height="44" alt="">
       <span>
         <span class="secondary-chrome-brand__name">STABLES</span>
@@ -641,7 +647,7 @@
       </span>
     </a>
     <nav class="secondary-chrome-nav" aria-label="Application access">
-      <a class="secondary-chrome-access" href="/new/payment-app/">Access dApp</a>
+      <a class="secondary-chrome-access" href="/payment-app/">Access dApp</a>
     </nav>
   </div>
 </header>
@@ -782,7 +788,7 @@
             </div>
 
             <!-- Testing -->
-            <a href="/new/payment-app/" class="link-item">
+            <a href="/payment-app/" class="link-item">
                 <div class="link-icon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
@@ -1133,9 +1139,9 @@
 
     <footer class="secondary-chrome-footer" role="contentinfo">
   <div class="secondary-chrome-footer__inner secondary-chrome-frame">
-    <p><a class="secondary-chrome-footer__signature" href="/new/">Stables | Be your Bank</a></p>
+    <p><a class="secondary-chrome-footer__signature" href="/">Stables | Be your Bank</a></p>
     <nav class="secondary-chrome-footer__links" aria-label="Supporting links">
-      <a class="secondary-chrome-access" href="/new/payment-app/">Access dApp</a>
+      <a class="secondary-chrome-access" href="/payment-app/">Access dApp</a>
       <a href="/links.html">All links</a>
       <a href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer">X</a>
       <a href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer">Telegram</a>
