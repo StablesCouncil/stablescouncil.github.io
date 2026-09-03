@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.0.11.39] - 2026-09-03
+
+- Standalone Android: the payment-received notification names the token the way a person does. A Minima token name can be a JSON object, and the node can hand it over as a string; the phone showed `Received 1000 {"name":"Winiwa"}`. One rule (`IncomingCoins.displayName`) now unwraps every form, in the notification and in the in-app incoming line, with a unit test for each shape.
+
+
 _Nothing yet: everything up to v0.0.11.38 shipped on 2026-09-03._
 
 ## [0.0.11.38] - 2026-09-03

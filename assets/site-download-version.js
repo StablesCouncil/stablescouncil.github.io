@@ -21,8 +21,8 @@
 //   [data-test-channel-download]  a real link to the current test package
 //   [data-test-channel-version]   the current test label and its truth statement
 (function () {
-  var PUBLISHED_DEMO_VERSION = '0.0.11.38';
-  var TEST_CHANNEL_VERSION = '0.0.11.38';
+  var PUBLISHED_DEMO_VERSION = '0.0.11.39';
+  var TEST_CHANNEL_VERSION = '0.0.11.39';
   /* THE RELEASE IS THE STANDALONE ANDROID APP (founder 2026-09-03: "let's release the Standalone
      APK first with the updated website"). This one constant drives every Android download control
      on the site ([data-android-test-download="standalone"]) and its version line
@@ -30,7 +30,7 @@
   // The frozen demo line, shown only as a label on the links hub Demo card. PUBLISHED_DEMO_VERSION
   // below tracks the published test iteration (release pointer rule), so it can no longer label the demo.
   var DEMO_FROZEN_VERSION = '0.0.0.3.45';
-  var ANDROID_TEST_VERSION = '0.0.11.38';
+  var ANDROID_TEST_VERSION = '0.0.11.39';
   var ANDROID_APK_URL = 'https://github.com/StablesCouncil/stables-app/releases/download/app-v'
     + ANDROID_TEST_VERSION + '/Stables_v' + ANDROID_TEST_VERSION + '.apk';
   var ACCESS_PAGE = '/payment-app/';

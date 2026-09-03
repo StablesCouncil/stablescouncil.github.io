@@ -7933,18 +7933,18 @@
     </style>
     <!-- App UI System layer: must load render-blocking AFTER the legacy styles above so
          documented component geometry wins in the cascade without a flash of unstyled UI. -->
-    <link rel="stylesheet" href="assets/app-ui-system.css?v=tv81-1138">
+    <link rel="stylesheet" href="assets/app-ui-system.css?v=tv81-1139">
     <!-- Machinery product adapter: reusable mx-* definitions, loaded after the legacy layer. -->
-    <link rel="stylesheet" href="assets/machinery-app.css?v=tv81-1138">
-    <link rel="stylesheet" href="assets/machinery-ui.css?v=tv81-1138">
-    <link rel="stylesheet" href="assets/machinery-shell.css?v=tv81-1138">
+    <link rel="stylesheet" href="assets/machinery-app.css?v=tv81-1139">
+    <link rel="stylesheet" href="assets/machinery-ui.css?v=tv81-1139">
+    <link rel="stylesheet" href="assets/machinery-shell.css?v=tv81-1139">
     <!-- The wallet legacy adapter loads before the final shared identity so it cannot override R001. -->
-    <link rel="stylesheet" href="assets/machinery-wallet.css?v=tv81-1138">
-    <link rel="stylesheet" href="assets/machinery-language.css?v=tv81-1138">
-    <link rel="stylesheet" href="assets/north-star-adoption.css?v=tv81-1138">
+    <link rel="stylesheet" href="assets/machinery-wallet.css?v=tv81-1139">
+    <link rel="stylesheet" href="assets/machinery-language.css?v=tv81-1139">
+    <link rel="stylesheet" href="assets/north-star-adoption.css?v=tv81-1139">
     <!-- D029 desktop composition. Gated on the web surface AND 1024px, so the MiniDapp and the
          APK keep the shipped mobile composition at every width. -->
-    <link rel="stylesheet" href="assets/desktop-web.css?v=tv81-1138">
+    <link rel="stylesheet" href="assets/desktop-web.css?v=tv81-1139">
     <script>
         /* Surface flag for the D029 desktop layer. The preview bootstrap above resolves the local
            preview channel; on the real web it returns early, and the web surface is the default.
@@ -13107,12 +13107,12 @@
         <button class="ntab" id="tab-slot-5" data-page=""><span class="nicon">•</span><span class="nlabel"></span></button>
     </nav>
 
-    <script src="assets/config/runtime-config.js?v=tv81-1138"></script>
-    <script src="assets/testv008-registry.js?v=tv81-1138"></script>
+    <script src="assets/config/runtime-config.js?v=tv81-1139"></script>
+    <script src="assets/testv008-registry.js?v=tv81-1139"></script>
     <!-- The budget must exist before anything that reads the node or repaints the wallet. -->
-    <script src="assets/node-read-budget.js?v=tv81-1138"></script>
+    <script src="assets/node-read-budget.js?v=tv81-1139"></script>
     <!-- Exact arithmetic and the app's wording for notes; every error path calls stablesHumanNodeError. -->
-    <script src="assets/notes-manager.js?v=tv81-1138"></script>
+    <script src="assets/notes-manager.js?v=tv81-1139"></script>
     <script>
         (function () {
             var s = String((window.STABLES_CONFIG || {}).APP_STAGE || 'test').trim().toLowerCase();
@@ -13591,7 +13591,7 @@
             setTimeout(function () { window.stablesReadiness.arm(); }, 1200);
         }
     </script>
-    <script src="assets/test-channel-bootstrap.js?v=tv81-1138"></script>
+    <script src="assets/test-channel-bootstrap.js?v=tv81-1139"></script>
     <!-- Minima MiniDapp hub does not inject a global MDS; ship mds.js in the package so hub URLs connect without Connect node. -->
     <script src="assets/lib/mds.js"></script>
     <script src="assets/qrcode.js"></script>
@@ -34473,15 +34473,15 @@
         })();
     </script>
     <script src="assets/theme.js"></script>
-    <script src="assets/payment-security.js?v=tv81-1138"></script>
-    <script src="assets/routes/activity-contacts.js?v=tv81-1138"></script>
+    <script src="assets/payment-security.js?v=tv81-1139"></script>
+    <script src="assets/routes/activity-contacts.js?v=tv81-1139"></script>
     <script src="assets/routes/trust-retro.js"></script>
-    <script src="assets/mx-dropdown.js?v=tv81-1138"></script>
-    <script src="assets/desktop-web.js?v=tv81-1138"></script>
-    <script src="assets/vendor/stables-sealedbox.js?v=tv81-1138"></script>
-    <script src="assets/chat-onchain.js?v=tv81-1138"></script>
+    <script src="assets/mx-dropdown.js?v=tv81-1139"></script>
+    <script src="assets/desktop-web.js?v=tv81-1139"></script>
+    <script src="assets/vendor/stables-sealedbox.js?v=tv81-1139"></script>
+    <script src="assets/chat-onchain.js?v=tv81-1139"></script>
     <script src="assets/routes/feedback.js"></script>
-    <script src="assets/tx-mirror.js?v=tv81-1138"></script>
+    <script src="assets/tx-mirror.js?v=tv81-1139"></script>
     <script src="assets/tx-radar.js"></script>
 
     <script>
