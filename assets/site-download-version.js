@@ -27,6 +27,9 @@
      APK first with the updated website"). This one constant drives every Android download control
      on the site ([data-android-test-download="standalone"]) and its version line
      ([data-android-test-version]); the MiniDapp and web builds are shown as coming soon. */
+  // The frozen demo line, shown only as a label on the links hub Demo card. PUBLISHED_DEMO_VERSION
+  // below tracks the published test iteration (release pointer rule), so it can no longer label the demo.
+  var DEMO_FROZEN_VERSION = '0.0.0.3.45';
   var ANDROID_TEST_VERSION = '0.0.11.38';
   var ANDROID_APK_URL = 'https://github.com/StablesCouncil/stables-app/releases/download/app-v'
     + ANDROID_TEST_VERSION + '/Stables_v' + ANDROID_TEST_VERSION + '.apk';
@@ -43,10 +46,11 @@
       downloadNodes[i].textContent = 'Get the app';
     }
 
-    // Where the demo version is still shown, it is shown as superseded rather than as an offer.
+    // The demo card names the frozen demo build; its Superseded pill says the rest (founder 2026-09-03:
+    // no "superseded" beside the version).
     var versionNodes = document.querySelectorAll('[data-demo-published-version]');
     for (var j = 0; j < versionNodes.length; j++) {
-      versionNodes[j].textContent = 'v' + PUBLISHED_DEMO_VERSION + ' superseded';
+      versionNodes[j].textContent = 'v' + DEMO_FROZEN_VERSION;
     }
 
     var testDownloadNodes = document.querySelectorAll('[data-test-channel-download]');
@@ -57,6 +61,11 @@
     var androidNodes = document.querySelectorAll('[data-android-test-download="standalone"]');
     for (var a = 0; a < androidNodes.length; a++) {
       androidNodes[a].setAttribute('href', ANDROID_APK_URL);
+    }
+    // The bare version beside Public Testing on the links hub, from the same constant as Install.
+    var androidLabelNodes = document.querySelectorAll('[data-android-test-version-label]');
+    for (var l = 0; l < androidLabelNodes.length; l++) {
+      androidLabelNodes[l].textContent = 'v' + ANDROID_TEST_VERSION;
     }
     var androidVersionNodes = document.querySelectorAll('[data-android-test-version]');
     for (var b = 0; b < androidVersionNodes.length; b++) {
