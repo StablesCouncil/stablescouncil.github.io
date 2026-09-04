@@ -314,7 +314,8 @@
 
   function fmtAmt(n) {
     var v = Math.abs(Number(n) || 0);
-    return v.toFixed(8).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+    /* Grouped, up to eight decimals, trailing zeros dropped: "For 2,000 Winiwa". */
+    return v.toLocaleString('en-US', { maximumFractionDigits: 8 });
   }
 
   // The single-row spec for an order txn (commit) or its fill (clear). Null for anything else.
@@ -1047,6 +1048,13 @@
               window.stablesUpsertUserActivityRows([{ id: r.id, status: 'Failed', pendingIncoming: false, note: 'Did not settle — the funds were not spent. Safe to try again.' }]);
               if (typeof window.renderActivity === 'function') window.renderActivity();
               if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
+            }
+            /* "Safe to try again" has to be true. A faucet claim stamps a one-hour countdown the
+               moment it is posted, so a claim that dies here must hand the hour back or the note
+               offers a retry the button refuses (founder 2026-09-04). This is the authoritative
+               failure verdict for a claim, since the settlement watchers now defer to it. */
+            if (r.faucetClaim === true && typeof window.stablesResetFaucetWiniwaCooldown === 'function') {
+              window.stablesResetFaucetWiniwaCooldown();
             }
           } catch (_) { /* ignore */ }
         };

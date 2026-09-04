@@ -1713,7 +1713,10 @@
     const p = {
       found: false, failed: false,
       built: true, sent: false, mined: false, confirmed: false,
-      confirmations: 0, target: target, txid: '', pendingTxnId: ''
+      confirmations: 0, target: target, txid: '', pendingTxnId: '',
+      /* The row id is the stepper's stable timing key, and the row's own timestamp is the one
+         moment any transaction can honestly be timed from (see stablesStepTimes). */
+      rowId: String(id || ''), startedAt: 0
     };
     let row = window.stablesGetUserActivityRowById(id);
     // The optimistic send row gets superseded/merged into the node-synced row once it confirms, so the
@@ -1726,6 +1729,7 @@
     }
     if (row) {
       p.found = true;
+      p.startedAt = Number(row.ts) || 0;
       target = stablesGetConfirmTargetForRow(row);
       p.target = target;
       const st = String(row.status || '');

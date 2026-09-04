@@ -80,10 +80,16 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
 /* The list editing pen stands down; currencies are managed from settings. */
 [data-machinery-scope="wallet"] .ccy-edit-pen { display: none !important; }
 
-/* The activity section title row is the way into the full list; the separate
-   "View all" control is redundant once a transaction returns there by itself. */
-[data-machinery-scope="wallet"] #walletRecentList ~ * .max-link,
-[data-machinery-scope="wallet"] .stitle-row .max-link { display: none !important; }
+/* REVERSED by the founder 2026-09-04: "beside Recent activity on the wallet page, on the right,
+   let's have a See all linked to the Activity page."
+   The 2026-07-25 reasoning was that the control was redundant "once a transaction returns there by
+   itself" — true of the route back after a payment, but that is not the same as a way IN. Reading
+   the last few rows and wanting the rest is its own intention, and nothing on this screen served
+   it. The control is back, in the title row's trailing slot (law 33), as a named text action
+   rather than the amount-row `max-link` it used to borrow.
+   The rule below still stands down a `max-link` inside the ACTIVITY LIST itself, where an
+   amount-row control has no business. */
+[data-machinery-scope="wallet"] #walletRecentList .max-link { display: none !important; }
 
 /* ---- The balance is the one large thing on the screen ------------------ *
  * Proportions adopted from the reference (founder 2026-07-25, "I prefer the
@@ -153,6 +159,19 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
   opacity: 1 !important;
 }
 
+/* `hidden` has to win over the layout rule above.
+ *
+ * That rule is `#balHideBtn { display: grid !important }`: an id with !important, which outranks
+ * the app's own `.btn[hidden] { display: none !important }` because an id beats a class. So when
+ * the wallet marked this control hidden — there being no amount to hide while the out-of-date
+ * explanation is on screen — the attribute was set and the button carried on rendering, sitting on
+ * top of the words (founder 2026-09-04, twice: "the eye makes the text reading difficult", then
+ * "even here the eye is covering the text").
+ *
+ * The lesson is wider than this button: any `!important` display rule on an id silently defeats
+ * `el.hidden`. Where one exists, it must carry its own `[hidden]` companion. */
+[data-machinery-scope="wallet"] #balHideBtn[hidden] { display: none !important; }
+
 [data-machinery-scope="wallet"] #balHideBtn:focus-visible {
   border-radius: 50% !important;
   outline: 3px solid color-mix(in srgb, var(--c) 55%, transparent) !important;
@@ -193,7 +212,16 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
   font-weight: 750 !important;
 }
 
-[data-machinery-scope="wallet"] #walletSendReceiveRow .act-btn:first-child {
+/* The accent belongs to the PRIMARY ACTION, not to the first position.
+ *
+ * This rule used to say `:first-child`, which was the same thing only because Send happened to be
+ * written first. When Send moved to the trailing position (founder 2026-09-03, law 33), the accent
+ * moved with the position: Receive took the cyan and Send kept it from its own role rule, so both
+ * buttons came out solid cyan and the pair stopped reading as a choice with one recommended verb.
+ * Deleting the positional rule is the whole fix. `.mx-action[data-role="primary"]` already paints
+ * Send, `[data-role="choice"]` already paints Receive in the glass, and both now travel with the
+ * button wherever it sits. */
+[data-machinery-scope="wallet"] #walletSendReceiveRow .act-btn[data-role="primary"] {
   border-color: transparent !important;
   background: var(--mx-accent) !important;
   color: var(--mx-on-accent) !important;

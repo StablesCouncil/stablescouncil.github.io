@@ -2,12 +2,293 @@
 
 ## [Unreleased]
 
+## [0.0.11.53] - 2026-09-04
+
+Iterations 40 to 53 of 2026-09-04, released together as the standalone Android app v0.0.11.53.
+
+### Changed
+- **How you confirm a protected send is two setting rows, both always on screen.** The biometrics
+  control was a checkbox under the payment-code button, rendered only once a code existed and never
+  on a device without the native bridge, so a person who had not set a code could not learn that
+  fingerprint or face was on offer (founder 2026-09-04: "present the option to set a biometric
+  confirmation much more obviously, now it is hidden"). The Payment protection card now carries a
+  titled block, "How you confirm a protected send", with a **Payment code** row (Set / Change) and a
+  **Fingerprint or face** row, each in the app's settings-row shape (title and copy leading, control
+  trailing). The biometrics row is live when the device can do it and a code exists; otherwise it is
+  disabled with copy naming which of the two is missing ("Set a payment code first", "Not set up on
+  this phone", "Not available on this device"). Nothing is hidden.
+- **Commas for thousands, everywhere, inputs included** (founder 2026-09-04). Figures that were
+  rendered straight from `toFixed` or a raw number are grouped: the Wallet management notes total
+  (`6755.563` was the founder's screenshot), the order-book tables and stats, the exchange lines and
+  price-impact confirmation, the sweep activity note, the tx mirror's "For N Winiwa" notes, the
+  council sales list. Amount inputs still typed `number` cannot show a separator at all, so the
+  three payment-protection thresholds, the confirmation-policy amounts, the exchange pair, the order
+  ticket, liquidity deposits, the coverage fund amount, the invoice amount and the recovery key-uses
+  move onto the existing `data-financial-amount` grouper, and every reader of theirs strips the
+  comma back out (`Number("1,000")` is `NaN`, `parseInt("1,000")` is `1`). Values written into
+  those fields by code (MAX fills, exchange calculation, settings render) are grouped on write via
+  `stablesGroupAmountInput` / `tv81GroupField`.
+
+### Changed
+- **The release-profile refusal names the product.** `stablesReleaseRefuse` said "... is not included
+  in the xWiniwa core test release." It now says "... is not part of this Stables test release."
+  (founder 2026-09-04: do not use the "xWiniwa core test" wording anywhere). The internal profile
+  id `xwiniwa-core` is an identifier and is never shown.
+
+### Fixed
+- **Payment progress shows a time beside every step it watched, and how long the current step has
+  run.** The stepper already had a timing store, keyed on `p.txid || p.pendingTxnId || p.rowId`.
+  During a live send those identifiers arrive one after another, so the key changed twice in flight
+  and each change read as first sight of a new transaction, which by design stamps already-done
+  steps as unknown: no time beside anything (founder 2026-09-04, old phone). The activity row id is
+  the one name that holds for the whole flight, so `stablesStepTimes` now takes the names in that
+  order, re-homes a record found under an alias instead of forgetting it, and stamps `built` from
+  the row's own timestamp on first sight (the one moment any transaction can honestly be timed
+  from). The active step shows elapsed time in the same slot, measured from the last finished step,
+  via `stablesStepElapsedHtml`; the modal already re-renders every 1.5 s.
+- **"Relaying to the network" is no longer said on hope.** The node's `status` reports its peer
+  count and the app never looked. `stablesRecordNodeTipTime` now records `network.connected` as
+  `__STABLES_LIVE_NODE.peers`; the Broadcasting step (`stablesRelaySubText`) says when the bank has
+  no peers, or is still catching up, instead of spinning; the Settings network line says "Alone"
+  with zero peers and otherwise how many nodes it is connected to; the fingerprint carries `peers`.
+
+### Fixed
+- **A faucet claim the node can still see is never called "failed".** The founder's phone showed the
+  pour row marked `failed` and, directly beneath it, a second row for the SAME claim reading
+  `receiving  +1,000.00 Winiwa`. That second row is written by the tx mirror, and its wording is
+  literal: `ladder(found:false)` writes "Seen by your Minima node - waiting for a block". So the node
+  was holding the transaction while the app was calling it failed. The cause is
+  `pollMinedFaucetTxpow`, which scanned node history against a fixed **180 s** deadline; a node that
+  has just resynced, or is thinly peered, needs longer than three blocks' worth of patience. A
+  deadline passing is the app running out of patience, never evidence that a transaction failed.
+  `markFaucetClaimNotConfirmedRow` now carries a second guard alongside the awaiting-approval one:
+  if `faucetClaimSeenByNode` finds a live incoming Winiwa row for this claim's amount inside the
+  hour, the row stays `Pending` with "Your node has the claim and is waiting for a block", and the
+  faucet card reads "Faucet claim on its way" instead of "not confirmed". `Pending` ranks below the
+  mirror's `Receiving`, so the two rows now merge into one instead of contradicting each other on
+  screen.
+- **A failed claim gives the hour back.** The 1 h countdown is stamped into `localStorage` the moment
+  the claim is posted, and nothing ever cleared it, so a claim that failed locked the person out for
+  an hour over a transaction that never happened (founder: "when it's the case the countdown should
+  be reset"). New `stablesResetFaucetWiniwaCooldown()` sweeps every stamp under the claim-key prefix
+  (the stamp is written under a per-wallet suffixed key, and the suffix in memory may not be the one
+  that was written) and re-renders the button, and the genuine-failure path calls it. The on-chain
+  source needed no change: `stablesGetOnChainLastFaucetClaimTs` already ignores failed rows.
+
+### Changed
+- **Faucet settlement poll budget 180 s to 600 s.** Minima blocks are ~50 s and the claim's own
+  completion target is 3 blocks, so the old budget left no margin for a node catching up.
+
+### v0.0.11.49 - The hide-amounts control really disappears
+
+- Founder 2026-09-04, second report: "even here the eye is covering the text". v0.0.11.48 marked
+  the control hidden and it carried on rendering.
+- The cause, measured rather than guessed: `[data-machinery-scope="wallet"] #balHideBtn` sets
+  `display: grid !important`, and an id with `!important` outranks the app's own
+  `.btn[hidden] { display: none !important }`, because an id beats a class. The attribute was set
+  and the button stayed on screen, 48 by 48, on top of the words. The rule now carries its own
+  `[hidden]` companion.
+- **The wider lesson, worth more than the fix: any `!important` display rule on an id silently
+  defeats `el.hidden`.** Where one exists it needs a `[hidden]` companion, or hiding will look
+  like it worked everywhere except on screen.
+- And the reason it shipped broken: the check read `el.hidden`, the property, which was `true`.
+  Verified now by pixels in all four states: up to date 48x48 visible, out of date 0x0, resyncing
+  0x0, recovered 48x48 again.
+
+### v0.0.11.48 - The message arrives as a pop-up, and nothing sits on top of it
+
+- Founder 2026-09-04: "the eye makes the text reading difficult, I think the message should be a
+  pop up".
+- **The eye stands down while the card is up.** `balHideBtn` floats in the balance card's top-right
+  corner to hide AMOUNTS; with an explanation in place of an amount it has nothing to hide, so it
+  was a control that could do nothing, sitting on the sentence. Same rule as the camera's Close
+  button. It returns the moment a balance does.
+- **The out-of-date message arrives as a pop-up, once per app open.** It opens the SAME
+  confirmation the button opens rather than a second sheet in front of it: one set of words, one
+  action, Back to dismiss (law 34, no Cancel). A standing state does not deserve a dialog on every
+  glance at the Wallet, and the card behind it carries the message for the rest of the session, so
+  dismissing costs nothing. It never opens over another dialog.
+- **The shared confirmation now reads in paragraphs.** Its text is set with `textContent` (never
+  `innerHTML`, because these messages carry amounts and addresses), so every blank line was
+  collapsing and a three-paragraph explanation arrived as one wall of words. `white-space:
+  pre-line` fixes it for every confirmation in the app.
+- A first attempt built a bespoke sheet and was thrown away: it reused `.wallet-onboarding-card`,
+  which is `display:none` by default and revealed by another flow's code, so the backdrop dimmed
+  over an invisible card. Measured rather than guessed, then replaced with the surface the app
+  already proves.
+
+### v0.0.11.47 - The Wallet page says when your bank is out of date, and resyncs it
+
+- Founder 2026-09-04, after installing on the older phone: "we still have nothing there telling the
+  user what to do. From the wallet page, we should have a whole process." The diagnosis and the
+  cure were on Settings, Network - the one page a person who is not technical will never open -
+  while the Wallet showed `0.00` and `Syncing…`, which reads as "my money is gone and the app is
+  stuck". Showing 0.00 in that state is not neutral, it is a false statement about someone's money.
+- **When the bank cannot catch up, the balance area carries the explanation and the action**, and
+  the hero figure stands down; the two never share the screen. It names how long the bank has been
+  offline, says the money is safe on the network, and offers one full-width action.
+- **A first run is never told its bank is out of date.** A bank that has fallen behind and a bank
+  finishing its first sync look identical to a naive check; the card requires a real block height
+  and a real tip time, so a brand-new install on the day of installing sees the ordinary wallet.
+- **The resync is a visible job, not a spinner**: the same card carries the phase (checking the
+  network, fetching the records and finding your money, almost done restarting) with the block
+  height, keeps the action disabled while it runs, and says the app restarts by itself.
+- **"Repair" is gone from the product** (founder: "let's avoid using the term repair, let's use
+  resync with the network"). The copy, the confirmation, the Settings button and the code all say
+  resync now, including the identifiers, so the source reads like the product.
+- Verified on the running app across every state: first run and up to date and 20 hours behind all
+  show the ordinary wallet; 66 days behind shows the card; the three running phases each read
+  correctly with the action disabled; and once the bank is current again the card disappears and
+  the balance returns.
+
+### v0.0.11.46 - A way into the full list, and a quieter camera
+
+- **Recent activity has a See all on the right, into the Activity page** (founder 2026-09-04).
+  The control existed but a machinery rule had hidden it since 2026-07-25, on the reasoning that it
+  was "redundant once a transaction returns there by itself". That is true of the route back after
+  a payment, but it is not a way IN: reading the last few rows and wanting the rest is its own
+  intention and nothing on the screen served it. It sits in the title row's trailing slot (law 33)
+  as a named text action (ACT-008); it used to borrow `max-link`, the amount-row MAX variant, plus
+  three inline styles to undo that class's own shouting. The rule still stands a `max-link` down
+  inside the activity list itself, where an amount-row control has no business.
+- **A closed camera no longer says "Camera off."** (founder: "we dont need the camera is off
+  here"). The control in the corner already reads **Camera**, which states what happened and offers
+  the way back; a sentence repeating it is one more thing to read for nothing. The status line
+  stays for messages that carry news, such as a camera that could not open.
+
+### v0.0.11.45 - No connect-a-node flash, and a one-tap repair
+
+- **The "Connect your Minima node" banner no longer flashes on start-up.** Founder, older phone:
+  "it briefly showed the node connection message at the top". The banner was visible in the markup
+  and hidden a moment later by script, so every open painted it until the JavaScript caught up, and
+  the slower the phone the longer it showed. The standalone app carries its own node and has
+  nothing for anyone to connect, so that message was never true there for even a moment. It now
+  starts hidden and is revealed only when it genuinely applies.
+- **A bank that has been offline too long says so at once, instead of "Watching for progress".**
+  The founder's phone was **66 days** behind and sat on that line for long minutes. Peers refuse to
+  serve a node that far back (Minima logs `We are Too old to sync new user!` and disconnects), so
+  waiting could never have worked. Past two days behind, the app says the bank cannot catch up on
+  its own and offers the repair immediately. Inside that window the catching-up wording is
+  unchanged, because there it is true.
+- **Repairing is one tap and one confirmation.** Founder: "we have to make it easy for non crypto
+  people, this should even be done automatically, the user should only have to confirm the action".
+  Reaching the repair used to mean reading about MegaMMR, checking a host and port, ticking an
+  acknowledgement and pressing a red button called "Resync from MegaMMR": four steps of vocabulary
+  nobody outside this project has, and not one of them a decision a person can actually make. The
+  Network section now offers **Repair my bank**, which asks the only question that is theirs, in
+  plain words (what it does, how long, that their money, key and settings are untouched), and then
+  runs it with the default recovery node. The Resync section is unchanged for anyone who wants to
+  choose their own node.
+
+### v0.0.11.44 - Opening the app asks the node once, not thirty times
+
+- Founder: "syncing every time I access the app takes long, maybe too long for a user in retail
+  payment". Measured on the phone, one ordinary open (logcat `StablesNodePathHandler`):
+  **255 node commands, 33.7 seconds of node time**, of which `history` was asked **30 times**
+  (11.9s) and `balance` **10 times** (8.5s). Twenty of those thirty-three seconds were the same
+  two questions. Several subsystems each want the wallet's balance and history at start-up and
+  each paid for its own round trip through a queue that serialises them, so they added up instead
+  of overlapping.
+- Identical read commands issued close together now share one answer: an in-flight call is joined
+  rather than duplicated, and a just-finished one is reused for 1.5s. Matched on the exact command
+  string, so `coins address:A` never borrows the answer to `coins address:B`. Writes, and anything
+  that changes the wallet when you call it (`getaddress` hands out a fresh address every time),
+  always go to the node.
+- Verified on the running app: ten identical balance reads cost **one** round trip; two different
+  `coins address:` cost two; two `getaddress` cost two; a `status` either side of the window costs
+  two. The node is never asked anything different, only fewer times.
+- **Measured on the phone, same open, before and after: 255 commands / 33.7s became 175 / 27.3s.**
+- A longer share window during start-up was tried and removed: it changed nothing (179 / 28.5s, ie
+  noise), because the remaining duplicates are not close in time, they are different questions.
+  `history` is asked as `max:20`, `max:40`, `max:50`, `max:100` and `max:250` by different
+  subsystems, and five distinct command strings cannot share one answer however long the window is.
+  Making one large history read serve the smaller ones is the next real gain and is not attempted
+  here, because it means trimming a node response and each caller's expectations have to be checked
+  first.
+
+### v0.0.11.43 - Answer on the first try, and one camera control
+
+- **The agent answers the first time you ask.** Founder: "it seems we often have to ask twice".
+  Four identical requests to the live agent, back to back, took **3.2s, 14.9s, 24.4s, 3.2s**: the
+  agent serialises work behind one model queue, so how long an answer takes depends on what is in
+  front of it, not on the question. The app was built for the fast case, aborting the request at
+  15s and declaring "StablesAgent unavailable" at 18s, so every slow answer was killed on the way
+  in. Asking twice worked because the second ask landed in a quiet moment.
+  - The request now waits 45s, well past the measured 24.4s tail.
+  - The app retries once itself, so it does the second ask instead of the person.
+  - It never declares the agent unavailable while a request is still in flight, and after 8s it
+    says "StablesAgent is still working on it…" without ending the wait or reopening the
+    composer, because a silent twenty seconds is what made people ask again.
+- **One camera control, in one place.** Founder: "when we close the camera, the button to turn it
+  back on should take the place of the close button and we dont need the close button there".
+  Close and Camera now share the same corner and exactly one is ever shown: Close while the camera
+  is on, Camera once it is off. Offering Close for a camera that is already closed was a control
+  that could do nothing.
+
+### v0.0.11.42 - Founder review of 2026-09-04
+
+- **Receive is dark blue again.** The wallet accent was painted by position
+  (`#walletSendReceiveRow .act-btn:first-child`), so moving Send to the trailing position handed
+  Receive the accent and both buttons came out cyan. The accent now follows `data-role="primary"`,
+  so it travels with the button instead of with the slot.
+- **StablesAgent answers again.** The app only ever asked through an iframe postMessage bridge and
+  waited 12 to 18 seconds for a reply that never came, then said "StablesAgent unavailable". The
+  agent's HTTP API answered the same question in under a second the whole time. The app now asks
+  the API first and keeps the bridge as a fallback. And it sends the QUESTION: the language
+  instruction it used to glue onto the end diluted the retrieval embedding, which is why a live
+  agent that knew the answer replied "I don't have information about a network contribution in the
+  provided context". Measured both ways. The founder's own question now answers in about 2 seconds.
+- **The agent opens as the Stables testing phase app**, not "the xWiniwa core", in all four
+  languages, and no longer tells standalone users that Minima Core holds their wallet.
+- **A bank that is behind no longer shows a balance as confirmed.** The wallet proof went `ready`
+  as soon as the node ANSWERED, so a node 114,000 blocks back reported a confirmed balance under a
+  banner saying it was still catching up. It now reads `stale` while the node is behind, and the
+  actions that would spend it stay closed.
+- **Catching up shows progress.** "Updating" now says how old the newest block it holds is, and
+  whether the gap is closing ("1,420 blocks gained since this page opened") or not ("has not
+  gained a block in 20 minutes, so waiting will not fix it"). When it is stuck, a **Repair with
+  Resync** control appears in Network and takes the person to the resync form.
+- **The contribution charts sit under their own measures**, each with its own y axis (the strip's
+  maximum, in that chart's unit) and its own dates. Two unlabelled rectangles under a shared date
+  line became two labelled charts.
+- Website: the home illustration no longer collapses on older phones. Its square canvas came only
+  from `aspect-ratio`, which older Android WebViews lack, so the nodes piled up and the core circle
+  stretched into an ellipse; there is now a padding fallback, and at narrow widths the core is a
+  card sized to its text rather than a 122px circle its words could not fit inside.
+- On-chain watch: Explorer and Download CSV are one pair again. The site's bare-button rule made
+  the button 48px in a white box while the link stayed 44px and plain; both are now the same
+  control at the same height on the same line.
+
+### v0.0.11.41 - The node could see the vault all along
+
+- **Mint and burn were dead on any node that had not taken the vault's coins into its own coin
+  set, which is every fresh install.** The app read the vault with
+  `coins address:<vault> relevant:false`. Measured on Minima 1.0.45.15 from inside the running
+  MiniDapp: that question returns 0 coins, while `coins address:<vault>` returns the same three
+  unspent coins the vault needs (reserve, balance, pool). The app then reported "the vault balance
+  or reserve coin is not locally proven" and disabled both actions. It read as the pruning window
+  and was not: the coins were 213 blocks old.
+- One helper now asks both ways and merges by coin id (`tv81CoinsAtAddress`, `tv81CoinsById`), so
+  neither form can hide a covenant coin from the other. Every covenant read moved onto it: the
+  vault, the beacon, the market engine, the order and result addresses, the book-source registry,
+  the anchor head and pages, and every re-check of an order or state coin by id.
+- The faucet was never affected because its own lookup already asked the plain question. That is
+  why claiming worked on a node where minting refused.
+
+### v0.0.11.40 - Send on the right, Receive on the left
+
+- Founder 2026-09-03: "from the wallet page and everywhere it makes sense, put the send button on
+  the right, it will be used more often, and the receive on the left". Registered in the UI system
+  reference as part of the placement axis (law 33) so it is a rule and not four separate edits:
+  wherever Send and Receive are offered side by side, Receive leads and Send trails.
+- Applied to the four places that offer both: the Wallet hero action row, the direction switcher
+  inside the Send sheet and inside the Receive sheet, and the currency action sheet. The switcher
+  keeps one fixed order in both sheets and only moves which segment is active, because a peer
+  selector that reorders itself teaches nothing.
+
 ## [0.0.11.39] - 2026-09-03
 
 - Standalone Android: the payment-received notification names the token the way a person does. A Minima token name can be a JSON object, and the node can hand it over as a string; the phone showed `Received 1000 {"name":"Winiwa"}`. One rule (`IncomingCoins.displayName`) now unwraps every form, in the notification and in the in-app incoming line, with a unit test for each shape.
-
-
-_Nothing yet: everything up to v0.0.11.38 shipped on 2026-09-03._
 
 ## [0.0.11.38] - 2026-09-03
 

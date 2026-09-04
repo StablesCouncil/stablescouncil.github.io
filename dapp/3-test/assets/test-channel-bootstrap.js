@@ -946,6 +946,38 @@
     clearFaucetPourStatusSurface(15000);
   }
 
+  /* Has the node actually SEEN this claim?
+   *
+   * The tx mirror writes its own row the moment the node reports the transaction, with status
+   * Receiving and the note "Seen by your Minima node - waiting for a block". That row is proof the
+   * claim exists on the node; a settlement watcher that has merely run out of patience must not
+   * contradict it. Matched on identity, not wording: an incoming Winiwa row, for this claim's
+   * amount, inside the hour, that is not the pour row itself. */
+  function faucetClaimSeenByNode(rowId) {
+    const mine = String(rowId || FAUCET_POUR_ROW_ID);
+    try {
+      const getRows = window.stablesGetUserActivityRows;
+      const getById = window.stablesGetUserActivityRowById;
+      if (typeof getRows !== 'function') return false;
+      const pour = (typeof getById === 'function') ? getById(mine) : null;
+      const wantAmt = pour ? Math.abs(Number(pour.amt) || 0) : 0;
+      const cutoff = Date.now() - 3600000;
+      return getRows().some(function (r) {
+        if (!r || String(r.id || '') === mine) return false;
+        if (r.dir !== 'in') return false;
+        const ccy = String(r.ccy || r.category || '').toLowerCase();
+        if (ccy !== 'winiwa' && ccy !== 'winima') return false;
+        if (Number(r.ts || 0) < cutoff) return false;
+        /* Same amount, so an unrelated incoming payment cannot vouch for the claim. */
+        if (wantAmt > 0 && Math.abs(Math.abs(Number(r.amt) || 0) - wantAmt) > 1e-6) return false;
+        const st = String(r.status || '').toLowerCase();
+        return st === 'receiving' || st === 'received' || st === 'broadcasted'
+          || st === 'on-chain' || st === 'pending' || st === 'confirmed';
+      });
+    } catch (_) { return false; }
+  }
+  window.stablesFaucetClaimSeenByNode = faucetClaimSeenByNode;
+
   function markFaucetClaimNotConfirmedRow(detail, title, rowId, status) {
     const msg = String(detail || 'No faucet transaction is visible in your node history yet.').trim();
     /* NOT LANDED YET IS NOT THE SAME AS FAILED.
@@ -966,6 +998,45 @@
         return;
       }
     } catch (_) { /* if the check cannot run, fall through to the old behaviour */ }
+    /* SEEN BY THE NODE IS NOT FAILED EITHER.
+     *
+     * Same shape as the guard above, and the same class of mistake: a watcher writing a verdict it
+     * has no standing to write. If the node is holding the claim, the honest state is "waiting for
+     * a block", and Pending ranks below the mirror's Receiving so the two rows merge into one
+     * instead of contradicting each other on screen (founder 2026-09-04, "the transaction is not
+     * going through" - it was going through). */
+    let stillTravelling = false;
+    try {
+      if (!status && faucetClaimSeenByNode(rowId)) stillTravelling = true;
+    } catch (_) { /* fall through */ }
+    if (stillTravelling) {
+      const waitingNote = 'Your node has the claim and is waiting for a block. No action needed.';
+      try {
+        if (typeof window.stablesUpsertUserActivityRows === 'function') {
+          window.stablesUpsertUserActivityRows([{
+            id: String(rowId || FAUCET_POUR_ROW_ID),
+            title: 'Faucet claim',
+            status: 'Pending',
+            note: waitingNote,
+            pendingIncoming: true
+          }]);
+        }
+        /* The card on the faucet page must not say "not confirmed" either. */
+        const cur = window.__STABLES_FAUCET_SETTLEMENT_STATUS__ || {};
+        setFaucetSettlementStatus(true, {
+          title: 'Faucet claim on its way',
+          detail: waitingNote,
+          txid: cur.txid || '',
+          pendingTxnId: cur.pendingTxnId || '',
+          amountText: cur.amountText || '',
+          startedAt: cur.startedAt || Date.now()
+        });
+        if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
+        if (typeof window.renderActivity === 'function') window.renderActivity();
+      } catch (_) { /* ignore */ }
+      try { console.log('[faucet-claim] not-confirmed watcher skipped: the node still has the claim'); } catch (_) {}
+      return;
+    }
     try {
       if (typeof window.stablesUpsertUserActivityRows === 'function') {
         window.stablesUpsertUserActivityRows([{
@@ -985,6 +1056,20 @@
       if (typeof window.updateGlobalUI === 'function') window.updateGlobalUI();
       if (typeof window.stablesRenderPendingIncomingIndicator === 'function') window.stablesRenderPendingIncomingIndicator();
     } catch (_) { /* ignore */ }
+    /* The countdown paces REAL claims, so a claim that never landed must not cost the person an
+       hour of lockout with no way to try again (founder 2026-09-04, "when it's the case the
+       countdown should be reset").
+     *
+     * Strictly AFTER the row above is marked Failed, and the ordering is not cosmetic: the
+     * remaining time is read from the wallet's Activity as well as from localStorage, and only a
+     * FAILED row is discounted there. Resetting first cleared the stamp and then re-armed the full
+     * hour from the very row being failed - measured, 59:59 left with no stamp on disk. */
+    try {
+      if (String(status || 'Failed') === 'Failed'
+        && typeof window.stablesResetFaucetWiniwaCooldown === 'function') {
+        window.stablesResetFaucetWiniwaCooldown();
+      }
+    } catch (_) { /* the countdown simply keeps running */ }
   }
 
   function appendTestFaucetActivityRow(amount, txid, pendingTxnId, options) {
@@ -1515,6 +1600,84 @@
   // balance state coin is not visible yet" on a node that had just imported that very coin
   // (founder report 2026-07-26). Fixing it in the shared lookup covers vault, faucet and anything
   // added later, instead of each caller reinventing the merge.
+  /* Ask the node for the coins at a covenant address the way that actually returns them.
+   *
+   * Measured on Minima 1.0.45.15, on a freshly synced node, against the live V9 vault
+   * (0xF4B1826C…), with both queries issued from inside the running MiniDapp over MDS:
+   *
+   *     coins address:<vault> relevant:false   ->  0 coins
+   *     coins address:<vault>                  ->  3 unspent coins (reserve, balance, pool)
+   *
+   * The help text says `relevant:false` searches every coin in the unpruned chain, so every
+   * covenant read in this file passed it. It does not behave that way for an address the node has
+   * not taken into its own coin set: the faucet answers both ways only because the claim path
+   * imports its coins. The vault does not, so a node that could see all three vault coins reported
+   * "The vault balance or reserve coin is not locally proven" and disabled mint and burn. It read
+   * as the pruning-window problem and was not: the coins were 213 blocks old.
+   *
+   * So: ask both ways and merge by coin id. The plain form finds in-window covenant coins the
+   * node has not adopted; the `relevant:false` form is kept because it is what answers on a node
+   * that HAS adopted them, and neither is a superset of the other. Snapshot-recovered coins are
+   * merged by their callers on top of this, since those are out of window entirely.
+   */
+  async function tv81CoinsAtAddress(address, extraParts) {
+    const addr = String(address || '').trim();
+    if (!addr) return [];
+    const tail = (extraParts && extraParts.length) ? ' ' + extraParts.join(' ') : '';
+    const rows = function (data) {
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.coins)) return data.coins;
+      return [];
+    };
+    let plain = [];
+    let scoped = [];
+    try { plain = rows(await mdsCmdData('coins address:' + addr + tail)); } catch (_) { /* one form is enough */ }
+    try { scoped = rows(await mdsCmdData('coins address:' + addr + ' relevant:false' + tail)); } catch (_) { /* ditto */ }
+    const seen = {};
+    const out = [];
+    for (const c of plain.concat(scoped)) {
+      if (!c || !c.coinid) continue;
+      const k = String(c.coinid).toLowerCase();
+      if (seen[k]) continue;
+      seen[k] = true;
+      out.push(c);
+    }
+    return out;
+  }
+  window.tv81CoinsAtAddress = tv81CoinsAtAddress;
+
+  /* Same measured fault, same shape, for a single coin:
+   *     coins coinid:<a vault coin> relevant:false  ->  0
+   *     coins coinid:<a vault coin>                 ->  1
+   * Every read of a covenant coin by id goes through here, so a re-check of an order, a state coin
+   * or a vault coin cannot silently decide the coin is gone. It returns a LIST, the same shape the
+   * node's payload had, because "no rows" is a meaningful answer to several callers (an order coin
+   * that is really spent) and turning it into null would have changed what they concluded. */
+  async function tv81CoinsById(coinid) {
+    const id = String(coinid || '').trim();
+    if (!id) return [];
+    const rows = function (data) {
+      if (Array.isArray(data)) return data;
+      if (data && Array.isArray(data.coins)) return data.coins;
+      return (data && data.coinid) ? [data] : [];
+    };
+    let plain = [];
+    let scoped = [];
+    try { plain = rows(await mdsCmdData('coins coinid:' + id)); } catch (_) { /* one form is enough */ }
+    try { scoped = rows(await mdsCmdData('coins coinid:' + id + ' relevant:false')); } catch (_) { /* ditto */ }
+    const seen = {};
+    const out = [];
+    for (const c of plain.concat(scoped)) {
+      if (!c || !c.coinid) continue;
+      const k = String(c.coinid).toLowerCase();
+      if (seen[k]) continue;
+      seen[k] = true;
+      out.push(c);
+    }
+    return out;
+  }
+  window.tv81CoinsById = tv81CoinsById;
+
   window.__TV81_SNAPSHOT_COINS__ = window.__TV81_SNAPSHOT_COINS__ || {};
   function tv81NoteSnapshotCoin(addr, coinid) {
     if (!addr || !coinid) return;
@@ -1732,7 +1895,7 @@
       if (!beacon || !beacon.covenant_address || !beacon.ports) return null;
       await tv81EnsureBeaconTracked(beacon);
       const ports = beacon.ports;
-      const data = await mdsCmdData('coins address:' + String(beacon.covenant_address).toLowerCase() + ' relevant:false');
+      const data = await tv81CoinsAtAddress(String(beacon.covenant_address).toLowerCase());
       const coins = Array.isArray(data) ? data : (data && Array.isArray(data.coins) ? data.coins : []);
       let best = null;
       let bestSchema = -1;
@@ -1806,13 +1969,13 @@
     const configuredId = ps.state_coin_ids ? ps.state_coin_ids[marketCode] : null;
     if (configuredId) {
       try {
-        const direct = await mdsCmdData('coins coinid:' + String(configuredId) + ' relevant:false');
+        const direct = await tv81CoinsById(String(configuredId));
         const rows = Array.isArray(direct) ? direct : (direct && Array.isArray(direct.coins) ? direct.coins : []);
         const current = rows.find(function (c) { return c && !c.spent; });
         if (current) return current;
       } catch (_) { /* continuation discovery below */ }
     }
-    const data = await mdsCmdData('coins address:' + engine + ' relevant:false');
+    const data = await tv81CoinsAtAddress(engine);
     const coins = Array.isArray(data) ? data : (data && Array.isArray(data.coins) ? data.coins : []);
     const generationId = String(registry.generation_id || '').toLowerCase();
     const candidates = coins.filter(function (coin) {
@@ -1903,7 +2066,7 @@
     const tick = BigInt(String(market.tick_atoms));
     const engine = String(market.order_address || '').toLowerCase();
     await tv81EnsureEngineTracked(registry);
-    const data = await mdsCmdData('coins address:' + engine + ' relevant:false');
+    const data = await tv81CoinsAtAddress(engine);
     const coins = Array.isArray(data) ? data : (data && Array.isArray(data.coins) ? data.coins : []);
     const o = TV81_ORDER_STATE;
     const orders = [];
@@ -2032,7 +2195,7 @@
     await tv81FbaEnsureTracked(registry);
     const base = String(cfg.base_token_id).toLowerCase(), quote = String(cfg.quote_token_id).toLowerCase();
     const tick = BigInt(String(cfg.tick_atoms || '10000'));
-    const data = await mdsCmdData('coins address:' + String(cfg.order_address).toLowerCase() + ' relevant:false');
+    const data = await tv81CoinsAtAddress(String(cfg.order_address).toLowerCase());
     const coins = Array.isArray(data) ? data : (data && Array.isArray(data.coins) ? data.coins : []);
     const orders = [];
     for (const c of coins) {
@@ -2073,7 +2236,7 @@
   async function tv81FbaLastPrice() {
     const registry = await tv81AppRegistry();
     const cfg = tv81FbaCfg(registry); if (!cfg) return null;
-    const data = await mdsCmdData('coins address:' + String(cfg.result_address).toLowerCase() + ' relevant:false');
+    const data = await tv81CoinsAtAddress(String(cfg.result_address).toLowerCase());
     const coins = Array.isArray(data) ? data : (data && Array.isArray(data.coins) ? data.coins : []);
     const cur = coins.filter(c => c && !c.spent).sort((a, b) => Number(readStatePort(b, 1)) - Number(readStatePort(a, 1)))[0];
     if (!cur) return null;
@@ -2214,7 +2377,7 @@
   async function tv81ReadBookSources() {
     const registry = await tv81AppRegistry();
     const cfg = tv81BookSourcesCfg(registry); if (!cfg) return [];
-    const data = await mdsCmdData('coins address:' + String(cfg.registry_address).toLowerCase() + ' relevant:false');
+    const data = await tv81CoinsAtAddress(String(cfg.registry_address).toLowerCase());
     const coins = Array.isArray(data) ? data : (data && Array.isArray(data.coins) ? data.coins : []);
     const portOf = function (c, p) { const st = c.state || []; for (let i = 0; i < st.length; i++) if (Number(st[i].port) === p) return st[i].data; return null; };
     const byOwner = {};
@@ -2418,7 +2581,7 @@
     const tipData = await mdsCmdData('status');
     const tip = Number(tipData && tipData.chain && tipData.chain.block);
     const rowsOf = function (d) { return Array.isArray(d) ? d : (d && Array.isArray(d.coins) ? d.coins : (d ? [d] : [])); };
-    const headData = await mdsCmdData('coins address:' + String(cfg.head_address).toLowerCase() + ' relevant:false');
+    const headData = await tv81CoinsAtAddress(String(cfg.head_address).toLowerCase());
     const candidateHeads = rowsOf(headData)
       .filter(function (c) { return c && !c.spent && String(tv81AnchorPort(c, 0)) === '2'; })
       .filter(function (c) { return tip - Number(c.created) <= (bounds.max_head_age_blocks || 900); });
@@ -2433,7 +2596,7 @@
       rejectedGenerationHeads: candidateHeads.length,
       tip: tip
     };
-    const pageData = await mdsCmdData('coins address:' + String(cfg.page_address).toLowerCase() + ' relevant:false');
+    const pageData = await tv81CoinsAtAddress(String(cfg.page_address).toLowerCase());
     const pagesByCoinId = {};
     rowsOf(pageData).filter(function (c) {
       return c && !c.spent
@@ -2581,7 +2744,7 @@
       const bounds = cfg.bounds || {};
       const rowsOf = function (d) { return Array.isArray(d) ? d : (d && Array.isArray(d.coins) ? d.coins : (d ? [d] : [])); };
       // live order coins (state port 2 present, unspent)
-      const orderData = await mdsCmdData('coins address:' + String(dcfg.order_address).toLowerCase() + ' relevant:false');
+      const orderData = await tv81CoinsAtAddress(String(dcfg.order_address).toLowerCase());
       const live = rowsOf(orderData).filter(function (c) { return c && !c.spent && (c.state || []).some(function (s) { return Number(s.port) === 2; }); });
       const pageMax = bounds.page_orders || 16;
       const records = [];
@@ -2595,7 +2758,7 @@
         const fa = String(((registry || {}).faucet || {}).address || '').toLowerCase();
         const fWin = String(dcfg.quote_token_id).toLowerCase();
         if (fa) {
-          const fcoins = rowsOf(await mdsCmdData('coins address:' + fa + ' relevant:false')).filter(function (c) { return c && !c.spent; });
+          const fcoins = rowsOf(await tv81CoinsAtAddress(fa)).filter(function (c) { return c && !c.spent; });
           const fpool = fcoins.find(function (c) { return String(c.tokenid || '').toLowerCase() === fWin; });
           const fstate = fcoins.find(function (c) { return String(c.tokenid || '').toLowerCase() === '0x00' && (c.state || []).length; });
           const flist = [fpool, fstate];
@@ -2620,7 +2783,7 @@
       try {
         const va = String(((registry || {}).xwiniwa_vault || {}).address || '').toLowerCase();
         if (va) {
-          const vcoins = rowsOf(await mdsCmdData('coins address:' + va + ' relevant:false')).filter(function (c) { return c && !c.spent; });
+          const vcoins = rowsOf(await tv81CoinsAtAddress(va)).filter(function (c) { return c && !c.spent; });
           for (let vi = 0; vi < vcoins.length; vi++) {
             const ex = await mdsCmdData('coinexport coinid:' + vcoins[vi].coinid);
             const blob = (ex && ex.data) ? ex.data : ex;
@@ -2672,7 +2835,7 @@
       let pageCoinId = null;
       for (let t = 0; t < 30 && !pageCoinId; t++) {
         await new Promise(function (r) { setTimeout(r, 6000); });
-        const pd = rowsOf(await mdsCmdData('coins address:' + String(cfg.page_address).toLowerCase() + ' relevant:false'));
+        const pd = rowsOf(await tv81CoinsAtAddress(String(cfg.page_address).toLowerCase()));
         const hit = pd.find(function (c) { return c && !c.spent && (c.state || []).some(function (s) { return Number(s.port) === 8 && String(s.data).toLowerCase() === page.pageHash.toLowerCase(); }); });
         if (hit) pageCoinId = hit.coinid;
       }
@@ -2754,7 +2917,7 @@
     await tv81DirectEnsureTracked(registry);
     const base = String(cfg.base_token_id).toLowerCase(), quote = String(cfg.quote_token_id).toLowerCase();
     const tick = BigInt(String(cfg.tick_atoms || '10000'));
-    const data = await mdsCmdData('coins address:' + String(cfg.order_address).toLowerCase() + ' relevant:false');
+    const data = await tv81CoinsAtAddress(String(cfg.order_address).toLowerCase());
     const coins = Array.isArray(data) ? data : (data && Array.isArray(data.coins) ? data.coins : []);
     const orders = [];
     // Reader truth log (2026-07-22, the phone one-visible-ask case): the node can hold order coins
@@ -3088,7 +3251,7 @@
           amt: Math.abs(Number(recvDisplay)), ccy: recvLabel, fee: 0,
           explorerTxId: extracted.explorerTxId || '', pendingTxnId: extracted.pendingTxnId || '',
           status: extracted.explorerTxId ? 'On-chain' : 'Pending',
-          note: (buy ? 'Paid ' + totalQuote + ' Winiwa for ' + totalBase + ' xWiniwa' : 'Sold ' + totalBase + ' xWiniwa for ' + totalQuote + ' Winiwa') + ' across ' + k + ' order' + (k === 1 ? '' : 's') + ', each at its own price.',
+          note: (buy ? 'Paid ' + tv81G(totalQuote) + ' Winiwa for ' + tv81G(totalBase) + ' xWiniwa' : 'Sold ' + tv81G(totalBase) + ' xWiniwa for ' + tv81G(totalQuote) + ' Winiwa') + ' across ' + k + ' order' + (k === 1 ? '' : 's') + ', each at its own price.',
           minimaOnChain: true, localOrigin: true, pendingIncoming: true,
         });
       }
@@ -3369,7 +3532,7 @@
   }
 
   async function tv81LoadOrderCoin(orderCoinId) {
-    const data = await mdsCmdData('coins coinid:' + String(orderCoinId) + ' relevant:false');
+    const data = await tv81CoinsById(String(orderCoinId));
     const coins = Array.isArray(data) ? data : (data && Array.isArray(data.coins) ? data.coins : []);
     return coins.find(function (coin) { return coin && !coin.spent; }) || null;
   }
@@ -3458,7 +3621,7 @@
     const registry = await tv81AppRegistry();
     const marketCode = Number(plan.marketId) === 1 ? 'XWINIWA_WINIWA' : 'USDW_WINIWA';
     for (let attempt = 0; attempt < 48; attempt++) {
-      const old = await mdsCmdData('coins coinid:' + plan.orderCoinId + ' relevant:false').catch(function () { return null; });
+      const old = await tv81CoinsById(plan.orderCoinId).catch(function () { return null; });
       const rows = Array.isArray(old) ? old : (old && Array.isArray(old.coins) ? old.coins : []);
       const consumed = rows.length === 0 || rows.every(function (coin) { return !!coin.spent; });
       const current = await tv81FindPriceStateCoin(registry, marketCode).catch(function () { return null; });
@@ -3666,8 +3829,7 @@
   }
 
   async function tv81VaultCoins(vault) {
-    const data = await mdsCmdData('coins address:' + vault.address + ' relevant:false');
-    let coins = Array.isArray(data) ? data : (data && Array.isArray(data.coins) ? data.coins : []);
+    let coins = await tv81CoinsAtAddress(vault.address);
     // Merge coins recovered from an on-chain snapshot. `coins address:` searches only the UNPRUNED
     // chain, and the vault's coins are older than that window on any node that did not track the
     // vault from deployment, so the scan returns nothing even after the proofs were imported. This
@@ -4000,7 +4162,7 @@
 
   async function tv81CancelOrderOnChain(orderCoinId) {
     const registry = await tv81AppRegistry();
-    const data = await mdsCmdData('coins coinid:' + String(orderCoinId) + ' relevant:false');
+    const data = await tv81CoinsById(String(orderCoinId));
     const coins = Array.isArray(data) ? data : (data && Array.isArray(data.coins) ? data.coins : []);
     const coin = coins.find(function (c) { return c && !c.spent; });
     if (!coin) throw new Error('This order coin is no longer unspent; refresh the book.');
@@ -4118,8 +4280,27 @@
   function tv81FmtPrice(atoms) { return tv81AtomsToDisplay8(BigInt(String(atoms))); }
   // Number discipline (founder-approved redesign 2026-07-22): one format per role everywhere —
   // prices 4 dp, sizes/totals 2 dp, tabular-aligned by the row CSS. Atoms in, fixed string out.
-  function tv81FmtPx(atoms) { return (Number(BigInt(String(atoms))) / 1e8).toFixed(4); }
-  function tv81FmtQty(atoms) { return (Number(BigInt(String(atoms))) / 1e8).toFixed(2); }
+  /* Grouped for the eye (founder 2026-09-04: commas for thousands, everywhere). Anything that
+     needs the exact string for arithmetic or the node keeps using tv81FbaFmt. */
+  function tv81G(v, dec) {
+    const x = Number(String(v == null ? '' : v).replace(/,/g, ''));
+    if (!Number.isFinite(x)) return '0';
+    return x.toLocaleString('en-US', {
+      minimumFractionDigits: dec == null ? 0 : dec,
+      maximumFractionDigits: dec == null ? 8 : dec
+    });
+  }
+  function tv81FmtPx(atoms) { return tv81G(Number(BigInt(String(atoms))) / 1e8, 4); }
+  function tv81FmtQty(atoms) { return tv81G(Number(BigInt(String(atoms))) / 1e8, 2); }
+  /* Amount fields are grouped as a person types, so their value carries commas. */
+  function tv81FieldNum(id) {
+    return Number(String((document.getElementById(id) || {}).value || '').replace(/,/g, '')) || 0;
+  }
+  function tv81GroupField(el) {
+    try {
+      if (el && typeof window.stablesFormatFinancialAmountInput === 'function') window.stablesFormatFinancialAmountInput(el);
+    } catch (_) { /* the raw digits are still right */ }
+  }
   let _tv81ObTimer = null;
   const TV81_PAR_ATOMS = 100000000n;
   function tv81SetText(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; }
@@ -4736,10 +4917,10 @@
       const ask = BigInt(String((window.__TV81_BEST__ || {}).ask || '0'));
       if (ask <= 0n) { el.value = '0'; window.tv81TicketQuote && tv81TicketQuote(); return; }
       const frac8 = BigInt(Math.round(f * 1e8));
-      el.value = tv81AtomsToDisplay8(availAtoms * frac8 / 100000000n * 100000000n / ask);
+      el.value = tv81AtomsToDisplay8(availAtoms * frac8 / 100000000n * 100000000n / ask); tv81GroupField(el);
     } else {
       const availAtoms = tokenDisplayToAtoms8(String((d.xWiniwa || {}).available || 0));
-      el.value = tv81AtomsToDisplay8(availAtoms * BigInt(Math.round(f * 1e8)) / 100000000n);
+      el.value = tv81AtomsToDisplay8(availAtoms * BigInt(Math.round(f * 1e8)) / 100000000n); tv81GroupField(el);
     }
     window.tv81TicketQuote && tv81TicketQuote();
   };
@@ -4747,7 +4928,7 @@
   window.tv81FillPriceFromBook = function (priceDisplay) {
     if (_tv81OrderMode !== 'limit') window.tv81SetOrderMode && tv81SetOrderMode('limit');
     const el = document.getElementById('tv81TicketPrice');
-    if (el) { el.value = priceDisplay; window.tv81TicketQuote && tv81TicketQuote(); }
+    if (el) { el.value = priceDisplay; tv81GroupField(el); window.tv81TicketQuote && tv81TicketQuote(); }
   };
 
   async function tv81IsAddressMine(addr) {
@@ -5010,14 +5191,14 @@
     if (_tv81OrderSide === 'buy') {
       const availableAtoms = tokenDisplayToAtoms8(String((d.Winiwa || {}).available || 0));
       const ask = BigInt(String((window.__TV81_BEST__ || {}).ask || '0'));
-      el.value = ask > 0n ? tv81AtomsToDisplay8(availableAtoms * 100000000n / ask) : '0';
+      el.value = ask > 0n ? tv81AtomsToDisplay8(availableAtoms * 100000000n / ask) : '0'; tv81GroupField(el);
     } else {
       el.value = String((d.xWiniwa || {}).available || 0);
     }
     window.tv81TicketQuote && tv81TicketQuote();
   };
   window.tv81TicketQuote = function () {
-    const size = Number((document.getElementById('tv81TicketSize') || {}).value || 0);
+    const size = tv81FieldNum('tv81TicketSize');
     const line = document.getElementById('tv81TicketQuoteLine');
     if (!line) return;
     if (!(size > 0)) { line.textContent = '—'; return; }
@@ -5030,7 +5211,7 @@
         ? 'Estimated from best ask: pay ~' + fmtTokenAmt(size * price) + ' Winiwa for ' + fmtTokenAmt(size) + ' xWiniwa.'
         : 'Estimated from best bid: receive ~' + fmtTokenAmt(size * price) + ' Winiwa for ' + fmtTokenAmt(size) + ' xWiniwa.';
     } else {
-      const price = Number((document.getElementById('tv81TicketPrice') || {}).value || 0);
+      const price = tv81FieldNum('tv81TicketPrice');
       if (!(price > 0)) { line.textContent = 'Enter a limit price.'; return; }
       line.textContent = (_tv81OrderSide === 'buy' ? 'Escrow ' : 'Sell ')
         + fmtTokenAmt(_tv81OrderSide === 'buy' ? size * price : size) + ' '
@@ -5086,10 +5267,10 @@
   window.tv81SubmitTicket = function () {
     if (!releaseRequireFeature('trade', 'Trade')) return;
     if (_tv81TicketBusy) return;
-    const size = Number((document.getElementById('tv81TicketSize') || {}).value || 0);
+    const size = tv81FieldNum('tv81TicketSize');
     if (!(size > 0)) { try { window.stablesFieldError('tv81TicketSize', 'Enter a size'); } catch (_) { /* ignore */ } return; }
     try {
-      const px0 = Number((document.getElementById('tv81TicketPrice') || {}).value || 0);
+      const px0 = tv81FieldNum('tv81TicketPrice');
       const short = tv81TicketShortfall(_tv81OrderSide, _tv81OrderMode, size, px0);
       if (short) { try { showToast(short, { tone: 'amber', durationMs: 9000 }); } catch (_) { /* ignore */ } return; }
     } catch (_) { /* a guard failure must never block a legitimate order */ }
@@ -5098,7 +5279,7 @@
       tv81SetTicketBusy(true);
       Promise.resolve(tv81ExecuteMarketTicket(_tv81OrderSide, size)).then(done, done);
     } else {
-      const price = Number((document.getElementById('tv81TicketPrice') || {}).value || 0);
+      const price = tv81FieldNum('tv81TicketPrice');
       if (!(price > 0)) { try { window.stablesFieldError('tv81TicketPrice', 'Enter a limit price'); } catch (_) { /* ignore */ } return; }
       tv81SetTicketBusy(true);
       Promise.resolve(tv81PlaceLimitFromTicket(_tv81OrderSide === 'buy' ? 'BID' : 'ASK', price, size)).then(done, done);
@@ -5143,7 +5324,7 @@
           });
         };
         if (dplan.unfilled && Number(dplan.unfilled) > 0) {
-          try { showToast('Book depth fills ' + dplan.totalBase + ' of ' + tv81FbaFmt(size) + ' xWiniwa; the rest has no resting orders.', { tone: 'amber', durationMs: 7000 }); } catch (_) { /* ignore */ }
+          try { showToast('Book depth fills ' + tv81G(dplan.totalBase) + ' of ' + tv81G(size) + ' xWiniwa; the rest has no resting orders.', { tone: 'amber', durationMs: 7000 }); } catch (_) { /* ignore */ }
         }
         if (typeof window.openMintBurnConfirm === 'function') {
           window.openMintBurnConfirm({
@@ -5321,8 +5502,8 @@
   }
 
   function tv81LpLadder() {
-    const depX = tokenDisplayToAtoms8(String((document.getElementById('lpDepX') || {}).value || '0'));
-    const depW = tokenDisplayToAtoms8(String((document.getElementById('lpDepW') || {}).value || '0'));
+    const depX = tokenDisplayToAtoms8(String((document.getElementById('lpDepX') || {}).value || '0').replace(/,/g, '') || '0');
+    const depW = tokenDisplayToAtoms8(String((document.getElementById('lpDepW') || {}).value || '0').replace(/,/g, '') || '0');
     const tick = 10000n;
     const weights = tv81LpWeights(_tv81LpBins);
     const xSlices = tv81LpSlices(depX, weights);
@@ -5869,7 +6050,7 @@
         if (exTo) exTo.value = '';
         const bestRows = side === 'buy' ? (book.orders.asks || []) : (book.orders.bids || []);
         if (pill) pill.textContent = bestRows.length
-          ? ('Best ' + (Number(bestRows[0].priceAtoms) / 1e8).toFixed(4) + ' Winiwa per xWiniwa')
+          ? ('Best ' + tv81G(Number(bestRows[0].priceAtoms) / 1e8, 4) + ' Winiwa per xWiniwa')
           : 'No offers on this side yet';
         if (btn) { btn.disabled = true; btn.style.opacity = '0.55'; btn.textContent = 'Exchange now'; }
       } else if (!walk) {
@@ -5878,8 +6059,8 @@
         if (btn) { btn.disabled = true; btn.style.opacity = '0.55'; btn.textContent = 'Exchange now'; }
       } else {
         const receive = side === 'buy' ? walk.base : walk.quote;
-        if (exTo) exTo.value = receive > 0 ? receive.toFixed(6).replace(/0+$/, '').replace(/\.$/, '') : '';
-        if (pill) pill.textContent = '1 xWiniwa = ' + walk.effective.toFixed(4) + ' Winiwa';
+        if (exTo) { exTo.value = receive > 0 ? receive.toFixed(6).replace(/0+$/, '').replace(/\.$/, '') : ''; tv81GroupField(exTo); }
+        if (pill) pill.textContent = '1 xWiniwa = ' + tv81G(walk.effective, 4) + ' Winiwa';
         if (btn) { btn.disabled = false; btn.style.opacity = ''; btn.textContent = 'Exchange now'; }
       }
       tv81ExRenderImpact(walk, amt, from);
@@ -5910,7 +6091,7 @@
     if (walk.shortfall > 1e-9) {
       const covered = fromCcy === 'Winiwa' ? (amt - walk.shortfall) : walk.base;
       el.setAttribute('data-tone', 'warning');
-      el.textContent = 'The book only covers ' + covered.toFixed(4) + ' ' + fromCcy
+      el.textContent = 'The book only covers ' + tv81G(covered, 4) + ' ' + fromCcy
         + ' of this size. Reduce the amount or place a limit order on Trade.';
       return;
     }
@@ -6006,7 +6187,7 @@
         window.openMintBurnConfirm({
           op: 'tv81-exchange', eyebrowText: '', titleText: 'Confirm price impact',
           sendText: 'Price impact ' + impact.toFixed(2) + '%',
-          receiveText: 'Best price ' + walk.best.toFixed(4) + ', you get ' + walk.effective.toFixed(4) + ' Winiwa per xWiniwa',
+          receiveText: 'Best price ' + tv81G(walk.best, 4) + ', you get ' + tv81G(walk.effective, 4) + ' Winiwa per xWiniwa',
           feeText: 'Free', counterparty: 'Order book (xWiniwa/Winiwa)', address: '',
           network: 'Minima mainnet test channel',
           buttonText: 'I understand, exchange anyway', onConfirm: runMarket,
@@ -7725,7 +7906,7 @@
     if (ourMinedTxid) return false; // we mined — not orphaned
     if (!usedStateCoinId) return false;
     try {
-      const r = await mdsCmdData('coins coinid:' + usedStateCoinId + ' relevant:false');
+      const r = await tv81CoinsById(usedStateCoinId);
       const c = Array.isArray(r) ? r[0] : (r && r.response ? (Array.isArray(r.response) ? r.response[0] : r.response) : r);
       if (!c) return false;            // can't tell — let normal settlement handle it
       return c.spent === true;          // spent by someone, and not by us → orphaned
@@ -7768,7 +7949,7 @@
           if (arrived === true) { verdict = 'mined'; break; }
           // Has the state coin we spent been consumed? If yes and our output still has not
           // arrived after a grace re-check, a competitor took it — our txn is orphaned.
-          const st = await mdsCmdData('coins coinid:' + last.usedStateCoinId + ' relevant:false');
+          const st = await tv81CoinsById(last.usedStateCoinId);
           const c = Array.isArray(st) ? st[0] : ((st && st.response && (Array.isArray(st.response) ? st.response[0] : st.response)) || null);
           if (c && c.spent === true) {
             await new Promise(function (r) { setTimeout(r, 15000); });
@@ -7836,7 +8017,7 @@
   async function pollMinedFaucetTxpow(pendingTxnId) {
     const want = normTxHash(pendingTxnId);
     if (!want) return '';
-    const deadline = Date.now() + 180000;
+    const deadline = Date.now() + 600000;
     while (Date.now() < deadline) {
       try {
         const histRes = await directOrMdsCmd('history max:50', 'tracking the faucet transaction', 20000);
@@ -9122,7 +9303,24 @@
     _balRefreshInFlight = refreshTestTokenBalancesWithRetry(opts)
       .then(function (r) {
         if (!r || r.proofReady !== true) throw new Error('The wallet balance response was not proven.');
-        publishWalletProofState('ready', 'Live node balance response received.');
+        /* A node that is BEHIND answers `balance` perfectly happily, with an answer that was true
+         * whenever it stopped following the chain. Until 2026-09-04 that answer was published as
+         * `ready`, so a phone whose node sat 114,000 blocks back showed a confirmed balance under a
+         * banner that said it was still catching up. The two cannot both be true, and the balance
+         * is the one people act on (founder 2026-09-04: "the app should not confirm a balance when
+         * the node is not sync").
+         *
+         * `stale` is exactly this state and the app already renders it everywhere a figure appears:
+         * the number is the node's, the node is not current, so it is shown as not current and the
+         * actions that would spend it stay closed until it is. */
+        var nodeBehind = typeof window.stablesNodeIsSynced === 'function' && !window.stablesNodeIsSynced();
+        if (nodeBehind) {
+          publishWalletProofState('stale', typeof window.stablesNodeCatchUpReason === 'function'
+            ? window.stablesNodeCatchUpReason()
+            : 'Your bank is still catching up with the network, so this balance is not current yet.');
+        } else {
+          publishWalletProofState('ready', 'Live node balance response received.');
+        }
         // First successful live sync: wallet quantities are now chain truth, so the
         // header total may render (it stays a quiet dash until then — never a figure
         // computed from unloaded zeros that would jump when the node answers).

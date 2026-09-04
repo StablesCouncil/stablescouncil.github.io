@@ -94,8 +94,15 @@
   }
 
   function finiteNum(v, fallback) {
-    var n = Number(v);
+    /* Amount fields are grouped as a person types, so "1,000" arrives here. */
+    var n = Number(String(v == null ? '' : v).replace(/,/g, ''));
     return Number.isFinite(n) && n >= 0 ? n : fallback;
+  }
+
+  /* The grouped form of a stored amount, for writing back into an amount field. */
+  function groupInputAmount(n) {
+    var x = finiteNum(n, 0);
+    return x.toLocaleString('en-US', { maximumFractionDigits: 8 });
   }
 
   function todayKey() {
@@ -191,7 +198,7 @@
       var blocks = clampConfirmBlocks(raw.blocks);
       if (blocks === null) return;
       var label = String(raw.label || '').trim();
-      var upTo = (raw.upTo === null || raw.upTo === undefined || raw.upTo === '') ? null : Number(raw.upTo);
+      var upTo = (raw.upTo === null || raw.upTo === undefined || raw.upTo === '') ? null : Number(String(raw.upTo).replace(/,/g, ''));
       if (upTo === null) {
         if (!catchAll) catchAll = { label: label || 'Above', upTo: null, blocks: blocks };
         return;
@@ -736,7 +743,7 @@
     return '<div data-conf-row data-conf-label="' + level.label + '" class="paysec-rule">'
       + '<div class="paysec-rule-label">Value up to</div>'
       + '<div class="paysec-rule-value paysec-rule-value--amount">'
-      + '<input class="finput" type="number" data-conf-upto min="0" step="1" inputmode="decimal" value="' + level.upTo
+      + '<input class="finput" data-financial-amount type="text" data-conf-upto inputmode="decimal" autocomplete="off" value="' + groupInputAmount(level.upTo)
       + '" aria-label="Amount threshold">'
       + '<span class="paysec-input-unit" data-paysec-primary-unit>MINIMA</span>'
       + '</div>'
@@ -876,7 +883,7 @@
       var el = document.getElementById(id);
       if (!el) return;
       if (el.type === 'checkbox') el.checked = !!map[id];
-      else el.value = String(map[id]);
+      else el.value = groupInputAmount(map[id]);
     });
     syncPrimaryCurrencyLabels(fav);
     var dailyLbl = document.getElementById('paySecDailySpent');
@@ -884,14 +891,52 @@
       var spent = getDailyQuickSpend();
       dailyLbl.textContent = 'Quick pay today: ' + formatPrimaryAmount(spent) + ' / ' + formatPrimaryAmount(s.dailyQuickPayCap) + ' ' + fav;
     }
+    /* The two ways to confirm a protected send, each a row that is always on screen.
+     *
+     * The code row's action reads Set until a code exists, then Change. The biometrics row is
+     * live only when the device can do it AND a code exists (biometrics sit on top of the code,
+     * never instead of one); otherwise it is disabled and its copy says which of the two is
+     * missing. It used to be hidden in both cases, so a person with no code could not learn the
+     * option existed at the one moment they would want to (founder 2026-09-04). */
+    var hasCode = hasPaymentCode();
     var codeBtn = document.getElementById('paySecCodeBtn');
     if (codeBtn) {
-      codeBtn.textContent = hasPaymentCode() ? 'Change payment code' : 'Set payment code';
-      codeBtn.classList.toggle('btn-primary', !hasPaymentCode());
-      codeBtn.classList.toggle('btn-secondary', hasPaymentCode());
+      codeBtn.textContent = hasCode ? 'Change' : 'Set';
+      codeBtn.classList.toggle('btn-primary', !hasCode);
+      codeBtn.classList.toggle('btn-secondary', hasCode);
+      codeBtn.setAttribute('data-role', hasCode ? 'secondary' : 'primary');
     }
-    var bioWrap = document.getElementById('paySecBiometricWrap');
-    if (bioWrap) bioWrap.style.display = (hasPaymentCode() && isBiometricAvailable()) ? '' : 'none';
+    var codeCopy = document.getElementById('paySecCodeCopy');
+    if (codeCopy) {
+      codeCopy.textContent = hasCode
+        ? 'Set. Asked before every protected send.'
+        : '4 digits, asked before every protected send.';
+    }
+    var bridge = !!(window.StablesNative && typeof window.StablesNative.isBiometricAvailable === 'function');
+    var available = isBiometricAvailable();
+    var bioOn, bioText;
+    if (!bridge) {
+      bioOn = false;
+      bioText = 'Not available on this device. On the Stables phone app, fingerprint or face can confirm protected sends.';
+    } else if (!available) {
+      bioOn = false;
+      bioText = 'Not set up on this phone. Add a fingerprint or face in the phone settings, then turn this on here.';
+    } else if (!hasCode) {
+      bioOn = false;
+      bioText = 'Set a payment code first. Fingerprint or face then confirms in its place.';
+    } else {
+      bioOn = true;
+      bioText = 'Confirm protected sends with your fingerprint or face. Your payment code always works too.';
+    }
+    var bio = document.getElementById('paySecBiometric');
+    if (bio) {
+      bio.disabled = !bioOn;
+      if (!bioOn) bio.checked = false;
+    }
+    var bioCopy = document.getElementById('paySecBiometricCopy');
+    if (bioCopy) bioCopy.textContent = bioText;
+    var bioRow = document.getElementById('paySecBiometricRow');
+    if (bioRow) bioRow.setAttribute('aria-disabled', bioOn ? 'false' : 'true');
     _suppressPanelSave = false;
     bindSettingsPanelAutoSave();
   }

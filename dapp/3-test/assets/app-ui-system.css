@@ -451,6 +451,32 @@
         .ui-bar { width: 100%; min-height: 2px; border-radius: 2px 2px 0 0; background: rgba(103, 232, 249, .4); }
         .ui-bar--today { background: rgba(103, 232, 249, .95); box-shadow: 0 0 8px rgba(103, 232, 249, .32); }
 
+        /* A chart says what it is measuring on both axes (founder 2026-09-04). The plot is the
+           strip plus a y scale beside it: the strip's own maximum at the top, 0 at the baseline,
+           in the same unit as the row the chart sits under. The x axis is the two ends of the
+           range, so the reader knows the bars run oldest to Today. Without these the two strips
+           were unlabelled rectangles that could have meant anything. */
+        .ui-chart-plot { display: flex; align-items: stretch; gap: 8px; }
+        .ui-chart-plot .ui-chart-frame { flex: 1 1 auto; min-width: 0; }
+        .ui-chart-yaxis {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
+            text-align: right;
+            flex: 0 0 auto;
+            min-width: 34px;
+            line-height: 1;
+            padding: 1px 0;
+            border-right: 1px solid rgba(255, 255, 255, .10);
+            padding-right: 6px;
+        }
+        .ui-chart-xaxis {
+            margin-top: 4px;
+            /* Line the dates up with the bars, not with the y scale beside them. */
+            padding-left: calc(34px + 14px);
+        }
+
         /* Range controls share the accent tone. */
         .page input[type="range"],
         .modal input[type="range"] {
