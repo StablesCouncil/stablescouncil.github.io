@@ -1607,7 +1607,11 @@
         && Math.abs(anchorTs - Number(r.ts || 0)) < RECENT_MS);
       if (m !== -1) {
         const local = USER_ACTIVITY.splice(m, 1)[0];
-        ['title', 'counterparty', 'category', 'icon', 'address', 'confirmTarget', 'confirmPolicyLabel', 'confirmFiatValue', 'flowId'].forEach(function (k) {
+        // balanceAlreadyApplied travels with the twin: the local row's optimistic hold is already
+        // the credit, so the adopted node row must not be added again by the settling overlay
+        // (measured 2026-09-05/06: a burn's +32 counted twice in the Winiwa row, a claim's +1,000
+        // shown as +2,000 against a correct hero).
+        ['title', 'counterparty', 'category', 'icon', 'address', 'confirmTarget', 'confirmPolicyLabel', 'confirmFiatValue', 'flowId', 'balanceAlreadyApplied'].forEach(function (k) {
           if (local[k] !== undefined && local[k] !== '') row[k] = local[k];
         });
         // In-progress action titles settle with the node row ("Sending X" → "Sent X").

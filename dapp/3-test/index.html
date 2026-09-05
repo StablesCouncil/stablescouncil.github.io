@@ -7974,18 +7974,18 @@
     </style>
     <!-- App UI System layer: must load render-blocking AFTER the legacy styles above so
          documented component geometry wins in the cascade without a flash of unstyled UI. -->
-    <link rel="stylesheet" href="assets/app-ui-system.css?v=tv81-1153">
+    <link rel="stylesheet" href="assets/app-ui-system.css?v=tv81-1160">
     <!-- Machinery product adapter: reusable mx-* definitions, loaded after the legacy layer. -->
-    <link rel="stylesheet" href="assets/machinery-app.css?v=tv81-1153">
-    <link rel="stylesheet" href="assets/machinery-ui.css?v=tv81-1153">
-    <link rel="stylesheet" href="assets/machinery-shell.css?v=tv81-1153">
+    <link rel="stylesheet" href="assets/machinery-app.css?v=tv81-1160">
+    <link rel="stylesheet" href="assets/machinery-ui.css?v=tv81-1160">
+    <link rel="stylesheet" href="assets/machinery-shell.css?v=tv81-1160">
     <!-- The wallet legacy adapter loads before the final shared identity so it cannot override R001. -->
-    <link rel="stylesheet" href="assets/machinery-wallet.css?v=tv81-1153">
-    <link rel="stylesheet" href="assets/machinery-language.css?v=tv81-1153">
-    <link rel="stylesheet" href="assets/north-star-adoption.css?v=tv81-1153">
+    <link rel="stylesheet" href="assets/machinery-wallet.css?v=tv81-1160">
+    <link rel="stylesheet" href="assets/machinery-language.css?v=tv81-1160">
+    <link rel="stylesheet" href="assets/north-star-adoption.css?v=tv81-1160">
     <!-- D029 desktop composition. Gated on the web surface AND 1024px, so the MiniDapp and the
          APK keep the shipped mobile composition at every width. -->
-    <link rel="stylesheet" href="assets/desktop-web.css?v=tv81-1153">
+    <link rel="stylesheet" href="assets/desktop-web.css?v=tv81-1160">
     <script>
         /* Surface flag for the D029 desktop layer. The preview bootstrap above resolves the local
            preview channel; on the real web it returns early, and the web surface is the default.
@@ -11061,6 +11061,13 @@
                             </span>
                             <input class="ui-tone-text ui-num-field" type="number" id="wmNoteAlert" aria-label="Tidy-up reminder note count" min="2" step="1" value="20" inputmode="numeric" oninput="stablesSetWalletNoteAlert(this.value)">
                         </div>
+                        <div class="ui-items-center ui-row-top-divided">
+                            <span class="ui-flex-1 ui-min-w-0">
+                                <span class="ui-tone-text ui-block ui-label-strong">Combine notes when a payment needs it</span>
+                                <span class="xs mu ui-mt-1" style="display:block">When a mint, burn or send would spend too many notes for one transaction, Stables combines them first, then continues. Off: it asks you first.</span>
+                            </span>
+                            <input class="ui-shrink-0" type="checkbox" id="wmAutoCombine" aria-label="Combine notes when a payment needs it" checked onchange="stablesSetWalletAutoCombine(this.checked)">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -13239,12 +13246,12 @@
         <button class="ntab" id="tab-slot-5" data-page=""><span class="nicon">•</span><span class="nlabel"></span></button>
     </nav>
 
-    <script src="assets/config/runtime-config.js?v=tv81-1153"></script>
-    <script src="assets/testv008-registry.js?v=tv81-1153"></script>
+    <script src="assets/config/runtime-config.js?v=tv81-1160"></script>
+    <script src="assets/testv008-registry.js?v=tv81-1160"></script>
     <!-- The budget must exist before anything that reads the node or repaints the wallet. -->
-    <script src="assets/node-read-budget.js?v=tv81-1153"></script>
+    <script src="assets/node-read-budget.js?v=tv81-1160"></script>
     <!-- Exact arithmetic and the app's wording for notes; every error path calls stablesHumanNodeError. -->
-    <script src="assets/notes-manager.js?v=tv81-1153"></script>
+    <script src="assets/notes-manager.js?v=tv81-1160"></script>
     <script>
         (function () {
             var s = String((window.STABLES_CONFIG || {}).APP_STAGE || 'test').trim().toLowerCase();
@@ -13723,7 +13730,7 @@
             setTimeout(function () { window.stablesReadiness.arm(); }, 1200);
         }
     </script>
-    <script src="assets/test-channel-bootstrap.js?v=tv81-1153"></script>
+    <script src="assets/test-channel-bootstrap.js?v=tv81-1160"></script>
     <!-- Minima MiniDapp hub does not inject a global MDS; ship mds.js in the package so hub URLs connect without Connect node. -->
     <script src="assets/lib/mds.js"></script>
     <script src="assets/qrcode.js"></script>
@@ -16889,6 +16896,33 @@
 
         let _awPendingAgentReply = null;
 
+        /* What the agent needs to understand a follow-up: the last exchanges, and the page the
+           person is looking at (founder 2026-09-05). Kept small on purpose: the retriever embeds
+           the question, the extras go to the model as context, and a page is capped so a long
+           Activity list cannot crowd out the knowledge base. */
+        const _awExchangeLog = [];
+        function _awRememberExchange(q, a) {
+            const question = String(q || '').trim().slice(0, 500);
+            const answer = String(a || '').trim().slice(0, 700);
+            if (!question || !answer) return;
+            _awExchangeLog.push({ q: question, a: answer });
+            while (_awExchangeLog.length > 3) _awExchangeLog.shift();
+        }
+        function _awVisiblePageText(ctx) {
+            try {
+                const id = String(ctx || '').trim();
+                let el = id ? document.getElementById('page-' + id) : null;
+                if (!el) {
+                    const modal = document.getElementById('agentActionModal');
+                    if (modal && modal.classList.contains('open')) el = document.getElementById('agentActionContent');
+                }
+                if (!el) el = document.querySelector('.page.active, .page[data-active="1"]');
+                if (!el) return '';
+                const text = String(el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim();
+                return text.slice(0, 1800);
+            } catch (_) { return ''; }
+        }
+
         function _awSendToLiveAgent(text, ctx, statusEl) {
             const frame = document.getElementById('agentFrame');
             const finalText = String(text || '').trim();
@@ -16981,6 +17015,7 @@
                     } else {
                         _awCompleteWorkingStatus(statusEl, 'StablesAgent answered.', 'ok');
                         _awAppendBubble(reply, true, { type: 'agent_reply', label: 'StablesAgent' });
+                        _awRememberExchange(finalText, reply);
                     }
                 }
             };
@@ -17019,7 +17054,13 @@
                  *        context"
                  *
                  * The knowledge was there both times. Only the question changed. */
-                var body = JSON.stringify({ message: finalText, lang: lang, context: promptCtx });
+                var body = JSON.stringify({
+                    message: finalText,
+                    lang: lang,
+                    context: promptCtx,
+                    history: _awExchangeLog.slice(-2),
+                    page: _awVisiblePageText(promptCtx)
+                });
 
                 var attempt = function (tryNo) {
                     var ctl = (typeof AbortController === 'function') ? new AbortController() : null;
@@ -17041,6 +17082,7 @@
                         window.removeEventListener('message', onAgentBridgeMessage);
                         _awCompleteWorkingStatus(statusEl, 'StablesAgent answered.', 'ok');
                         _awAppendBubble(reply, true, { type: 'agent_reply', label: 'StablesAgent' });
+                        _awRememberExchange(finalText, reply);
                     }).catch(function () {
                         clearTimeout(giveUp);
                         if (pending.replied) return;
@@ -17050,6 +17092,10 @@
                            the local answer are still to come. */
                         if (tryNo < 2) return attempt(tryNo + 1);
                         pending.httpInFlight = false;
+                        /* Only now does the iframe get the question. Posting it at the same time
+                           as the HTTP route made every question arrive twice at the agent
+                           (measured in its log 2026-09-05), two answers racing for one bubble. */
+                        try { postSuggest(); } catch (_) { /* the local answer is still to come */ }
                     });
                 };
 
@@ -17057,13 +17103,11 @@
                 attempt(1);
             })();
 
+            /* The frame is loaded now so it is ready if needed, but it is asked only when the
+               HTTP route gives up (see the catch above). */
             if (shouldLoadFrame) {
-                frame.addEventListener('load', () => { postSuggest(); }, { once: true });
                 frame.src = buildAgentUrl(promptCtx, null, null, lang);
-            } else {
-                postSuggest();
             }
-            pending.timeouts.push(setTimeout(() => { if (!pending.acked && !pending.replied) postSuggest(); }, 500));
             /* While the request is genuinely still running, say so rather than going quiet: a
                twenty-second wait with no sign of life is what makes a person ask again. */
             pending.timeouts.push(setTimeout(() => {
@@ -21386,14 +21430,48 @@
          * is that a first run has no chain of its own yet, so the card requires a real block height
          * and a real tip time before it will ever appear.
          */
+        /* Out of sync with the network, read from the chain itself, no outside server.
+         * The beacon, the faucet pool and the vault reserve are markers that live on the shared
+         * chain and move with it. A bank on that chain can prove at least one of them; a bank that
+         * has drifted onto its own copy of history can prove none, because the current versions do
+         * not exist there. Wallet balance is deliberately NOT a marker: coins from before a split
+         * still prove on the wrong side of it. We judge only after the bank has had a fair chance to
+         * prove a marker, and only once the failure has held a while, so a normal fresh start, a
+         * brief keeper hiccup, or a resync-in-progress never trips it. */
+        var STABLES_OUTOFSYNC_SINCE = 0;
+        var STABLES_OUTOFSYNC_SUSTAIN_MS = 6 * 60 * 1000;   // the failure must hold this long (tunable)
+        var STABLES_OUTOFSYNC_GRACE_MS = 4 * 60 * 1000;     // fair chance to prove a marker after connecting (tunable)
+        // Total time from a fresh connect to the banner is grace + sustain, about ten minutes, the
+        // founder's starting figure; both are tunable once watched against real behaviour.
+        function stablesNetworkAnchorsAllUnprovable() {
+            var faucet = String(window.__STABLES_FAUCET_LEVEL_STATE__ || '');
+            var vault = String((window.__STABLES_XWINIWA_VAULT_PROOF_STATE__ || {}).state || '');
+            var beacon = window.__STABLES_BEACON_STATUS__ || {};
+            var faucetProvable = faucet === 'ready' || faucet === 'empty';   // an on-chain read either way
+            var vaultProvable = vault === 'ready';
+            var beaconProvable = !!(beacon.available && beacon.verified);
+            return !faucetProvable && !vaultProvable && !beaconProvable;
+        }
+        function stablesNetworkOutOfSync() {
+            var L = window.__STABLES_LIVE_NODE || {};
+            if (!(Number(L.block) > 0 && L.tipTimeMs != null)) { STABLES_OUTOFSYNC_SINCE = 0; return false; }
+            if (STABLES_CHAIN_RESYNC_RUNNING) { STABLES_OUTOFSYNC_SINCE = 0; return false; }
+            if (!STABLES_CATCHUP.firstAt || (Date.now() - STABLES_CATCHUP.firstAt) < STABLES_OUTOFSYNC_GRACE_MS) { return false; }
+            if (!stablesNetworkAnchorsAllUnprovable()) { STABLES_OUTOFSYNC_SINCE = 0; return false; }
+            if (!STABLES_OUTOFSYNC_SINCE) STABLES_OUTOFSYNC_SINCE = Date.now();
+            return (Date.now() - STABLES_OUTOFSYNC_SINCE) > STABLES_OUTOFSYNC_SUSTAIN_MS;
+        }
+        window.stablesNetworkOutOfSync = stablesNetworkOutOfSync;
+
         function stablesWalletResyncState() {
             var L = window.__STABLES_LIVE_NODE || {};
             var running = STABLES_CHAIN_RESYNC_RUNNING;
             if (running) return 'running';
             var hasChain = Number(L.block) > 0 && L.tipTimeMs != null;
             if (!hasChain) return 'none';               // first run, or nothing known yet
-            if (!stablesNodeIsTooFarBehind()) return 'none';
-            return 'needed';
+            if (stablesNodeIsTooFarBehind()) return 'needed';       // offline too long (existing rule)
+            if (stablesNetworkOutOfSync()) return 'needed';         // drifted onto a different chain
+            return 'none';
         }
 
         /* Phase wording for a job that takes minutes. A spinner alone is why people close an app
@@ -21405,14 +21483,23 @@
             return 'Working…';
         }
 
-        /* Said once, so the card and the sheet can never drift apart. */
+        /* Said once, so the card and the sheet can never drift apart. Two reasons reach the same
+           remedy: offline too long to catch up, or drifted onto a different chain. */
+        function stablesResyncNeededTitle() {
+            if (typeof stablesNodeIsTooFarBehind === 'function' && stablesNodeIsTooFarBehind()) return 'Your bank is out of date';
+            return 'Your bank is out of sync';
+        }
         function stablesResyncNeededBody() {
             var L = window.__STABLES_LIVE_NODE || {};
-            var behind = L.tipTimeMs != null ? (Date.now() - Number(L.tipTimeMs)) : null;
-            return 'It has been offline '
-                + (behind != null ? stablesFormatBehindSpan(behind) : 'too long')
-                + ', too long to catch up on its own. Your money is safe on the network. '
-                + 'This phone needs a fresh copy of the records.';
+            if (typeof stablesNodeIsTooFarBehind === 'function' && stablesNodeIsTooFarBehind()) {
+                var behind = L.tipTimeMs != null ? (Date.now() - Number(L.tipTimeMs)) : null;
+                return 'It has been offline '
+                    + (behind != null ? stablesFormatBehindSpan(behind) : 'too long')
+                    + ', too long to catch up on its own. Your money is safe on the network. '
+                    + 'This phone needs a fresh copy of the records.';
+            }
+            return 'Your bank has fallen out of sync with the network, so it is paused. Your money is '
+                + 'safe on the network. This phone needs a fresh copy of the records to catch up.';
         }
 
         /* Once per app open, the message arrives as a pop-up (founder 2026-09-04: "I think the
@@ -21468,10 +21555,15 @@
                 return;
             }
 
-            if (titleEl) titleEl.textContent = 'Your bank is out of date';
+            if (titleEl) titleEl.textContent = stablesResyncNeededTitle();
             if (bodyEl) bodyEl.textContent = stablesResyncNeededBody();
-            if (btn) { btn.textContent = 'Resync with the network'; btn.disabled = false; btn.removeAttribute('aria-busy'); }
-            if (noteEl) noteEl.textContent = 'A few minutes. Keep the phone charging.';
+            if (btn) {
+                btn.textContent = window.__STABLES_CORE_CONNECTED_APP ? 'Open Minima Core to re-sync' : 'Resync with the network';
+                btn.disabled = false; btn.removeAttribute('aria-busy');
+            }
+            if (noteEl) noteEl.textContent = window.__STABLES_CORE_CONNECTED_APP
+                ? 'Re-sync Minima Core, then come back.'
+                : 'A few minutes. Keep the phone charging.';
         }
         window.stablesUpdateWalletResyncCard = stablesUpdateWalletResyncCard;
 
@@ -21502,6 +21594,20 @@
          * The Resync section below stays exactly as it is, for anyone who wants to choose their own
          * recovery node. This is the door, not a replacement for it. */
         async function stablesResyncWithNetwork() {
+            /* Core owns the node on the companion, so the re-sync happens in Minima Core, not here.
+               We explain and open Core; we never pretend to repair a node we do not own. */
+            if (window.__STABLES_CORE_CONNECTED_APP) {
+                var okCore = await stablesConfirm({
+                    title: stablesResyncNeededTitle(),
+                    message: stablesResyncNeededBody() + '\n\n'
+                        + 'Minima Core runs your bank, so the re-sync happens there. Open Minima Core, '
+                        + 're-sync it, then come back to Stables.',
+                    confirmText: 'Open Minima Core'
+                });
+                if (!okCore) return;
+                try { if (window.StablesCore && typeof window.StablesCore.openMinimaCore === 'function') window.StablesCore.openMinimaCore(); } catch (_) { /* no bridge: nothing to open */ }
+                return;
+            }
             var endpoint = STABLES_CHAIN_RESYNC_DEFAULT_ENDPOINT;
             try {
                 var field = document.getElementById('stablesChainResyncHost');
@@ -21510,7 +21616,7 @@
             } catch (_) { /* the default stands */ }
 
             var ok = await stablesConfirm({
-                title: 'Your bank is out of date',
+                title: stablesResyncNeededTitle(),
                 message: stablesResyncNeededBody() + '\n\n'
                     + 'Stables will fetch a fresh copy of the records and find your money in it. '
                     + 'It takes a few minutes and the app restarts when it is done.\n\n'
@@ -21839,7 +21945,7 @@
 
             if (state === 'connected') {
                 title = window.__STABLES_CORE_CONNECTED_APP ? 'Connected to Minima Core' : 'Connected to your Minima node';
-                body = window.__STABLES_CORE_CONNECTED_APP ? 'Core is enabled and live balances and transactions are available.' : 'Live balances and transactions are available.';
+                body = window.__STABLES_CORE_CONNECTED_APP ? 'Core is enabled.' : 'Your node is connected.';
                 action = 'Connection settings';
                 icon = '✓';
                 tone = 'accent';
@@ -23832,6 +23938,8 @@
                 vaultProofState: String(vault.state || 'absent'),
                 faucetLevelState: String(window.__STABLES_FAUCET_LEVEL_STATE__ || 'absent'),
                 faucetLevelReady: !!window.__STABLES_FAUCET_LEVEL_READY__,
+                networkOutOfSync: typeof window.stablesNetworkOutOfSync === 'function' ? !!window.stablesNetworkOutOfSync() : null,
+                resyncState: typeof stablesWalletResyncState === 'function' ? stablesWalletResyncState() : null,
                 chartVisible: chart,
                 nodeSynced: typeof window.stablesNodeIsSynced === 'function' ? !!window.stablesNodeIsSynced() : null,
                 blockHeight: live.block == null ? null : Number(live.block),
@@ -24164,6 +24272,12 @@
             // Every height the node reports feeds the catch-up record, so "Updating" can say whether
             // the gap is actually closing instead of only naming a number.
             try { stablesNoteCatchUpProgress(h); } catch (_) { /* progress reporting is never fatal */ }
+            /* Re-evaluate the network-sync verdict on every node report. The resync banner was only
+               refreshed on connection-state changes, but a bank that has drifted onto its own chain
+               still reports as connected and synced, so no connection event ever fires and the
+               out-of-sync verdict was never re-checked past the grace window. Driving it from the
+               poll gives the sustained-failure timer something to advance on. */
+            try { if (typeof stablesUpdateWalletResyncCard === 'function') stablesUpdateWalletResyncCard(); } catch (_) { /* still refreshes on connection changes */ }
             // A new block deepens every pending/confirming tx — advance x/y counters and auto-settle.
             if (prev !== h) {
                 if (typeof window.stablesOnLiveBlockTick === 'function') {
@@ -27874,10 +27988,21 @@
          * build and broadcast a transaction. In APK mode this reads the native readiness gate;
          * in browser / MDS mode it is a no-op.
          */
+        var stablesSendWarmupHtml = null;
         function stablesUpdateSendNodeReadiness() {
             const notice = document.getElementById('sendNodeWarmup');
             const btn = document.getElementById('sendConfirmBtn');
             if (!notice || !btn) return;
+            if (stablesSendWarmupHtml == null) stablesSendWarmupHtml = notice.innerHTML;
+            /* Paused while the bank cannot confirm it is on the shared network: a send now could land
+               on a copy of history no one else has. One honest gate, every platform. */
+            if (typeof stablesWalletResyncState === 'function' && stablesWalletResyncState() === 'needed') {
+                notice.textContent = 'Paused until your bank is back in sync with the network.';
+                notice.style.display = '';
+                btn.disabled = true;
+                return;
+            }
+            notice.innerHTML = stablesSendWarmupHtml;
             const isApk = window.__STABLES_ANDROID_APP === true ||
                 (typeof window.StablesNative === 'object' &&
                  typeof window.StablesNative.isNodeReadyForPayment === 'function');
@@ -32205,8 +32330,14 @@
                (law 33). Trades and mints stay primary. */
             if (btn) {
                 const burnish = !isTrade && !mintish;
-                btn.classList.toggle('btn-danger', burnish);
-                btn.classList.toggle('btn-primary', !burnish);
+                /* Founder 2026-09-05: the confirm burn button must be the SAME solid red as the
+                   first burn button, not the faded danger outline. The first button gets its colour
+                   from `.action-transaction[data-side="burn"]` (#fb7185 solid); give the confirm the
+                   same attribute so it resolves through the identical rule, and never btn-danger. */
+                btn.classList.remove('btn-danger');
+                btn.classList.add('btn-primary');
+                if (burnish) btn.setAttribute('data-side', 'burn');
+                else btn.removeAttribute('data-side');
             }
             _mintBurnConfirmCallback = opts.onConfirm || null;
             openModal('mintBurnConfirmModal');
@@ -33107,7 +33238,9 @@
         // only combined when a payment needs them (lazy), and only sub-threshold dust is auto-swept.
         const WM_SETTINGS_KEY = 'stables_wallet_mgmt_v1';
         function stablesWalletMgmtGet() {
-            const def = { privacyLevel: 'regular', dustSweep: true, dustThreshold: 0.01, noteAlert: 20 };
+            // autoCombine (founder 2026-09-05, default YES): when a mint, burn or send would spend too
+            // many notes for one transaction, combine them first and continue, without asking.
+            const def = { privacyLevel: 'regular', dustSweep: true, dustThreshold: 0.01, noteAlert: 20, autoCombine: true };
             try {
                 const raw = JSON.parse(localStorage.getItem(WM_SETTINGS_KEY) || '{}');
                 return Object.assign(def, raw && typeof raw === 'object' ? raw : {});
@@ -33127,6 +33260,10 @@
         function stablesSetWalletDustSweep(on) { stablesWalletMgmtSet({ dustSweep: !!on }); }
         function stablesSetWalletDustThreshold(v) { stablesWalletMgmtSet({ dustThreshold: Math.max(0, Number(v) || 0) }); }
         function stablesSetWalletNoteAlert(v) { stablesWalletMgmtSet({ noteAlert: Math.max(2, Math.floor(Number(v) || 20)) }); }
+        function stablesSetWalletAutoCombine(on) { stablesWalletMgmtSet({ autoCombine: !!on }); }
+        window.stablesSetWalletAutoCombine = stablesSetWalletAutoCombine;
+        window.stablesWalletMgmtGet = stablesWalletMgmtGet;
+        window.stablesWalletMgmtSet = stablesWalletMgmtSet;
         window.stablesSetWalletPrivacyLevel = stablesSetWalletPrivacyLevel;
         window.stablesSetWalletDustSweep = stablesSetWalletDustSweep;
         window.stablesSetWalletDustThreshold = stablesSetWalletDustThreshold;
@@ -33140,6 +33277,7 @@
                 const ds = document.getElementById('wmDustSweep'); if (ds) { ds.checked = !!s.dustSweep; ds.disabled = (s.privacyLevel === 'merchant'); }
                 const dt = document.getElementById('wmDustThreshold'); if (dt) dt.value = String(s.dustThreshold);
                 const na = document.getElementById('wmNoteAlert'); if (na) na.value = String(s.noteAlert);
+                const ac = document.getElementById('wmAutoCombine'); if (ac) ac.checked = (s.autoCombine !== false);
             } catch (_) { /* ignore */ }
         }
 
@@ -35182,15 +35320,15 @@
         })();
     </script>
     <script src="assets/theme.js"></script>
-    <script src="assets/payment-security.js?v=tv81-1153"></script>
-    <script src="assets/routes/activity-contacts.js?v=tv81-1153"></script>
+    <script src="assets/payment-security.js?v=tv81-1160"></script>
+    <script src="assets/routes/activity-contacts.js?v=tv81-1160"></script>
     <script src="assets/routes/trust-retro.js"></script>
-    <script src="assets/mx-dropdown.js?v=tv81-1153"></script>
-    <script src="assets/desktop-web.js?v=tv81-1153"></script>
-    <script src="assets/vendor/stables-sealedbox.js?v=tv81-1153"></script>
-    <script src="assets/chat-onchain.js?v=tv81-1153"></script>
+    <script src="assets/mx-dropdown.js?v=tv81-1160"></script>
+    <script src="assets/desktop-web.js?v=tv81-1160"></script>
+    <script src="assets/vendor/stables-sealedbox.js?v=tv81-1160"></script>
+    <script src="assets/chat-onchain.js?v=tv81-1160"></script>
     <script src="assets/routes/feedback.js"></script>
-    <script src="assets/tx-mirror.js?v=tv81-1153"></script>
+    <script src="assets/tx-mirror.js?v=tv81-1160"></script>
     <script src="assets/tx-radar.js"></script>
 
     <script>

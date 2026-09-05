@@ -61,6 +61,35 @@
       : ('NODE-' + String(txpowid).toLowerCase());
   }
 
+  // Transactions this wallet has PROVED can never mine (an input already spent elsewhere, see
+  // failOrphanedVaultRows). Remembered across opens, because every other pass here rebuilds rows
+  // from the node's history, where the dead txpow still sits: the repair pass removed the Failed
+  // row, the import re-created it "receiving", and the ladder kept it there (measured on the
+  // phone 2026-09-05, 22:42 to 22:45). A dead id is skipped by all of them; the rescue pass
+  // forgets it again if the chain ever does show the transaction.
+  var DEAD_KEY = 'stables_tx_mirror_dead_v1';
+  function deadLoad() {
+    try { var a = JSON.parse(localStorage.getItem(DEAD_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch (_) { return []; }
+  }
+  function txpowIsDead(txpowid) {
+    var k = String(txpowid || '').toLowerCase();
+    return !!k && deadLoad().indexOf(k) >= 0;
+  }
+  function rememberDead(txpowid) {
+    var k = String(txpowid || '').toLowerCase();
+    if (!k) return;
+    try {
+      var a = deadLoad().filter(function (x) { return x !== k; });
+      a.push(k);
+      localStorage.setItem(DEAD_KEY, JSON.stringify(a.slice(-50)));
+    } catch (_) { /* ignore */ }
+  }
+  function forgetDead(txpowid) {
+    var k = String(txpowid || '').toLowerCase();
+    try { localStorage.setItem(DEAD_KEY, JSON.stringify(deadLoad().filter(function (x) { return x !== k; }))); } catch (_) { /* ignore */ }
+  }
+  window.stablesMirrorTxpowIsDead = txpowIsDead;
+
   // The APK's node bridge can silently drop a callback under load (observed on-device:
   // one dropped `history` callback froze the whole mirror because the `checking` gate only
   // resets inside the callback). Every command therefore gets a hard timeout: if no
@@ -553,6 +582,7 @@
   // no duplicate). notifyIncoming: fire the live incoming hook (receive-window auto-close) —
   // live detections only, never the initial history import.
   function representTxn(txpowid, entries, state, adoptLocal, notifyIncoming, covKind, meta) {
+    if (txpowIsDead(txpowid)) return; // proved unminable: its Failed row stands
     var tracked = [];
     // REAL on-chain time (the txpow header's timemilli), never the import/recovery time. The
     // displayed date, the row's ts, and all twin/adoption matching anchor on chain truth.
@@ -707,6 +737,7 @@
   function advancePending() {
     var ids = Object.keys(pending).slice(0, 6);
     ids.forEach(function (txpowid) {
+      if (txpowIsDead(txpowid)) { delete pending[txpowid]; return; }
       runCmd('txpow onchain:' + txpowid, function (res) {
         var r = payload(res);
         if (!res || res.status === false || !r) {
@@ -770,6 +801,7 @@
     (function next() {
       if (idx >= rows.length) { done(); return; }
       var row = rows[idx++];
+      if (txpowIsDead(row.txid)) { next(); return; } // its Failed row is the truth; never rebuild it
       var hit = byId[String(row.txid || '').toLowerCase()];
       if (!hit) {
         // The Core connector intentionally bounds history to three entries. That must not make
@@ -1067,6 +1099,78 @@
     } catch (_) { /* ignore */ }
   }
 
+  // Orphaned vault operation sweep (measured 2026-09-05: a 32 xWiniwa burn built while the previous
+  // burn was still landing spent the same coins, the network dropped it, and its row sat
+  // "receiving" for the two hours of the stale sweep above). A settling mint/burn row whose
+  // transaction is NOT on-chain and one of whose inputs is ALREADY spent can never mine: the node
+  // still holds the txpow, so its inputs are readable, and a spent coin comes back as no rows.
+  // Exact, not time-based; a 3 min minimum age keeps a just-posted transaction out of it.
+  function failOrphanedVaultRows() {
+    try {
+      var rows = (typeof window.stablesGetUserActivityRows === 'function') ? (window.stablesGetUserActivityRows() || []) : [];
+      var now = Date.now();
+      var MIN_AGE_MS = 3 * 60 * 1000;
+      var targets = rows.filter(function (r) {
+        if (!r) return false;
+        var s = String(r.status || '').toLowerCase();
+        var settling = s === 'pending' || s === 'broadcasted' || s === 'sending' || s === 'receiving' || s === 'on-chain';
+        if (!settling) return false;
+        var kind = String(r.opKind || '').toLowerCase();
+        var vaultOp = kind === 'mint' || kind === 'burn' || /^(MINT|BURN)-/.test(String(r.id || ''));
+        if (!vaultOp) return false;
+        if (!r.ts || (now - Number(r.ts)) < MIN_AGE_MS) return false;
+        return /^0x[0-9a-f]{64}$/i.test(String(r.explorerTxId || '').trim());
+      }).slice(0, 6);
+      var i = 0;
+      (function next() {
+        if (i >= targets.length) return;
+        var r = targets[i++];
+        var tx = String(r.explorerTxId).trim();
+        runCmd('txpow onchain:' + tx, function (res) {
+          var p = payload(res);
+          if (p && (p.found === true || p.found === 'true')) { next(); return; }
+          runCmd('txpow txpowid:' + tx, function (res2) {
+            var t = payload(res2) || {};
+            var txn = (t.body && (t.body.txn || t.body.transaction)) || {};
+            var ins = Array.isArray(txn.inputs) ? txn.inputs : [];
+            if (!ins.length || typeof window.tv81CoinsById !== 'function') { next(); return; }
+            var j = 0;
+            (function checkInput() {
+              if (j >= ins.length) { next(); return; }
+              var cid = String((ins[j++] || {}).coinid || '').trim();
+              if (!cid) { checkInput(); return; }
+              window.tv81CoinsById(cid).then(function (live) {
+                if (Array.isArray(live) && live.length === 0) {
+                  rememberDead(tx);
+                  try { delete pending[tx]; delete pending[String(tx).toLowerCase()]; } catch (_) { /* ignore */ }
+                  try {
+                    if (typeof window.stablesUpsertUserActivityRows === 'function') {
+                      window.stablesUpsertUserActivityRows([{ id: r.id, status: 'Failed', pendingIncoming: false, balanceAlreadyApplied: true, note: 'Did not settle: it was sent while an earlier mint or burn was still being confirmed. The funds were not spent. Safe to try again.' }]);
+                      if (typeof window.renderActivity === 'function') window.renderActivity();
+                      if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
+                    }
+                    // The operation credited its outcome optimistically (balances move once per
+                    // transaction); a dropped one must hand that back. Drop the holds and let the
+                    // node refresh restore the true figures (measured 2026-09-05: the Wallet showed
+                    // Winiwa 4,716.62 against the node's 4,652.62 while the dead row sat "receiving").
+                    if (typeof window.stablesClearOptimisticBalance === 'function') window.stablesClearOptimisticBalance(['Winiwa', 'xWiniwa', 'USDw']);
+                    if (typeof window.stablesRefreshLiveNodeBalances === 'function') window.stablesRefreshLiveNodeBalances();
+                    if (typeof window.stablesRenderPendingIncomingIndicator === 'function') window.stablesRenderPendingIncomingIndicator();
+                    console.log('[TxMirror] orphaned vault operation failed honestly: ' + tx.slice(0, 18) + ' (input ' + cid.slice(0, 18) + ' already spent)');
+                  } catch (_) { /* ignore */ }
+                  next();
+                  return;
+                }
+                checkInput();
+              }).catch(function () { checkInput(); });
+            })();
+          });
+        });
+      })();
+    } catch (_) { /* ignore */ }
+  }
+  window.stablesFailOrphanedVaultRows = failOrphanedVaultRows;
+
   // Settle-mined sweep (founder 2026-07-07: a mined USDw mint sat "receiving" with a bare
   // "undefined · undefined" row). Two defects, one sweep: (1) rows whose transaction IS
   // on-chain past its confirm target were never upgraded to Confirmed when the flow died
@@ -1283,7 +1387,7 @@
     function rescueRow(f, txid, how) {
       f.rescued = true;
       try { window.stablesRemoveActivityRowById(f.id); } catch (_) { /* ignore */ }
-      if (txid) delete known[String(txid)];
+      if (txid) { delete known[String(txid)]; forgetDead(txid); }
       try { console.log('[TxMirror] rescued false-failed row ' + String(f.id).slice(0, 26) + ' (' + how + ') tx ' + String(txid).slice(0, 12)); } catch (_) { /* ignore */ }
     }
 
@@ -1399,7 +1503,7 @@
           if (typeof window.stablesListUnsettledNodeRows === 'function') {
             window.stablesListUnsettledNodeRows().forEach(function (u) {
               var txpowid = u.id.replace(/^NODE-/, '').replace(/:.*$/, '');
-              if (!txpowid) return;
+              if (!txpowid || txpowIsDead(txpowid)) return;
               if (!pending[txpowid]) pending[txpowid] = { rows: [] };
               pending[txpowid].rows.push({ id: u.id, dirIn: u.dirIn, target: u.target || DEFAULT_TARGET });
               try { console.log('[TxMirror] re-tracking ' + u.id.slice(0, 22)); } catch (_) { /* ignore */ }
@@ -1419,13 +1523,14 @@
         setTimeout(deepReconcilePass, 90000);
         setTimeout(deepReconcilePass, 5 * 60 * 1000);
         setTimeout(failStaleSettlingRows, 30000);
+        setTimeout(failOrphanedVaultRows, 45000);
         setTimeout(repairCovenantReceiveAmounts, 40000);
         // Settle-mined sweep: 25s after arm, then again each 2 min so a row that mines while
         // the app is open (but whose flow died) still upgrades without a restart. The
         // receive-leg rebuild follows it (it wants statuses already settled to Confirmed).
         setTimeout(settleMinedSettlingRows, 25000);
         setTimeout(repairMissingCovenantReceiveLegs, 50000);
-        window.stablesRepeatWhileVisible('tx-mirror-settle', function () { settleMinedSettlingRows(); repairMissingCovenantReceiveLegs(); }, 120000);
+        window.stablesRepeatWhileVisible('tx-mirror-settle', function () { settleMinedSettlingRows(); repairMissingCovenantReceiveLegs(); failOrphanedVaultRows(); }, 120000);
         return;
       }
       for (var j = r.txpows.length - 1; j >= 0; j--) {

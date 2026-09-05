@@ -239,17 +239,80 @@
     try { return forwardPricing ? (g3prof.active || ['USDw']).slice() : ['USDw']; } catch (_) { return ['USDw']; }
   };
   // Single-flight guard: mint AND burn both spend the covenant's ONE state coin, so two in-flight
-  // operations are mutually conflicting and the network drops them. Block overlap until ~confirmed.
-  let _mintBurnInFlight = false;
-  const MINT_BURN_INFLIGHT_HOLD_MS = 70000; // ~one mainnet block + propagation
+  // operations are mutually conflicting and the network drops the later one as a double spend.
+  // Measured 2026-09-05 (v0.0.11.56, Pixel): a 2 xWiniwa burn took 4 min to mine; a 32 xWiniwa
+  // burn posted 3 min later spent the same four coins and was silently dropped. A fixed 70 s hold
+  // was therefore wrong. The hold now lasts until the balance state coin the operation spent is
+  // gone from the node (our transaction mined, or someone else's moved the vault, in which case
+  // ours can never mine and stablesFailOrphanedVaultRows says so), with a 15 min ceiling. It is
+  // persisted so an app restart mid-confirmation cannot build a second conflicting operation.
+  let _mintBurnInFlight = false; // building right now (transaction not yet posted)
+  const TV81_VAULT_HOLD_KEY = 'stables_tv81_vault_hold_v1';
+  const TV81_VAULT_HOLD_CEILING_MS = 15 * 60 * 1000;
+  const TV81_VAULT_HOLD_POLL_MS = 15000;
+  let _vaultHoldWatchTimer = null;
+  let _vaultHoldEmptyReads = 0;
+  function tv81VaultHoldRecord() {
+    try {
+      const r = JSON.parse(localStorage.getItem(TV81_VAULT_HOLD_KEY) || 'null');
+      if (!r || !r.stateCoinId || !(Number(r.ts) > 0)) return null;
+      if (Date.now() - Number(r.ts) > TV81_VAULT_HOLD_CEILING_MS) { tv81VaultHoldClear(); return null; }
+      return r;
+    } catch (_) { return null; }
+  }
+  function tv81VaultHoldClear() {
+    try { localStorage.removeItem(TV81_VAULT_HOLD_KEY); } catch (_) { /* ignore */ }
+    if (_vaultHoldWatchTimer) { clearTimeout(_vaultHoldWatchTimer); _vaultHoldWatchTimer = null; }
+  }
   function mintBurnBeginInFlight() {
     if (_mintBurnInFlight) return false;
+    if (tv81VaultHoldRecord()) { tv81VaultHoldWatch(); return false; }
     _mintBurnInFlight = true;
-    setTimeout(function () { _mintBurnInFlight = false; }, MINT_BURN_INFLIGHT_HOLD_MS);
     return true;
   }
   function mintBurnEndInFlight() { _mintBurnInFlight = false; }
-  window.__STABLES_TEST_MINT_BURN_IN_FLIGHT__ = function () { return _mintBurnInFlight; };
+  function mintBurnBusyMessage() {
+    return tv81VaultHoldRecord()
+      ? 'Your previous mint or burn is still being confirmed. This usually takes a few minutes. Wait for it before starting another.'
+      : 'A mint or burn is already in progress. Wait for it to confirm before starting another.';
+  }
+  // Called by tv81VaultOnChain the moment txnpost succeeds: from here the chain, not a timer, ends the hold.
+  // The build flag is handed over to the record here: the handler's own mined-txpow poll can run for
+  // up to three minutes after the post (measured on the phone 2026-09-05: the hold had released at
+  // 23:22:21, a new burn at 23:23:55 was still refused by the build flag), and that poll is bookkeeping,
+  // not a reason to refuse the next operation once the chain has moved on.
+  function mintBurnHoldUntilSettled(stateCoinId, op) {
+    try { localStorage.setItem(TV81_VAULT_HOLD_KEY, JSON.stringify({ stateCoinId: String(stateCoinId), op: op, ts: Date.now() })); } catch (_) { /* ignore */ }
+    _mintBurnInFlight = false;
+    _vaultHoldEmptyReads = 0;
+    tv81VaultHoldWatch();
+  }
+  function tv81VaultHoldWatch() {
+    if (_vaultHoldWatchTimer) return;
+    const tick = async function () {
+      _vaultHoldWatchTimer = null;
+      const rec = tv81VaultHoldRecord();
+      if (!rec) return;
+      if (typeof document !== 'undefined' && document.hidden) { _vaultHoldWatchTimer = setTimeout(tick, TV81_VAULT_HOLD_POLL_MS); return; }
+      let live = null;
+      try { live = await tv81CoinsById(rec.stateCoinId); } catch (_) { live = null; }
+      if (Array.isArray(live) && live.length === 0) _vaultHoldEmptyReads += 1; else _vaultHoldEmptyReads = 0;
+      // Two empty reads 15 s apart: the state coin is spent (one empty read can be a node hiccup).
+      if (_vaultHoldEmptyReads >= 2) {
+        tv81VaultHoldClear();
+        try { console.log('[tv81-vault] hold released: the vault state coin moved (' + String(rec.stateCoinId).slice(0, 18) + ')'); } catch (_) { /* ignore */ }
+        try {
+          if (typeof window.stablesFailOrphanedVaultRows === 'function') setTimeout(function () { window.stablesFailOrphanedVaultRows(); }, 20000);
+        } catch (_) { /* ignore */ }
+        return;
+      }
+      _vaultHoldWatchTimer = setTimeout(tick, TV81_VAULT_HOLD_POLL_MS);
+    };
+    _vaultHoldWatchTimer = setTimeout(tick, TV81_VAULT_HOLD_POLL_MS);
+  }
+  if (tv81VaultHoldRecord()) tv81VaultHoldWatch(); // a restart mid-confirmation keeps the guard
+  window.__STABLES_TEST_MINT_BURN_IN_FLIGHT__ = function () { return _mintBurnInFlight || !!tv81VaultHoldRecord(); };
+  window.__STABLES_TEST_VAULT_HOLD__ = function () { return tv81VaultHoldRecord(); };
   const FAUCET_TXN_ID = 'stables_faucet_claim';
   const FAUCET_DUST = '0.0000000000000000000000000001';
   const FAUCET_MINIMA_RESERVE = Number(cfg.TEST_FAUCET_MINIMA_FLOAT_RESERVE) > 0
@@ -1127,7 +1190,11 @@
       localOrigin: true,
       block: 0,
       ts: Date.now(),
-      pendingIncoming: pouring || !!(txid || pendingTxnId)
+      pendingIncoming: pouring || !!(txid || pendingTxnId),
+      // The claim credits the balance through the optimistic hold the moment it posts; the
+      // settling overlay must not add the same +1,000 again (measured 2026-09-06 on the Pixel:
+      // Winiwa row 28,501.74 against a hero of 27,501.74 while the claim was "received 2/3").
+      balanceAlreadyApplied: true
     };
     if (upsertFn) {
       upsertFn([row]);
@@ -3952,7 +4019,8 @@
       // Deposit must leave at least one atom in the reserve (covenant law).
       if (atoms >= reserveAtoms) throw new Error('Amount exceeds the issuable xWiniwa reserve.');
       poolIn = poolAtoms; // merge the canonical pool coin whenever one exists
-      userCoins = await gatherUserCoinsWithSettleWait(winiwaTokenId, amtDisplay, 'Winiwa');
+      // Three covenant inputs (reserve, balance state, pool) ride with the user's notes; five outputs.
+      userCoins = await gatherUserCoinsFitted(winiwaTokenId, amtDisplay, 'Winiwa', 3, 5);
     } else {
       if (op !== 1) throw new Error('Unknown vault operation.');
       if (atoms > prev68) throw new Error('Amount exceeds the issued xWiniwa supply.');
@@ -3960,7 +4028,7 @@
         throw new Error('The Winiwa pool coin cannot cover this burn yet. Try a smaller amount.');
       }
       poolIn = poolAtoms;
-      userCoins = await gatherUserCoinsWithSettleWait(xwiniwaTokenId, amtDisplay, 'xWiniwa');
+      userCoins = await gatherUserCoinsFitted(xwiniwaTokenId, amtDisplay, 'xWiniwa', 3, 5);
     }
     const userTotalAtoms = userCoins.reduce(function (s, c) { return s + tokenDisplayToAtoms8(String(c.tokenamount || '0')); }, 0n);
     if (userTotalAtoms < atoms) throw new Error('Not enough ' + (op === 0 ? 'Winiwa' : 'xWiniwa') + ' to cover this operation.');
@@ -4047,6 +4115,8 @@
     if (!extracted || (!extracted.explorerTxId && !extracted.pendingTxnId)) {
       throw new Error('Vault operation posted but no transaction id was returned. Check Activity or the console.');
     }
+    // Hold the mint/burn guard until this state coin is spent on the chain (see mintBurnHoldUntilSettled).
+    mintBurnHoldUntilSettled(coins.balance.coinid, op);
     // Orphan-watch fields (covenantWithOrphanRetry): if a competing spend consumes the balance
     // state coin and our output never arrives, the flow rebuilds against fresh chain state.
     extracted.usedStateCoinId = coins.balance.coinid;
@@ -7488,6 +7558,98 @@
     }
   }
 
+  /* ── Notes that fit ─────────────────────────────────────────────────────────────────────
+   * Two ceilings turn a fragmented wallet into a failed payment, and both are "too many
+   * inputs": Minima refuses a transaction over 65,536 bytes ("TxPoW size too large"), and
+   * Minima Core refuses to hand back any reply over 100,000 characters ("Result too long!
+   * MAX(100000)"), which txnbasics hits first because it returns the whole transaction with
+   * every input's proof. Measured on the founder's phone 2026-09-05: a burn that pulled in a
+   * hundred-odd xWiniwa notes died at txnbasics with exactly that. The notes manager already
+   * estimates bytes before a build; this is where that estimate is USED, so the person is
+   * offered the fix (combine the notes) before the node's error, not after. Founder 2026-09-05:
+   * "if a consolidation of the coins is needed, it should be asked", and the asking is
+   * pre-approved by default from Wallet management ("Combine notes when a payment needs it").
+   */
+  const STABLES_MAX_OP_INPUTS = 36;      // keeps txnbasics' reply well under Core's 100,000-char cap
+  const STABLES_COMBINE_MAX_PASSES = 8;  // `consolidate` merges at most 20 notes per pass
+
+  function stablesNotesFit(picked, extraInputs, outputs) {
+    const N = (typeof window !== 'undefined' && window.stablesNotes) ? window.stablesNotes : null;
+    const inputs = (picked ? picked.length : 0) + (Number(extraInputs) || 0);
+    const limit = N && N.TXPOW_MAX_BYTES ? N.TXPOW_MAX_BYTES : 65536;
+    const bytes = N && typeof N.estimateTxnBytes === 'function' ? Number(N.estimateTxnBytes(inputs, outputs)) : 0;
+    return { fits: bytes <= limit && inputs <= STABLES_MAX_OP_INPUTS, inputs: inputs, bytes: bytes, limit: limit };
+  }
+
+  function stablesAutoCombineOn() {
+    try {
+      const get = (typeof window.stablesWalletMgmtGet === 'function') ? window.stablesWalletMgmtGet
+        : (typeof stablesWalletMgmtGet === 'function' ? stablesWalletMgmtGet : null);
+      const s = get ? get() : null;
+      return s ? s.autoCombine !== false : true;
+    } catch (_) { return true; }
+  }
+
+  async function stablesCombineNotesPass(tokenId) {
+    const r = await directOrMdsCmd('consolidate tokenid:' + tokenId + ' maxcoins:20', 'combining your notes', 90000);
+    const p = (r && r.response) ? r.response : r;
+    const id = p && (p.txpowid || (p.txpow && p.txpow.txpowid));
+    if (!id) throw new Error((p && p.error) || (r && r.error) || 'The node could not combine the notes.');
+    return String(id);
+  }
+
+  /* Gather the notes for an operation and make sure they fit in one transaction. If they do
+     not, combine them first (automatically when pre-approved, otherwise after asking), then
+     gather again. Each pass is a real transaction that must confirm and become spendable, so
+     the wait is judged by the notes themselves: the count must drop. */
+  async function gatherUserCoinsFitted(tokenId, target, tokenLabel, covenantInputs, outputs) {
+    let picked = await gatherUserCoinsWithSettleWait(tokenId, target, tokenLabel);
+    let fit = stablesNotesFit(picked, covenantInputs, outputs);
+    if (fit.fits) return picked;
+
+    const kb = Math.max(1, Math.round(fit.bytes / 1024));
+    const limitKb = Math.round(fit.limit / 1024);
+    const need = 'This would spend ' + picked.length + ' ' + tokenLabel + ' notes, about ' + kb + ' KB; the limit is ' + limitKb + ' KB.';
+    const phase = function (t) {
+      try { if (typeof window.stablesUpdateOpenTxProgressModal === 'function') window.stablesUpdateOpenTxProgressModal({ built: false, phaseSub: t }); } catch (_) { /* ignore */ }
+    };
+
+    if (!stablesAutoCombineOn()) {
+      let ok = false;
+      try {
+        ok = await (typeof window.stablesConfirm === 'function' ? window.stablesConfirm({
+          title: 'Combine your notes first?',
+          message: need + '\n\nStables can combine them into fewer notes first (a transaction of its own, about a minute per pass), then continue.',
+          confirmText: 'Combine and continue'
+        }) : Promise.resolve(false));
+      } catch (_) { ok = false; }
+      if (!ok) {
+        const e = new Error('Not sent. ' + need + ' Combine your notes from Wallet management, or turn on automatic combining there.');
+        e.quietAbort = true;
+        throw e;
+      }
+    }
+
+    for (let pass = 1; pass <= STABLES_COMBINE_MAX_PASSES; pass++) {
+      const before = picked.length;
+      phase('Combining your ' + tokenLabel + ' notes first (' + before + ' notes, pass ' + pass + ')…');
+      try { showToast('Combining your ' + tokenLabel + ' notes first…', { durationMs: 5000 }); } catch (_) { /* ignore */ }
+      await stablesCombineNotesPass(tokenId);
+      const end = Date.now() + 300000;
+      let merged = false;
+      while (Date.now() < end) {
+        await new Promise(function (r) { setTimeout(r, 8000); });
+        try { picked = await gatherSendableUserCoins(tokenId, target); } catch (_) { picked = []; }
+        if (picked.length && picked.length < before) { merged = true; break; }
+      }
+      if (!merged) throw new Error('Combining your ' + tokenLabel + ' notes has not confirmed yet. Wait a minute and try again.');
+      fit = stablesNotesFit(picked, covenantInputs, outputs);
+      if (fit.fits) { phase('Notes combined. Continuing…'); return picked; }
+    }
+    throw new Error('Your ' + tokenLabel + ' is still spread over too many notes. Open Wallet management, Tidy up notes, then try again.');
+  }
+  window.__STABLES_TEST_NOTES_FIT__ = stablesNotesFit;
+
   let _mintBurnPrewarmPromise = null;
   function prewarmMintBurnCovenant(reason) {
     // XR1-03: this warms the USDw peg covenant by registering its script on the tester's node at
@@ -10311,7 +10473,7 @@
     // Single-flight: block overlapping mint/burn so we never fire conflicting spends of the one covenant
     // state coin (the cause of "I clicked mint 4 times and nothing happened, just duplicate pending rows").
     if (mintBurnMode === 'covenant' && !mintBurnBeginInFlight()) {
-      return showToast('A mint or burn is already in progress. Wait for it to confirm before starting another.', { tone: 'amber', durationMs: 4500 });
+      return showToast(mintBurnBusyMessage(), { tone: 'amber', durationMs: 6000 });
     }
 
     // Stable ids so we can stamp the real txid onto these rows after the covenant posts (lets the
@@ -10710,7 +10872,7 @@
     const handlerFlowStartMs = Date.now();
     // Single-flight: block overlapping mint/burn (shared covenant state coin) — see mint handler.
     if (mintBurnMode === 'covenant' && !mintBurnBeginInFlight()) {
-      return showToast('A mint or burn is already in progress. Wait for it to confirm before starting another.', { tone: 'amber', durationMs: 4500 });
+      return showToast(mintBurnBusyMessage(), { tone: 'amber', durationMs: 6000 });
     }
 
     // Stable ids so the real txid can be stamped onto these rows after the covenant posts (settlement).
@@ -11063,7 +11225,7 @@
   async function _executeMintXwmTestConfirmed(mintAmt, address, winiwaBefore, collWiniwa) {
     const handlerFlowStartMs = Date.now();
     if (xwiniwaMintBurnMode === 'covenant' && !mintBurnBeginInFlight()) {
-      return showToast('A mint or burn is already in progress. Wait for it to confirm before starting another.', { tone: 'amber', durationMs: 4500 });
+      return showToast(mintBurnBusyMessage(), { tone: 'amber', durationMs: 6000 });
     }
     const collOut = Number(collWiniwa) > 0 ? Number(collWiniwa) : Math.abs(mintAmt);
     const xwMintFlowTs = Date.now();
@@ -11161,12 +11323,16 @@
     try {
       posted = await window.__STABLES_TEST_XWINIWA_COVENANT__(0, mintAmt);
     } catch (e) {
-      const errMsg = (e && e.message) || 'xWiniwa covenant mint failed';
+      let errMsg = (e && e.message) || 'xWiniwa covenant mint failed';
+      const notSent = !!(e && e.quietAbort);
+      if (/Result too long|TxPoW size too large/i.test(errMsg)) {
+        errMsg = 'Too many notes for one transaction. Turn on "Combine notes when a payment needs it" in Wallet management, or use Tidy up notes, then try again.';
+      }
       const permMint = (e && e.needsConfirmation) ? stablesPermissionRowText('xWiniwa mint') : null;
       try {
         if (typeof window.stablesUpsertUserActivityRows === 'function') {
           window.stablesUpsertUserActivityRows([
-            { id: mintReceiveRowId, title: permMint ? permMint.title : 'xWiniwa mint failed', status: permMint ? permMint.status : 'Failed', note: permMint ? permMint.note : errMsg, awaitingApproval: !!permMint, pendingIncoming: false, balanceAlreadyApplied: true }
+            { id: mintReceiveRowId, title: permMint ? permMint.title : (notSent ? 'xWiniwa mint not sent' : 'xWiniwa mint failed'), status: permMint ? permMint.status : (notSent ? 'Cancelled' : 'Failed'), note: permMint ? permMint.note : errMsg, awaitingApproval: !!permMint, pendingIncoming: false, balanceAlreadyApplied: true }
           ]);
         }
         if (typeof WALLET_WINIWA !== 'undefined') WALLET_WINIWA = baseWiniwa;
@@ -11326,7 +11492,7 @@
   async function _executeBurnXwmTestConfirmed(burnAmt, address, xBal, winiwaOut) {
     const handlerFlowStartMs = Date.now();
     if (xwiniwaMintBurnMode === 'covenant' && !mintBurnBeginInFlight()) {
-      return showToast('A mint or burn is already in progress. Wait for it to confirm before starting another.', { tone: 'amber', durationMs: 4500 });
+      return showToast(mintBurnBusyMessage(), { tone: 'amber', durationMs: 6000 });
     }
     const payoutWiniwa = Number(winiwaOut) > 0 ? Number(winiwaOut) : Math.abs(burnAmt);
     const xwBurnFlowTs = Date.now();
@@ -11423,12 +11589,18 @@
     try {
       posted = await window.__STABLES_TEST_XWINIWA_COVENANT__(1, burnAmt);
     } catch (e) {
-      const errMsg = (e && e.message) || 'xWiniwa covenant burn failed';
+      let errMsg = (e && e.message) || 'xWiniwa covenant burn failed';
+      /* A declined combine is not a failure: the person said "not now". One honest row, no red.
+         And the node's two size errors get our words and the way out (founder 2026-09-05). */
+      const notSent = !!(e && e.quietAbort);
+      if (/Result too long|TxPoW size too large/i.test(errMsg)) {
+        errMsg = 'Too many notes for one transaction. Turn on "Combine notes when a payment needs it" in Wallet management, or use Tidy up notes, then try again.';
+      }
       const permBurn = (e && e.needsConfirmation) ? stablesPermissionRowText('xWiniwa burn') : null;
       try {
         if (typeof window.stablesUpsertUserActivityRows === 'function') {
           window.stablesUpsertUserActivityRows([
-            { id: burnReceiveRowId, title: permBurn ? permBurn.title : 'xWiniwa burn failed', status: permBurn ? permBurn.status : 'Failed', note: permBurn ? permBurn.note : errMsg, awaitingApproval: !!permBurn, pendingIncoming: false, balanceAlreadyApplied: true }
+            { id: burnReceiveRowId, title: permBurn ? permBurn.title : (notSent ? 'xWiniwa burn not sent' : 'xWiniwa burn failed'), status: permBurn ? permBurn.status : (notSent ? 'Cancelled' : 'Failed'), note: permBurn ? permBurn.note : errMsg, awaitingApproval: !!permBurn, pendingIncoming: false, balanceAlreadyApplied: true }
           ]);
         }
         if (typeof WALLET_XWM !== 'undefined') WALLET_XWM = baseXwm;

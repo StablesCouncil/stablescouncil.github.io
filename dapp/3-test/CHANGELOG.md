@@ -2,6 +2,86 @@
 
 ## [Unreleased]
 
+## [0.0.11.60] - 2026-09-06
+
+Iterations 54 to 60 of 2026-09-05 and 2026-09-06, released together as the standalone Android app and, for the first time, the Minima Core companion, both v0.0.11.60.
+
+### Added
+- **A payment that would spend too many notes combines them first, then continues.** Two ceilings
+  turn a fragmented wallet into a failed payment, and both are "too many inputs": Minima refuses a
+  transaction over 64 KB, and Minima Core refuses to hand back any reply over 100,000 characters,
+  which the burn hit at `txnbasics` on 2026-09-05 ("Result too long! MAX(100000)") after a
+  hundred-odd xWiniwa notes were pulled in. The notes manager's size estimate is now applied
+  BEFORE a mint or burn is built: if the notes do not fit, Stables combines them (the node's
+  `consolidate`, up to 20 notes a pass, each pass confirmed and judged by the note count dropping)
+  and then carries on with the operation. Founder: "if a consolidation of the coins is needed, it
+  should be asked", and it is pre-approved by default: a new Wallet management setting, **Combine
+  notes when a payment needs it** (on by default), combines without asking; off, the app asks
+  first with the exact figures ("would spend N notes, about X KB; the limit is 64 KB") and a
+  declined combine leaves one honest "not sent" row, not a failure. The node's two size errors
+  now carry our words and the way out.
+- **The burn confirmation wears the same red as the burn button.** The confirmation was given a
+  deliberately faded danger outline while the first burn button is solid `#fb7185`, so the two
+  never matched (founder 2026-09-05, and 2026-09-03 before it). The confirmation now resolves
+  through the identical rule (`data-side="burn"`), never `btn-danger`.
+- **Your bank tells you when it has drifted off the network, and offers the fix.** A Minima node
+  can come back from being offline on its own divergent copy of history: fresh, connected and
+  moving, yet sharing nothing with the rest of the network, so a payment made on it would reach no
+  one (measured on a real forked Minima Core, 2026-09-05). The app now reads this from the chain
+  itself, with no outside server: the beacon, the faucet pool and the vault reserve are markers
+  that live on the shared chain, and a bank that cannot prove any of them for a sustained window
+  has drifted. When that happens the Wallet shows one plain message, "Your bank is out of sync",
+  with the re-sync as the main action, and payments pause behind it. On the standalone the button
+  re-syncs in one confirm (the MegaMMR repair already shipped); on the Core companion it opens
+  Minima Core, since Core owns the node. Grace and sustain are tunable (about ten minutes total to
+  start). Nothing is shown when the bank is healthy, and the old "live balances and transactions
+  are available" claim is removed: fine is implicit.
+
+### Fixed
+- **A second mint or burn now waits for the first to land, instead of being dropped in silence.**
+  Every mint and burn spends the vault's one balance state coin, so two of them in flight are a
+  double spend and the network keeps only the first. The app's guard against that was a fixed
+  70 s, one block's worth; measured on the phone (v0.0.11.56, 2026-09-05), a 2 xWiniwa burn took
+  four minutes to mine, a 32 xWiniwa burn started three minutes later spent the same four coins,
+  passed every local check, and vanished, leaving a "receiving" row and a balance inflated by the
+  phantom credit. The guard now holds until the state coin the operation spent is actually gone
+  from the node (our transaction mined, or someone else's moved the vault), it survives an app
+  restart, and it caps at fifteen minutes. A second attempt meanwhile gets one sentence: "Your
+  previous mint or burn is still being confirmed. This usually takes a few minutes. Wait for it
+  before starting another." Once the chain has moved on, the next operation is allowed at once:
+  the handler's own bookkeeping poll (up to three minutes after the post) no longer counts as
+  "in progress".
+- **A mint or burn the network dropped is marked failed within minutes, and the balance corrected.**
+  A settling mint or burn whose transaction is not on the chain and one of whose inputs is already
+  spent can never mine. The mirror now checks exactly that (from three minutes after posting, and
+  every two minutes after) and marks the row "Failed" with "Did not settle: it was sent while an
+  earlier mint or burn was still being confirmed. The funds were not spent. Safe to try again.",
+  clearing the optimistic credit so the Wallet shows what the node holds. Before, such a row sat
+  "receiving" for the two hours of the general stale sweep. The verdict is remembered across
+  opens: measured on the phone, the mirror's repair pass removed the failed row three minutes
+  later and its import re-created it "receiving" from the node's history, where the dead
+  transaction still sits, so every pass that rebuilds rows from history now skips a proved-dead
+  transaction (and the rescue pass forgets the verdict should the chain ever show it).
+- **A settling claim or burn is credited once, never twice.** While a faucet claim was "received
+  2/3" the Winiwa row read 28,501.74 against a hero total of 27,501.74 (Pixel, 2026-09-06), and a
+  burn's +32 Winiwa had shown twice the evening before: the operation credits the balance through
+  its optimistic hold the moment it posts, and the settling overlay then added the mirror's row
+  for the same transaction on top, because the "balance already applied" mark on the local row
+  was not carried over when the mirror adopted it as its twin. The faucet row now carries the mark
+  from the start and an adopted node row inherits it, so one transaction moves a balance once.
+
+### Changed
+- **StablesAgent is told what you are looking at and what was just said.** A follow-up such as "What
+  do they change from a user perspective" reached the agent with no previous turn and no page text,
+  so its retrieval drifted to unrelated documents (founder 2026-09-05). Each question now carries
+  the last two exchanges and the visible text of the current page (capped), and the server folds
+  them into the prompt; when a short follow-up leans on a pronoun, the server retrieves with the
+  previous question as well.
+- **One question, one answer.** The app asked the agent's HTTP API and, at the same moment, posted
+  the same question into the agent iframe, whose own page asks the same API: every question arrived
+  twice at the agent (its log, 2026-09-05) and two answers raced for one bubble. The iframe is now
+  the fallback it was always described as: it is asked only after the HTTP route has given up.
+
 ## [0.0.11.53] - 2026-09-04
 
 Iterations 40 to 53 of 2026-09-04, released together as the standalone Android app v0.0.11.53.
