@@ -177,13 +177,13 @@
     <div class="card hero cr">
       <div class="lbl">Coverage ratio</div>
       <div class="big" id="crBig">N/A</div>
-      <div class="sub" id="crState">assets vs stablecoins owed</div>
+      <div class="sub" id="crState">not part of this test</div>
       <div class="track"><div class="fill" id="crFill" style="width:0%;background:var(--winiwa)"></div></div>
     </div>
     <div class="card hero lev">
       <div class="lbl">Leverage</div>
       <div class="big" id="levBig">N/A</div>
-      <div class="sub">assets ÷ equity (xWiniwa)</div>
+      <div class="sub">not part of this test</div>
     </div>
     <div class="card hero faucet">
       <div class="lbl">Faucet pool</div>
@@ -210,17 +210,17 @@
   <!-- usage -->
   <div class="section-t" id="usage">Usage</div>
   <div class="grid">
-    <div class="stat"><div class="k">USDw in circulation</div><div class="v" id="usdwCirc">N/A</div><div class="u">stablecoins held by testers</div></div>
+    <div class="stat"><div class="k">USDw in circulation</div><div class="v" id="usdwCirc">N/A</div><div class="u">not part of this test</div></div>
     <div class="stat"><div class="k">xWiniwa in circulation</div><div class="v" id="xwCirc">N/A</div><div class="u">equity tokens held</div></div>
     <div class="stat"><div class="k">Winiwa handed out</div><div class="v" id="winDist">N/A</div><div class="u">by the faucet, total</div></div>
-    <div class="stat"><div class="k">Test actions</div><div class="v" id="txTot">N/A</div><div class="u">mints · burns · claims</div></div>
+    <div class="stat"><div class="k">Test actions</div><div class="v" id="txTot">N/A</div><div class="u">claims · mints · burns, since the start</div></div>
   </div>
 
   <!-- adoption -->
   <div class="section-t" id="adoption">Adoption</div>
   <div class="grid">
-    <div class="stat"><div class="k">Faucet claims</div><div class="v" id="testers">N/A</div><div class="u">testers who took the faucet</div></div>
-    <div class="stat"><div class="k">USDw addresses</div><div class="v" id="hUsdw">N/A</div><div class="u">hold the stablecoin</div></div>
+    <div class="stat"><div class="k">Faucet claims</div><div class="v" id="testers">N/A</div><div class="u">1,000 Winiwa each, since the start</div></div>
+    <div class="stat"><div class="k">USDw addresses</div><div class="v" id="hUsdw">N/A</div><div class="u">not part of this test</div></div>
     <div class="stat"><div class="k">xWiniwa addresses</div><div class="v" id="hXw">N/A</div><div class="u">hold the equity token</div></div>
     <div class="stat"><div class="k">Winiwa addresses</div><div class="v" id="hWin">N/A</div><div class="u">hold the test asset</div></div>
   </div>
@@ -241,11 +241,11 @@
   <!-- charts -->
   <div class="charts">
     <div class="card">
-      <div class="chart-head"><span class="t">Coverage ratio</span><span class="r" id="crRange">N/A</span></div>
+      <div class="chart-head"><span class="t">Faucet claims per day</span><span class="r" id="crRange">N/A</span></div>
       <svg class="spark" id="crSpark" viewBox="0 0 300 72" preserveAspectRatio="none"></svg>
     </div>
     <div class="card">
-      <div class="chart-head"><span class="t">Stablecoins in circulation</span><span class="r" id="supRange">N/A</span></div>
+      <div class="chart-head"><span class="t">Vault mints and burns per day</span><span class="r" id="supRange">N/A</span></div>
       <svg class="spark" id="supSpark" viewBox="0 0 300 72" preserveAspectRatio="none"></svg>
     </div>
   </div>
@@ -331,6 +331,7 @@
     err.style.display = isFixture ? "block" : "none";
     err.className = "err" + (isFixture ? " fixture" : "");
     if (isFixture) err.textContent = "Development fixture. Sample values are for local UI review only. No live-chain claim is being made.";
+    else if (d.scope && d.scope.note) { err.style.display = "block"; err.className = "err fixture"; err.textContent = d.scope.note; }
     // freshness
     var stale = (Date.now() - new Date(d.generated).getTime()) > 15 * 60 * 1000;
     var lt = $("liveTag"); lt.className = "live" + ((stale || isFixture) ? " stale" : "");
@@ -338,16 +339,26 @@
     $("sourceFoot").textContent = isFixture ? "Local development fixture, not live data" : "Live from the Test Channel collector";
     $("updatedH").textContent = "updated " + ago(d.generated);
     $("blockH").textContent = d.block ? nf(d.block) : "N/A";
-    $("priceH").textContent = tinyPrice(d.winiwa_usd);
+    $("priceH").textContent = d.winiwa_usd != null ? tinyPrice(d.winiwa_usd) : "no price (test asset)";
+    if (d.archive_behind != null && d.archive_behind > 0) {
+      $("updatedH").textContent += " · archive " + nf(d.archive_behind) + " blocks behind the tip";
+    }
 
     // coverage
     var cr = Number(d.cr);
-    $("crBig").textContent = isFinite(cr) ? Math.round(cr * 100) + "%" : "N/A";
-    var crCol = cr >= 1.25 ? "var(--savers)" : cr >= 1.05 ? "var(--amber)" : "var(--red)";
-    $("crBig").style.color = crCol;
-    $("crFill").style.width = Math.max(0, Math.min(100, (cr / 2) * 100)) + "%";
-    $("crFill").style.background = crCol;
-    $("crState").textContent = cr >= 1.25 ? "healthy cushion" : cr >= 1.05 ? "thin cushion" : cr >= 1 ? "barely covered" : "under-covered";
+    var scope = d.scope || {};
+    if (scope.coverage === false || !isFinite(cr)) {
+      $("crBig").textContent = "N/A"; $("crBig").style.color = "var(--muted, #9fb0c0)";
+      $("crFill").style.width = "0%";
+      $("crState").textContent = "not part of this test";
+    } else {
+      $("crBig").textContent = Math.round(cr * 100) + "%";
+      var crCol = cr >= 1.25 ? "var(--savers)" : cr >= 1.05 ? "var(--amber)" : "var(--red)";
+      $("crBig").style.color = crCol;
+      $("crFill").style.width = Math.max(0, Math.min(100, (cr / 2) * 100)) + "%";
+      $("crFill").style.background = crCol;
+      $("crState").textContent = cr >= 1.25 ? "healthy cushion" : cr >= 1.05 ? "thin cushion" : cr >= 1 ? "barely covered" : "under-covered";
+    }
 
     // leverage
     var lev = Number(d.leverage);
@@ -362,7 +373,7 @@
     renderSplit(d);
 
     // usage
-    $("usdwCirc").textContent = money(d.usdw_circulating);
+    $("usdwCirc").textContent = d.usdw_circulating != null ? money(d.usdw_circulating) : "N/A";
     $("xwCirc").textContent = nf(d.xwiniwa_circulating);
     $("winDist").textContent = d.winiwa_distributed != null ? winiwa(d.winiwa_distributed) : "N/A";
     $("txTot").textContent = d.tx_total != null ? nf(d.tx_total) : "N/A";
@@ -388,10 +399,12 @@
 
     // charts
     var hist = Array.isArray(d.history) ? d.history : [];
-    var crs = spark("crSpark", hist.map(function (h) { return Number(h.cr) * 100; }), "#57d6ef");
-    if (crs && crs.lo != null) $("crRange").textContent = Math.round(crs.lo) + "–" + Math.round(crs.hi) + "%";
-    var sups = spark("supSpark", hist.map(function (h) { return Number(h.usdw_circulating); }), "#34d399");
-    if (sups && sups.lo != null) $("supRange").textContent = money(sups.lo) + "–" + money(sups.hi);
+    var claimsSeries = hist.map(function (h) { return h.claims != null ? Number(h.claims) : Number(h.cr) * 100; });
+    var crs = spark("crSpark", claimsSeries, "#57d6ef");
+    if (crs && crs.lo != null) $("crRange").textContent = nf(crs.lo) + "–" + nf(crs.hi) + " a day, last " + hist.length + " days";
+    var opsSeries = hist.map(function (h) { return h.mints != null ? Number(h.mints) + Number(h.burns || 0) : Number(h.usdw_circulating); });
+    var sups = spark("supSpark", opsSeries, "#34d399");
+    if (sups && sups.lo != null) $("supRange").textContent = nf(sups.lo) + "–" + nf(sups.hi) + " a day, last " + hist.length + " days";
 
     // activity
     var feed = $("feed"), act = Array.isArray(d.activity) ? d.activity : [];

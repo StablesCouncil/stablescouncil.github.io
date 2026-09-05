@@ -1,6 +1,6 @@
 {
   "version": "0.1",
-  "updated": "2026-05-07",
+  "updated": "2026-09-05",
   "measurementWindow": "weekly",
   "displayMode": "success-percentages-plus-absolute-values",
   "groupSuccessBaselines": {
@@ -628,16 +628,11 @@
       "name": "TikTok followers",
       "description": "Followers on @stablescouncil.",
       "unit": "count",
-      "latestValue": 1,
+      "latestValue": null,
       "previousValue": null,
       "weeklyChange": null,
-      "history": [
-        {
-          "date": "2026-05-08",
-          "value": 1
-        }
-      ],
-      "lastMeasured": "2026-05-08",
+      "history": [],
+      "lastMeasured": null,
       "source": "https://www.tiktok.com/@stablescouncil",
       "relatedNaviItems": [
         "community-social-profiles-live-registry",
@@ -647,18 +642,16 @@
       "sourceType": "external-link",
       "indicatorType": "KPI",
       "indicatorRule": "Community, user, or external response signal that Stables does not fully control.",
-      "valueMode": "snapshot",
-      "sourceDetail": "Public TikTok profile follower count parsed from profile HTML.",
-      "feedMode": "Public profile snapshot",
-      "feedCadence": "When tools/collect-dashboard-snapshots.mjs runs",
-      "dataPullStatus": "public-snapshot",
-      "feedNextStep": "Replace this public-page parser with the official platform API when credentials and permissions are available.",
+      "valueMode": "manual-missing",
+      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "feedMode": "Platform API candidate",
+      "feedCadence": "Weekly API or controlled manual pull",
+      "dataPullStatus": "api-candidate",
+      "feedNextStep": "Confirm the current platform API access level for this account, then wire the allowed public count fields or keep a controlled manual snapshot.",
       "primaryIndicatorGroup": "Users",
       "indicatorGroups": [
         "Users"
-      ],
-      "snapshotCollector": "public-profiles",
-      "snapshotQuality": "public-page-snapshot"
+      ]
     },
     {
       "id": "twitch_followers",
@@ -2355,11 +2348,11 @@
       "name": "Successful Test actions (7d)",
       "description": "Successful faucet, mint, burn, and swap actions recorded during the latest seven-day Test window.",
       "unit": "actions",
-      "latestValue": null,
+      "latestValue": 66,
       "previousValue": null,
       "weeklyChange": null,
       "history": [],
-      "lastMeasured": null,
+      "lastMeasured": "2026-09-05",
       "source": "Test Channel collector (test-dashboard.html)",
       "sourceType": "local-file",
       "relatedNaviItems": [
@@ -2368,8 +2361,8 @@
       "notes": "Exclude identified Council automation and failed actions.",
       "indicatorType": "KPI",
       "indicatorRule": "Outcome signal: community Test use is not fully controlled by Stables. Count only verified successful on-chain actions and exclude identified Council automation.",
-      "valueMode": "manual-missing",
-      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "valueMode": "snapshot",
+      "sourceDetail": "Faucet claims, mints and burns in the last seven days, read from the Minima archive by the Test Channel collector (archive 2139 blocks behind the tip). Winiwa and xWiniwa are valueless test tokens.",
       "primaryIndicatorGroup": "Users",
       "indicatorGroups": [
         "Users"
@@ -2379,7 +2372,9 @@
       "dataPullStatus": "api-candidate",
       "feedNextStep": "Connect the verified Test token registry and publish a sanitized collector snapshot before displaying a value.",
       "detailUrl": "test-dashboard.html#activity",
-      "detailLabel": "Open activity detail"
+      "detailLabel": "Open activity detail",
+      "snapshotCollector": "test-channel",
+      "snapshotQuality": "live-api"
     },
     {
       "id": "test_channel_active_recipient_addresses_7d",
@@ -2387,11 +2382,11 @@
       "name": "Active Test addresses (7d)",
       "description": "Unique non-system addresses participating in successful Test actions during the latest seven-day window.",
       "unit": "addresses",
-      "latestValue": null,
+      "latestValue": 115,
       "previousValue": null,
       "weeklyChange": null,
       "history": [],
-      "lastMeasured": null,
+      "lastMeasured": "2026-09-05",
       "source": "Test Channel collector (test-dashboard.html)",
       "sourceType": "local-file",
       "relatedNaviItems": [
@@ -2400,8 +2395,8 @@
       "notes": "Addresses are not people. Exclude treasury, faucet, and identified Council automation addresses.",
       "indicatorType": "KPI",
       "indicatorRule": "Outcome signal: participant-address activity is not fully controlled by Stables. Treat addresses as on-chain activity units, never as a people count.",
-      "valueMode": "manual-missing",
-      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "valueMode": "snapshot",
+      "sourceDetail": "Distinct non-custody addresses that received Winiwa or xWiniwa in the last seven days, read from the Minima archive by the Test Channel collector (archive 2139 blocks behind the tip). Winiwa and xWiniwa are valueless test tokens.",
       "primaryIndicatorGroup": "Users",
       "indicatorGroups": [
         "Users"
@@ -2411,7 +2406,9 @@
       "dataPullStatus": "api-candidate",
       "feedNextStep": "Connect the verified Test token registry and publish a sanitized collector snapshot before displaying a value.",
       "detailUrl": "test-dashboard.html#adoption",
-      "detailLabel": "Open adoption detail"
+      "detailLabel": "Open adoption detail",
+      "snapshotCollector": "test-channel",
+      "snapshotQuality": "live-api"
     },
     {
       "id": "test_channel_holder_addresses",
@@ -2419,11 +2416,11 @@
       "name": "Test token holder addresses",
       "description": "Unique non-treasury addresses holding one or more current Test-channel assets.",
       "unit": "addresses",
-      "latestValue": null,
+      "latestValue": 218,
       "previousValue": null,
       "weeklyChange": null,
       "history": [],
-      "lastMeasured": null,
+      "lastMeasured": "2026-09-05",
       "source": "Test Channel collector (test-dashboard.html)",
       "sourceType": "local-file",
       "relatedNaviItems": [
@@ -2432,8 +2429,8 @@
       "notes": "Addresses are not people. Deduplicate addresses across Test assets and exclude treasury-controlled holdings.",
       "indicatorType": "KPI",
       "indicatorRule": "Outcome signal: distribution across external addresses is not fully controlled by Stables. Do not interpret an address count as a tester count.",
-      "valueMode": "manual-missing",
-      "sourceDetail": "No automated snapshot exists and no manual value has been entered yet.",
+      "valueMode": "snapshot",
+      "sourceDetail": "Distinct non-custody addresses holding Winiwa or xWiniwa, read from the Minima archive by the Test Channel collector (archive 2139 blocks behind the tip). Winiwa and xWiniwa are valueless test tokens.",
       "primaryIndicatorGroup": "Users",
       "indicatorGroups": [
         "Users"
@@ -2443,7 +2440,9 @@
       "dataPullStatus": "api-candidate",
       "feedNextStep": "Connect the verified Test token registry and publish a sanitized collector snapshot before displaying a value.",
       "detailUrl": "test-dashboard.html#adoption",
-      "detailLabel": "Open holder detail"
+      "detailLabel": "Open holder detail",
+      "snapshotCollector": "test-channel",
+      "snapshotQuality": "live-api"
     }
   ],
   "framework": {

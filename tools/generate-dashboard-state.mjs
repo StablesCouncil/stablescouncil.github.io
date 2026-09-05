@@ -600,7 +600,9 @@ function main() {
   const measuredMetricCount = metrics.filter((metric) => metric.latestValue !== null && metric.latestValue !== undefined).length;
   const dataCoveragePercent = metrics.length ? Math.round((measuredMetricCount / metrics.length) * 100) : 0;
 
-  const leadingDappPhase = Object.entries(phaseCounts)
+  /* The stage we are in is a declared fact (navi.currentAppPhase), not the phase with the most
+     items: counting made Demo lead for ever, since most items span several phases. */
+  const leadingDappPhase = navi.currentAppPhase || Object.entries(phaseCounts)
     .filter(([phase]) => phase !== "Prod")
     .sort((a, b) => b[1] - a[1])[0]?.[0] || "Demo";
 
@@ -610,7 +612,7 @@ function main() {
 
   const dashboardState = {
     version: "0.1",
-    updated: measuredAt,
+    updated: new Date().toISOString().slice(0, 10),
     generatedBy: "tools/generate-dashboard-state.mjs",
     devOnlyDraft: true,
     overallState: blockedItems.length ? "blocked" : "moving",

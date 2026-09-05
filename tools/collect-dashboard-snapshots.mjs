@@ -9,6 +9,7 @@ import { collect as collectPublicProfiles } from "./dashboard_collectors/public-
 import { collect as collectTelegram } from "./dashboard_collectors/telegram.mjs";
 import { collect as collectX } from "./dashboard_collectors/x.mjs";
 import { collect as collectYouTube } from "./dashboard_collectors/youtube.mjs";
+import { collect as collectTestChannel } from "./dashboard_collectors/test-channel.mjs";
 import { today, writeJson } from "./dashboard_collectors/_shared.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -18,6 +19,7 @@ const generatedAt = new Date().toISOString();
 const measurementDate = today();
 
 const collectors = [
+  collectTestChannel,
   collectLocalLedgers,
   collectManualBaselines,
   collectX,

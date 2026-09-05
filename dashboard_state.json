@@ -1,12 +1,12 @@
 {
   "version": "0.1",
-  "updated": "2026-05-07",
+  "updated": "2026-09-05",
   "generatedBy": "tools/generate-dashboard-state.mjs",
   "devOnlyDraft": true,
   "overallState": "moving",
   "overallStateLabel": "Moving in draft",
-  "situation": "59 active Navi items are moving, no blocked items are recorded, and 39 Dashboard metrics are computed from local sources.",
-  "leadingDappPhase": "Demo",
+  "situation": "51 active Navi items are moving, no blocked items are recorded, and 39 Dashboard metrics are computed from local sources.",
+  "leadingDappPhase": "Test",
   "nextAttentionArea": {
     "id": "financial-merchant-settlement-local-liquidity",
     "title": "Merchant Settlement And Local Liquidity",
@@ -16,24 +16,25 @@
   },
   "counts": {
     "items": 90,
-    "activeWork": 59,
-    "laterWork": 28,
+    "activeWork": 51,
+    "laterWork": 22,
     "destinations": 3,
     "blocked": 0,
     "readyForReviewSignals": 0,
     "metrics": 77,
     "computedMetrics": 39,
-    "snapshotMetrics": 1,
-    "manualMetrics": 37,
-    "measuredMetrics": 41,
-    "dataCoveragePercent": 53,
+    "snapshotMetrics": 3,
+    "manualMetrics": 35,
+    "measuredMetrics": 43,
+    "dataCoveragePercent": 56,
     "missingMetricLinks": 0,
     "missingNaviLinks": 0
   },
   "statusCounts": {
-    "In progress": 28,
-    "Drafting": 54,
-    "Not started": 7,
+    "Live": 14,
+    "Drafting": 43,
+    "In progress": 29,
+    "Not started": 3,
     "Active": 1
   },
   "streamCounts": {
@@ -42,9 +43,9 @@
     "Community Stream": 25
   },
   "streamProgress": {
-    "Technical Stream": 8.5,
-    "Financial Stream": 6.1,
-    "Community Stream": 5.6
+    "Technical Stream": 33.6,
+    "Financial Stream": 8.5,
+    "Community Stream": 8.8
   },
   "categoryCounts": {
     "Community Communication And Feedback": 12,
@@ -61,13 +62,13 @@
     "Destinations": 3
   },
   "categoryProgress": {
-    "Community Communication And Feedback": 7.3,
-    "Dapp Channels And Development Infrastructure": 23,
-    "Wallet And User Banking": 5.3,
-    "Mint, Burn And Token Scope": 7.3,
+    "Community Communication And Feedback": 10.8,
+    "Dapp Channels And Development Infrastructure": 47.1,
+    "Wallet And User Banking": 47.2,
+    "Mint, Burn And Token Scope": 40.1,
     "Invest And Coverage Fund": 4.3,
     "Merchant Banking Tools": 3.8,
-    "Community, Communications And Support Surfaces": 4.1,
+    "Community, Communications And Support Surfaces": 53.9,
     "Protocol Mechanics And Solvency": 5.2,
     "Merchant Network Economics": 5.8,
     "Ambassadors And Cluster Growth": 5.5,
@@ -77,14 +78,14 @@
   "dappPhaseCounts": {
     "Showcase": 37,
     "Demo": 75,
-    "Test": 67,
+    "Test": 72,
     "Prod": 46
   },
   "dappPhaseProgress": {
-    "Showcase": 12.2,
-    "Demo": 8.4,
-    "Test": 5.6,
-    "Prod": 4.2
+    "Showcase": 23.7,
+    "Demo": 22.2,
+    "Test": 24.6,
+    "Prod": 12.7
   },
   "validation": {
     "missingMetricLinks": [],

@@ -1,9 +1,33 @@
 {
   "version": "0.1",
-  "generatedAt": "2026-05-08T09:46:17.071Z",
-  "measurementDate": "2026-05-08",
+  "generatedAt": "2026-09-05T09:13:22.509Z",
+  "measurementDate": "2026-09-05",
   "generatedBy": "tools/collect-dashboard-snapshots.mjs",
   "metrics": {
+    "test_channel_successful_actions_7d": {
+      "value": 66,
+      "measuredAt": "2026-09-05",
+      "source": "https://agent.stablescouncil.org/test-dashboard",
+      "sourceDetail": "Faucet claims, mints and burns in the last seven days, read from the Minima archive by the Test Channel collector (archive 2139 blocks behind the tip). Winiwa and xWiniwa are valueless test tokens.",
+      "collector": "test-channel",
+      "quality": "live-api"
+    },
+    "test_channel_active_recipient_addresses_7d": {
+      "value": 115,
+      "measuredAt": "2026-09-05",
+      "source": "https://agent.stablescouncil.org/test-dashboard",
+      "sourceDetail": "Distinct non-custody addresses that received Winiwa or xWiniwa in the last seven days, read from the Minima archive by the Test Channel collector (archive 2139 blocks behind the tip). Winiwa and xWiniwa are valueless test tokens.",
+      "collector": "test-channel",
+      "quality": "live-api"
+    },
+    "test_channel_holder_addresses": {
+      "value": 218,
+      "measuredAt": "2026-09-05",
+      "source": "https://agent.stablescouncil.org/test-dashboard",
+      "sourceDetail": "Distinct non-custody addresses holding Winiwa or xWiniwa, read from the Minima archive by the Test Channel collector (archive 2139 blocks behind the tip). Winiwa and xWiniwa are valueless test tokens.",
+      "collector": "test-channel",
+      "quality": "live-api"
+    },
     "x_followers": {
       "value": 117,
       "measuredAt": "2026-05-07",
@@ -11,17 +35,18 @@
       "sourceDetail": "Manual public-mirror baseline from TwStalker search result: @StablesCouncil showed 117 followers, crawled 5 days before 2026-05-07. Replace with X API once X_BEARER_TOKEN is available.",
       "collector": "manual-baselines",
       "quality": "public-mirror-baseline"
-    },
-    "tiktok_followers": {
-      "value": 1,
-      "measuredAt": "2026-05-08",
-      "source": "https://www.tiktok.com/@stablescouncil",
-      "sourceDetail": "Public TikTok profile follower count parsed from profile HTML.",
-      "collector": "public-profiles",
-      "quality": "public-page-snapshot"
     }
   },
   "collectors": [
+    {
+      "name": "test-channel",
+      "status": "ok",
+      "metricCount": 3,
+      "notes": [
+        "Snapshot 2026-09-05T09:12:38.042Z: 190 faucet claims, 24 mints, 13 burns in total; USDw is not part of this test."
+      ],
+      "errors": []
+    },
     {
       "name": "local-ledgers",
       "status": "ok",
@@ -88,9 +113,10 @@
     {
       "name": "public-profiles",
       "status": "ok",
-      "metricCount": 1,
+      "metricCount": 0,
       "notes": [
         "moltbook_followers: no stable public count found.",
+        "tiktok_followers: no stable public count found.",
         "twitch_followers: no stable public count found."
       ],
       "errors": []

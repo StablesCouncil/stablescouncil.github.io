@@ -1,6 +1,6 @@
 {
   "version": "0.2",
-  "updated": "2026-05-04",
+  "updated": "2026-09-05",
   "statusValues": [
     "Not started",
     "Drafting",
@@ -56,8 +56,8 @@
       "stream": "Technical Stream",
       "phase": "Wallet And Activity Surface",
       "type": "work-item",
-      "status": "In progress",
-      "progress": 16,
+      "status": "Live",
+      "progress": 90,
       "category": "Wallet And User Banking",
       "objective": "Make the Demo wallet and activity pages a reviewable node-connected banking surface.",
       "summary": "Protect the native MINIMA send/receive baseline and connect it to visible balances, recent activity, filters, amount selection, and Demo-only token scope.",
@@ -178,17 +178,18 @@
         "amount_selector_review_state",
         "demo_status"
       ],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
-        "Demo"
+        "Demo",
+        "Test"
       ],
       "streams": [
         "Technical Stream"
       ],
-      "workState": "active",
+      "workState": "live",
       "navigationRole": "active-work",
-      "nextStep": "Review the wallet and activity pages together as one Demo banking surface.",
-      "proof": "This card is complete only when wallet send/receive, balances, activity entries, filters, and amount-selection behavior can be reviewed together in the Demo.",
+      "nextStep": "Keep the balance stabiliser honest against node convergence as more testers join.",
+      "proof": "Wallet page with live node balances, Receive on the left and Send on the right, Recent activity with See all, and the resync card when the bank is out of date. Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens.",
       "phaseSummary": "Demo"
     },
     {
@@ -197,8 +198,8 @@
       "stream": "Technical Stream",
       "phase": "Activity And Transaction History Surface",
       "type": "work-item",
-      "status": "Drafting",
-      "progress": 7,
+      "status": "Live",
+      "progress": 90,
       "category": "Wallet And User Banking",
       "objective": "Make the Activity page a reviewable transaction-history surface with filters, search, history rows, pagination, and transaction details.",
       "summary": "Give the Dapp Lens Activity page a concrete owner instead of hiding it inside the wallet card.",
@@ -296,17 +297,18 @@
         "activity_filters_review_state",
         "fx_activity_visibility_review_state"
       ],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
-        "Demo"
+        "Demo",
+        "Test"
       ],
       "streams": [
         "Technical Stream"
       ],
-      "workState": "active",
+      "workState": "live",
       "navigationRole": "active-work",
-      "nextStep": "Create the Activity page checklist from filters through transaction detail review.",
-      "proof": "This card is complete only when the Activity page can be reviewed independently from the wallet home card.",
+      "nextStep": "None for this item.",
+      "proof": "Activity is a mirror of the node's own records: one row per transaction, status that moves, confirmation blocks. Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens.",
       "phaseSummary": "Demo"
     },
     {
@@ -555,8 +557,8 @@
       "stream": "Technical Stream",
       "phase": "Settings, Profile And Security Surface",
       "type": "work-item",
-      "status": "Drafting",
-      "progress": 4,
+      "status": "Live",
+      "progress": 90,
       "category": "Wallet And User Banking",
       "objective": "Make Preferences reviewable across settings and updates, profile, security, appearance, display, addresses, sync, and vault-key guidance.",
       "summary": "Give Settings, My profile, and Security a concrete owner so the Dapp Lens points to real preference and identity work.",
@@ -683,17 +685,18 @@
         "Transition Risk - dependencies on external systems during the bridge period"
       ],
       "metrics": [],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
-        "Demo"
+        "Demo",
+        "Test"
       ],
       "streams": [
         "Technical Stream"
       ],
-      "workState": "later",
+      "workState": "live",
       "navigationRole": "later-work",
-      "nextStep": "Create the Preferences checklist covering settings updates, profile, security, display, addresses, and sync.",
-      "proof": "This card is complete only when Preferences pages have pass/fix/open rows and public-safe security wording.",
+      "nextStep": "Verify the fingerprint or face row live on a phone with a payment code set.",
+      "proof": "Security page with Payment protection (quick pay, protected pay, payment code, fingerprint or face offered in the open) and Confirmation policy as two sections. Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens.",
       "phaseSummary": "Demo"
     },
     {
@@ -1097,7 +1100,7 @@
         "merchant_validations_issued",
         "merchant_reviews_submitted"
       ],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Demo",
         "Test"
@@ -1107,8 +1110,8 @@
       ],
       "workState": "active",
       "navigationRole": "active-work",
-      "nextStep": "Draft the merchant wallet validation UX from Demo to Test without implying production identity is live.",
-      "proof": "Charter identity direction and merchant preparation docs define the need; implementation evidence is pending.",
+      "nextStep": "Returns only through a later Council decision, after the test has proven the current scope.",
+      "proof": "Not part of the current test: merchant tools are deferred by Council decision TV81-D23. The page is present in the app and refuses honestly; nothing here can move funds.",
       "phaseSummary": "Demo + Test"
     },
     {
@@ -1845,8 +1848,8 @@
       "stream": "Technical Stream",
       "phase": "Deployment Test And Public Preview Verification",
       "type": "work-item",
-      "status": "Drafting",
-      "progress": 55,
+      "status": "Live",
+      "progress": 90,
       "category": "Dapp Channels And Development Infrastructure",
       "objective": "Test the deployment path before treating Navi, Dashboard, links, or Dapp stages as public-ready.",
       "summary": "Verify that domain routes, GitHub Pages/public hosting, Dapp stage URLs, links page anchors, Navi, Dashboard, and generated JSON load correctly after each publish.",
@@ -1974,18 +1977,19 @@
         "demo_status",
         "dashboard_metric_sources_ready"
       ],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Showcase",
-        "Demo"
+        "Demo",
+        "Test"
       ],
       "streams": [
         "Technical Stream"
       ],
-      "workState": "active",
+      "workState": "live",
       "navigationRole": "active-work",
-      "nextStep": "Write the deployment smoke-test checklist for domain routes, Dapp stages, Navi, Dashboard, and generated JSON.",
-      "proof": "This card is complete only when a deployment test result is recorded with pass/fix/open status for every public route.",
+      "nextStep": "Add the in-app update path to the publish-time checks.",
+      "proof": "Every run: parse gate, four-platform parity, UI contract with a phone-format catalogue, runtime audits, signing identity, latest-version single source; every publish: release pointers in publish mode, the website candidate chain, and a live check of the manifest, the served app, the download and the release notes. Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens.",
       "phaseSummary": "Showcase + Demo"
     },
     {
@@ -2262,8 +2266,8 @@
       "stream": "Technical Stream",
       "phase": "Test Standalone Node Requirement",
       "type": "milestone",
-      "status": "Not started",
-      "progress": 0,
+      "status": "Live",
+      "progress": 100,
       "category": "Dapp Channels And Development Infrastructure",
       "objective": "Make standalone node readiness a Test-phase requirement instead of leaving the app dependent on the Demo MDS connector model.",
       "summary": "Track the external dependency on what the Minima team makes available for standalone node function, local helper, or non-MDS connector path.",
@@ -2375,17 +2379,17 @@
         "Transition Risk - dependencies on external systems during the bridge period"
       ],
       "metrics": [],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Test"
       ],
       "streams": [
         "Technical Stream"
       ],
-      "workState": "later",
+      "workState": "live",
       "navigationRole": "later-work",
-      "nextStep": "Create the Test readiness row that records the selected standalone-node path, owner, and decision status.",
-      "proof": "This card is complete only when the Test readiness row names the chosen node path, the source of the decision, and the package criterion it unlocks.",
+      "nextStep": "None for this item; the standalone app carries it.",
+      "proof": "The standalone node is the published product: the node runs inside the app on the phone, nothing else to install. Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens.",
       "phaseSummary": "Test"
     },
     {
@@ -2394,8 +2398,8 @@
       "stream": "Technical Stream",
       "phase": "Standalone Stables App With Embedded Node",
       "type": "work-item",
-      "status": "Not started",
-      "progress": 0,
+      "status": "Live",
+      "progress": 90,
       "category": "Dapp Channels And Development Infrastructure",
       "objective": "Prototype a self-contained Stables app that embeds the clean Minima core node and serves the Stables UI to it over local RPC, removing the dependency on a separately installed MDS host.",
       "summary": "Use the clean minima-core node (no MDS, no Maxima) as an embedded engine: node, wallet, and Stables UI in one application, desktop first then Android, bootstrapped from a MegaMMR archive.",
@@ -2479,7 +2483,7 @@
         "Smart Contract Risk - code vulnerabilities, upgrade failures"
       ],
       "metrics": [],
-      "lastUpdated": "2026-06-11",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Test",
         "Prod"
@@ -2487,10 +2491,10 @@
       "streams": [
         "Technical Stream"
       ],
-      "workState": "later",
+      "workState": "live",
       "navigationRole": "later-work",
-      "nextStep": "Run a local proof of concept: launch minima-core with RPC on localhost and point a local copy of the website dapp at it.",
-      "proof": "This card is complete only when one platform runs the embedded node with the Stables UI connected over local RPC, with seed restore and archive bootstrap demonstrated.",
+      "nextStep": "Observe the in-app update path from an installed build on a real device; measure the node's battery cost over a day with no other node on the phone.",
+      "proof": "Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens. Embedded Minima node, own wallet, in-app updater, network contribution setting, resync from the Wallet page.",
       "phaseSummary": "Test"
     },
     {
@@ -2499,8 +2503,8 @@
       "stream": "Technical Stream",
       "phase": "Multi-Channel Distribution And Sovereignty",
       "type": "milestone",
-      "status": "Not started",
-      "progress": 0,
+      "status": "In progress",
+      "progress": 40,
       "category": "Dapp Channels And Development Infrastructure",
       "objective": "Ensure Stables stays obtainable, verifiable, and installable even if any single platform disappears, by maintaining redundant distribution channels.",
       "summary": "PWA as the primary interface, standalone APK as the secondary channel, plus GitHub releases, independent mirrors, and an onion mirror, with Minima-native distribution as the long-term horizon.",
@@ -2582,7 +2586,7 @@
         "Confidence Risk - prolonged loss of merchant and participant confidence"
       ],
       "metrics": [],
-      "lastUpdated": "2026-06-11",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Demo",
         "Test",
@@ -2592,10 +2596,10 @@
         "Technical Stream",
         "Community Stream"
       ],
-      "workState": "later",
+      "workState": "active",
       "navigationRole": "later-work",
-      "nextStep": "Document each distribution channel and its verification method, then confirm none is a single point of failure.",
-      "proof": "This card is complete only when each distribution channel is documented with a verification method and the loss of any single channel still leaves a working install path.",
+      "nextStep": "Publish the MiniDapp package next; then the web build; then the Core companion; re-scope the onion mirror to standalone-first.",
+      "proof": "Standalone Android app published on GitHub Releases and the website. The MiniDapp package (claim, mint, burn, send proven on a MinimaOS hub), the web build and the Minima Core companion (pairing proven) follow one at a time. The onion mirror still serves the demo line.",
       "phaseSummary": "Test"
     },
     {
@@ -2604,8 +2608,8 @@
       "stream": "Technical Stream",
       "phase": "Deep Wallet Recovery And Key-Use Scanning",
       "type": "work-item",
-      "status": "Not started",
-      "progress": 0,
+      "status": "In progress",
+      "progress": 50,
       "category": "Wallet And User Banking",
       "objective": "Guarantee that users never lose visibility of funds because a seed import scanned too few key uses.",
       "summary": "Recovery must not assume a seed phrase alone is sufficient. Support configurable recovery depth, key-use scanning, and automatic deep recovery, given Minima's signing-key usage model.",
@@ -2676,7 +2680,7 @@
         "Confidence Risk - prolonged loss of merchant and participant confidence"
       ],
       "metrics": [],
-      "lastUpdated": "2026-06-11",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Test",
         "Prod"
@@ -2684,10 +2688,10 @@
       "streams": [
         "Technical Stream"
       ],
-      "workState": "later",
+      "workState": "active",
       "navigationRole": "later-work",
-      "nextStep": "Document Minima's key-use recovery model and define the configurable recovery depth the wallet must expose.",
-      "proof": "This card is complete only when recovery is validated against a wallet with many key uses and no funds remain invisible after import.",
+      "nextStep": "Prove a full recovery on a second device from the Vault key alone and write it up for testers.",
+      "proof": "Recovery parameters (keys, key-uses) are in Settings and the resync with the network is offered from the Wallet page when the bank is out of date.",
       "phaseSummary": "Test"
     },
     {
@@ -2820,8 +2824,8 @@
       "stream": "Technical Stream",
       "phase": "Get Winiwa Faucet Surface",
       "type": "work-item",
-      "status": "Drafting",
-      "progress": 4,
+      "status": "Live",
+      "progress": 100,
       "category": "Mint, Burn And Token Scope",
       "objective": "Make Get Winiwa reviewable as the Demo faucet surface for claiming Winiwa and resetting balances with clear no-value boundaries.",
       "summary": "Give the Faucet page a concrete owner so Winiwa claim and reset behavior is not hidden inside token-scope language.",
@@ -2926,18 +2930,19 @@
         "Early-Stage Volatility - low collateral base amplifying backing ratio swings"
       ],
       "metrics": [],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Showcase",
-        "Demo"
+        "Demo",
+        "Test"
       ],
       "streams": [
         "Technical Stream"
       ],
-      "workState": "active",
+      "workState": "live",
       "navigationRole": "active-work",
-      "nextStep": "Create the Get Winiwa checklist for claim, reset, no-value copy, and Demo/Test boundary.",
-      "proof": "This card is complete only when the Faucet page has pass/fix/open rows for claim, reset, and token-value language.",
+      "nextStep": "None for this item; watch the monitor.",
+      "proof": "On-chain faucet covenant on Minima mainnet: 190 claims of 1,000 Winiwa at 2026-09-05 (Test Channel Monitor). A claim the node still holds is never reported as failed; a failed claim resets the countdown. Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens.",
       "phaseSummary": "Showcase + Demo"
     },
     {
@@ -2946,8 +2951,8 @@
       "stream": "Technical Stream",
       "phase": "Send, Receive And QR Payment Surface",
       "type": "work-item",
-      "status": "Drafting",
-      "progress": 6,
+      "status": "Live",
+      "progress": 90,
       "category": "Wallet And User Banking",
       "objective": "Make send, receive, QR, camera permission, address format, and payment-request entry points reviewable as one wallet transaction surface.",
       "summary": "Own the wallet modal layer: native Minima send when node live, demo-token send boundaries, receive address formats, QR scan/pay behaviour, and merchant checkout entry points.",
@@ -3058,7 +3063,7 @@
       "metrics": [
         "demo_minima_wallet_baseline_verified"
       ],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Demo",
         "Test"
@@ -3066,10 +3071,10 @@
       "streams": [
         "Technical Stream"
       ],
-      "workState": "active",
+      "workState": "live",
       "navigationRole": "active-work",
-      "nextStep": "Create the send/receive checklist from amount entry through QR, address format, node-live execution, and demo-only fallbacks.",
-      "proof": "This card is complete only when every send/receive modal state has a pass/fix/open row tied to the Demo wallet route.",
+      "nextStep": "Measure the real broadcast-to-receiver latency between two phones.",
+      "proof": "Send and receive Winiwa and xWiniwa with addresses or QR; payment progress shows the time of each step and says when the node has no peers. Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens.",
       "phaseSummary": "Demo + Test"
     },
     {
@@ -3215,8 +3220,8 @@
       "stream": "Technical Stream",
       "phase": "xWiniwa Mint And Burn Surface",
       "type": "work-item",
-      "status": "Drafting",
-      "progress": 6,
+      "status": "Live",
+      "progress": 100,
       "category": "Mint, Burn And Token Scope",
       "objective": "Make the xWiniwa mint/burn panel reviewable with leverage chart, collateral-ratio language, no-value boundaries, and source mechanics.",
       "summary": "Own the xWiniwa side of the Mint page: mint button, burn path, leverage traces, current leverage row, and stress language aligned to protocol truth.",
@@ -3326,7 +3331,7 @@
         "Early-Stage Volatility - low collateral base amplifying backing ratio swings"
       ],
       "metrics": [],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Showcase",
         "Demo",
@@ -3335,10 +3340,10 @@
       "streams": [
         "Technical Stream"
       ],
-      "workState": "active",
+      "workState": "live",
       "navigationRole": "active-work",
-      "nextStep": "Create the xWiniwa mint/burn checklist covering chart, leverage math, buttons, copy, and no-value boundary.",
-      "proof": "This card is complete only when the Mint page xWiniwa section can be reviewed without relying on the broader token-scope card.",
+      "nextStep": "None for this item; watch the monitor.",
+      "proof": "Par vault on Minima mainnet: 24 mints and 13 burns at 2026-09-05, with the vault pool at about 34,800 Winiwa (Test Channel Monitor). Mint and burn work on a fresh node since v0.0.11.41. Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens.",
       "phaseSummary": "Showcase + Demo + Test"
     },
     {
@@ -3457,7 +3462,7 @@
         "Early-Stage Volatility - low collateral base amplifying backing ratio swings"
       ],
       "metrics": [],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Showcase",
         "Demo",
@@ -3468,8 +3473,8 @@
       ],
       "workState": "active",
       "navigationRole": "active-work",
-      "nextStep": "Create the Wables issue/reclaim checklist for inputs, balances, labels, copy, and protocol boundaries.",
-      "proof": "This card is complete only when Wables mint/burn can be reviewed separately from xWiniwa minting.",
+      "nextStep": "Returns only through a later Council decision, after the test has proven the current scope.",
+      "proof": "Not part of the current test: USDw and every stablecoin are deferred by Council decision TV81-D23. The page is present in the app and refuses honestly; nothing here can move funds.",
       "phaseSummary": "Showcase + Demo + Test"
     },
     {
@@ -4112,7 +4117,7 @@
         "Early-Stage Volatility - low collateral base amplifying backing ratio swings"
       ],
       "metrics": [],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Showcase",
         "Demo",
@@ -4123,8 +4128,8 @@
       ],
       "workState": "active",
       "navigationRole": "active-work",
-      "nextStep": "Create the Treasury UI checklist for every chart, slider label, spot source, and stress result row.",
-      "proof": "This card is complete only when Treasury can be reviewed as a Dapp page with app evidence and financial-source links.",
+      "nextStep": "Returns only through a later Council decision, after the test has proven the current scope.",
+      "proof": "Not part of the current test: the treasury and stress-test surface are deferred by Council decision TV81-D23. The page is present in the app and refuses honestly; nothing here can move funds.",
       "phaseSummary": "Showcase + Demo + Test"
     },
     {
@@ -5164,8 +5169,8 @@
       "stream": "Technical Stream",
       "phase": "Feedback Submission Surface",
       "type": "work-item",
-      "status": "Drafting",
-      "progress": 5,
+      "status": "Live",
+      "progress": 80,
       "category": "Community, Communications And Support Surfaces",
       "objective": "Make the Feedback page reviewable across public feedback fields, optional Minima/contact fields, consent, submit target, public database link, and Telegram fallback.",
       "summary": "Track the technical feedback intake surface that routes community input into GitHub/API/Telegram without losing consent and privacy boundaries.",
@@ -5270,7 +5275,7 @@
         "feedback_items_routed_to_tracker",
         "github_feedback_open"
       ],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Showcase",
         "Demo",
@@ -5279,10 +5284,10 @@
       "streams": [
         "Technical Stream"
       ],
-      "workState": "active",
+      "workState": "live",
       "navigationRole": "active-work",
-      "nextStep": "Create the Feedback page checklist for fields, schema, endpoint, public DB link, Telegram fallback, and failure states.",
-      "proof": "This card is complete only when feedback submission can be tested or explicitly marked blocked with endpoint evidence.",
+      "nextStep": "Publish the feedback ledger path once the first tester reports arrive.",
+      "proof": "In-app Feedback page submits a structured report to the Council server. Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens.",
       "phaseSummary": "Showcase + Demo + Test"
     },
     {
@@ -5291,8 +5296,8 @@
       "stream": "Technical Stream",
       "phase": "Academy And Guided Help Surface",
       "type": "work-item",
-      "status": "Drafting",
-      "progress": 3,
+      "status": "Live",
+      "progress": 80,
       "category": "Community, Communications And Support Surfaces",
       "objective": "Make Help and Academy reviewable across guided tours, questionnaires, score tracking, certificates, and StablesAgent entry points.",
       "summary": "Own the app education surface so user guidance and future certificate logic are not hidden under general communication work.",
@@ -5401,7 +5406,7 @@
         "Confidence Risk - prolonged loss of merchant and participant confidence"
       ],
       "metrics": [],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Demo",
         "Test"
@@ -5409,10 +5414,10 @@
       "streams": [
         "Technical Stream"
       ],
-      "workState": "later",
+      "workState": "live",
       "navigationRole": "later-work",
-      "nextStep": "Create the Academy checklist for tours, questionnaire states, score tracking, certificates, and agent hooks.",
-      "proof": "This card is complete only when Academy/help functionality has a route-level checklist tied to the Demo page.",
+      "nextStep": "Close the brain gaps testers reveal.",
+      "proof": "Academy, guided help and StablesAgent in the app; the agent answers on the first try, with the page and the previous exchange as context, and never shows its working notes (v0.0.11.54 on the channel). Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens.",
       "phaseSummary": "Demo + Test"
     },
     {
@@ -5421,8 +5426,8 @@
       "stream": "Technical Stream",
       "phase": "Official Links Surface",
       "type": "work-item",
-      "status": "Drafting",
-      "progress": 6,
+      "status": "Live",
+      "progress": 90,
       "category": "Community, Communications And Support Surfaces",
       "objective": "Make the in-app All links page reviewable across domains, GitHub, emails, social links, Telegram, Discord, and the public links page handoff.",
       "summary": "Track the official-links surface as the app-side companion to the website links page and social registry.",
@@ -5532,7 +5537,7 @@
         "Confidence Risk - prolonged loss of merchant and participant confidence"
       ],
       "metrics": [],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Showcase",
         "Demo",
@@ -5542,10 +5547,10 @@
       "streams": [
         "Technical Stream"
       ],
-      "workState": "active",
+      "workState": "live",
       "navigationRole": "active-work",
-      "nextStep": "Create the All links checklist and compare it to the website links page and social-profile registry.",
-      "proof": "This card is complete only when the in-app links page and website links page agree on official public surfaces.",
+      "nextStep": "None for this item.",
+      "proof": "Links page in the app and the links hub on the website aligned with the published release. Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens.",
       "phaseSummary": "Showcase + Demo + Test + Prod"
     },
     {
@@ -5824,8 +5829,8 @@
       "stream": "Technical Stream",
       "phase": "Settings And Updates Surface",
       "type": "work-item",
-      "status": "Drafting",
-      "progress": 4,
+      "status": "Live",
+      "progress": 80,
       "category": "Community, Communications And Support Surfaces",
       "objective": "Make Settings and updates reviewable across package updates, appearance, display, wallet addresses, sync preferences, and theme/display state.",
       "summary": "Own the preferences surface that controls global app behaviour and wallet address presentation.",
@@ -5942,7 +5947,7 @@
         "Confidence Risk - prolonged loss of merchant and participant confidence"
       ],
       "metrics": [],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Demo",
         "Test"
@@ -5950,10 +5955,10 @@
       "streams": [
         "Technical Stream"
       ],
-      "workState": "active",
+      "workState": "live",
       "navigationRole": "active-work",
-      "nextStep": "Create the Settings and updates checklist for package, appearance, display, addresses, and sync blocks.",
-      "proof": "This card is complete only when settings changes have visible app effects and review rows.",
+      "nextStep": "Observe an in-app update from an installed build to the next release on a real device.",
+      "proof": "Settings and updates: in-app updater against the published manifest, node connection line, network contribution levels with TxPoW and time online. Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens.",
       "phaseSummary": "Demo + Test"
     },
     {
@@ -5962,8 +5967,8 @@
       "stream": "Technical Stream",
       "phase": "Security And Vault Key Surface",
       "type": "work-item",
-      "status": "Drafting",
-      "progress": 4,
+      "status": "Live",
+      "progress": 90,
       "category": "Community, Communications And Support Surfaces",
       "objective": "Make the Security page reviewable across vault-key wording, seed guidance, Security app CTA, and no-custody boundary.",
       "summary": "Own the in-app security surface that tells users the vault key is the only access to funds.",
@@ -6080,7 +6085,7 @@
         "Confidence Risk - prolonged loss of merchant and participant confidence"
       ],
       "metrics": [],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Demo",
         "Test",
@@ -6089,10 +6094,10 @@
       "streams": [
         "Technical Stream"
       ],
-      "workState": "active",
+      "workState": "live",
       "navigationRole": "active-work",
-      "nextStep": "Create the Security page checklist for vault-key copy, seed guidance, CTA behaviour, and no-custody wording.",
-      "proof": "This card is complete only when the Security page can be reviewed as a standalone user-safety surface.",
+      "nextStep": "None for this item.",
+      "proof": "Vault key section with the warnings, opening the Minima Security app for the seed phrase. Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens.",
       "phaseSummary": "Demo + Test + Prod"
     },
     {
@@ -8259,16 +8264,16 @@
       "phase": "Test",
       "type": "work-item",
       "status": "Active",
-      "progress": 25,
+      "progress": 65,
       "category": "Mint, Burn And Token Scope",
       "objective": "Develop and validate the live Test channel with real on-chain no-value assets, forward-priced protocol actions, transparent balance-sheet monitoring, and standalone-node parity.",
       "summary": "Active Test development covers the on-chain test-token registry, mint and burn paths, faucet availability, standalone-node behaviour, and a public operational monitor. Test assets have no official value.",
       "compactSignal": "Mint, Burn And Token Scope",
       "kpis": [
-        "Final Test token registry connected",
-        "Mint, burn, swap, and Coverage Fund paths validated",
-        "Web, Android, and MiniDapp behaviour aligned",
-        "Public Test Channel Monitor backed by a live collector"
+        "Final Test token registry connected (V9): done",
+        "Faucet, mint, burn, send and receive validated on Minima mainnet: done",
+        "Standalone Android app published; MiniDapp, web and Core companion follow one at a time",
+        "Public Test Channel Monitor backed by a live collector: done"
       ],
       "dependencies": [],
       "links": [
@@ -8361,7 +8366,7 @@
         "test_channel_active_recipient_addresses_7d",
         "test_channel_holder_addresses"
       ],
-      "lastUpdated": "2026-07-10",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Test"
       ],
@@ -8370,8 +8375,8 @@
       ],
       "workState": "active",
       "navigationRole": "active-work",
-      "nextStep": "Connect the final Test token registry and collector endpoint, then validate the monitor against Web, Android, and MiniDapp actions.",
-      "proof": "The active Test Dapp and Test Channel Monitor expose the current Test boundary; the monitor remains development-only until its collector supplies verified on-chain snapshots.",
+      "nextStep": "Bring the MiniDapp package, the web build and the Minima Core companion to the standalone app's level, one at a time; observe the in-app update path on a real device; keep the monitor and the brain matching each release.",
+      "proof": "Test stage active. Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens. The Test Channel Monitor is backed by a live collector reading the Minima archive (faucet claims, vault mints and burns, addresses holding). USDw, coverage and leverage are not part of this test (TV81-D23).",
       "phaseSummary": "Test"
     },
     {
@@ -8949,7 +8954,7 @@
       "phase": "Domain, GitHub And Official Links Registry",
       "type": "work-item",
       "status": "In progress",
-      "progress": 17,
+      "progress": 25,
       "category": "Community Communication And Feedback",
       "objective": "Register and maintain the official public surfaces: domain, GitHub, links page, Telegram, Discord, X, and other social profiles.",
       "summary": "Keep one verified public registry for the domain, GitHub organization, Dapp links, links page, Telegram community, Telegram Council, Discord, X, and other social accounts.",
@@ -9132,7 +9137,7 @@
         "council_official_ready",
         "social_profiles_ready"
       ],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Showcase",
         "Demo",
@@ -9144,8 +9149,8 @@
       ],
       "workState": "active",
       "navigationRole": "active-work",
-      "nextStep": "Audit the links page and mark each official public property as live, draft, or missing.",
-      "proof": "This card is complete only when the links page and Navi card show the official public properties with live/draft/missing status.",
+      "nextStep": "Collect follower and engagement counts through the dashboard collectors once the API keys are set.",
+      "proof": "Testing-phase announcement posted on Telegram and X on 2026-09-05 with the new website and the install page.",
       "phaseSummary": "Showcase + Demo + Test + Prod"
     },
     {
@@ -10400,7 +10405,7 @@
       "phase": "Community Release Rhythm",
       "type": "work-item",
       "status": "In progress",
-      "progress": 6,
+      "progress": 40,
       "category": "Community Communication And Feedback",
       "objective": "Keep releases understandable by pairing changelogs, open items, feedback asks, and visible roadmap.",
       "summary": "Make Demo releases understandable by pairing each cycle with changelogs, known open items, feedback asks, and visible movement in Navi.",
@@ -10579,7 +10584,7 @@
         "Transition Risk - dependencies on external systems during the bridge period"
       ],
       "metrics": [],
-      "lastUpdated": "2026-05-04",
+      "lastUpdated": "2026-09-05",
       "appPhases": [
         "Showcase",
         "Demo",
@@ -10591,8 +10596,8 @@
       ],
       "workState": "active",
       "navigationRole": "active-work",
-      "nextStep": "Prepare the release rhythm for the next coherent Demo cycle.",
-      "proof": "Demo tracker and MiniDapp versioning docs define the release evidence that should feed Navi.",
+      "nextStep": "Settle a cadence testers can rely on once the other builds are out.",
+      "proof": "Three published releases in two days (v0.0.11.38 and .39 on 2026-09-03, v0.0.11.53 on 2026-09-04), each with release notes, checksums and a version-log entry; announcements sent to Telegram and X on 2026-09-05.",
       "phaseSummary": "Showcase + Demo + Test + Prod"
     },
     {
@@ -12963,6 +12968,7 @@
     "Test",
     "Prod"
   ],
+  "currentAppPhase": "Test",
   "model": {
     "workStateValues": [
       "active",
