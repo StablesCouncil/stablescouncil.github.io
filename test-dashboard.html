@@ -123,6 +123,7 @@
   .foot a { color: var(--winiwa); text-decoration: none; }
   .err { background: rgba(242,109,109,.1); border: 1px solid rgba(242,109,109,.3); color: #fca5a5; border-radius: 12px; padding: 14px 16px; font-size: 13px; margin-bottom: 14px; display: none; }
   .err.fixture { background: rgba(245,181,68,.08); border-color: rgba(245,181,68,.3); color: #f8d58a; }
+  .meta .txlink { color: var(--savers, #34d399); text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
 </style>
 <link rel="stylesheet" href="stables.css">
 <link rel="stylesheet" href="assets/stables-visual-authority.css">
@@ -421,8 +422,11 @@
     feed.innerHTML = act.slice(0, 12).map(function (a) {
       var m = ACT[a.type] || { ic: "mint", cls: "mint", label: a.type, pos: true };
       var amt = (m.pos ? "+" : "−") + nf(Math.abs(Number(a.amount)), 2) + " " + (a.ccy || "");
+      // The transaction hash, in full, with its explorer link (public verifiability rule).
+      var base = d.explorer_tx_base || "https://explorer.minima.global/search?q=";
+      var hash = a.txpowid ? ' · <a class="txlink" href="' + base + encodeURIComponent(a.txpowid) + '" target="_blank" rel="noopener noreferrer" title="' + a.txpowid + '">' + a.txpowid + '</a>' : "";
       return '<div class="row"><div class="ic ' + m.cls + '">' + (m.ic === "faucet" ? "↓" : m.ic === "burn" ? "↑" : "◇") + '</div>' +
-        '<div class="body"><div class="ttl">' + m.label + '</div><div class="meta">' + (a.t ? ago(a.t) : "") + (a.block ? " · block " + nf(a.block) : "") + '</div></div>' +
+        '<div class="body"><div class="ttl">' + m.label + '</div><div class="meta">' + (a.t ? ago(a.t) : "") + (a.block ? " · block " + nf(a.block) : "") + hash + '</div></div>' +
         '<div class="amt ' + (m.pos ? "pos" : "neg") + '">' + amt + '</div></div>';
     }).join("");
   }
