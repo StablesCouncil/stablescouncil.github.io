@@ -1,53 +1,2547 @@
 {
-  "schema": "stables.test-channel-monitor.snapshot.v1",
-  "mode": "development-fixture",
-  "generated": "2026-07-10T09:00:00Z",
+  "schema": "stables.test-channel-monitor.snapshot.v3",
+  "mode": "fixture",
+  "note": "Snapshot of the live collector (with ?activity=all) taken 2026-09-06 for local UI review; the page shows it only on localhost.",
+  "generated": "2026-09-06T08:02:40.962Z",
   "network": "Minima mainnet",
   "channel": "Test",
-  "block": 2194676,
-  "winiwa_usd": 0.00553,
-  "assets_usd": 93.45,
-  "assets_winiwa": 16899,
-  "liabilities_usd": 68.52,
-  "cr": 1.364,
-  "leverage": 3.75,
-  "faucet_pool_winiwa": 17866000,
-  "faucet_initial_winiwa": 20000000,
-  "usdw_circulating": 68.52,
-  "xwiniwa_circulating": 4510,
-  "winiwa_distributed": 2134000,
-  "tx_total": 284,
-  "faucet_claims": 41,
+  "block": 2300064,
+  "archive_behind": 2084,
+  "winiwa_usd": null,
+  "faucet_pool_winiwa": 999784000,
+  "faucet_initial_winiwa": 1000000000,
+  "winiwa_distributed": 216000,
+  "faucet_claims": 216,
+  "xwiniwa_circulating": 39671.51375196,
+  "xwiniwa_vault_pool_winiwa": 39671.51375196,
+  "tx_total": 270,
+  "activity_total": 270,
   "holders": {
-    "usdw": 32,
-    "xwiniwa": 19,
-    "winiwa": 47
+    "winiwa": 214,
+    "xwiniwa": 23
   },
   "breakdown": {
-    "faucet": 41,
-    "mint_usdw": 96,
-    "burn_usdw": 37,
-    "mint_xwiniwa": 78,
-    "burn_xwiniwa": 32
+    "faucet": 216,
+    "mint_xwiniwa": 31,
+    "burn_xwiniwa": 23
   },
   "history": [
-    { "t": "2026-07-04T09:00:00Z", "cr": 1.29, "usdw_circulating": 52.12 },
-    { "t": "2026-07-05T09:00:00Z", "cr": 1.32, "usdw_circulating": 55.31 },
-    { "t": "2026-07-06T09:00:00Z", "cr": 1.31, "usdw_circulating": 59.86 },
-    { "t": "2026-07-07T09:00:00Z", "cr": 1.35, "usdw_circulating": 61.22 },
-    { "t": "2026-07-08T09:00:00Z", "cr": 1.38, "usdw_circulating": 65.18 },
-    { "t": "2026-07-09T09:00:00Z", "cr": 1.36, "usdw_circulating": 66.94 },
-    { "t": "2026-07-10T09:00:00Z", "cr": 1.364, "usdw_circulating": 68.52 }
+    {
+      "t": "2026-08-24T00:00:00Z",
+      "claims": 0,
+      "mints": 0,
+      "burns": 0
+    },
+    {
+      "t": "2026-08-25T00:00:00Z",
+      "claims": 2,
+      "mints": 0,
+      "burns": 0
+    },
+    {
+      "t": "2026-08-26T00:00:00Z",
+      "claims": 0,
+      "mints": 0,
+      "burns": 0
+    },
+    {
+      "t": "2026-08-27T00:00:00Z",
+      "claims": 1,
+      "mints": 0,
+      "burns": 0
+    },
+    {
+      "t": "2026-08-28T00:00:00Z",
+      "claims": 0,
+      "mints": 0,
+      "burns": 0
+    },
+    {
+      "t": "2026-08-29T00:00:00Z",
+      "claims": 1,
+      "mints": 2,
+      "burns": 0
+    },
+    {
+      "t": "2026-08-30T00:00:00Z",
+      "claims": 1,
+      "mints": 0,
+      "burns": 0
+    },
+    {
+      "t": "2026-08-31T00:00:00Z",
+      "claims": 2,
+      "mints": 0,
+      "burns": 0
+    },
+    {
+      "t": "2026-09-01T00:00:00Z",
+      "claims": 14,
+      "mints": 3,
+      "burns": 1
+    },
+    {
+      "t": "2026-09-02T00:00:00Z",
+      "claims": 13,
+      "mints": 9,
+      "burns": 3
+    },
+    {
+      "t": "2026-09-03T00:00:00Z",
+      "claims": 12,
+      "mints": 3,
+      "burns": 4
+    },
+    {
+      "t": "2026-09-04T00:00:00Z",
+      "claims": 11,
+      "mints": 2,
+      "burns": 1
+    },
+    {
+      "t": "2026-09-05T00:00:00Z",
+      "claims": 12,
+      "mints": 5,
+      "burns": 10
+    },
+    {
+      "t": "2026-09-06T00:00:00Z",
+      "claims": 3,
+      "mints": 0,
+      "burns": 0
+    }
   ],
   "activity": [
-    { "type": "mint_usdw", "amount": 7.5, "ccy": "USDw", "block": 2194668, "t": "2026-07-10T08:54:00Z" },
-    { "type": "faucet", "amount": 1000, "ccy": "Winiwa", "block": 2194651, "t": "2026-07-10T08:41:00Z" },
-    { "type": "mint_xwiniwa", "amount": 120, "ccy": "xWiniwa", "block": 2194612, "t": "2026-07-10T08:12:00Z" },
-    { "type": "burn_usdw", "amount": 3.25, "ccy": "USDw", "block": 2194586, "t": "2026-07-10T07:51:00Z" }
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2300043,
+      "t": "2026-09-06T07:44:43.406Z",
+      "txpowid": "0x000013110C20403409C7453B4430D9AF9E7C2F4FEDC2FFF5E28A3F18EF1191E7",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2300019,
+      "t": "2026-09-06T07:18:34.171Z",
+      "txpowid": "0x000016ABA334627FEDA23D60E93768A5F63797AA41377B736A44809F54DDAE3E",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2299613,
+      "t": "2026-09-06T01:30:24.638Z",
+      "txpowid": "0x00003944DC14647CD54226104047DADE85275640402C16704C6576FB24B71D13",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2299375,
+      "t": "2026-09-05T22:22:10.191Z",
+      "txpowid": "0x00004D211633A1DF1EF2B760805BF7AA6416CED21B1A94C092F106F09C74A004",
+      "source": "node"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2299358,
+      "t": "2026-09-05T22:11:37.158Z",
+      "txpowid": "0x0000555DD16DAC353D0435766EF26A9F1BC6BE77F675117F7A1A15A81076B878",
+      "source": "node"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 3,
+      "ccy": "xWiniwa",
+      "block": 2299340,
+      "t": "2026-09-05T22:01:07.079Z",
+      "txpowid": "0x00005D1527960EA05D89EFB6FD5D334299282F3C3117D2CFC921F6AC0E81E65F",
+      "source": "node"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 2,
+      "ccy": "xWiniwa",
+      "block": 2299335,
+      "t": "2026-09-05T21:57:40.717Z",
+      "txpowid": "0x00005DCC9CCEB4DDD7920828F9059BC03A5ECA82B6241919281EA302BFEF1F60",
+      "source": "node"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 5,
+      "ccy": "xWiniwa",
+      "block": 2299330,
+      "t": "2026-09-05T21:51:57.191Z",
+      "txpowid": "0x0000281071157343DFB0ED3DB70D00F6612FCA44117B982485234BAD654FDF08",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2299321,
+      "t": "2026-09-05T21:43:49.039Z",
+      "txpowid": "0x000037F9C2AE9E186C9A9639F82FB9FD2119EBBEB82ECBB522B57C140008C2DA",
+      "source": "node"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2299274,
+      "t": "2026-09-05T21:04:07.580Z",
+      "txpowid": "0x000050AF6FDBD9ED06868A6BEC00C530A41D274C18B91F217F76E989FD8EF20F",
+      "source": "node"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2299272,
+      "t": "2026-09-05T21:02:51.138Z",
+      "txpowid": "0x00005493673846E5FD96ACF3B9C13C0143D29925D4ABD6E4466778A00C1D0445",
+      "source": "node"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2299251,
+      "t": "2026-09-05T20:46:57.348Z",
+      "txpowid": "0x00005B1A18B2498449431EA21B067641B3A96CD45365AE5351C054684A485EE5",
+      "source": "node"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2299227,
+      "t": "2026-09-05T20:30:06.928Z",
+      "txpowid": "0x000009EAA1806DF6E69C9FBA506E7641D0C16212B9FC9E785303D29027C00BF4",
+      "source": "node"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2299216,
+      "t": "2026-09-05T20:21:46.831Z",
+      "txpowid": "0x00005A697F7C3C066CA5A4B03CEB7EEF8E6579FA135D9C556F39AFF450A433D4",
+      "source": "node"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 2,
+      "ccy": "xWiniwa",
+      "block": 2299125,
+      "t": "2026-09-05T19:04:46.670Z",
+      "txpowid": "0x0000616CC8695922BBF022C95975829F3831C9F7EE094D786C7969419B397C9C",
+      "source": "node"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 5,
+      "ccy": "xWiniwa",
+      "block": 2299118,
+      "t": "2026-09-05T18:56:17.422Z",
+      "txpowid": "0x000085B169B50E8942824DF2D17415A790A44F5CC23FFBCD75C86098AA009F57",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2299117,
+      "t": "2026-09-05T18:55:59.729Z",
+      "txpowid": "0x00005F648A0FBF2B319AE02DCC12CA9A083AB9381949F548FF990037927AFD02",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2299013,
+      "t": "2026-09-05T17:27:05.512Z",
+      "txpowid": "0x000021F695BA65936FE8D1987572A7A3AC134CD225DBF208F681AD588A03D00B",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2299005,
+      "t": "2026-09-05T17:19:24.626Z",
+      "txpowid": "0x00002BBAEAEB097C6D448FB1D6DAE29C98547EA96A7DCC4F898F5ECA1E5A0F05",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2298887,
+      "t": "2026-09-05T15:35:07.986Z",
+      "txpowid": "0x00008ED84DD9989AE4E4C9FBC8745830A9F8D10AF00DDAB35B080115E8535C01",
+      "source": "node"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 300,
+      "ccy": "xWiniwa",
+      "block": 2298842,
+      "t": "2026-09-05T15:02:33.057Z",
+      "txpowid": "0x00004DC9AC335E4779DE287D35B50CEE764B234A213DCE3E5EB8D209D52A6EF1",
+      "source": "node"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 1000,
+      "ccy": "xWiniwa",
+      "block": 2298833,
+      "t": "2026-09-05T14:56:57.610Z",
+      "txpowid": "0x00003DC8E1D2BB6FF081AEA3CCB6E69040E10CF6D8FF903A6A3D73C0E4E27760",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2298831,
+      "t": "2026-09-05T14:56:23.179Z",
+      "txpowid": "0x000056DE706077AA94A3E73D8469A423F48BB7AB20B2216E185815FA1A6B3F25",
+      "source": "node"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 800,
+      "ccy": "xWiniwa",
+      "block": 2298805,
+      "t": "2026-09-05T14:29:27.972Z",
+      "txpowid": "0x0000719C2FE23F2620490618E1840474430826AAD04CD45256CDF3321051FDDC",
+      "source": "node"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 2655.6165000000037,
+      "ccy": "xWiniwa",
+      "block": 2298781,
+      "t": "2026-09-05T14:04:21.218Z",
+      "txpowid": "0x000019E32C838FDB13525F42EA33C01CE7228E237381E3B3C4CE1DC171942E02",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2298780,
+      "t": "2026-09-05T14:04:05.156Z",
+      "txpowid": "0x000012E27483B4A60E361481B306BA3E186D9D64B4CF6B59BED1AA767F766B1B",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2298765,
+      "t": "2026-09-05T13:52:22.711Z",
+      "txpowid": "0x00005085B9DEB03E630BA38E9C4ED42258E38F1B80F49A4C003FD33A295C3A8F",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2298634,
+      "t": "2026-09-05T12:13:46.266Z",
+      "txpowid": "0x00005830F149E3C6B9C213776FC6C0E6C25674151E77CB12E497973D748CD2AE",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2298396,
+      "t": "2026-09-05T09:00:31.681Z",
+      "txpowid": "0x00003A2B3C1A63CB21F7A07569EC451E50229125D7FD21D7853D6836FF313E12",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2298186,
+      "t": "2026-09-05T06:04:10.052Z",
+      "txpowid": "0x00001DBD0358D432A663EF1A9933DBEC707AF440ED14200F5B211177ED91A5C3",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2297361,
+      "t": "2026-09-04T18:27:11.358Z",
+      "txpowid": "0x0000AA95A785FF96739FDA2B470AB7BC9EFE1B0901C4EAAF4066FE7FC2612A78",
+      "source": "both"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2297228,
+      "t": "2026-09-04T16:44:56.577Z",
+      "txpowid": "0x00004DD2F49DE9C90568F43079C36841B7BCC0CA8B6D5B1331933AA9206C2D90",
+      "source": "both"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2297211,
+      "t": "2026-09-04T16:34:30.408Z",
+      "txpowid": "0x00005FE111D83177C2E3AD88F5DC27D6552A3188310B5CC861F6BD778001A5A3",
+      "source": "both"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2297093,
+      "t": "2026-09-04T14:45:58.414Z",
+      "txpowid": "0x0000250AE6423BCCC5CA75152614C58B316089BF333B5F822B6FABA72F529FE9",
+      "source": "both"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 500,
+      "ccy": "xWiniwa",
+      "block": 2297072,
+      "t": "2026-09-04T14:32:04.047Z",
+      "txpowid": "0x00012D629908E15C0C65E913A5E12F80A1B4D4728446F8A86514420C7DF946CF",
+      "source": "both"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2297065,
+      "t": "2026-09-04T14:23:58.265Z",
+      "txpowid": "0x00007C7DCADD0F49336B2FE56D1EA372FFED6C42F12311DBBD096381CE380836",
+      "source": "both"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2297016,
+      "t": "2026-09-04T13:32:20.529Z",
+      "txpowid": "0x0002429F07245510A1906DA41730BBAE642131F86235AF976924B3D6C9D49184",
+      "source": "both"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2297002,
+      "t": "2026-09-04T13:16:39.737Z",
+      "txpowid": "0x000017705F3892ADE36D28344BE19691041EBD40E25989F8C4A356347E6B8876",
+      "source": "both"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 222,
+      "ccy": "xWiniwa",
+      "block": 2296806,
+      "t": "2026-09-04T10:19:08.654Z",
+      "txpowid": "0x0000396F97BFF2783C4E47603DD273511ACB9967416F8D3C80D5DF073AC0C6C3",
+      "source": "both"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2296798,
+      "t": "2026-09-04T10:12:19.077Z",
+      "txpowid": "0x00005D49BD1E6EAF072390F2F61A94F4A08AC62172B463459838305B5DB4AD19",
+      "source": "both"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2296742,
+      "t": "2026-09-04T09:22:30.262Z",
+      "txpowid": "0x0000542F6AA80BB3F34471969B362D1C7BD3532FA85DB7F4D4ADF52D98CE441B",
+      "source": "both"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2296681,
+      "t": "2026-09-04T08:33:08.636Z",
+      "txpowid": "0x000019ADEBCD9548750A5158F38B5042A86C0B084788A037B7E39225D5471375",
+      "source": "both"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2296463,
+      "t": "2026-09-04T05:41:30.988Z",
+      "txpowid": "0x00003FAE79B7C6424F834AFB8029082D7B9668D4B1514E02FE9F5579234B19D5",
+      "source": "both"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 3,
+      "ccy": "xWiniwa",
+      "block": 2296048,
+      "t": "2026-09-04T00:00:51.965Z",
+      "txpowid": "0x0003A3D392485DB0AEB469DC1977E233A1B7B2525B4C7A99296AE06AC6F4C429",
+      "source": "both"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2296040,
+      "t": "2026-09-03T23:53:25.088Z",
+      "txpowid": "0x0003577B535A060BF5D9146791BA64DE3F89B250F048DC36EEFDD665C13ED23E",
+      "source": "both"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 2,
+      "ccy": "xWiniwa",
+      "block": 2296034,
+      "t": "2026-09-03T23:48:09.212Z",
+      "txpowid": "0x000081E3343DC68E2D00EC973435C12CDED6AF61ECBC299C894B3F28ECB6D9A7",
+      "source": "both"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2296027,
+      "t": "2026-09-03T23:41:18.902Z",
+      "txpowid": "0x0002DB77CF3CDB6094FFE909F868BDF70232D409D48FBCAE236B44EC115AD5AB",
+      "source": "both"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 5,
+      "ccy": "xWiniwa",
+      "block": 2296002,
+      "t": "2026-09-03T23:18:32.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2295948,
+      "t": "2026-09-03T22:31:04.616Z",
+      "txpowid": "0x000114CC62AE41D9101EAD900401A1B51EC9ED3AC8245470D12F8FA33668BD6F",
+      "source": "both"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2295831,
+      "t": "2026-09-03T20:54:54.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 820.1932510000042,
+      "ccy": "xWiniwa",
+      "block": 2295747,
+      "t": "2026-09-03T19:57:53.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2295728,
+      "t": "2026-09-03T19:38:53.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 22359.887999970004,
+      "ccy": "xWiniwa",
+      "block": 2295721,
+      "t": "2026-09-03T19:31:08.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2295581,
+      "t": "2026-09-03T17:37:10.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2295331,
+      "t": "2026-09-03T13:49:07.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2295214,
+      "t": "2026-09-03T12:07:28.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2295210,
+      "t": "2026-09-03T12:06:37.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2295124,
+      "t": "2026-09-03T10:49:09.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2295032,
+      "t": "2026-09-03T09:49:21.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2295002,
+      "t": "2026-09-03T09:20:34.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 1307.924425000001,
+      "ccy": "xWiniwa",
+      "block": 2294978,
+      "t": "2026-09-03T09:04:28.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2294965,
+      "t": "2026-09-03T08:55:23.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2294885,
+      "t": "2026-09-03T07:48:04.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2294037,
+      "t": "2026-09-02T20:07:48.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2293978,
+      "t": "2026-09-02T19:26:24.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 1193.8144250000005,
+      "ccy": "xWiniwa",
+      "block": 2293959,
+      "t": "2026-09-02T19:12:17.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2293953,
+      "t": "2026-09-02T19:07:58.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2293591,
+      "t": "2026-09-02T13:26:27.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2293590,
+      "t": "2026-09-02T13:24:55.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2293586,
+      "t": "2026-09-02T13:20:22.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2293536,
+      "t": "2026-09-02T12:44:12.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 1268.09425,
+      "ccy": "xWiniwa",
+      "block": 2293477,
+      "t": "2026-09-02T12:04:16.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2293472,
+      "t": "2026-09-02T11:59:55.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 5719.06375,
+      "ccy": "xWiniwa",
+      "block": 2293457,
+      "t": "2026-09-02T11:46:24.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2293456,
+      "t": "2026-09-02T11:44:45.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2293451,
+      "t": "2026-09-02T11:39:52.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 136.1885000000002,
+      "ccy": "xWiniwa",
+      "block": 2293411,
+      "t": "2026-09-02T11:12:08.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2293406,
+      "t": "2026-09-02T11:08:25.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2293295,
+      "t": "2026-09-02T09:38:12.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2293291,
+      "t": "2026-09-02T09:34:54.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2293291,
+      "t": "2026-09-02T09:34:54.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2293286,
+      "t": "2026-09-02T09:31:10.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2293279,
+      "t": "2026-09-02T09:24:37.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 3,
+      "ccy": "xWiniwa",
+      "block": 2293273,
+      "t": "2026-09-02T09:20:01.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 2,
+      "ccy": "xWiniwa",
+      "block": 2293258,
+      "t": "2026-09-02T09:08:19.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 3,
+      "ccy": "xWiniwa",
+      "block": 2293252,
+      "t": "2026-09-02T09:03:48.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 2,
+      "ccy": "xWiniwa",
+      "block": 2293232,
+      "t": "2026-09-02T08:48:36.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2293193,
+      "t": "2026-09-02T08:17:31.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2292479,
+      "t": "2026-09-01T22:18:57.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 1609.1713929999996,
+      "ccy": "xWiniwa",
+      "block": 2292358,
+      "t": "2026-09-01T20:35:50.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2292358,
+      "t": "2026-09-01T20:35:50.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2292323,
+      "t": "2026-09-01T20:07:42.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2292310,
+      "t": "2026-09-01T19:58:09.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2292251,
+      "t": "2026-09-01T19:12:00.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2292067,
+      "t": "2026-09-01T16:50:50.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2291950,
+      "t": "2026-09-01T15:21:50.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 1059.8474999999999,
+      "ccy": "xWiniwa",
+      "block": 2291868,
+      "t": "2026-09-01T14:15:57.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2291868,
+      "t": "2026-09-01T14:15:57.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2291787,
+      "t": "2026-09-01T13:01:42.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2291668,
+      "t": "2026-09-01T11:18:49.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2291660,
+      "t": "2026-09-01T11:13:14.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 2402.75,
+      "ccy": "xWiniwa",
+      "block": 2291658,
+      "t": "2026-09-01T11:12:14.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2291429,
+      "t": "2026-09-01T07:57:57.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2291199,
+      "t": "2026-09-01T04:42:51.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2290407,
+      "t": "2026-09-01T04:42:51.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2290067,
+      "t": "2026-08-31T13:02:15.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 805.5,
+      "ccy": "xWiniwa",
+      "block": 2289984,
+      "t": "2026-09-01T11:12:14.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2289980,
+      "t": "2026-08-31T11:45:42.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2287895,
+      "t": "2026-08-30T06:28:25.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 622.2940369999999,
+      "ccy": "xWiniwa",
+      "block": 2286758,
+      "t": "2026-08-29T14:31:19.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 1244.58807299,
+      "ccy": "xWiniwa",
+      "block": 2286692,
+      "t": "2026-08-29T13:32:29.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2286684,
+      "t": "2026-08-29T13:24:46.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2283688,
+      "t": "2026-08-27T19:47:50.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2279818,
+      "t": "2026-08-25T13:44:40.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2279483,
+      "t": "2026-08-25T09:04:13.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2275152,
+      "t": "2026-08-22T21:13:03.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2274683,
+      "t": "2026-08-22T14:20:23.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2274321,
+      "t": "2026-08-22T09:42:10.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2274164,
+      "t": "2026-08-22T07:31:20.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2273429,
+      "t": "2026-08-21T21:06:08.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2273018,
+      "t": "2026-08-21T15:27:18.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2271676,
+      "t": "2026-08-20T20:24:10.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2271209,
+      "t": "2026-08-20T13:56:55.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2271146,
+      "t": "2026-08-20T13:07:01.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2271144,
+      "t": "2026-08-20T13:03:14.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2271137,
+      "t": "2026-08-20T12:57:43.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2271029,
+      "t": "2026-08-20T11:43:14.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2270008,
+      "t": "2026-08-19T22:00:04.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2269924,
+      "t": "2026-08-19T20:48:14.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2269562,
+      "t": "2026-08-19T15:14:58.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2269502,
+      "t": "2026-08-19T14:15:47.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2267999,
+      "t": "2026-08-18T17:06:44.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2267877,
+      "t": "2026-08-18T15:23:17.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2267845,
+      "t": "2026-08-18T15:01:43.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2267835,
+      "t": "2026-08-18T14:54:41.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2267741,
+      "t": "2026-08-18T13:36:55.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2267240,
+      "t": "2026-08-18T06:53:25.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2267204,
+      "t": "2026-08-18T06:30:50.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2267193,
+      "t": "2026-08-18T06:21:46.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2266694,
+      "t": "2026-08-17T23:08:07.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2266503,
+      "t": "2026-08-17T20:20:22.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2266397,
+      "t": "2026-08-17T18:52:55.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2266385,
+      "t": "2026-08-17T18:45:26.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2266380,
+      "t": "2026-08-17T18:43:25.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2266312,
+      "t": "2026-08-17T17:39:58.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2266026,
+      "t": "2026-08-17T13:41:46.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2265925,
+      "t": "2026-08-17T12:13:47.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2265916,
+      "t": "2026-08-17T12:07:36.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2264491,
+      "t": "2026-08-16T16:43:46.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2264489,
+      "t": "2026-08-16T16:42:16.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2264194,
+      "t": "2026-08-16T12:29:39.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2263965,
+      "t": "2026-08-16T09:21:41.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2263105,
+      "t": "2026-08-15T21:18:49.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2263080,
+      "t": "2026-08-15T21:01:39.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2262684,
+      "t": "2026-08-15T15:45:13.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2262409,
+      "t": "2026-08-15T11:57:12.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2261118,
+      "t": "2026-08-14T17:45:35.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2260948,
+      "t": "2026-08-14T15:16:35.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2260786,
+      "t": "2026-08-14T13:17:55.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2260709,
+      "t": "2026-08-14T12:05:34.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2260628,
+      "t": "2026-08-14T10:49:11.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2260447,
+      "t": "2026-08-14T08:17:40.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2260407,
+      "t": "2026-08-14T07:46:30.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2260332,
+      "t": "2026-08-14T06:44:52.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2259479,
+      "t": "2026-08-13T18:52:24.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2259386,
+      "t": "2026-08-13T17:30:42.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2259335,
+      "t": "2026-08-13T16:45:08.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2259222,
+      "t": "2026-08-13T15:12:33.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2259215,
+      "t": "2026-08-13T15:05:38.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2259045,
+      "t": "2026-08-13T12:49:40.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2258996,
+      "t": "2026-08-13T12:22:17.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2258822,
+      "t": "2026-08-13T09:44:45.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2258603,
+      "t": "2026-08-13T07:04:54.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2258537,
+      "t": "2026-08-13T06:13:43.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2258532,
+      "t": "2026-08-13T06:08:45.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2257910,
+      "t": "2026-08-12T21:14:21.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2257811,
+      "t": "2026-08-12T19:46:54.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2256927,
+      "t": "2026-08-12T07:38:49.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2256012,
+      "t": "2026-08-11T18:54:45.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2255906,
+      "t": "2026-08-11T17:41:32.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2255846,
+      "t": "2026-08-11T16:37:57.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2255661,
+      "t": "2026-08-11T13:54:16.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2255620,
+      "t": "2026-08-11T13:21:27.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2255619,
+      "t": "2026-08-11T13:19:57.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2252648,
+      "t": "2026-08-09T20:07:45.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2252279,
+      "t": "2026-08-09T15:10:17.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2251077,
+      "t": "2026-08-08T22:16:47.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2250877,
+      "t": "2026-08-08T19:34:47.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2250828,
+      "t": "2026-08-08T18:55:24.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2250797,
+      "t": "2026-08-08T18:36:48.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2250657,
+      "t": "2026-08-08T16:30:47.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2250389,
+      "t": "2026-08-08T12:38:37.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2248893,
+      "t": "2026-08-07T15:30:36.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2248640,
+      "t": "2026-08-07T12:01:53.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2248472,
+      "t": "2026-08-07T09:44:01.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2248373,
+      "t": "2026-08-07T08:25:06.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2247516,
+      "t": "2026-08-06T20:34:16.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2247273,
+      "t": "2026-08-06T16:59:19.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2247136,
+      "t": "2026-08-06T15:17:14.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2247063,
+      "t": "2026-08-06T14:20:11.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2247057,
+      "t": "2026-08-06T14:15:50.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2245922,
+      "t": "2026-08-05T22:15:31.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2245838,
+      "t": "2026-08-05T20:49:42.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2245792,
+      "t": "2026-08-05T20:15:25.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2242413,
+      "t": "2026-08-03T21:11:10.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2242267,
+      "t": "2026-08-03T19:19:08.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2242119,
+      "t": "2026-08-03T17:22:03.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2241733,
+      "t": "2026-08-03T12:07:54.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2240809,
+      "t": "2026-08-02T23:24:14.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2240804,
+      "t": "2026-08-02T23:20:46.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2240389,
+      "t": "2026-08-02T17:31:15.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 0.009999999999990905,
+      "ccy": "xWiniwa",
+      "block": 2239822,
+      "t": "2026-08-02T09:37:02.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 0.25,
+      "ccy": "xWiniwa",
+      "block": 2239025,
+      "t": "2026-08-01T22:29:06.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 0.25,
+      "ccy": "xWiniwa",
+      "block": 2239004,
+      "t": "2026-08-01T22:13:35.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2238838,
+      "t": "2026-08-01T19:52:52.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2238829,
+      "t": "2026-08-01T19:46:59.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2238740,
+      "t": "2026-08-01T18:45:28.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2238666,
+      "t": "2026-08-01T17:50:26.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2238539,
+      "t": "2026-08-01T15:52:42.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2238500,
+      "t": "2026-08-01T15:24:28.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2238493,
+      "t": "2026-08-01T15:21:06.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2238480,
+      "t": "2026-08-01T15:01:46.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2238451,
+      "t": "2026-08-01T14:34:16.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2238435,
+      "t": "2026-08-01T14:21:08.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2238344,
+      "t": "2026-08-01T13:03:54.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2238216,
+      "t": "2026-08-01T11:12:31.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2238086,
+      "t": "2026-08-01T09:27:34.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2238066,
+      "t": "2026-08-01T09:14:57.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2237261,
+      "t": "2026-08-01T09:27:34.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2237196,
+      "t": "2026-07-31T20:56:05.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 0.6000000000000227,
+      "ccy": "xWiniwa",
+      "block": 2237144,
+      "t": "2026-08-01T09:14:57.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 0.39999999999997726,
+      "ccy": "xWiniwa",
+      "block": 2237141,
+      "t": "2026-07-31T20:19:41.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2237134,
+      "t": "2026-07-31T20:13:59.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2237094,
+      "t": "2026-07-31T19:44:02.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2237049,
+      "t": "2026-07-31T19:11:49.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2236710,
+      "t": "2026-07-31T14:34:32.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2236508,
+      "t": "2026-07-31T11:44:58.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2236252,
+      "t": "2026-07-31T08:14:49.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2235455,
+      "t": "2026-07-30T21:03:16.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2235259,
+      "t": "2026-07-30T18:17:29.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2233754,
+      "t": "2026-07-29T20:59:19.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2233739,
+      "t": "2026-07-29T20:44:56.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2233725,
+      "t": "2026-07-29T20:34:29.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2233699,
+      "t": "2026-07-29T20:15:32.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2233631,
+      "t": "2026-07-29T19:20:36.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2233618,
+      "t": "2026-07-29T19:05:44.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2233600,
+      "t": "2026-07-29T18:51:31.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2233214,
+      "t": "2026-07-29T13:37:18.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2232792,
+      "t": "2026-07-29T08:02:41.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2231406,
+      "t": "2026-07-28T12:37:06.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2231306,
+      "t": "2026-07-28T11:16:37.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2231223,
+      "t": "2026-07-28T10:02:51.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2229783,
+      "t": "2026-07-27T13:36:36.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2229738,
+      "t": "2026-07-27T13:06:15.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2229735,
+      "t": "2026-07-27T13:03:25.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2229703,
+      "t": "2026-07-27T12:32:54.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2229699,
+      "t": "2026-07-27T12:28:07.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2229433,
+      "t": "2026-07-27T09:11:05.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2228790,
+      "t": "2026-07-27T00:11:46.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 500,
+      "ccy": "xWiniwa",
+      "block": 2228358,
+      "t": "2026-07-26T18:11:36.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2228278,
+      "t": "2026-07-26T17:09:23.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 0.5,
+      "ccy": "xWiniwa",
+      "block": 2227847,
+      "t": "2026-07-26T11:26:21.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 111,
+      "ccy": "xWiniwa",
+      "block": 2227091,
+      "t": "2026-07-26T00:37:10.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2227075,
+      "t": "2026-07-26T00:26:26.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2227040,
+      "t": "2026-07-25T23:54:47.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2227037,
+      "t": "2026-07-25T23:50:52.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2226586,
+      "t": "2026-07-25T17:31:13.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2225027,
+      "t": "2026-07-24T19:36:56.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2224949,
+      "t": "2026-07-24T18:30:45.000Z",
+      "txpowid": null,
+      "source": "archive"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2224833,
+      "t": "2026-07-24T17:16:13.000Z",
+      "txpowid": null,
+      "source": "archive"
+    }
   ],
-  "outcomes": {
-    "successful_actions_7d": 284,
-    "active_recipient_addresses_7d": 47,
-    "holder_addresses": 98
-  }
+  "explorer_tx_base": "https://explorer.minima.global/search?q="
 }
