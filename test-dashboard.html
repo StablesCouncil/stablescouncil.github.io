@@ -40,7 +40,7 @@
   .status b { color: var(--ink); font-variant-numeric: tabular-nums; }
 
   /* hero stat cards */
-  .heroes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px; }
+  .heroes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 14px; }
   @media (max-width: 720px) { .heroes { grid-template-columns: 1fr; } }
   .card { background: var(--panel); border: 1px solid var(--hair); border-radius: 16px; box-shadow: var(--shadow); padding: 20px; }
   .hero .lbl { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
@@ -89,6 +89,19 @@
   .tip { position: absolute; top: 6px; left: 0; z-index: 2; pointer-events: none; display: none; padding: 7px 10px; border: 1px solid var(--hair); border-radius: 10px; background: rgba(7,10,18,.96); box-shadow: var(--shadow); font-size: 12px; line-height: 1.45; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
   .tip .d { display: block; color: var(--muted); font-size: 11px; }
   .tip.show { display: block; }
+
+  /* on chain: identity in full, figures beneath */
+  .onchain { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 860px) { .onchain { grid-template-columns: 1fr; } }
+  .oc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .oc-name { font-size: 15px; font-weight: 850; }
+  .oc-role { font-size: 12px; color: var(--dim); }
+  .oc-id { display: block; margin-top: 10px; padding: 9px 11px; border: 1px solid var(--hair); border-radius: 10px; background: rgba(0,0,0,.28); font-family: var(--mono); font-size: 12px; line-height: 1.45; color: var(--savers); text-decoration: none; word-break: break-all; }
+  .oc-id:hover { border-color: rgba(52,211,153,.4); }
+  .oc-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; margin-top: 12px; }
+  .oc-stat { display: flex; flex-direction: column; gap: 2px; }
+  .oc-stat .k { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .oc-stat .v { font-size: 16px; font-weight: 850; font-variant-numeric: tabular-nums; }
 
   /* activity list controls */
   .feed-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 26px 0 10px; }
@@ -153,30 +166,23 @@
 
   <div class="err" id="err"></div>
 
-  <!-- what this test measures: what the faucet handed out and the two pools that move -->
+  <!-- what this test measures: what the faucet handed out and what the vault issued -->
   <div class="heroes" id="protocol-health">
     <div class="card hero faucet">
       <div class="lbl">Winiwa handed out</div>
       <div class="big" id="winDist">N/A</div>
       <div class="sub" id="winDistSub">by the faucet, since the start</div>
     </div>
-    <div class="card hero vault">
-      <div class="lbl">Vault pool</div>
-      <div class="big" id="vaultBig">N/A</div>
-      <div class="sub">Winiwa deposited for xWiniwa, one for one</div>
-    </div>
     <div class="card hero xw">
       <div class="lbl">xWiniwa in circulation</div>
       <div class="big" id="xwCirc">N/A</div>
-      <div class="sub">held by testers, redeemable at par</div>
+      <div class="sub" id="xwCircSub">held by testers, redeemable one for one against the Winiwa in the vault</div>
     </div>
   </div>
 
   <!-- usage and holders -->
   <div class="section-t" id="usage">Usage</div>
   <div class="grid" id="adoption">
-    <div class="stat"><div class="k">Faucet pool</div><div class="v" id="faucetBig">N/A</div><div class="u" id="faucetSub">Winiwa left to hand out</div></div>
-    <div class="stat"><div class="k">Faucet claims</div><div class="v" id="testers">N/A</div><div class="u">1,000 Winiwa each, since the start</div></div>
     <div class="stat"><div class="k">Test actions</div><div class="v" id="txTot">N/A</div><div class="u">claims · mints · burns, since the start</div></div>
     <div class="stat"><div class="k">Winiwa addresses</div><div class="v" id="hWin">N/A</div><div class="u">hold the test asset</div></div>
     <div class="stat"><div class="k">xWiniwa addresses</div><div class="v" id="hXw">N/A</div><div class="u">hold xWiniwa</div></div>
@@ -206,6 +212,51 @@
       <div class="chart">
         <div class="yaxis" aria-hidden="true"><span id="supY4"></span><span id="supY3"></span><span id="supY2"></span><span id="supY1"></span><span id="supY0">0</span></div>
         <div class="plot"><svg class="spark" id="supSpark" viewBox="0 0 300 180" preserveAspectRatio="none" role="img" aria-label="Vault mints and burns per day"></svg><div class="tip" id="supTip"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- on chain: every element of this test, with its identity and its figures -->
+  <div class="section-t" id="onchain">On chain</div>
+  <div class="onchain">
+    <div class="card oc">
+      <div class="oc-head"><span class="oc-name">Winiwa token</span><span class="oc-role">the test asset</span></div>
+      <a class="oc-id" id="ocWiniwaId" href="#" target="_blank" rel="noopener noreferrer"></a>
+      <div class="oc-stats">
+        <div class="oc-stat"><span class="k">Total supply</span><span class="v" id="ocWinSupply">N/A</span></div>
+        <div class="oc-stat"><span class="k">Handed out</span><span class="v" id="ocWinOut">N/A</span></div>
+        <div class="oc-stat"><span class="k">Still in the faucet</span><span class="v" id="ocWinPool">N/A</span></div>
+        <div class="oc-stat"><span class="k">Addresses holding it</span><span class="v" id="ocWinHolders">N/A</span></div>
+      </div>
+    </div>
+    <div class="card oc">
+      <div class="oc-head"><span class="oc-name">xWiniwa token</span><span class="oc-role">issued one for one against Winiwa</span></div>
+      <a class="oc-id" id="ocXwId" href="#" target="_blank" rel="noopener noreferrer"></a>
+      <div class="oc-stats">
+        <div class="oc-stat"><span class="k">Total supply</span><span class="v" id="ocXwSupply">N/A</span></div>
+        <div class="oc-stat"><span class="k">In circulation</span><span class="v" id="ocXwCirc">N/A</span></div>
+        <div class="oc-stat"><span class="k">Unissued, in the vault</span><span class="v" id="ocXwReserve">N/A</span></div>
+        <div class="oc-stat"><span class="k">Addresses holding it</span><span class="v" id="ocXwHolders">N/A</span></div>
+      </div>
+    </div>
+    <div class="card oc">
+      <div class="oc-head"><span class="oc-name">Winiwa faucet</span><span class="oc-role">covenant, 1,000 Winiwa a claim</span></div>
+      <a class="oc-id" id="ocFaucetId" href="#" target="_blank" rel="noopener noreferrer"></a>
+      <div class="oc-stats">
+        <div class="oc-stat"><span class="k">Seeded with</span><span class="v" id="ocFaucetSeed">N/A</span></div>
+        <div class="oc-stat"><span class="k">Claims</span><span class="v" id="ocFaucetClaims">N/A</span></div>
+        <div class="oc-stat"><span class="k">Handed out</span><span class="v" id="ocFaucetOut">N/A</span></div>
+        <div class="oc-stat"><span class="k">Left to hand out</span><span class="v" id="ocFaucetLeft">N/A</span></div>
+      </div>
+    </div>
+    <div class="card oc">
+      <div class="oc-head"><span class="oc-name">xWiniwa vault</span><span class="oc-role">covenant, mint and burn at par</span></div>
+      <a class="oc-id" id="ocVaultId" href="#" target="_blank" rel="noopener noreferrer"></a>
+      <div class="oc-stats">
+        <div class="oc-stat"><span class="k">Winiwa deposited</span><span class="v" id="ocVaultPool">N/A</span></div>
+        <div class="oc-stat"><span class="k">xWiniwa issued</span><span class="v" id="ocVaultIssued">N/A</span></div>
+        <div class="oc-stat"><span class="k">Mints</span><span class="v" id="ocVaultMints">N/A</span></div>
+        <div class="oc-stat"><span class="k">Burns</span><span class="v" id="ocVaultBurns">N/A</span></div>
       </div>
     </div>
   </div>
@@ -351,23 +402,48 @@
       $("updatedH").textContent += " · archive " + nf(d.archive_behind) + " blocks behind the tip";
     }
 
-    // the headline: what the faucet handed out, then the two pools that move
+    // the headline: what the faucet handed out and what the vault issued
     var claims = d.faucet_claims != null ? d.faucet_claims : (d.breakdown && d.breakdown.faucet);
     $("winDist").textContent = d.winiwa_distributed != null ? nf(d.winiwa_distributed) : "N/A";
     $("winDistSub").textContent = "Winiwa by the faucet" + (claims != null ? ", " + nf(claims) + " claims of 1,000" : "");
-    var vp = Number(d.xwiniwa_vault_pool_winiwa);
-    $("vaultBig").textContent = isFinite(vp) ? nf(vp) : "N/A";
     $("xwCirc").textContent = d.xwiniwa_circulating != null ? nf(d.xwiniwa_circulating) : "N/A";
 
     // usage and holders
-    var fp = Number(d.faucet_pool_winiwa), fi = Number(d.faucet_initial_winiwa);
-    $("faucetBig").textContent = isFinite(fp) ? nf(fp) : "N/A";
-    $("faucetSub").textContent = "Winiwa left to hand out" + (fi > 0 ? ", of " + nf(fi) : "");
     $("txTot").textContent = d.tx_total != null ? nf(d.tx_total) : "N/A";
-    $("testers").textContent = claims != null ? nf(claims) : "N/A";
     var H = d.holders || {};
     $("hXw").textContent = H.xwiniwa != null ? nf(H.xwiniwa) : "N/A";
     $("hWin").textContent = H.winiwa != null ? nf(H.winiwa) : "N/A";
+
+    // on chain: identities and the figures of each element
+    var oc = d.onchain || {};
+    var ids = {
+      ocWiniwaId: oc.winiwa_token || "0xD4F5DD3546F25D327CBF2B6867E193CE5DB6491AC9C65BBDCECACA1A6688063F",
+      ocXwId: oc.xwiniwa_token || "0xEFA53EFF58616DDBDF0B6D6DBB4E18F041C4509FB3DB3B7E5482B99ABC72F127",
+      ocFaucetId: oc.faucet_covenant || "0x5E08C5DCD965B9460C4734DC6113AE747C98DFEC31B13FEADF5805D464F49930",
+      ocVaultId: oc.vault_covenant || "0xF4B1826C2AC2F94C5C1DEB99E1DA560DAD98471B3C5BAF58E4B6FB1083EDFF3C"
+    };
+    var base = d.explorer_tx_base || "https://explorer.minima.global/search?q=";
+    Object.keys(ids).forEach(function (id) { var el = $(id); if (!el) return; el.textContent = ids[id]; el.href = base + encodeURIComponent(ids[id]); el.title = ids[id]; });
+    var sup = d.supply || {};
+    var fp = Number(d.faucet_pool_winiwa), fi = Number(d.faucet_initial_winiwa);
+    var B0 = d.breakdown || {};
+    $("ocWinSupply").textContent = sup.winiwa != null ? nf(sup.winiwa) : "N/A";
+    $("ocWinOut").textContent = d.winiwa_distributed != null ? nf(d.winiwa_distributed) : "N/A";
+    $("ocWinPool").textContent = isFinite(fp) ? nf(fp) : "N/A";
+    $("ocWinHolders").textContent = H.winiwa != null ? nf(H.winiwa) : "N/A";
+    $("ocXwSupply").textContent = sup.xwiniwa != null ? nf(sup.xwiniwa) : "N/A";
+    $("ocXwCirc").textContent = d.xwiniwa_circulating != null ? nf(d.xwiniwa_circulating) : "N/A";
+    $("ocXwReserve").textContent = d.xwiniwa_vault_reserve != null ? nf(d.xwiniwa_vault_reserve) + (d.xwiniwa_vault_reserve_seed ? " of " + nf(d.xwiniwa_vault_reserve_seed) : "") : "N/A";
+    $("ocXwHolders").textContent = H.xwiniwa != null ? nf(H.xwiniwa) : "N/A";
+    $("ocFaucetSeed").textContent = fi > 0 ? nf(fi) + " Winiwa" : "N/A";
+    $("ocFaucetClaims").textContent = claims != null ? nf(claims) : "N/A";
+    $("ocFaucetOut").textContent = d.winiwa_distributed != null ? nf(d.winiwa_distributed) + " Winiwa" : "N/A";
+    $("ocFaucetLeft").textContent = isFinite(fp) ? nf(fp) + " Winiwa" : "N/A";
+    var vp = Number(d.xwiniwa_vault_pool_winiwa);
+    $("ocVaultPool").textContent = isFinite(vp) ? nf(vp) + " Winiwa" : "N/A";
+    $("ocVaultIssued").textContent = isFinite(vp) ? nf(vp) + " xWiniwa" : "N/A";
+    $("ocVaultMints").textContent = B0.mint_xwiniwa != null ? nf(B0.mint_xwiniwa) : "N/A";
+    $("ocVaultBurns").textContent = B0.burn_xwiniwa != null ? nf(B0.burn_xwiniwa) : "N/A";
 
     // activity by type
     var B = d.breakdown || {};

@@ -2,11 +2,11 @@
   "schema": "stables.test-channel-monitor.snapshot.v3",
   "mode": "fixture",
   "note": "Snapshot of the live collector (with ?activity=all) taken 2026-09-06 for local UI review; the page shows it only on localhost.",
-  "generated": "2026-09-06T08:02:40.962Z",
+  "generated": "2026-09-06T08:47:27.383Z",
   "network": "Minima mainnet",
   "channel": "Test",
-  "block": 2300064,
-  "archive_behind": 2084,
+  "block": 2300109,
+  "archive_behind": 2129,
   "winiwa_usd": null,
   "faucet_pool_winiwa": 999784000,
   "faucet_initial_winiwa": 1000000000,
@@ -14,6 +14,18 @@
   "faucet_claims": 216,
   "xwiniwa_circulating": 39671.51375196,
   "xwiniwa_vault_pool_winiwa": 39671.51375196,
+  "xwiniwa_vault_reserve": 99960328.48624805,
+  "xwiniwa_vault_reserve_seed": 100000000,
+  "supply": {
+    "winiwa": 1000000000,
+    "xwiniwa": 1000000000
+  },
+  "onchain": {
+    "winiwa_token": "0xD4F5DD3546F25D327CBF2B6867E193CE5DB6491AC9C65BBDCECACA1A6688063F",
+    "xwiniwa_token": "0xEFA53EFF58616DDBDF0B6D6DBB4E18F041C4509FB3DB3B7E5482B99ABC72F127",
+    "faucet_covenant": "0x5E08C5DCD965B9460C4734DC6113AE747C98DFEC31B13FEADF5805D464F49930",
+    "vault_covenant": "0xF4B1826C2AC2F94C5C1DEB99E1DA560DAD98471B3C5BAF58E4B6FB1083EDFF3C"
+  },
   "tx_total": 270,
   "activity_total": 270,
   "holders": {
