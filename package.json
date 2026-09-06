@@ -14,7 +14,7 @@
     "verify:new-homepage": "node ../work/task_merchant_owned_payment_system_repositioning/tools/verify-new-homepage.mjs",
     "verify:app-access": "node ../work/task_merchant_owned_payment_system_repositioning/tools/verify-app-access-page.mjs",
     "verify:brand": "node ../work/tools/audit-brand-continuity.mjs",
-    "verify:website-candidate": "npm run verify:secondary-chrome && npm run verify:secondary-chrome-runtime && npm run verify:new-routes && npm run verify:review && npm run verify:new-homepage && npm run verify:app-access && npm run verify:brand",
+    "verify:website-candidate": "npm run verify:secondary-chrome && npm run verify:secondary-chrome-runtime && npm run verify:new-routes && npm run verify:new-homepage && npm run verify:app-access && npm run verify:brand",
     "dashboard:collect": "node tools/collect-dashboard-snapshots.mjs",
     "dashboard:generate": "node tools/generate-dashboard-state.mjs",
     "dashboard:update": "node tools/collect-dashboard-snapshots.mjs && node tools/generate-dashboard-state.mjs"

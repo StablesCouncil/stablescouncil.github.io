@@ -892,23 +892,53 @@ a {
   font-size: 0.78rem;
 }
 
+/* The system diagram is a square canvas with four nodes positioned around a circle. Its height came
+ * only from `aspect-ratio`, which older Android WebViews and Samsung Internet do not support: there
+ * the box collapsed to no height, the absolutely positioned nodes had nothing to sit against, and
+ * the whole illustration fell into a stack under the circle. Reported from an older phone
+ * (founder 2026-09-04) and reproduced from the CSS.
+ *
+ * So the square is made the old way first, with the percentage-padding trick that every browser has
+ * understood for twenty years, and `aspect-ratio` takes over only where it exists. `width` gets a
+ * plain fallback before the `min()` for the same reason. Modern browsers render exactly as before. */
 .new-system {
   position: relative;
   display: grid;
+  width: 100%;
+  max-width: 520px;
   width: min(100%, 520px);
-  aspect-ratio: 1;
   justify-self: center;
   place-items: center;
 }
 
+/* Fallback square: a zero-width child in the same grid cell whose padding gives the box its height. */
+.new-system::after {
+  grid-area: 1 / 1;
+  width: 0;
+  padding-top: 100%;
+  content: "";
+}
+
+@supports (aspect-ratio: 1 / 1) {
+  .new-system { aspect-ratio: 1; }
+  .new-system::after { content: none; }
+}
+
+/* Inner halo. Same fallback reasoning: `padding-top` makes it square where `aspect-ratio` is
+   missing, so an old browser draws a circle rather than a flat line. */
 .new-system::before {
   position: absolute;
   width: 56%;
-  aspect-ratio: 1;
+  height: 0;
+  padding-top: 56%;
   border: 1px solid rgba(103, 232, 249, 0.18);
   border-radius: 50%;
   box-shadow: 0 0 80px rgba(103, 232, 249, 0.12);
   content: "";
+}
+
+@supports (aspect-ratio: 1 / 1) {
+  .new-system::before { height: auto; padding-top: 0; aspect-ratio: 1; }
 }
 
 .new-system__map {
@@ -933,13 +963,22 @@ a {
   text-align: center;
 }
 
+/* The core is a circle, and a circle needs equal sides. Without `aspect-ratio` it took its content
+ * height instead, so `border-radius: 50%` drew a squashed ellipse around the words: what the
+ * founder's older phone showed on 2026-09-04. `min-height` keyed to the same width expression keeps
+ * it round on browsers that lack the property, and `aspect-ratio` still governs where it exists. */
 .new-system__core {
   width: clamp(116px, 34%, 176px);
+  min-height: clamp(116px, 34vw, 176px);
   aspect-ratio: 1;
   padding: clamp(0.8rem, 3vw, 1.4rem);
   border-radius: 50%;
   background: linear-gradient(145deg, rgba(103, 232, 249, 0.2), rgba(96, 165, 250, 0.09)), var(--new-panel-strong);
   box-shadow: 0 0 60px rgba(103, 232, 249, 0.16);
+}
+
+@supports (aspect-ratio: 1 / 1) {
+  .new-system__core { min-height: 0; }
 }
 
 .new-system__core img {
@@ -1570,12 +1609,25 @@ a {
     display: none;
   }
 
+  /* At this width the circle and its connecting lines are hidden, so the diagram is already a set
+     of cards and the core is simply the one they lead to. It was still forced into a 122px circle,
+     which "Merchant economy / banking sovereignty" cannot fit inside: on a modern browser the words
+     spilled out of the ring, and on an older one without `aspect-ratio` the ring stretched into an
+     ellipse around them (founder 2026-09-04, older phone). A card sized to its own text is right in
+     both, and matches the four nodes beside it. */
   .new-system__core {
     position: relative;
     grid-column: 1 / -1;
-    width: 122px;
+    width: auto;
+    min-width: 0;
+    min-height: 0;
+    aspect-ratio: auto;
+    max-width: 260px;
     justify-self: center;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.45rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--new-line);
+    border-radius: 18px;
   }
 
   .new-system__node {
