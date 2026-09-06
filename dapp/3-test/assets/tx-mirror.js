@@ -1412,6 +1412,17 @@
     // back EMPTY on a busy node (checkaddress timeouts) fall back to the raw difference
     // entries — indeterminate must not read as "no match".
     function fuzzyPass() {
+      /* A FAILED ROW THAT WILL NEVER BE RESCUED MUST NOT COST A READ PER TRANSACTION PER PASS
+       * (2026-09-06, battery). Three old Failed rows on the founder's phone kept this pass alive on
+       * every deep pass of every open, and each pass re-resolved every non-row transaction of the
+       * last 48 hours: 28 `txpow txpowid` reads per pass after the reconcile loop was fixed, all
+       * for transactions this wallet had already judged to be nobody's. Three bounds, all exact:
+       * only rows without a transaction id can be fuzzy-matched at all (pass 1 owns the others);
+       * a transaction remembered as nothing of this wallet's has no entries to match; and a match
+       * needs the transaction's own time within the window of a candidate row, which is known
+       * before anything is read. */
+      var candidates = failed.filter(function (f) { return !f.rescued && !f.txid; });
+      if (!candidates.length) { done(); return; }
       var idx = 0;
       (function next() {
         if (idx >= txpows.length) { done(); return; }
@@ -1422,7 +1433,9 @@
         if (!txid || !base.length) { next(); return; }
         if (typeof window.stablesHasNodeActivityRow === 'function'
           && window.stablesHasNodeActivityRow(nodeId(txid))) { next(); return; }
+        if (nonRowRemembered(txid)) { next(); return; }
         var tms = Number(tp.header && tp.header.timemilli) || 0;
+        if (tms && !candidates.some(function (f) { return !f.ts || Math.abs(tms - Number(f.ts)) <= WINDOW_MS; })) { next(); return; }
         resolveEntries(txid, details && details[i], function (entries) {
           var usable = (entries && entries.length) ? entries : base;
           usable.forEach(function (e) {
@@ -1585,6 +1598,13 @@
    */
   var POLL_FAST_MS = 3000;
   var POLL_IDLE_MS = 30000;
+  /* On the Minima Core companion every history read is an intent round trip to another process
+     and a 47 KB reply parsed twice (measured 2026-09-06: 685 replies, 31 MB, in one night). Core
+     pushes NEWTXPOW and NEWBLOCK to the companion, and those kick `check` directly, so the idle
+     poll there is only a safety net for a missed push: two minutes is enough. The fast mode while
+     a payment is in play is unchanged. */
+  var POLL_IDLE_CORE_MS = 120000;
+  function pollIdleMs() { return window.__STABLES_CORE_CONNECTED_APP ? POLL_IDLE_CORE_MS : POLL_IDLE_MS; }
   var _lastPollAt = 0;
   var _lastUserActionAt = 0;
   window.stablesNoteUserPaymentAction = function () { _lastUserActionAt = Date.now(); };
@@ -1622,7 +1642,7 @@
   window.__STABLES_TX_POLL__ = { fast: false, polls: 0, lastPollAt: 0, gapMs: POLL_IDLE_MS };
   window.stablesRepeatWhileVisible('tx-mirror-poll', function () {
     var fast = paymentInPlay();
-    var gap = fast ? POLL_FAST_MS : POLL_IDLE_MS;
+    var gap = fast ? POLL_FAST_MS : pollIdleMs();
     window.__STABLES_TX_POLL__.fast = fast;
     window.__STABLES_TX_POLL__.gapMs = gap;
     if (Date.now() - _lastPollAt < gap - 250) return;

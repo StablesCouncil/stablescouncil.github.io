@@ -2,6 +2,79 @@
 
 ## [Unreleased]
 
+## [0.0.11.63] - 2026-09-06
+
+Iterations 61 to 63 of 2026-09-06, released as the standalone Android app and the Minima Core companion, both v0.0.11.63: the battery release.
+
+### Changed
+- **The standalone stops re-tracking an old faucet claim on every open.** On every launch the app
+  resumed "exact settlement" for the most recent faucet claim that was not Confirmed, whatever its
+  verdict, and the tracker then asked the node for `history max:50` every five seconds for ten
+  minutes before giving up, keeping a "Faucet claim syncing. Do not retry yet" card on the Wallet
+  the whole time and its five-second repaint job for the rest of the session. Measured on the Pixel
+  (v0.0.11.62, 2026-09-06): 13 history reads a minute for the first ten minutes of every open, more
+  than half of the idle app's node traffic, all for one claim posted days earlier. A claim is now
+  resumed only while its row is still settling, is under two hours old (older ones are judged by
+  the transaction mirror's stale sweep) and is not waiting for approval in Minima; when the tracker
+  gives up it clears its own card. The faucet covenant script is also registered once per session
+  rather than on every retry of an unprovable pool (the lab node was being sent `newscript` seven
+  times a minute). And the app now keeps a ledger of who asked the node what: every five minutes on
+  screen it logs `[STABLES-NODE-READS]` with counts by command and by calling function (plus the
+  repeating job that fired it), so the next cadence is attributed from logcat instead of guessed.
+- **Merged mint and burn rows stop being re-judged, removed and re-created on every open.** The
+  transaction mirror marks each merged operation row with a flag and its reconcile sweep judges
+  rows by that flag, but the list of stored rows handed to the sweep never carried it. So every
+  merged mint or burn row failed the test on every deep pass of every open: the ones still in the
+  history window were removed and re-imported, the older ones were "migrated" again, each time a
+  transaction read, its address checks and an on-chain check. Measured on the Pixel (v0.0.11.63,
+  on-device read ledger): 53 migrations and 46 repairs of the same eight rows in eight minutes,
+  about 85 `txpow` and 18 `checkaddress` reads per open. The list now carries the flag, so a row
+  that was right stays right and costs nothing; this is the "twelve rows removed and re-created on
+  every open" left open on 3 September.
+- **An old failed row no longer makes every open re-read the transactions that are nobody's.**
+  The mirror's rescue pass, which looks for a mined transaction behind an app row shown as
+  Failed, matched rows without a transaction id against every history transaction of the last
+  48 hours and resolved each one again on every deep pass, ignoring what the wallet had already
+  remembered as nothing of its own. Three old Failed rows kept it running for ever: 28 `txpow`
+  reads per pass, three passes per open, measured on the Pixel once the reconcile loop above was
+  gone. The pass now runs only when a row without an id exists, skips transactions remembered as
+  not this wallet's, and reads only those whose own time falls within the thirty-minute match
+  window of such a row. Cold launch on the Pixel after both mirror fixes: the three passes cost
+  37, 28 and 28 transaction reads instead of 74, 71 and 71 before the first fix, with zero rows
+  repaired or migrated, and the idle floor between them reads about 7 commands a minute (status 3,
+  history 2, balance 1, coins 0.5) against 24 at v0.0.11.62.
+- **A node that cannot prove the faucet pool is no longer asked sixty times a minute.** When the
+  pool is unprovable (a fresh install still catching up, or the lab node) the faucet level retried
+  four times three seconds apart, and every attempt ran up to five coins queries, the last of them a
+  scan of every Winiwa coin the node holds, plus the covenant script registration; measured on the
+  web preview: sixty commands a minute for as long as the pool stayed unproven. Now two quick
+  retries, the whole-token scan once per session, the script registration once per session, and
+  the readiness sweep's doubling backoff carries the rest. The four states are untouched: an
+  unproven pool still reads "Proof unavailable", never a zero.
+- **The on-chain chat stops scanning every 15 seconds on pages that are not the chat.** With the
+  chat unlocked, its scanner asked the node for the chat address's coins every 15 s and, through
+  its reclaim housekeeping, for the node status as well: eight commands a minute all day on
+  whatever page was actually open, a third of the idle app's traffic on the phone (named by the
+  new read ledger on its first five minutes: `scan` and `reclaimAged`). The 15 s cadence now applies
+  only while the Chat page is on screen; elsewhere the scan is a two-minute safety net, and a
+  native NEWTXPOW push kicks it at once because the chat address is tracked, so a message still
+  lands within seconds. Housekeeping runs only when there are coins to consider and at most every
+  ten minutes.
+- **The Minima Core companion asks Core about ten times less while idle, and nothing in the
+  background, with the same screens and the same freshness.** Measured on the phone (2026-09-06, the
+  night the companion was published): on screen and idle it sent Core ten commands a minute
+  (history four times, status three, balance twice, keys almost once), 55 a minute around a
+  transaction, and two a minute from the pocket; history alone was 685 replies and 31 MB of JSON in
+  one night, and keys was asked 227 times for an answer that never changes. Every command is a
+  process hop that wakes Core as well. Core already pushes NEWBALANCE, NEWBLOCK and NEWTXPOW to the
+  companion and those pushes drive the app, so: the live poll there is one status and one balance a
+  minute (was 20 s); the history safety-net poll is two minutes while idle (was 30 s; the fast mode
+  while a payment is in play is untouched); the wallet's first key is remembered for ten minutes
+  (also on the standalone); and a balance or block push that arrives while the app is hidden is
+  remembered, not answered, because both the poll and the wallet refresh run the moment the app
+  comes back (measured: every hidden read last night followed a Core NEWBLOCK event within a
+  second). An incoming payment still lands through NEWTXPOW whatever the visibility.
+
 ## [0.0.11.60] - 2026-09-06
 
 Iterations 54 to 60 of 2026-09-05 and 2026-09-06, released together as the standalone Android app and, for the first time, the Minima Core companion, both v0.0.11.60.

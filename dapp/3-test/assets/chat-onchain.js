@@ -25,6 +25,31 @@
   var DUST = '0.00000001';
   var MAX_BLOB_HEX_CHARS = 98000; /* 49,000 bytes as 0x-hex — the one-coin bound (minimaMail law) */
   var SCAN_EVERY_MS = 15000;
+  /* NOBODY IS READING THE CHAT MOST OF THE TIME (2026-09-06, standalone battery).
+   *
+   * With the chat unlocked, this scan asked the phone's node for the chat address's coins every
+   * 15 s and then, through the reclaim housekeeping, for `status` as well: eight node commands a
+   * minute, all day, on whatever page the person was actually looking at. Measured on the Pixel
+   * (v0.0.11.62/63): a `coins` then a `status` every 15.0 s, a third of the idle app's traffic,
+   * traced by the on-device read ledger to `scan` and `reclaimAged`. Messages live in blocks
+   * (about one a minute), so a 15 s scan bought nothing but the battery.
+   *
+   * The 15 s cadence now applies only while the Chat page is on screen. Elsewhere the scan runs
+   * every two minutes as a safety net, and a native NEWTXPOW push (the node saw a transaction it
+   * tracks, which the chat address is) kicks it at once through scanNow, so a message still lands
+   * within seconds. Housekeeping runs only when there are coins to consider, at most every ten
+   * minutes, and it is the only reason this file ever asks for `status`. */
+  var SCAN_IDLE_MS = 120000;
+  var RECLAIM_EVERY_MS = 10 * 60 * 1000;
+  var lastScanAt = 0;
+  var lastReclaimAt = 0;
+  function chatPageOnScreen() {
+    try {
+      var page = document.getElementById('page-chat');
+      if (!page || page.offsetParent === null) return false;
+      return page.getBoundingClientRect().height > 0;
+    } catch (_) { return true; /* an unreadable page is not a reason to stand down */ }
+  }
   var ENABLE_KEY = 'stables_chat_onchain_enabled_v1';
   var STORE_KEY = 'stables_chat_onchain_store_v1';
 
@@ -282,8 +307,10 @@
   }
 
   /* ---- scan: trial-decrypt the address; INCOMING only (own sends are stored at send time) ---- */
-  async function scan() {
+  async function scan(force) {
     if (!enabled()) return;
+    if (!force && !chatPageOnScreen() && (Date.now() - lastScanAt) < SCAN_IDLE_MS) return;
+    lastScanAt = Date.now();
     var SB = window.StablesSealedBox;
     var id = await ensureIdentity();
     if (!id) {
@@ -331,12 +358,16 @@
     var resolved = await resolvePending().catch(function () { return false; });
     await flushQueued().catch(function () { /* retried next cycle */ });
     if ((fresh > 0 || resolved) && typeof window.stablesChatOnchainRender === 'function') window.stablesChatOnchainRender();
-    reclaimAged(coins).catch(function () { /* housekeeping only */ });
+    if (coins.length && (Date.now() - lastReclaimAt) >= RECLAIM_EVERY_MS) {
+      lastReclaimAt = Date.now();
+      reclaimAged(coins).catch(function () { /* housekeeping only */ });
+    }
   }
 
   /* ---- auto-reclaim own aged coins: default hygiene, never a setting ---- */
   async function reclaimAged(coins) {
     if (!myNodeKey) return;
+    if (!coins || !coins.length) return;
     var s = await nodeCmd('status');
     var tip = Number((((s || {}).response || {}).chain || {}).block || 0);
     if (!tip) return;
@@ -445,13 +476,13 @@
     rotateId: rotateIdentity,
     send: send,
     sendOrQueue: sendOrQueue,
-    scanNow: scan,
+    scanNow: function () { return scan(true); },
     rows: loadStore,
   };
 
   function start() {
     if (scanTimer) return;
-    scan();
+    scan(true);
     /* Publish our own (address -> key) directory entry so a contact who only has our Minima
        address can start a chat with us. Runs once; it checks the chain before spending. */
     announceKey().catch(function () { /* best effort */ });

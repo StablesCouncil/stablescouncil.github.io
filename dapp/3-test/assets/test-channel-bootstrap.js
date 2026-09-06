@@ -701,6 +701,8 @@
   async function faucetRpcSendCommand(cmd, timeoutMs) {
     const cfgRpc = typeof stablesGetRpcConfig === 'function' ? stablesGetRpcConfig() : null;
     if (!cfgRpc || !cfgRpc.url) throw new Error('RPC not configured');
+    // This path has its own fetch, so it reports to the shell's node-read ledger itself.
+    try { if (typeof window.stablesNoteNodeRead === 'function') window.stablesNoteNodeRead(cmd); } catch (_) { /* attribution only */ }
     const endpoint = cfgRpc.url + '/' + encodeURIComponent(cmd);
     const headers = {};
     if (cfgRpc.pass) headers.Authorization = 'Basic ' + btoa(cfgRpc.user + ':' + cfgRpc.pass);
@@ -1556,12 +1558,24 @@
   // Stable wallet fingerprint for the wallet-change guard.
   // getaddress returns a fresh key each call, so using its miniaddress caused
   // an infinite reload loop. The first key from `keys` is deterministic for a seed.
+  // The first key of a wallet never changes, so the answer is kept for ten minutes: on the Core
+  // companion this read was 227 times a night (9 KB each, a process hop to Core every time) for a
+  // value that was the same every time (measured 2026-09-06). A wallet swap is still seen within
+  // ten minutes, and a reconnect clears the memory at once (stablesForgetWalletFingerprint).
+  let _walletFingerprintMemo = { value: '', at: 0 };
+  const WALLET_FINGERPRINT_TTL_MS = 10 * 60 * 1000;
+  window.stablesForgetWalletFingerprint = function () { _walletFingerprintMemo = { value: '', at: 0 }; };
   async function fetchWalletStableFingerprint() {
+    if (_walletFingerprintMemo.value && (Date.now() - _walletFingerprintMemo.at) < WALLET_FINGERPRINT_TTL_MS) {
+      return _walletFingerprintMemo.value;
+    }
     try {
       const data = await mdsCmdData('keys');
       const list = Array.isArray(data) ? data : (data && Array.isArray(data.keys) ? data.keys : null);
       if (list && list.length && list[0] && list[0].publickey) {
-        return String(list[0].publickey).trim().toLowerCase();
+        const fp = String(list[0].publickey).trim().toLowerCase();
+        _walletFingerprintMemo = { value: fp, at: Date.now() };
+        return fp;
       }
     } catch (_) { /* ignore */ }
     return '';
@@ -6768,6 +6782,7 @@
     })[0] || null;
   }
 
+  let _faucetTokenWideScanned = false;
   async function findFaucetLevelCoins() {
     const queries = [
       ['coins', 'tokenid:' + activeFaucetTokenId, 'address:' + activeFaucetAddress],
@@ -6797,6 +6812,17 @@
 
     let best = [];
     for (let i = 0; i < queries.length; i++) {
+      /* THE WHOLE-TOKEN SCAN RUNS ONCE PER SESSION (2026-09-06, battery). The last query has no
+         address: it lists every Winiwa coin the node holds, as a last resort for a node whose
+         address index does not answer. On a node that cannot prove the pool at all (a fresh
+         install still catching up, or the lab node) the retry ladder reached it on EVERY
+         attempt: measured on the web preview, three coins reads per attempt, five attempts per
+         sweep run, sixty commands a minute, and this one walks the chain's whole Winiwa coin
+         set on a phone. An index that did not answer three seconds ago will not answer now. */
+      if (queries[i].length === 2 && String(queries[i][1]).indexOf('tokenid:') === 0) {
+        if (_faucetTokenWideScanned) continue;
+        _faucetTokenWideScanned = true;
+      }
       try {
         const coins = await findCovenantCoinsUrgent(queries[i]);
         const filtered = coins.filter(isFaucetCoin);
@@ -6856,7 +6882,11 @@
       el.innerHTML = '<span class="stables-qr-spinner" style="width:12px;height:12px;border-width:2px" aria-hidden="true"></span><span>Syncing…</span>';
     };
     const retryOrUnavailable = function () {
-      if (attempt < 4) {
+      /* Two quick retries cover index timing on a fresh node; anything longer is the readiness
+         sweep's job, which keeps retrying with a backoff (20 s doubling to five minutes) for as
+         long as the pool stays unproven. Four retries here meant five full read sets per sweep
+         run on a node that could not prove the pool (2026-09-06, battery). */
+      if (attempt < 2) {
         if (!cached) renderSyncing();
         setReady(false, cached ? 'stale' : 'syncing');
         setTimeout(function () { try { window.stablesRefreshFaucetLevel(attempt + 1); } catch (_) { /* ignore */ } }, 3000);
@@ -6888,11 +6918,15 @@
         if (!activeFaucetUsesForwardProfile) {
           if (!_faucetLevelTracking) {
             _faucetLevelTracking = ensureFaucetCovenantScript().then(function () {
-              _faucetLevelTracked = true;
               return true;
             }).catch(function () {
+              /* Once per session either way. A node that refuses the script refuses it again three
+                 seconds later (measured on the lab node, 2026-09-06: `newscript` re-sent on every one
+                 of five retries, seven times a minute, for as long as the pool stayed unprovable).
+                 The claim executor re-tracks at build time, which is the moment it matters. */
               return false;
             }).finally(function () {
+              _faucetLevelTracked = true;
               _faucetLevelTracking = null;
             });
           }
@@ -6919,7 +6953,7 @@
       }
       // total === 0: an empty read on a fresh node can be index/re-scan timing rather than a truly
       // empty pool, so retry a few times before trusting it. A positive read above short-circuits.
-      if (attempt < 4) { retryOrUnavailable(); return; }
+      if (attempt < 2) { retryOrUnavailable(); return; }
       // After retries (D22 four-state truth law): a zero may render only when emptiness is
       // positively proven. The faucet's native state coin lives at the same covenant address:
       // state coin visible + no pool coin = the pool is genuinely exhausted; neither visible =
@@ -8361,6 +8395,32 @@
 
   let _faucetResumeStarted = false;
 
+  /* ONLY A CLAIM THAT IS STILL SETTLING IS RESUMED (2026-09-06, standalone battery).
+   *
+   * The resume below used to pick up any faucet row that was not Confirmed. A claim that had
+   * already been judged (Failed by the mirror's two-hour sweep, or left for review) was picked up
+   * again on EVERY launch, and the exact-settlement tracker then read `history max:50` every five
+   * seconds for ten minutes before giving up, with a "Faucet claim syncing. Do not retry yet" card
+   * on the Wallet the whole time. Measured on the Pixel (v0.0.11.62, 2026-09-06): 13 history reads
+   * a minute for the first ten minutes of every open, all for one claim posted days earlier, more
+   * than half of the idle app's node traffic. A claim is resumed only while it is still settling,
+   * is younger than the stale sweep that would otherwise judge it, and is not waiting for the
+   * person's approval in Minima (nothing was posted, so history cannot hold it). Everything else is
+   * the transaction mirror's verdict to give, not a reason to poll. */
+  const FAUCET_RESUME_MAX_AGE_MS = 2 * 60 * 60 * 1000;
+  function faucetRowStillWorthResuming(row) {
+    const s = String((row && row.status) || '').toLowerCase();
+    const settling = s === 'pending' || s === 'broadcasted' || s === 'sending' || s === 'receiving' || s === 'on-chain';
+    if (!settling) return false;
+    const ts = Number(row && row.ts) || 0;
+    if (!(ts > 0) || (Date.now() - ts) > FAUCET_RESUME_MAX_AGE_MS) return false;
+    try {
+      if (typeof window.stablesActivityRowAwaitingApproval === 'function'
+        && window.stablesActivityRowAwaitingApproval(String(row.id || ''))) return false;
+    } catch (_) { /* an unreadable flag does not stop a genuine resume */ }
+    return true;
+  }
+
   /**
    * Reconcile a faucet row left pending by an older build. Recovery is deliberately keyed only
    * by the immutable prepared transaction id; it never guesses from amount, recipient, or shape.
@@ -8375,9 +8435,11 @@
     } catch (_) { rows = []; }
     const row = rows.find(function (candidate) {
       if (!candidate || String(candidate.status || '').toLowerCase() === 'confirmed') return false;
-      if (candidate.id === FAUCET_POUR_ROW_ID) return true;
-      return /^faucet claim/i.test(String(candidate.title || ''))
-        && String(candidate.counterparty || '') === 'On-chain faucet covenant';
+      const isFaucetRow = candidate.id === FAUCET_POUR_ROW_ID
+        || (/^faucet claim/i.test(String(candidate.title || ''))
+          && String(candidate.counterparty || '') === 'On-chain faucet covenant');
+      if (!isFaucetRow) return false;
+      return faucetRowStillWorthResuming(candidate);
     });
     if (!row) return;
     const pendingTxnId = String(row.pendingTxnId || '').trim();
@@ -8404,7 +8466,11 @@
       });
       const minedTxpowid = await pollMinedFaucetTxpow(pendingTxnId);
       if (!minedTxpowid) {
-        console.log('[faucet] exact pending transaction is not mined in local history yet');
+        console.log('[faucet] exact pending transaction is not mined in local history yet; settlement card cleared, the transaction mirror keeps the verdict');
+        /* The tracker has given up for this open. Leaving the card armed kept a five-second
+           repaint job and a "Do not retry yet" notice on the Wallet for the rest of the session. */
+        setFaucetSettlementStatus(false);
+        try { if (typeof clearFaucetPourStatusSurface === 'function') clearFaucetPourStatusSurface(0); } catch (_) { /* ignore */ }
         return;
       }
       await linkMinedTxpowToActivityRows([FAUCET_POUR_ROW_ID], pendingTxnId, minedTxpowid);

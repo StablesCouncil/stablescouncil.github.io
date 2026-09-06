@@ -59,7 +59,7 @@ window.STABLES_CONFIG = {
    * (vote-vault, per-launch auction); stablecoins born later via pledge→vote→auction→pool. App
    * rebuilt to genesis-6 per V6_APP_WIRING_PLAN.md (slice 1: config + pool reader).
    */
-  APP_BUILD_ITERATION: 60,
+  APP_BUILD_ITERATION: 63,
   /** Date this build was published to GitHub (ISO YYYY-MM-DD). */
   APP_BUILD_DATE: '2026-09-06',
   /**
@@ -294,7 +294,7 @@ window.STABLES_CONFIG = {
    * Use the same segment count as APP_BUILD_VERSION so semver-like compare is meaningful.
    */
   APP_UPDATE_POLICY: {
-    latestPublishedVersion: '0.0.11.60',
+    latestPublishedVersion: '0.0.11.63',
     whenUpdateNeeded: {
       criticality: 'low',
       whatChanged:
@@ -309,12 +309,12 @@ window.STABLES_CONFIG = {
    */
   ANDROID_APK_UPDATE: {
     /** SHA-256 and signer fingerprint are filled from the exact signed artifact before publication. */
-    latestVersion: '0.0.11.60',
-    versionCode: 11060,
+    latestVersion: '0.0.11.63',
+    versionCode: 11063,
     expectedPackageName: 'org.stablescouncil.stables',
     downloadUrl:
-      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.11.60/Stables_v0.0.11.60.apk',
-    sha256: 'f6d20a7afdb444d479abd1978b04175b7e072fa53dd0ece142f21dd87a75faff',
+      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.11.63/Stables_v0.0.11.63.apk',
+    sha256: '311f22116063fd557f017caa16d694b6510644dfbb8cdc6975528cb43ded9f06',
     signerSha256: 'dabb1b2a79b134b6008e6401735d649c140b51f2c4a83eb001b2ffdad5ce5dd4',
     releasesPageUrl: 'https://github.com/StablesCouncil/stables-app/releases',
     /** Dedicated immutable-shape metadata used by hardened standalone builds. */

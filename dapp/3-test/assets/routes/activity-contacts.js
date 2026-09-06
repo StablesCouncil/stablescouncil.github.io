@@ -1444,6 +1444,17 @@
         title: String(r.title || ''),
         // One-row-per-trade metadata: the sweep must know a fill row is already merged.
         g3Merged: r.g3Merged === true,
+        /* ONE-ROW-PER-OPERATION METADATA, THE FLAG THE SWEEP JUDGES BY (2026-09-06, battery).
+           The mirror writes `opMerged: true` on every merged mint/burn row and its reconcile
+           sweep tests exactly that flag: a row without it is "pre-law" and is migrated, or
+           "wrong" and is removed and re-imported. This list never carried the flag, so every
+           merged operation row failed the test on every deep pass, on every open, for ever:
+           measured on the Pixel (v0.0.11.63), 53 migrations and 46 repairs of the same eight
+           rows in eight minutes, each one a `txpow txpowid`, its `checkaddress` reads and a
+           `txpow onchain`. The row was right the whole time; only the copy shown to the judge
+           was missing a field. */
+        opMerged: r.opMerged === true,
+        opKind: r.opKind ? String(r.opKind) : '',
         txid: String(r.explorerTxId || '').trim()
           || String(r.id).replace(/^NODE-/, '').replace(/^RECV-/, '').replace(/:.*$/, '')
       }));

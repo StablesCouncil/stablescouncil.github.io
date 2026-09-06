@@ -7974,18 +7974,18 @@
     </style>
     <!-- App UI System layer: must load render-blocking AFTER the legacy styles above so
          documented component geometry wins in the cascade without a flash of unstyled UI. -->
-    <link rel="stylesheet" href="assets/app-ui-system.css?v=tv81-1160">
+    <link rel="stylesheet" href="assets/app-ui-system.css?v=tv81-1163">
     <!-- Machinery product adapter: reusable mx-* definitions, loaded after the legacy layer. -->
-    <link rel="stylesheet" href="assets/machinery-app.css?v=tv81-1160">
-    <link rel="stylesheet" href="assets/machinery-ui.css?v=tv81-1160">
-    <link rel="stylesheet" href="assets/machinery-shell.css?v=tv81-1160">
+    <link rel="stylesheet" href="assets/machinery-app.css?v=tv81-1163">
+    <link rel="stylesheet" href="assets/machinery-ui.css?v=tv81-1163">
+    <link rel="stylesheet" href="assets/machinery-shell.css?v=tv81-1163">
     <!-- The wallet legacy adapter loads before the final shared identity so it cannot override R001. -->
-    <link rel="stylesheet" href="assets/machinery-wallet.css?v=tv81-1160">
-    <link rel="stylesheet" href="assets/machinery-language.css?v=tv81-1160">
-    <link rel="stylesheet" href="assets/north-star-adoption.css?v=tv81-1160">
+    <link rel="stylesheet" href="assets/machinery-wallet.css?v=tv81-1163">
+    <link rel="stylesheet" href="assets/machinery-language.css?v=tv81-1163">
+    <link rel="stylesheet" href="assets/north-star-adoption.css?v=tv81-1163">
     <!-- D029 desktop composition. Gated on the web surface AND 1024px, so the MiniDapp and the
          APK keep the shipped mobile composition at every width. -->
-    <link rel="stylesheet" href="assets/desktop-web.css?v=tv81-1160">
+    <link rel="stylesheet" href="assets/desktop-web.css?v=tv81-1163">
     <script>
         /* Surface flag for the D029 desktop layer. The preview bootstrap above resolves the local
            preview channel; on the real web it returns early, and the web surface is the default.
@@ -13246,12 +13246,12 @@
         <button class="ntab" id="tab-slot-5" data-page=""><span class="nicon">•</span><span class="nlabel"></span></button>
     </nav>
 
-    <script src="assets/config/runtime-config.js?v=tv81-1160"></script>
-    <script src="assets/testv008-registry.js?v=tv81-1160"></script>
+    <script src="assets/config/runtime-config.js?v=tv81-1163"></script>
+    <script src="assets/testv008-registry.js?v=tv81-1163"></script>
     <!-- The budget must exist before anything that reads the node or repaints the wallet. -->
-    <script src="assets/node-read-budget.js?v=tv81-1160"></script>
+    <script src="assets/node-read-budget.js?v=tv81-1163"></script>
     <!-- Exact arithmetic and the app's wording for notes; every error path calls stablesHumanNodeError. -->
-    <script src="assets/notes-manager.js?v=tv81-1160"></script>
+    <script src="assets/notes-manager.js?v=tv81-1163"></script>
     <script>
         (function () {
             var s = String((window.STABLES_CONFIG || {}).APP_STAGE || 'test').trim().toLowerCase();
@@ -13470,7 +13470,11 @@
                    visibility gating applies and it stands down like everything else. */
                 const neverSucceeded = !j.everReady;
                 if (!j.whileHidden && !neverSucceeded && !visible()) return;
+                /* The firing job's label is visible to the node-read ledger for the synchronous
+                   part of the run, so a read can be attributed to the timer that caused it. */
+                try { window.__STABLES_JOB_FIRING = j.label; } catch (_) { /* ignore */ }
                 try { j.fn(); } catch (_) { /* one job must never stop the others */ }
+                try { window.__STABLES_JOB_FIRING = null; } catch (_) { /* ignore */ }
             }
 
             function armJob(j, runNow) {
@@ -13730,7 +13734,7 @@
             setTimeout(function () { window.stablesReadiness.arm(); }, 1200);
         }
     </script>
-    <script src="assets/test-channel-bootstrap.js?v=tv81-1160"></script>
+    <script src="assets/test-channel-bootstrap.js?v=tv81-1163"></script>
     <!-- Minima MiniDapp hub does not inject a global MDS; ship mds.js in the package so hub URLs connect without Connect node. -->
     <script src="assets/lib/mds.js"></script>
     <script src="assets/qrcode.js"></script>
@@ -24817,6 +24821,11 @@
                     interval = 8000;  // remote node: be polite
                 }
             }
+            // The Minima Core companion pays a process hop for every command, and Core pushes
+            // NEWBALANCE, NEWBLOCK and NEWTXPOW to it (stablesOnNativeNodeEvent), so the poll there
+            // is a safety net for a missed push, not the detector: one status and one balance a
+            // minute (measured 2026-09-06 at 20 s: 3 status + 2.3 balance a minute all night).
+            if (window.__STABLES_CORE_CONNECTED_APP) interval = 60000;
             try { console.log('[Stables detect] live poll armed, interval ' + interval + 'ms'); } catch (_) { /* ignore */ }
             // A balance safety net is for a person who is looking at their balance. In a pocket it
             // is a node command every 20 seconds all night, holding awake the CPU the native layer
@@ -25051,6 +25060,17 @@
                 try { if (window.StablesTxRadar) window.StablesTxRadar.onNodeEvent(ev, nativeTxpowId); } catch (_) { /* ignore */ }
                 if (ev === 'NEWBALANCE') {
                     try { console.log('[Stables detect] native NEWBALANCE push at ' + new Date().toISOString()); } catch (_) { /* ignore */ }
+                    // NOBODY IS LOOKING. Core sends NEWBALANCE on every block, and this handler used
+                    // to answer each one from the pocket with a balance read plus the whole wallet
+                    // bundle (keys, coins, balance: 2 commands a minute all night, measured
+                    // 2026-09-06). The screens are repainted from the node the moment the app comes
+                    // back (the live poll and the balance refresh both run on resume), so while
+                    // hidden the push is only remembered. An incoming payment still arrives through
+                    // NEWTXPOW, which is handled below whatever the visibility.
+                    if (typeof document !== 'undefined' && document.hidden) {
+                        try { window.__STABLES_NEWBALANCE_WHILE_HIDDEN_AT = Date.now(); } catch (_) { /* ignore */ }
+                        return;
+                    }
                     try { stablesPullBlockAndBalanceFromMds(true); } catch (_) { /* ignore */ }
                     try {
                         MDS.cmd('balance', function (response) {
@@ -25077,6 +25097,10 @@
                     const id = nativeTxpowId;
                     try { console.log('[Stables detect] native NEWTXPOW push id=' + (id ? id.slice(0, 18) : '(none)') + ' at ' + new Date().toISOString()); } catch (_) { /* ignore */ }
                     try { if (typeof window.stablesTxMirrorKick === 'function') window.stablesTxMirrorKick(id); } catch (_) { /* ignore */ }
+                    // The chat address is tracked, so a message to it arrives as one of these pushes
+                    // too; the chat scan stands down between pages and this is what keeps a message
+                    // landing within seconds (see chat-onchain.js, SCAN_IDLE_MS).
+                    try { if (window.StablesChatOnchain && typeof window.StablesChatOnchain.scanNow === 'function') window.StablesChatOnchain.scanNow(); } catch (_) { /* ignore */ }
                     if (id && typeof window.stablesIngestLiveTxpow === 'function') {
                         // Retry ladder: hydration can fail or crawl while the history worker hogs
                         // the single-threaded node bridge, so re-attempt until the row lands.
@@ -25111,6 +25135,14 @@
                     return;
                 }
                 if (ev === 'NEWBLOCK') {
+                    // Same rule as NEWBALANCE: from the pocket a block is remembered, not answered.
+                    // Measured 2026-09-06 on the companion: every hidden keys+balance read of the
+                    // night followed a Core NEWBLOCK event within a second, through the settlement
+                    // refresh and the wallet repaint below. Resume repaints from the node anyway.
+                    if (typeof document !== 'undefined' && document.hidden) {
+                        try { window.__STABLES_NEWBLOCK_WHILE_HIDDEN_AT = Date.now(); } catch (_) { /* ignore */ }
+                        return;
+                    }
                     try { if (typeof window.stablesRefreshPendingSettlement === 'function') window.stablesRefreshPendingSettlement(); } catch (_) { /* ignore */ }
                     try { if (typeof window.renderActivity === 'function') window.renderActivity(); } catch (_) { /* ignore */ }
                     try { if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity(); } catch (_) { /* ignore */ }
@@ -25300,6 +25332,68 @@
          * borrows the answer to `coins address:B`. Anything that writes, and anything that changes
          * the wallet when you call it (`getaddress` hands out a fresh address every time), is
          * excluded and always goes to the node. */
+        /* WHO IS ASKING THE NODE, COUNTED ON THE DEVICE ITSELF.
+         *
+         * Every battery measurement so far attributed node commands by hand from logcat, which
+         * names the command word and nothing else. The standalone's ten-minute `history` train
+         * (2026-09-06) took an afternoon to trace to a resumed faucet tracker for exactly that
+         * reason. So the transport keeps a small ledger of reads by command word and by the
+         * function that asked, captured from the caller's own stack at the moment of asking (plus
+         * the label of the repeating job that is firing, when one is), and prints it once every
+         * five minutes while the app is in front:
+         *
+         *     [STABLES-NODE-READS] {"windowMs":300000,"total":24,"byCmd":{...},"byCaller":{...}}
+         *
+         * A release build has no devtools, so this line in logcat IS the attribution. Cost: one
+         * Error().stack per read, microseconds against a node command that costs milliseconds. On
+         * demand: window.stablesNodeReadLedger(). Only actual sends are counted; a read that joins
+         * one already in flight costs the node nothing and is not a read. */
+        var STABLES_NODE_READ_LEDGER = { since: Date.now(), total: 0, byCmd: {}, byCaller: {} };
+        var STABLES_NODE_READ_PLUMBING = /^(stablesNoteNodeRead|stablesRpcSendCommand|stablesRpcSendCommandNow|stablesRpcSendCommandRaw|stablesRpcEnqueue|stablesRpcShareableRead|stablesRpcRememberRead|MDS_RPC_cmd|MDS\.cmd|cmd|mdsCmdAsync|mdsCmdData|directOrMdsCmd|urgentMdsCmdData|faucetRpcSendCommand|withFaucetTimeout|runCmd|nodeCmd|mdsCommand|stablesAnyNodeCmd|new|Promise|Object|Array|Function|Generator|async|eval)$/;
+        function stablesNoteNodeRead(command) {
+            try {
+                var word = String(command || '').trim().split(/[\s:]/)[0].toLowerCase() || '?';
+                var sig = '';
+                try {
+                    var lines = String(new Error().stack || '').split('\n');
+                    var names = [];
+                    for (var i = 0; i < lines.length && names.length < 3; i++) {
+                        var m = lines[i].match(/^\s*at\s+(?:async\s+)?([^\s(]+)/);
+                        if (!m) continue;
+                        var name = m[1].replace(/^window\./, '').replace(/^Object\./, '').replace(/^async\s+/, '');
+                        if (!name || /^</.test(name) || /^(https?:|appassets|blob:|file:)/.test(name)) continue;
+                        if (STABLES_NODE_READ_PLUMBING.test(name)) continue;
+                        names.push(name);
+                    }
+                    sig = names.join('<');
+                } catch (_) { /* attribution is best-effort */ }
+                try { if (window.__STABLES_JOB_FIRING) sig += '@' + window.__STABLES_JOB_FIRING; } catch (_) { /* ignore */ }
+                var L = STABLES_NODE_READ_LEDGER;
+                L.total += 1;
+                L.byCmd[word] = (L.byCmd[word] || 0) + 1;
+                var key = word + ' ' + (sig || '(anonymous)');
+                L.byCaller[key] = (L.byCaller[key] || 0) + 1;
+            } catch (_) { /* a diagnostic must never break a read */ }
+        }
+        window.stablesNoteNodeRead = stablesNoteNodeRead;
+        window.stablesNodeReadLedger = function (reset) {
+            var L = STABLES_NODE_READ_LEDGER;
+            var callers = Object.keys(L.byCaller).sort(function (a, b) { return L.byCaller[b] - L.byCaller[a]; });
+            var top = {};
+            callers.slice(0, 16).forEach(function (k) { top[k] = L.byCaller[k]; });
+            var out = { windowMs: Date.now() - L.since, total: L.total, byCmd: L.byCmd, byCaller: top };
+            if (reset) STABLES_NODE_READ_LEDGER = { since: Date.now(), total: 0, byCmd: {}, byCaller: {} };
+            return out;
+        };
+        try {
+            window.stablesRepeatWhileVisible('node-read-ledger', function () {
+                try {
+                    var r = window.stablesNodeReadLedger(true);
+                    if (r.total > 0) console.log('[STABLES-NODE-READS] ' + JSON.stringify(r));
+                } catch (_) { /* ignore */ }
+            }, 300000, { runOnVisible: false });
+        } catch (_) { /* the ledger still answers on demand */ }
+
         const STABLES_RPC_SHAREABLE_READ = /^(balance|history|status|coins|checkaddress|keys|txpow|tokens|scripts)\b/i;
         const STABLES_RPC_SHARE_WINDOW_MS = 1500;
 
@@ -25352,7 +25446,13 @@
         const STABLES_RPC_LONG_CMDS = /^(megammrsync|restore|backup|archive|resync|seedrestore|vault)\b/i;
         const STABLES_RPC_LONG_TIMEOUT_MS = 15 * 60 * 1000;
 
+        /* Direct sends (the urgent reads) are counted here; queued ones are counted where they are
+           queued, while the caller is still on the stack. The raw sender counts nothing. */
         async function stablesRpcSendCommandNow(command) {
+            stablesNoteNodeRead(command);
+            return stablesRpcSendCommandRaw(command);
+        }
+        async function stablesRpcSendCommandRaw(command) {
             const cfg = stablesGetRpcConfig();
             if (!cfg) throw new Error('RPC not configured');
             const endpoint = cfg.url + '/' + encodeURIComponent(command);
@@ -25396,9 +25496,10 @@
                calls in one app open, 20 of the 33 seconds before a balance appears). */
             const shared = stablesRpcShareableRead(command);
             if (shared) return shared;
+            stablesNoteNodeRead(command);
             return stablesRpcRememberRead(
                 command,
-                stablesRpcEnqueue(function () { return stablesRpcSendCommandNow(command); })
+                stablesRpcEnqueue(function () { return stablesRpcSendCommandRaw(command); })
             );
         }
         window.stablesRpcSendCommand = stablesRpcSendCommand;
@@ -35320,15 +35421,15 @@
         })();
     </script>
     <script src="assets/theme.js"></script>
-    <script src="assets/payment-security.js?v=tv81-1160"></script>
-    <script src="assets/routes/activity-contacts.js?v=tv81-1160"></script>
+    <script src="assets/payment-security.js?v=tv81-1163"></script>
+    <script src="assets/routes/activity-contacts.js?v=tv81-1163"></script>
     <script src="assets/routes/trust-retro.js"></script>
-    <script src="assets/mx-dropdown.js?v=tv81-1160"></script>
-    <script src="assets/desktop-web.js?v=tv81-1160"></script>
-    <script src="assets/vendor/stables-sealedbox.js?v=tv81-1160"></script>
-    <script src="assets/chat-onchain.js?v=tv81-1160"></script>
+    <script src="assets/mx-dropdown.js?v=tv81-1163"></script>
+    <script src="assets/desktop-web.js?v=tv81-1163"></script>
+    <script src="assets/vendor/stables-sealedbox.js?v=tv81-1163"></script>
+    <script src="assets/chat-onchain.js?v=tv81-1163"></script>
     <script src="assets/routes/feedback.js"></script>
-    <script src="assets/tx-mirror.js?v=tv81-1160"></script>
+    <script src="assets/tx-mirror.js?v=tv81-1163"></script>
     <script src="assets/tx-radar.js"></script>
 
     <script>
