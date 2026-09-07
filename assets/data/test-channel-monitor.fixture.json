@@ -1,21 +1,46 @@
 {
+  "outcomes": {
+    "successful_actions_7d": 125,
+    "active_recipient_addresses_7d": 185,
+    "holder_addresses": 258
+  },
   "schema": "stables.test-channel-monitor.snapshot.v3",
-  "mode": "fixture",
-  "note": "Snapshot of the live collector (with ?activity=all) taken 2026-09-06 for local UI review; the page shows it only on localhost.",
-  "generated": "2026-09-06T08:47:27.383Z",
+  "mode": "live",
+  "generated": "2026-09-07T15:22:27.834Z",
   "network": "Minima mainnet",
   "channel": "Test",
-  "block": 2300109,
-  "archive_behind": 2129,
+  "block": 2302333,
+  "archive_block": 2300280,
+  "archive_behind": 2053,
+  "archive_time": "2026-09-07T15:20:06.791Z",
+  "archive_behind_reason": "by design: Minima writes a block to its archive only when the chain tree cuts it into the cascade, 100 blocks at a time, so the archive stays about a day behind the tip. The figures on this page do not wait for it.",
+  "node_scanned_to": 2302332,
+  "node_events": 67,
+  "data_current_to": 2302332,
+  "holders_live": true,
+  "coin_ledger_from": 2299712,
   "winiwa_usd": null,
-  "faucet_pool_winiwa": 999784000,
+  "scope": {
+    "usdw": false,
+    "coverage": false,
+    "leverage": false,
+    "note": "USDw, coverage and leverage are not part of this test (Council decision TV81-D23). Winiwa and xWiniwa are valueless test tokens."
+  },
+  "assets_usd": null,
+  "liabilities_usd": null,
+  "cr": null,
+  "leverage": null,
+  "usdw_circulating": null,
+  "faucet_pool_winiwa": 999774000,
   "faucet_initial_winiwa": 1000000000,
-  "winiwa_distributed": 216000,
-  "faucet_claims": 216,
-  "xwiniwa_circulating": 39671.51375196,
-  "xwiniwa_vault_pool_winiwa": 39671.51375196,
-  "xwiniwa_vault_reserve": 99960328.48624805,
-  "xwiniwa_vault_reserve_seed": 100000000,
+  "winiwa_distributed": 226000,
+  "faucet_claims": 226,
+  "faucet_claims_listed": 226,
+  "xwiniwa_circulating": 44265.913751960004,
+  "xwiniwa_outside_custody": 44365.91375196,
+  "xwiniwa_vault_pool_winiwa": 44265.913751960004,
+  "xwiniwa_vault_reserve": 103955734.08624804,
+  "xwiniwa_vault_reserve_seed": 104000000,
   "supply": {
     "winiwa": 1000000000,
     "xwiniwa": 1000000000
@@ -24,26 +49,24 @@
     "winiwa_token": "0xD4F5DD3546F25D327CBF2B6867E193CE5DB6491AC9C65BBDCECACA1A6688063F",
     "xwiniwa_token": "0xEFA53EFF58616DDBDF0B6D6DBB4E18F041C4509FB3DB3B7E5482B99ABC72F127",
     "faucet_covenant": "0x5E08C5DCD965B9460C4734DC6113AE747C98DFEC31B13FEADF5805D464F49930",
-    "vault_covenant": "0xF4B1826C2AC2F94C5C1DEB99E1DA560DAD98471B3C5BAF58E4B6FB1083EDFF3C"
+    "vault_covenant": "0xF4B1826C2AC2F94C5C1DEB99E1DA560DAD98471B3C5BAF58E4B6FB1083EDFF3C",
+    "vault_covenant_v2": "0x0C402031CE74B8C4F65CDC19F9E12AC00526091920C76E72AC90FAD7C57D5606",
+    "vault_v2_lanes": 4
   },
-  "tx_total": 270,
-  "activity_total": 270,
+  "tx_total": 289,
   "holders": {
-    "winiwa": 214,
-    "xwiniwa": 23
+    "usdw": null,
+    "xwiniwa": 37,
+    "winiwa": 240
   },
   "breakdown": {
-    "faucet": 216,
-    "mint_xwiniwa": 31,
-    "burn_xwiniwa": 23
+    "faucet": 226,
+    "mint_usdw": null,
+    "burn_usdw": null,
+    "mint_xwiniwa": 37,
+    "burn_xwiniwa": 26
   },
   "history": [
-    {
-      "t": "2026-08-24T00:00:00Z",
-      "claims": 0,
-      "mints": 0,
-      "burns": 0
-    },
     {
       "t": "2026-08-25T00:00:00Z",
       "claims": 2,
@@ -118,8 +141,14 @@
     },
     {
       "t": "2026-09-06T00:00:00Z",
-      "claims": 3,
-      "mints": 0,
+      "claims": 8,
+      "mints": 4,
+      "burns": 3
+    },
+    {
+      "t": "2026-09-07T00:00:00Z",
+      "claims": 5,
+      "mints": 2,
       "burns": 0
     }
   ],
@@ -128,10 +157,181 @@
       "type": "faucet",
       "amount": 1000,
       "ccy": "Winiwa",
+      "block": 2302246,
+      "t": "2026-09-07T14:18:33.303Z",
+      "txpowid": "0x0000092EC265E99A952A06FC465F72E32451CD19E4526923A30EE8FF0FDC8718",
+      "source": "node"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2301855,
+      "t": "2026-09-07T08:39:47.367Z",
+      "txpowid": "0x0000538632A02C81EEDE5E8DE3357A732D802F5F44BC9D7F4EBCF3418050869C",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2301853,
+      "t": "2026-09-07T08:36:46.674Z",
+      "txpowid": "0x00000618C91DF858B9FE20109A72C6B3CE24E07F89EDC8451FBF570A0CFAD173",
+      "source": "node"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 100,
+      "ccy": "xWiniwa",
+      "block": 2301830,
+      "t": "2026-09-07T08:24:03.671Z",
+      "txpowid": "0x00001C964DD76474FDB0C1860C22F634D0A3359CAE78D781D31EE1AB4784CD96",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2301826,
+      "t": "2026-09-07T08:21:24.127Z",
+      "txpowid": "0x0000045AA51A60CCB264E2C63B4E987F70F87E570737515BF35AB5129EB2DED5",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2301649,
+      "t": "2026-09-07T06:01:12.498Z",
+      "txpowid": "0x00007D6FCEA907669A12C9B38CBBAD7B9160E72EC45D81B116A51F5B5F33007A",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2301251,
+      "t": "2026-09-07T00:04:24.731Z",
+      "txpowid": "0x00001D7313FF13CF4191207DADEAF10EC46DACAD3FB5FC1BBDC591DDFFFEEF86",
+      "source": "node"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 0.4,
+      "ccy": "xWiniwa",
+      "block": 2301177,
+      "t": "2026-09-06T23:01:14.008Z",
+      "txpowid": "0x0000CCEF7DB93454F2B0A9E5567C07CDAE84F34329B04D4C1F2D8CA69777127D",
+      "source": "node"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 0.5,
+      "ccy": "xWiniwa",
+      "block": 2301177,
+      "t": "2026-09-06T23:01:14.008Z",
+      "txpowid": "0x000045FBE53FC8DEB61D69EF2F9FD261275760AAE911C3148769208F39890EC6",
+      "source": "node"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 1,
+      "ccy": "xWiniwa",
+      "block": 2301176,
+      "t": "2026-09-06T22:59:08.461Z",
+      "txpowid": "0x0000A61A7ED0D688DA992860B64E097CF50AFC4AAC042FFA0CB67B44B50B27DA",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2301160,
+      "t": "2026-09-06T22:49:36.059Z",
+      "txpowid": "0x0000BE7CB4F88F3CA0A2183EEBE8962B591B4149C26F5311AC02D1BE25C5A63C",
+      "source": "node"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 2.5,
+      "ccy": "xWiniwa",
+      "block": 2301099,
+      "t": "2026-09-06T21:55:50.642Z",
+      "txpowid": "0x0000BFF6947B1236C355750D1302D96ABF7E9F8D3BF17522E3F25EE71F271ED1",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2301025,
+      "t": "2026-09-06T20:59:30.453Z",
+      "txpowid": "0x00006256DB5B771D94DB027198EAF3AF690FF69DADB907C423378DF2BE4FF6A5",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2300384,
+      "t": "2026-09-06T12:15:47.888Z",
+      "txpowid": "0x0000E9B339116D5F3817E008B9E61745B9B5D7EE9E28D5CF65E99491D472FA56",
+      "source": "node"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 4000,
+      "ccy": "xWiniwa",
+      "block": 2300382,
+      "t": "2026-09-06T12:14:43.761Z",
+      "txpowid": "0x0000050442BEFE463B8AE60B2616130589364DA48AF3D80FDDE19ABC16B853E5",
+      "source": "node"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2300368,
+      "t": "2026-09-06T12:05:24.555Z",
+      "txpowid": "0x00007FFCDAC7903571A08F28F7FE356D00A07D09D0BA12586CD6437D254E4CA3",
+      "source": "node"
+    },
+    {
+      "type": "burn_xwiniwa",
+      "amount": 5,
+      "ccy": "xWiniwa",
+      "block": 2300132,
+      "t": "2026-09-06T09:09:02.588Z",
+      "txpowid": "0x00003107D673CB7D1A96D1B4170E9066886470DC736C4128925BFF82D607CA83",
+      "source": "both"
+    },
+    {
+      "type": "mint_xwiniwa",
+      "amount": 500,
+      "ccy": "xWiniwa",
+      "block": 2300129,
+      "t": "2026-09-06T09:05:34.965Z",
+      "txpowid": "0x00005110D19044B45D5AC2869F6B77C7FD33E20D95BE2B1693C007612E70E5FA",
+      "source": "both"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
+      "block": 2300125,
+      "t": "2026-09-06T09:02:55.469Z",
+      "txpowid": "0x00005187B240F24F2088F0CCEE8C8A52F30DE7C2FBEC9B7411EC829F60EB9452",
+      "source": "both"
+    },
+    {
+      "type": "faucet",
+      "amount": 1000,
+      "ccy": "Winiwa",
       "block": 2300043,
       "t": "2026-09-06T07:44:43.406Z",
       "txpowid": "0x000013110C20403409C7453B4430D9AF9E7C2F4FEDC2FFF5E28A3F18EF1191E7",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -140,7 +340,7 @@
       "block": 2300019,
       "t": "2026-09-06T07:18:34.171Z",
       "txpowid": "0x000016ABA334627FEDA23D60E93768A5F63797AA41377B736A44809F54DDAE3E",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -149,7 +349,7 @@
       "block": 2299613,
       "t": "2026-09-06T01:30:24.638Z",
       "txpowid": "0x00003944DC14647CD54226104047DADE85275640402C16704C6576FB24B71D13",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -158,7 +358,7 @@
       "block": 2299375,
       "t": "2026-09-05T22:22:10.191Z",
       "txpowid": "0x00004D211633A1DF1EF2B760805BF7AA6416CED21B1A94C092F106F09C74A004",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "burn_xwiniwa",
@@ -167,7 +367,7 @@
       "block": 2299358,
       "t": "2026-09-05T22:11:37.158Z",
       "txpowid": "0x0000555DD16DAC353D0435766EF26A9F1BC6BE77F675117F7A1A15A81076B878",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "burn_xwiniwa",
@@ -176,7 +376,7 @@
       "block": 2299340,
       "t": "2026-09-05T22:01:07.079Z",
       "txpowid": "0x00005D1527960EA05D89EFB6FD5D334299282F3C3117D2CFC921F6AC0E81E65F",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "burn_xwiniwa",
@@ -185,7 +385,7 @@
       "block": 2299335,
       "t": "2026-09-05T21:57:40.717Z",
       "txpowid": "0x00005DCC9CCEB4DDD7920828F9059BC03A5ECA82B6241919281EA302BFEF1F60",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "mint_xwiniwa",
@@ -194,7 +394,7 @@
       "block": 2299330,
       "t": "2026-09-05T21:51:57.191Z",
       "txpowid": "0x0000281071157343DFB0ED3DB70D00F6612FCA44117B982485234BAD654FDF08",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -203,7 +403,7 @@
       "block": 2299321,
       "t": "2026-09-05T21:43:49.039Z",
       "txpowid": "0x000037F9C2AE9E186C9A9639F82FB9FD2119EBBEB82ECBB522B57C140008C2DA",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "burn_xwiniwa",
@@ -212,7 +412,7 @@
       "block": 2299274,
       "t": "2026-09-05T21:04:07.580Z",
       "txpowid": "0x000050AF6FDBD9ED06868A6BEC00C530A41D274C18B91F217F76E989FD8EF20F",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "burn_xwiniwa",
@@ -221,7 +421,7 @@
       "block": 2299272,
       "t": "2026-09-05T21:02:51.138Z",
       "txpowid": "0x00005493673846E5FD96ACF3B9C13C0143D29925D4ABD6E4466778A00C1D0445",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "burn_xwiniwa",
@@ -230,7 +430,7 @@
       "block": 2299251,
       "t": "2026-09-05T20:46:57.348Z",
       "txpowid": "0x00005B1A18B2498449431EA21B067641B3A96CD45365AE5351C054684A485EE5",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "burn_xwiniwa",
@@ -239,7 +439,7 @@
       "block": 2299227,
       "t": "2026-09-05T20:30:06.928Z",
       "txpowid": "0x000009EAA1806DF6E69C9FBA506E7641D0C16212B9FC9E785303D29027C00BF4",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "burn_xwiniwa",
@@ -248,7 +448,7 @@
       "block": 2299216,
       "t": "2026-09-05T20:21:46.831Z",
       "txpowid": "0x00005A697F7C3C066CA5A4B03CEB7EEF8E6579FA135D9C556F39AFF450A433D4",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "burn_xwiniwa",
@@ -257,7 +457,7 @@
       "block": 2299125,
       "t": "2026-09-05T19:04:46.670Z",
       "txpowid": "0x0000616CC8695922BBF022C95975829F3831C9F7EE094D786C7969419B397C9C",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "mint_xwiniwa",
@@ -266,7 +466,7 @@
       "block": 2299118,
       "t": "2026-09-05T18:56:17.422Z",
       "txpowid": "0x000085B169B50E8942824DF2D17415A790A44F5CC23FFBCD75C86098AA009F57",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -275,7 +475,7 @@
       "block": 2299117,
       "t": "2026-09-05T18:55:59.729Z",
       "txpowid": "0x00005F648A0FBF2B319AE02DCC12CA9A083AB9381949F548FF990037927AFD02",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -284,7 +484,7 @@
       "block": 2299013,
       "t": "2026-09-05T17:27:05.512Z",
       "txpowid": "0x000021F695BA65936FE8D1987572A7A3AC134CD225DBF208F681AD588A03D00B",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -293,7 +493,7 @@
       "block": 2299005,
       "t": "2026-09-05T17:19:24.626Z",
       "txpowid": "0x00002BBAEAEB097C6D448FB1D6DAE29C98547EA96A7DCC4F898F5ECA1E5A0F05",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -302,7 +502,7 @@
       "block": 2298887,
       "t": "2026-09-05T15:35:07.986Z",
       "txpowid": "0x00008ED84DD9989AE4E4C9FBC8745830A9F8D10AF00DDAB35B080115E8535C01",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "burn_xwiniwa",
@@ -311,7 +511,7 @@
       "block": 2298842,
       "t": "2026-09-05T15:02:33.057Z",
       "txpowid": "0x00004DC9AC335E4779DE287D35B50CEE764B234A213DCE3E5EB8D209D52A6EF1",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "mint_xwiniwa",
@@ -320,7 +520,7 @@
       "block": 2298833,
       "t": "2026-09-05T14:56:57.610Z",
       "txpowid": "0x00003DC8E1D2BB6FF081AEA3CCB6E69040E10CF6D8FF903A6A3D73C0E4E27760",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -329,7 +529,7 @@
       "block": 2298831,
       "t": "2026-09-05T14:56:23.179Z",
       "txpowid": "0x000056DE706077AA94A3E73D8469A423F48BB7AB20B2216E185815FA1A6B3F25",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "mint_xwiniwa",
@@ -338,7 +538,7 @@
       "block": 2298805,
       "t": "2026-09-05T14:29:27.972Z",
       "txpowid": "0x0000719C2FE23F2620490618E1840474430826AAD04CD45256CDF3321051FDDC",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "mint_xwiniwa",
@@ -347,7 +547,7 @@
       "block": 2298781,
       "t": "2026-09-05T14:04:21.218Z",
       "txpowid": "0x000019E32C838FDB13525F42EA33C01CE7228E237381E3B3C4CE1DC171942E02",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -356,7 +556,7 @@
       "block": 2298780,
       "t": "2026-09-05T14:04:05.156Z",
       "txpowid": "0x000012E27483B4A60E361481B306BA3E186D9D64B4CF6B59BED1AA767F766B1B",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -365,7 +565,7 @@
       "block": 2298765,
       "t": "2026-09-05T13:52:22.711Z",
       "txpowid": "0x00005085B9DEB03E630BA38E9C4ED42258E38F1B80F49A4C003FD33A295C3A8F",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -374,7 +574,7 @@
       "block": 2298634,
       "t": "2026-09-05T12:13:46.266Z",
       "txpowid": "0x00005830F149E3C6B9C213776FC6C0E6C25674151E77CB12E497973D748CD2AE",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -383,7 +583,7 @@
       "block": 2298396,
       "t": "2026-09-05T09:00:31.681Z",
       "txpowid": "0x00003A2B3C1A63CB21F7A07569EC451E50229125D7FD21D7853D6836FF313E12",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -392,7 +592,7 @@
       "block": 2298186,
       "t": "2026-09-05T06:04:10.052Z",
       "txpowid": "0x00001DBD0358D432A663EF1A9933DBEC707AF440ED14200F5B211177ED91A5C3",
-      "source": "node"
+      "source": "both"
     },
     {
       "type": "faucet",
@@ -2555,5 +2755,16 @@
       "source": "archive"
     }
   ],
-  "explorer_tx_base": "https://explorer.minima.global/search?q="
+  "activity_total": 289,
+  "explorer_tx_base": "https://explorer.minima.global/search?q=",
+  "sources": {
+    "archive": "minima_archive.coins, canonical row per coin (max mmrentrynumber); archive lags the tip by the cascade window",
+    "node": "txpow block:N and coins address: on the Council node, scanned forward and kept on disk",
+    "holders": "archive position at its head, carried to the tip by the node's coin ledger (every Winiwa and xWiniwa coin created or spent in the scanned window)",
+    "faucet": "0x5E08C5DCD965B9460C4734DC6113AE747C98DFEC31B13FEADF5805D464F49930",
+    "vault": "0xF4B1826C2AC2F94C5C1DEB99E1DA560DAD98471B3C5BAF58E4B6FB1083EDFF3C",
+    "winiwa": "0xD4F5DD3546F25D327CBF2B6867E193CE5DB6491AC9C65BBDCECACA1A6688063F",
+    "xwiniwa": "0xEFA53EFF58616DDBDF0B6D6DBB4E18F041C4509FB3DB3B7E5482B99ABC72F127",
+    "system_addresses_excluded": 8
+  }
 }

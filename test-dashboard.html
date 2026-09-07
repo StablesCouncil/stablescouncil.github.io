@@ -398,8 +398,16 @@
     $("updatedH").textContent = "updated " + ago(d.generated);
     $("blockH").textContent = d.block ? nf(d.block) : "N/A";
     $("priceH").textContent = d.winiwa_usd != null ? tinyPrice(d.winiwa_usd) : "no price (test asset)";
+    // Freshness is the block the figures are current TO, which is a block or two behind the tip.
+    // It used to say how far the Minima archive was behind, which read as a fault: the archive is
+    // about 2,100 blocks back by design (a block reaches it only when the chain tree cuts it into
+    // the cascade), and since 2026-09-07 the holder figures no longer wait for it. The archive line
+    // stays, in smaller words, because it is still true and still worth being able to see.
+    if (d.data_current_to != null && d.block != null) {
+      $("updatedH").textContent += " · figures current to block " + nf(d.data_current_to);
+    }
     if (d.archive_behind != null && d.archive_behind > 0) {
-      $("updatedH").textContent += " · archive " + nf(d.archive_behind) + " blocks behind the tip";
+      $("updatedH").textContent += " · long history from the Minima archive, " + nf(d.archive_behind) + " blocks back by design";
     }
 
     // the headline: what the faucet handed out and what the vault issued
