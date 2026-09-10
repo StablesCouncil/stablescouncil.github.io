@@ -120,8 +120,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 22852,
-      "sha256": "E95AA2F9ADC827A7C4FBF0DCCDF36E613038659723C814D2731400652D6D6E75"
+      "bytes": 24278,
+      "sha256": "CF2880B9053625B888F79CD0167637C1A9A67104370460CD745B1DBC023EF74E"
     },
     {
       "path": "knowledge/communication_plan_overview.md",
@@ -185,8 +185,8 @@
     },
     {
       "path": "minima_continuity.html",
-      "bytes": 1888,
-      "sha256": "418C2F278B1BB1B2136E50DBF8EBC691456FB8B979E2B29EFCB6D862696B51BE"
+      "bytes": 3259,
+      "sha256": "8C7FA25CC68AFD4372C215906A90C4E762D7E5B433CE81B36D563D6FACA19769"
     },
     {
       "path": "notices/index.json",
