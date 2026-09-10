@@ -1,0 +1,12 @@
+Stables BCP status: normal standby
+
+This onion resilience page is being prepared as the public Business Continuity Plan activation surface.
+
+Current priority:
+- publish a stable onion address,
+- ask users to bookmark it in Tor Browser,
+- provide the approved MiniDapp package,
+- provide a compact essentials archive,
+- provide verification material for public files.
+
+Signed notices will be added after the signing flow is selected.

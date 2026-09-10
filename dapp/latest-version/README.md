@@ -1,25 +1,10 @@
-# Latest MiniDapp package
+# Stables coordinated testing release v0.0.11.88
 
-This folder mirrors the current public MiniDapp package for direct node installs.
+Release date: 2026-09-10. Includes startup and reliability improvements and notes grouped by address.
 
-**Current file:** **`Stables_v0.0.0.3.45.mds.zip`**  
-**Stage:** demo  
-**Display version:** `v0.0.0.3.45`  
-**Internal canonical version:** `v00.00.00.03.45`
+- `Stables_v0.0.11.88.apk`: standalone Android with its embedded node.
+- `StablesCore_v0.0.11.88.apk`: companion for the compatible official Minima Core app.
+- `Stables_v0.0.11.88.mds.zip`: install or update through MinimaOS.
+- Web: https://stablescouncil.org/dapp/3-test/, requiring a connected node.
 
-The public filename uses the short human-facing version style agreed for the app. Internal app config and `dapp.conf` keep the canonical two-digit version for comparisons and release bookkeeping.
-
-Direct download (raw):
-
-`https://raw.githubusercontent.com/StablesCouncil/stablescouncil.github.io/main/dapp/latest-version/Stables_v0.0.0.3.45.mds.zip`
-
-Per-channel source:
-
-- Demo build source: [`../2-demo/build/`](../2-demo/build/)
-- Showcase latest package: [`../1-showcase/latest-version/`](../1-showcase/latest-version/)
-
-Older demo zips are in [`archive/`](archive/) (not at this folder root). Only the current package stays here.
-
-Release history:
-
-`https://github.com/StablesCouncil/stablescouncil.github.io/blob/main/dapp/latest-version/VERSION_HISTORY.md`
+Upgrade over existing installations; do not uninstall or clear wallet data. The Core companion uses Core's wallet. Winiwa and xWiniwa are valueless test tokens. Payment readiness requires fresh node status and wallet proofs. Cold-payment speed and battery efficiency remain under measurement.

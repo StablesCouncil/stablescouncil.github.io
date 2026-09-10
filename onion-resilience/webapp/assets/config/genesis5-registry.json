@@ -1,0 +1,67 @@
+{
+  "genesis5": {
+    "genesis_block_note": "genesis-5 2026-07-10 from TestV005 (V5_GENERATION_PLAN.md). Set one: Winiwa(1e9, all-faucet)+USDw+cfUSDw+xWiniwa(active, floored). No order cap (S4 void). maxage 6. Lab proof: TRACEABILITY_MATRIX \"V5 Phase-1\".",
+    "oracle": {
+      "publickey": "0xD535B711E2F5EB01D4B9E824F81A206C5DC9AB6F0137717B032065A844A9A38E",
+      "node": "VPS"
+    },
+    "covenants": {
+      "commit": "0x43ED96934E2CD74BCA0784395719056F3EC786121AC44479F7F359EDBF8B89CD",
+      "collateral_vault": "0x988F9F34964E72225B50C84EAEEF7A9519EAB1C8CA82E756620C847E8FF44EC6",
+      "cf_vault": "0x580384E7BAAC93D145EF76A2CC6A565CBA6044F0219DBE9683157E39FA1C564A",
+      "ccy_vaults": {
+        "USDw": "0xC1E5155182E8B1100744CF3204B2FC6F3E598035730F470791D49B8FFDFEDEFC"
+      },
+      "xw_vault": "0x11B7120517E43A579B36B0F7AC28B55B8C5C190BA68055BDA38AC1EEA0E8F2B5",
+      "faucet": "0x6F2E8362CE26C169F322EC7A53CF3BFA9538212EDE2D1128F25CF2C5E1E983FF"
+    },
+    "rate_ports": {
+      "USDw": 60,
+      "xWiniwa": 78,
+      "xw_mirror": 79,
+      "collateral": 40
+    },
+    "tunables": {
+      "matureage": 5,
+      "refundage": 120,
+      "maxage": 6,
+      "order_cap": null,
+      "xw_floor": "0.01 Winiwa per xWiniwa (on-chain, S13)",
+      "bands": {
+        "ccy": 0.015,
+        "collateral": 0.05,
+        "xw": 0.05
+      }
+    },
+    "collateral": {
+      "name": "Winiwa",
+      "tokenid": "0xC06402ED4980239AF96918B706927C13EB14E3209B3BA6540D1F887A59D648CD",
+      "supply": "1000000000"
+    },
+    "equity": {
+      "name": "xWiniwa",
+      "tokenid": "0x28299B4768893F5FD4F1D3F439A94E48BD4AE779A8C1E76D40C788C37BA94F3F",
+      "supply": "1000000000000",
+      "active": true
+    },
+    "faucet": {
+      "address": "0x6F2E8362CE26C169F322EC7A53CF3BFA9538212EDE2D1128F25CF2C5E1E983FF",
+      "per_claim": 1000,
+      "note": "all Winiwa supply lives here (D5); pool starts at dust"
+    },
+    "snapshot": {
+      "pC": "0.00559",
+      "usdw": "1",
+      "xw": "0.0000559",
+      "at": "2026-07-10T21:20:33.734Z"
+    },
+    "currencies": {
+      "USDw": {
+        "tokenid": "0x15F2F500A22E34C32768D4B67AB10815C94D07002B9AE21DDF10EC72E1A8AA43",
+        "cf": "0x6333F01014A3DCEB09621BB1680B8B8BF938625DA1A6176B38AB0F029ADD6927",
+        "active": true,
+        "port": 60
+      }
+    }
+  }
+}

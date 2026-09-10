@@ -1,0 +1,340 @@
+/* R001 complete-product adoption. Mechanics and runtime identities remain in the existing DOM. */
+:root, html[data-theme], [data-theme] {
+  color-scheme: dark;
+  --bg: #16334f;
+  --bg-glow: rgba(103, 232, 249, .62);
+  --panel: rgba(255, 255, 255, .12);
+  --card: transparent;
+  --surface-chrome: rgba(255, 255, 255, .12);
+  --surface-chrome-alt: rgba(255, 255, 255, .12);
+  --surface-card: transparent;
+  --surface-input: rgba(255, 255, 255, .12);
+  --surface-input-solid: rgba(22, 51, 79, .96);
+  --surface-modal: rgba(22, 51, 79, .96);
+  --surface-btn: rgba(255, 255, 255, .12);
+  --surface-btn-hover: rgba(255, 255, 255, .17);
+  --surface-disabled: rgba(255, 255, 255, .08);
+  --surface-bar-track: rgba(255, 255, 255, .10);
+  --border-subtle: rgba(255, 255, 255, .16);
+  --border-accent: rgba(255, 255, 255, .24);
+  --border-accent-soft: rgba(255, 255, 255, .20);
+  --border-accent-faint: rgba(255, 255, 255, .12);
+  --shadow-card: none;
+  --overlay-backdrop: rgba(7, 20, 34, .68);
+  --surface-toast: rgba(22, 51, 79, .96);
+  --surface-elevated: rgba(255, 255, 255, .12);
+  --surface-elevated-hover: rgba(255, 255, 255, .17);
+  --surface-accent-soft: rgba(103, 232, 249, .16);
+  --surface-highlight-purple: rgba(96, 165, 250, .14);
+  --surface-highlight-purple-border: rgba(96, 165, 250, .32);
+  --surface-drawer: rgba(22, 51, 79, .96);
+  --surface-drawer-chrome: rgba(255, 255, 255, .12);
+  --t: #ffffff;
+  --m: rgba(255, 255, 255, .80);
+  --muted: rgba(255, 255, 255, .80);
+  --ln: rgba(255, 255, 255, .16);
+  --c: #67e8f9;
+  --pu: #60a5fa;
+  --am: #fbbf24;
+  /* Status colours are the D028 golden baseline's own, which is also what the public website
+     resolves. The app had drifted: success was mapped onto the accent (#67e8f9), so a success
+     state was indistinguishable from a primary action, and danger sat one tint away from the
+     baseline. The baseline uses #34d399 and #fb7185; the website matches it exactly and the app
+     did not, which the P1 brand-continuity audit reported. Both are single tokens with 55 and 38
+     uses, so the alignment propagates rather than being applied per site. */
+  --gr: #34d399;
+  --rd: #fb7185;
+  --r: 18px;
+  --rs: 12px;
+  --fz-hero: 28px;
+  --fz-title: 20px;
+  --fz-subtitle: 16px;
+  --fz-body: 16px;
+  --fz-caption: 14px;
+  --fz-label: 14px;
+  --fz-ui: 16px;
+  --fz-tab: 15px;
+  --fz-btn-lg: 16px;
+}
+
+html { min-width: 320px; background: #16334f; }
+body {
+  min-width: 320px;
+  background:
+    radial-gradient(64% 30% at 14% 0%, rgba(103, 232, 249, .62), transparent 66%),
+    radial-gradient(72% 34% at 86% 100%, rgba(96, 165, 250, .52), transparent 70%),
+    #16334f !important;
+  background-attachment: fixed !important;
+  color: #fff;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+body::before {
+  background-image:
+    radial-gradient(64% 30% at 14% 0%, rgba(103, 232, 249, .62), transparent 66%),
+    radial-gradient(72% 34% at 86% 100%, rgba(96, 165, 250, .52), transparent 70%) !important;
+}
+button, input, select, textarea { font: inherit; }
+:focus-visible { outline: 3px solid #67e8f9 !important; outline-offset: 3px !important; }
+
+.scroll-area, .page, .page.active, [data-machinery-lit] { background: transparent !important; color: #fff; }
+.page[data-machinery-lit] { width: min(580px, 100%); margin-inline: auto; padding-inline: 16px !important; }
+.app-page-header { padding: 8px 0 22px !important; }
+.app-page-header h1, .app-page-header__title, .app-page-title, .hero-title, .ptitle {
+  color: #fff !important;
+  font-size: clamp(28px, 7vw, 34px) !important;
+  font-weight: 700 !important;
+  line-height: 1.08 !important;
+  letter-spacing: -.035em !important;
+}
+.app-page-header p, .app-page-header__sub, .app-page-subtitle, .psub, .mu, .xs, .set-sub, .ui-tone-muted { color: rgba(255, 255, 255, .80) !important; }
+body [data-machinery-lit] .app-page-header__sub { font-size: 16px !important; line-height: 1.45 !important; font-weight: 500 !important; }
+.stitle, .set-label, .flabel, .ui-support-strong { color: #fff !important; }
+body [data-machinery-lit] .stitle { font-size: 20px !important; line-height: 1.2 !important; font-weight: 700 !important; letter-spacing: -.02em !important; }
+
+.app-section, .app-section-card, .card, .cp-card, .xwm-card, .ui-card, .ui-card-pad, .cb, .ccy-sec-list, .tx-list {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.app-section { padding-block: 20px !important; border-bottom: 1px solid rgba(255, 255, 255, .16) !important; }
+.app-section:last-child { border-bottom: 0 !important; }
+
+.finput, .fsel, .ui-input, .ui-select, .mx-dropdown__trigger, .ex-ccy-dd__btn, .paysec-input, textarea {
+  min-height: 56px !important;
+  border: 1px solid rgba(255, 255, 255, .24) !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, .12) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+.finput::placeholder, textarea::placeholder { color: rgba(255, 255, 255, .58) !important; }
+body [data-machinery-lit] .finput:not(textarea),
+body [data-machinery-lit] .fsel,
+body [data-machinery-lit] .ex-ccy-dd__btn,
+body [data-machinery-lit] .tv81-pair-dd .ex-ccy-dd__btn {
+  height: 56px !important;
+  min-height: 56px !important;
+  padding: 12px 14px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+}
+body .fsel {
+  height: 56px !important;
+  min-height: 56px !important;
+  padding: 12px 14px !important;
+  border-radius: 12px !important;
+  font-size: 15px !important;
+}
+.finput:focus, .fsel:focus, .ui-input:focus, .ui-select:focus, textarea:focus {
+  border-color: #67e8f9 !important;
+  box-shadow: 0 0 0 3px rgba(103, 232, 249, .18) !important;
+}
+
+.btn, .mx-action { min-height: 48px; border-radius: 12px !important; font-size: 16px !important; font-weight: 750 !important; box-shadow: none !important; }
+/* `.btn-w` is the full-width LAYOUT modifier and does not belong in a role selector. Listing it
+   here painted the primary accent, with !important, onto every full-width action whatever its role:
+   eleven quiet reference links across My shop, Council, Updates and Legal came out solid cyan, and
+   the seven-row Legal section index became one unbroken accent slab. Geometry and role are separate
+   axes in both directions, and the accent is used once. Every genuine primary carries `btn-primary`
+   or `data-role="primary"`/`"transaction"`, which the zero `bareBtnRoleCount` gate already
+   guarantees, so nothing loses its accent by removing the layout class from this list. */
+.btn-primary, .mx-action[data-role="primary"], .mx-action[data-role="transaction"] {
+  border-color: transparent !important;
+  background: #67e8f9 !important;
+  color: #07222c !important;
+}
+
+/* A destructive transaction keeps the transaction geometry and takes the burn colour (founder
+   2026-09-03: "the burn button on the confirm page should have the same burn red color as the other
+   burn buttons"). The role rule above painted EVERY transaction action accent, so btn-danger lost
+   on specificity and a burn confirmation read as a mint. Law 33: same place, same size, only the
+   role changes. */
+.mx-action.btn-danger[data-role="transaction"],
+.mx-action.btn-danger[data-role="transaction"]:hover,
+.mx-action.btn-danger[data-role="transaction"]:focus-visible {
+  background: rgba(239, 68, 68, 0.22) !important;
+  border: 1px solid rgba(239, 68, 68, 0.6) !important;
+  color: var(--t, #ffffff) !important;
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.14) !important;
+}
+.btn-secondary, .btn-choice, .mx-action[data-role="secondary"], .mx-action[data-role="choice"] {
+  border: 1px solid rgba(255, 255, 255, .24) !important;
+  background: rgba(255, 255, 255, .12) !important;
+  color: #fff !important;
+}
+.btn-danger, .mx-action[data-role="danger"] {
+  border: 1px solid rgba(255, 154, 166, .50) !important;
+  background: rgba(255, 154, 166, .18) !important;
+  color: #fff !important;
+}
+.btn:disabled, .mx-action:disabled, .mx-action[aria-disabled="true"] {
+  border-color: rgba(255, 255, 255, .12) !important;
+  background: rgba(255, 255, 255, .08) !important;
+  color: rgba(255, 255, 255, .58) !important;
+  opacity: 1 !important;
+}
+
+/* SEGMENTED CONTROL — one clean appearance for every mutually-exclusive choice row (founder
+   2026-08-10: the faint tint + thin underline read as confusing; make the selected segment a
+   solid fill, like The Pool). The control is a recessed track holding segments; the SELECTED
+   segment is a solid fill that reads at a glance. A direction pair fills its consequence colour
+   (buy/mint = accent, sell/burn = light red). This is the registered look; changing it here
+   ripples to every segmented control in the app. */
+.ui-segmented, .ui-side-toggle {
+  display: flex !important;
+  min-height: 52px !important;
+  padding: 4px !important;
+  gap: 4px !important;
+  border: 1px solid rgba(255, 255, 255, .10) !important;
+  border-radius: 14px !important;
+  background: rgba(8, 22, 36, .24) !important;
+  box-shadow: none !important;
+}
+.ui-segment, .ui-side, .mx-side, .tab, .subtab {
+  min-height: 44px !important;
+  flex: 1 1 0 !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: transparent !important;
+  color: rgba(255, 255, 255, .74) !important;
+  font-weight: 700 !important;
+  transition: background .15s ease, color .15s ease !important;
+}
+.ui-segment:hover, .ui-side:hover, .mx-side:hover { color: #fff !important; background: rgba(255, 255, 255, .05) !important; }
+.ui-segment.active, .ui-side.active, .mx-side.active, .tab.active, .subtab.active, [role="tab"][aria-selected="true"] {
+  background: #67e8f9 !important;
+  color: #07222c !important;
+  font-weight: 800 !important;
+  box-shadow: none !important;
+}
+/* M-EL-SIDE-CHOICE consequence colour (founder ruling 2026-08-09, extended 2026-08-10 to a solid
+   fill): a selected SELL or BURN segment is a solid light-red fill, never the accent. Direction
+   is meaning, not decoration. */
+.ui-side.active[data-side="sell"], .mx-side.active[data-side="sell"], .ui-segment.active[data-side="sell"],
+.ui-side.active[data-side="burn"], .mx-side.active[data-side="burn"], .ui-segment.active[data-side="burn"] {
+  background: #fb7185 !important;
+  color: #2c070e !important;
+  box-shadow: none !important;
+}
+
+/* The COMMIT action of a destructive direction wears the same consequence (founder 2026-08-10:
+   mint stays accent; burn, sell and every other-side action box go light red). The attribute is
+   the direction truth: static on burn commits, set by the ticket's side switch. */
+.action-transaction[data-side="burn"], .action-transaction[data-side="sell"] {
+  background: #fb7185 !important;
+  border-color: transparent !important;
+  color: #2c070e !important;
+}
+
+.tx-row, .ccy-primary, .ccy-sec-row, .set-row, .fact-row, .contact-row, .academy-row {
+  min-height: 64px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .16) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.tx-row:last-child, .ccy-primary:last-child, .ccy-sec-row:last-child, .set-row:last-child, .fact-row:last-child { border-bottom: 0 !important; }
+
+.ui-table, table { color: #fff; border-color: rgba(255, 255, 255, .16) !important; font-variant-numeric: tabular-nums; }
+th { color: rgba(255, 255, 255, .80) !important; }
+td, th { border-color: rgba(255, 255, 255, .16) !important; }
+.ui-chart-frame, .chart-wrap, .sim-chart, .tv81-chart, .mx-chart {
+  border: 1px solid rgba(255, 255, 255, .16) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(180deg, rgba(103, 232, 249, .10), transparent 70%) !important;
+  box-shadow: none !important;
+}
+
+.topbar, .bnav, .drawer, .agent-drawer-panel, .mx-keypad {
+  border-color: rgba(255, 255, 255, .24) !important;
+  background: rgba(255, 255, 255, .12) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(170%) !important;
+  backdrop-filter: blur(28px) saturate(170%) !important;
+}
+.bnav .ntab { min-height: 56px; border-radius: 12px !important; color: rgba(255, 255, 255, .80) !important; }
+.bnav .ntab.active { background: #67e8f9 !important; color: #07222c !important; }
+
+.mback, .ui-modal-overlay, .modal-overlay { background: rgba(7, 20, 34, .68) !important; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+/* `.ui-modal-frame` is NOT in this list. It is a positioning wrapper around a `.modal` that
+   paints its own surface, so giving it one too draws a box inside a box (D022). Both desktop
+   surfaces already cancelled it; the ordinary surface did not, and at any width where the frame
+   is not edge to edge the second box was plainly visible (founder 2026-09-01, the Get started
+   with Winiwa dialog). Fixed at the cause instead of a third override. */
+.modal:not([data-modal-shape="screen"]), .ui-modal, .confirm-dialog, .contact-picker, .sheet, .drawer-panel {
+  border: 1px solid rgba(255, 255, 255, .24) !important;
+  border-radius: 18px !important;
+  background: rgba(22, 51, 79, .96) !important;
+  color: #fff !important;
+  box-shadow: 0 20px 60px rgba(7, 20, 34, .42) !important;
+}
+.modal[data-modal-shape="screen"] {
+  background:
+    radial-gradient(64% 30% at 14% 0%, rgba(103, 232, 249, .62), transparent 66%),
+    radial-gradient(72% 34% at 86% 100%, rgba(96, 165, 250, .52), transparent 70%),
+    #16334f !important;
+}
+/* Floating status SURFACES only. An in-row status line (.set-sub.mx-status, e.g. the node
+   connection line) is typographic and must never wear this frame — that read as an ugly
+   input-shaped box under the row label (founder 2026-08-10). */
+.toast, .status-banner, .mx-status:not(.set-sub), .lifecycle-banner {
+  border: 1px solid rgba(255, 255, 255, .24) !important;
+  border-radius: 12px !important;
+  background: rgba(22, 51, 79, .96) !important;
+  color: #fff !important;
+}
+
+/* The in-row status line carries its state as a leading dot instead: glanceable truth,
+   no chrome. States follow the connection renderer's data-state. */
+.set-sub.mx-status[data-state]::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .35);
+  vertical-align: baseline;
+}
+.set-sub.mx-status[data-state="connected"]::before { background: #34d399; }
+.set-sub.mx-status[data-state="connecting"]::before { background: #fbbf24; }
+.set-sub.mx-status[data-state="error"]::before { background: #fb7185; }
+#stablesNodeBanner {
+  min-height: 52px !important;
+  margin-bottom: 4px !important;
+  padding: 8px 10px !important;
+}
+.theme-picker[hidden] { display: none !important; }
+
+@media (max-width: 460px) {
+  #stablesNodeBanner {
+    grid-template-columns: 28px minmax(0, 1fr) auto !important;
+    gap: 8px !important;
+    padding: 10px !important;
+  }
+  #stablesNodeBanner > .mx-action {
+    grid-column: auto !important;
+    width: auto !important;
+    min-width: 104px !important;
+    padding-inline: 12px !important;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .topbar, .bnav, .drawer, .agent-drawer-panel, .mx-keypad { background: rgba(22, 51, 79, .96) !important; }
+}
+@media (max-width: 380px) {
+  .page[data-machinery-lit] { padding-inline: 14px !important; }
+  .ui-grid-equal, .ui-grid-2, .ui-grid-3 { grid-template-columns: minmax(0, 1fr) !important; }
+  #feedbackApp [style*="grid-template-columns:max-content"] { grid-template-columns: minmax(0, 1fr) !important; }
+  #feedbackApp [style*="white-space:nowrap"] { white-space: normal !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

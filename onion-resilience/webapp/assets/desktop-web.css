@@ -1,0 +1,849 @@
+/*
+ * Desktop web integration, second generation (founder direction 2026-08-09).
+ *
+ * The founder discarded the first desktop version (desktop-webapp.css, the pinned right-hand
+ * drawer rail and the page-by-page composition programme) and asked for one complete integration
+ * designed for desktop from the mobile app's CONTENT. This file and desktop-web.js are that
+ * integration. The retired file is kept on disk, unlinked, as history.
+ *
+ * WHAT IT IS. An application shell: a fixed right sidebar carrying brand, navigation and
+ * connection status, and a content canvas where every one of the 25 routes has an assigned
+ * desktop treatment. The sidebar is not a rebuilt menu: desktop-web.js MOVES the app's own
+ * brand block, More-drawer and status cluster into it, so every destination, label, handler and
+ * status control stays the single mobile source of truth and cannot drift from it (P2: a wider
+ * screen arranges differently, it never offers differently).
+ *
+ * GATING. Everything here requires BOTH:
+ *   html.dw-active            added by desktop-web.js only on the webapp surface at >=1024px
+ *   @media (min-width:1024px) belt and braces against a stale class during resize
+ * ?preview=dapp and ?preview=apk never get the class, so the MiniDapp and APK are untouched at
+ * every width, and the web surface below 1024px keeps the shipped mobile composition.
+ *
+ * LAWS CARRIED FORWARD (defect fixes, not the discarded design):
+ *   - A layout rule may never decide whether something is on screen. Any rule here that sets
+ *     display on a .page element is guarded with .active. The desktop audit fails whenever the
+ *     number of visible pages is not exactly one.
+ *   - The pair rule must lose to any state that hides its container (no !important on display).
+ *   - The modal positioning frame never paints a surface (one box, not two).
+ *   - Register geometry is untouched: control heights and radii are the element registry's own.
+ *
+ * TREATMENTS (assigned in desktop-web.js, mirrored in
+ * work/Machinery/projects/stables-desktop-web/desktop-web.v1.json, enforced by
+ * work/tools/audit-desktop-webapp.mjs):
+ *   home        Wallet. Balance and its two verbs lead, Assets follow, and recent activity
+ *               always follows Assets in the same vertical flow (P8).
+ *   task        A money page. The form keeps a bounded 560px task column (P7); marked
+ *               supporting truth ([data-mx-region="context"]) moves beside it from 1280.
+ *   document    Legal & notices. A 680px reading measure (P4) with the page's own section
+ *               index beside it.
+ *   focus       Everything whose content is one column of sections. It keeps its measured
+ *               width (--dw-max) on the open ground instead of stretching (P3).
+ *   The Trade view is a workstation: chart and book beside the order ticket, scoped to the
+ *   view container, not the route, because Exchange and Trade share one page implementation.
+ */
+
+/* The desktop-only Wallet navigation row stays invisible on every mobile surface, including the
+   web surface below 1024px. This base rule must exist whether or not the shell mounts. */
+[data-desktop-only] { display: none; }
+.desktop-connection-modes { display: none; }
+
+@media (min-width: 1024px) {
+
+  html.dw-active {
+    --dw-sidebar: 264px;
+  /* THE THREE MEASURES, declared once, consumed everywhere. The 720px reading measure is also
+     the standard single-column page width; 560px is reserved for focused money tasks. */
+    --dw-frame: 1180px;
+    --dw-measure-task: 560px;
+    --dw-measure-read: 720px;
+    /* The topbar is hidden on desktop (its brand and status cluster live in the sidebar), and
+       there are no bottom tabs, so the app's chrome clearance collapses. */
+    --th: 0px;
+    --nh: 0px;
+  }
+
+  /* ------------------------------------------------------------------ shell */
+
+  html.dw-active .topbar { display: none !important; }
+  html.dw-active .bnav { display: none !important; }
+
+  html.dw-active #dwSidebar {
+    position: fixed;
+    inset: 0 0 0 auto;
+    width: var(--dw-sidebar);
+    display: flex;
+    flex-direction: column;
+    z-index: 90;
+    border-left: 1px solid var(--border-subtle);
+    /* Chrome wears glass in this product (topbar, tabs, drawer); the sidebar is chrome. A
+       faint wash, not a pane: the ambient field stays readable through it (P5). */
+    background: linear-gradient(180deg, rgba(255, 255, 255, .055), rgba(255, 255, 255, .02));
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(24px) saturate(160%);
+    padding: 20px 0 12px;
+  }
+
+  /* Brand at the top of the sidebar: the same .brand node the topbar carried. */
+  html.dw-active #dwSidebar .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 20px 18px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid var(--border-subtle);
+    cursor: pointer;
+  }
+  html.dw-active #dwSidebar .brand .ui-center-row { align-items: flex-start; }
+
+  /* Connection status in the footer: the same .topbar-trailing cluster. Persistent, so the
+     app-wide connection truth is always on screen (one persistent status surface). */
+  html.dw-active #dwSidebar .topbar-trailing {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px 6px;
+    border-top: 1px solid var(--border-subtle);
+    position: static;
+  }
+  /* machinery-wallet hides the trailing cluster while the Wallet page is active, because on
+     mobile the wallet keeps only the mark in its transparent bar. In the sidebar this cluster
+     is the app's one persistent connection surface, so it stays on every route. */
+  html.dw-active body:has(#page-wallet.active) #dwSidebar .topbar-trailing {
+    display: flex !important;
+  }
+  /* The menu shows connection ACTIONS and PROBLEMS, never the chain's own counter (founder
+     2026-08-09: no block height in the menu). A live healthy node needs no message here — the
+     status dot carries the truth, and Connect / Connecting / Node issue still surface. */
+  html.dw-active #dwSidebar .topbar-trailing .stables-node-cluster-pill--live { display: none; }
+
+  html.dw-active .desktop-connection-modes {
+    display: grid;
+    gap: 8px;
+    padding: 0;
+    margin: 0 0 18px;
+    border: 0;
+  }
+  html.dw-active .desktop-connection-mode {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-control);
+    background: rgba(255, 255, 255, .025);
+    cursor: pointer;
+  }
+  html.dw-active .desktop-connection-mode:has(input:checked) {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  html.dw-active .desktop-connection-mode:has(input:disabled) {
+    opacity: .55;
+    cursor: not-allowed;
+  }
+  html.dw-active .desktop-connection-mode input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+  }
+  html.dw-active .desktop-connection-mode span,
+  html.dw-active .desktop-connection-mode strong,
+  html.dw-active .desktop-connection-mode small {
+    display: block;
+  }
+  html.dw-active .desktop-connection-mode small {
+    margin-top: 3px;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  /* ------------------------------------------------------- sidebar navigation */
+
+  /* The adopted drawer stops being an overlay. Pinned regardless of .open so closeMore()
+     cannot dismiss the only navigation on screen. */
+  html.dw-active #dwSidebar .dback#drawer {
+    display: block !important;
+    opacity: 1 !important;
+    position: static;
+    inset: auto;
+    width: 100%;
+    height: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: transparent;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    transition: none;
+  }
+
+  html.dw-active #dwSidebar .drawer {
+    display: flex;
+    flex-direction: column;
+    position: static;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: none;
+    margin: 0;
+    padding: 0 10px 8px;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    transform: none;
+    overflow: visible;
+  }
+
+  /* D031 removes the three quick controls from the desktop rail head. Their mobile placement is
+     untouched; desktop-web.js moves language to Preferences and version to the footer. */
+  html.dw-active #dwSidebar .drawer .drawer-lang-bar {
+    display: none !important;
+  }
+
+  html.dw-active #dwSidebar .drawer .dw-language-item {
+    display: flex;
+    cursor: default;
+  }
+  html.dw-active #dwSidebar .drawer .dw-language-item .app-lang-switcher {
+    order: -1;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+  }
+  html.dw-active #dwSidebar .drawer .dw-language-item #drawerLangLabelBtn { display: none; }
+  /* Language is an interactive command, so its registered 48px target remains intact. Only its
+     painted mark follows the 28px rail-icon language. Keeping target and mark as separate layers
+     prevents an accessibility rule from creating a second visual size inside one menu. */
+  html.dw-active #dwSidebar .drawer .dw-language-item .app-lang-globe-btn {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 12px !important;
+  }
+  html.dw-active #dwSidebar .drawer .dw-language-item .app-lang-globe-btn::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 28px;
+    height: 28px;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+    border: 1px solid var(--mx-glass-line);
+    border-radius: 50%;
+    background: var(--mx-glass);
+  }
+  html.dw-active #dwSidebar .drawer .dw-language-item .app-lang-globe-btn svg {
+    position: relative;
+    z-index: 1;
+    width: 16px;
+    height: 16px;
+  }
+
+  html.dw-active #dwSidebarFooter {
+    flex: 0 0 auto;
+    min-width: 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+  html.dw-active #dwSidebarFooter .topbar-trailing {
+    border-top: 0;
+    padding-bottom: 8px;
+  }
+  html.dw-active #dwSidebarFooter .drawer-version-status {
+    display: flex;
+    width: calc(100% - 24px);
+    max-width: none;
+    min-width: 0;
+    margin: 0 12px;
+    padding: 9px 10px;
+    gap: 8px;
+  }
+  html.dw-active #dwSidebarFooter .drawer-version-status__version {
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  /* Group headings carry the structure; the mobile divider hairlines stand down. Most of these
+     restate the lit drawer language at desktop density, so they carry the same weight it does. */
+  html.dw-active #dwSidebar .drawer .ddiv { display: none !important; }
+  html.dw-active #dwSidebar .drawer .dsect { margin: 2px 0; }
+  html.dw-active #dwSidebar .drawer .dsect-t {
+    font-size: 10.5px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .12em !important;
+    color: rgba(255, 255, 255, .52) !important;
+    padding: 16px 12px 6px !important;
+  }
+
+  /* Compact desktop rows: one glass mark and a name, no separators; spacing and the group
+     headings do the structural work. The two-line description was written for a full-width
+     mobile drawer; here it pushed the list past the window. Nothing is removed from the app:
+     same rows, same order, same handlers. */
+  html.dw-active #dwSidebar .drawer .ditem {
+    min-height: 42px;
+    padding: 8px 12px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    gap: 12px !important;
+    align-items: center;
+    margin: 1px 0;
+  }
+  html.dw-active #dwSidebar .drawer .ditem:hover { background: rgba(255, 255, 255, .08) !important; }
+  html.dw-active #dwSidebar .drawer .ditem .ddesc { display: none; }
+  html.dw-active #dwSidebar .drawer .ditem > span.ui-tone-muted { display: none; }
+  html.dw-active #dwSidebar .drawer .ditem .dname {
+    font-size: 14px !important;
+    font-weight: 650 !important;
+    letter-spacing: -.005em !important;
+  }
+  /* The menu's one-glass-mark-per-destination language, at desktop scale. */
+  html.dw-active #dwSidebar .drawer .ditem .dic {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px;
+    font-size: 13px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  html.dw-active #dwSidebar .drawer .ditem .dic img,
+  html.dw-active #dwSidebar .drawer .ditem .dic svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Where you are: the outlined selector (founder 2026-08-09, from the charter navigation) —
+     a rounded accent ring with a soft glow around the current row, text staying white. Drawn
+     with shadows rather than a border so the row's geometry never shifts between states.
+     !important because the base row rules above carry the lit language's own weight. */
+  html.dw-active #dwSidebar .drawer .ditem.is-current {
+    background: rgba(103, 232, 249, .06) !important;
+    border-radius: 12px !important;
+    box-shadow:
+      inset 0 0 0 1.5px var(--c),
+      0 0 10px rgba(103, 232, 249, .28) !important;
+  }
+  html.dw-active #dwSidebar .drawer .ditem.is-current .dname { font-weight: 800 !important; }
+  html.dw-active #dwSidebar .drawer .ditem.is-current:hover { background: rgba(103, 232, 249, .10) !important; }
+
+  /* A thin, quiet scrollbar for the navigation column. `scrollbar-gutter: stable both-edges`
+     is the SOURCE fix for centring: the scrollbar otherwise eats width on one side of the
+     scroll container, so nav content centres on a narrower box than the brand above it and
+     everything sits a few pixels off the rail's true centre — most visibly in the collapsed
+     rail. Symmetric gutters give every element in the sidebar one centring reference. */
+  html.dw-active #dwSidebar .dback#drawer {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, .22) transparent;
+    scrollbar-gutter: stable both-edges;
+  }
+
+  /* ------------------------------------------------- collapsed icon rail */
+
+  /* The menu collapses to the logo and the page marks (founder 2026-08-09). Everything else
+     stands down; a row's name survives as its native tooltip and the current ring stays on the
+     mark. The canvas and dialogs follow automatically because they read --dw-sidebar. */
+  html.dw-active.dw-collapsed { --dw-sidebar: 76px; }
+
+  html.dw-active.dw-collapsed #dwSidebar .brand {
+    justify-content: center;
+    padding: 0 0 16px;
+    gap: 0;
+  }
+  html.dw-active.dw-collapsed #dwSidebar .brand .ui-center-row { display: none; }
+  html.dw-active.dw-collapsed #dwSidebar .brand .brand-hover-tip { display: none; }
+
+  /* The symmetric scrollbar gutters already frame the column; drawer AND group side padding on
+     top of them squeezed the content box below the row width, and an over-constrained box
+     cannot centre (its auto margins collapse to 0 and negative). ONE reservation: the gutters.
+     This is the source rule for centring — every box between the rail and a row keeps zero
+     side padding, so the row's auto margins always have room to be equal. */
+  html.dw-active.dw-collapsed #dwSidebar .drawer { padding: 0 0 8px; }
+  html.dw-active.dw-collapsed #dwSidebar .drawer .dsect { padding-inline: 0 !important; }
+  html.dw-active.dw-collapsed #dwSidebar .drawer .dsect-t { display: none !important; }
+  html.dw-active.dw-collapsed #dwSidebar .drawer .drawer-lang-bar { display: none !important; }
+  /* A collapsed row is a centred square, so the current ring hugs the mark instead of
+     stretching into a tall pill (founder finding 2026-08-09). */
+  html.dw-active.dw-collapsed #dwSidebar .drawer .ditem {
+    width: 46px;
+    min-height: 46px;
+    justify-content: center;
+    margin: 2px auto;
+    padding: 9px 0 !important;
+    gap: 0 !important;
+    border-radius: 12px !important;
+  }
+  html.dw-active.dw-collapsed #dwSidebar .drawer .ditem .dinfo { display: none; }
+  html.dw-active.dw-collapsed #dwSidebar .drawer .dw-language-item .app-lang-switcher {
+    flex-basis: 28px;
+  }
+
+  /* The flyout name beside the rail: instant, reading the row's own label. */
+  #dwTip {
+    position: fixed;
+    transform: translate(-100%, -50%);
+    z-index: 420;
+    pointer-events: none;
+    background: var(--surface-toast);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--t);
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(7, 20, 34, .45);
+  }
+  #dwTip[hidden] { display: none; }
+  /* Groups keep their boundaries as hairlines where their headings stood. No side margins:
+     a margin here shrinks the group's box below the row width and off-centres every row in it
+     (the one-reservation centring law again). */
+  html.dw-active.dw-collapsed #dwSidebar .drawer .dsect ~ .dsect {
+    border-top: 1px solid var(--border-subtle);
+    margin: 6px 0 0;
+    padding-top: 6px;
+  }
+  /* The status cluster stands down while collapsed; the node banner on the canvas remains the
+     persistent connection surface. This must outrank the wallet-route exception above. */
+  html.dw-active.dw-collapsed body:has(#page-wallet.active) #dwSidebar .topbar-trailing,
+  html.dw-active.dw-collapsed #dwSidebar .topbar-trailing,
+  html.dw-active.dw-collapsed #dwSidebarFooter .drawer-version-status { display: none !important; }
+
+  /* The collapse control: one quiet chevron at the foot of the rail. */
+  /* The Wallet home row exists only where the bottom tabs that carried it do not. */
+  html.dw-active #dwSidebar .dsect[data-desktop-only] { display: block; }
+  html.dw-active #dwSidebar .ditem[data-desktop-only] { display: flex; }
+
+  /* ------------------------------------------------------------------ canvas */
+
+  html.dw-active .scroll-area {
+    max-width: none;
+    margin: 0 var(--dw-sidebar) 0 0;
+    padding: 36px 48px 96px;
+  }
+  /* machinery-language collapses the top reserve to safe+10px on every page without the
+     wallet's transparent bar (its selector carries an id inside :not(), so it outranks any
+     plain class rule). The frame's top edge must sit at the same height on every route, so the
+     same selector shape restates the desktop value. */
+  html.dw-active body:has(.page.active[data-machinery-lit]):not(:has(#page-wallet.active)) .scroll-area {
+    padding-top: 36px !important;
+  }
+
+  html.dw-active .scroll-area > .stables-node-banner {
+    max-width: var(--dw-frame);
+    margin-inline: auto;
+  }
+
+  /* Every page gets the content frame; its treatment decides what happens inside it. The
+     mobile 580px page measure (north-star-adoption) is restated at frame width; these rules
+     never touch display, so an inactive page stays exactly as hidden as it was. */
+  html.dw-active .page,
+  html.dw-active .page[data-machinery-lit] {
+    width: min(var(--dw-frame), 100%);
+    max-width: var(--dw-frame);
+    margin-inline: auto;
+    padding-inline: 0 !important;
+    padding-block: 0 48px;
+  }
+
+  /* The selected rail row is the desktop page title. Keep the source heading in the
+     accessibility tree while removing its duplicate visual treatment from the canvas. */
+  html.dw-active .page.active > .app-page-header {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+
+  /* Multi-recipient construction already uses the established exact-amount send path.
+     Desktop restores its entry control without changing transaction mechanics. */
+  html.dw-active #sendModal.open .send-split-row {
+    display: block;
+  }
+
+  /* The floating agent control belongs to the canvas, not the viewport edge, and on a desktop
+     canvas an assistant sits at the bottom corner rather than over the status banner. */
+  html.dw-active .fab-container {
+    left: auto;
+    right: calc(var(--dw-sidebar) + 28px);
+    margin-inline: 0;
+    /* The scroll-away-navigation transform is a mobile behaviour; there is no bottom bar to
+       follow on desktop. */
+    transform: none !important;
+  }
+  html.dw-active .agent-fab {
+    top: auto;
+    bottom: 28px;
+    /* Barely visible on the navy ground (founder finding 2026-08-09): the assistant gets a
+       light chip so its dark mark actually reads, with a soft lift off the canvas. */
+    background: rgba(255, 255, 255, .92) !important;
+    border: 1px solid rgba(255, 255, 255, .55) !important;
+    box-shadow: 0 8px 24px rgba(7, 20, 34, .45) !important;
+  }
+  /* The mobile drawer hides the assistant while it is open; on desktop that same element IS the
+     pinned navigation, so a stale .open must not erase the assistant. Dialogs still hide it. */
+  html.dw-active body:has(.dback.open):not(:has(.mback.open)) .agent-fab {
+    display: flex !important;
+  }
+
+  /* The local platform-preview badge (a web-dev aid) writes inline `left:10px`, which lands it
+     under the sidebar; it moves to the canvas edge instead. */
+  html.dw-active [data-stables-preview-badge] {
+    left: 16px !important;
+  }
+
+  /* ------------------------------------------------------------- treatments */
+
+  /* FOCUS: one measured column of sections centered on the open ground. Width buys nothing here
+     because the page has nothing to place beside itself; a page is never widened just to occupy
+     space (P3). Fixed-position children (page-scoped dialogs) are exempt: bounding a fixed
+     backdrop would tear it off the viewport. */
+  /* !important because the lit language declares `.app-section { max-width: none !important }`
+     for the mobile column; the desktop bound must outrank it or every section quietly runs the
+     frame. FORM is a focus column fixed at the 560px task measure: its fields and its commit
+     action share one column edge, which is the alignment law. */
+  /* THE THREE MEASURES (founder ruling 2026-08-09: one common structure; multiple column
+     widths hurt the brain). 560 is the task measure (money and forms, P7). 720 is the reading
+     measure, one width for EVERY single-column page (it is the registered P4 maximum). 1180 is
+     the frame, spent only where a real second region earns it (task+context, document+index,
+     the workstation). A single-flow Wallet uses the reading measure. Nothing else exists. */
+  html.dw-active .page[data-dw="home"] > *:not(.mback) {
+    max-width: var(--dw-measure-read) !important;
+    margin-inline: auto !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  html.dw-active .page[data-dw="focus"] > *:not(.mback),
+  html.dw-active .page:not([data-dw]) > *:not(.mback) {
+    max-width: var(--dw-measure-read) !important;
+    margin-inline: auto !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  html.dw-active .page[data-dw="form"] > *:not(.mback) {
+    max-width: var(--dw-measure-read) !important;
+    margin-inline: auto !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  /* A native input is inline-level by default, so browsers resolve its auto side margins to
+     zero even when it is the page's bounded column member. Direct controls participate in the
+     same centered column as section blocks without changing their registered field geometry. */
+  html.dw-active .page[data-dw="focus"] > :is(input, select, textarea),
+  html.dw-active .page[data-dw="form"] > :is(input, select, textarea) {
+    display: block;
+  }
+
+  /* HOME: one centered account column. Balance and verbs lead, Assets follow, and Recent
+     activity follows Assets (P3, P4 and P8). */
+  /* TASK: the form stays a bounded task column; marked supporting truth moves beside it. The
+     bound is declared on what a person fills in, so a control added later inherits it. */
+  /* Bounded AND centred (founder 2026-09-01). The bound existed already; without the centring the
+     page's own controls - the asset picker and the direction switch - sat against the left edge
+     while the form inside the region host was centred, giving one page two starting points. */
+  html.dw-active .page[data-dw="task"] > *:not(.mback) {
+    max-width: var(--dw-measure-task) !important;
+    margin-inline: auto !important;
+  }
+  html.dw-active .page[data-dw="task"] > *:has([data-mx-regions]),
+  html.dw-active .page[data-dw="task"] > [data-mx-regions],
+  html.dw-active .page[data-dw="task"] > #tv81ExTabLiquidity {
+    max-width: none !important;
+  }
+
+  /* Chat is a two-pane workstation (founder 2026-08-10: list left, conversation right, the way
+     every messaging app is built). Its layout spans the frame instead of the reading measure. */
+  html.dw-active .page[data-dw="workstation"] > .chat-layout { max-width: none !important; }
+  /* The bound holds from 1024 even though the region grid only forms at 1280: what a person
+     fills in never widens with the window (P7). Declared on what the control IS, so a control
+     added later inherits it. */
+  html.dw-active .page[data-dw="task"] [data-mx-regions] .finput,
+  html.dw-active .page[data-dw="task"] [data-mx-regions] .fsel,
+  html.dw-active .page[data-dw="task"] [data-mx-regions] .ex-input,
+  html.dw-active .page[data-dw="task"] [data-mx-regions] input,
+  html.dw-active .page[data-dw="task"] [data-mx-regions] select,
+  html.dw-active .page[data-dw="task"] [data-mx-regions] textarea {
+    max-width: var(--dw-measure-task);
+  }
+
+  /* DOCUMENT: prose keeps its reading measure whatever the screen does (P4). */
+  html.dw-active .page[data-dw="document"] > *:not(.mback) { max-width: var(--dw-measure-read) !important; }
+
+  /* FIRST RULE-CLASS OF THE STRUCTURE PASS (founder 2026-08-09, from the Merchants page): a
+     stood-down container family must leave ROWS behind, not floating fragments. A repeating
+     collection separates its items with hairlines and keeps one internal rhythm; the kicker,
+     title, meta and action of one item read as one row, not four orphans. */
+  html.dw-active .page .merchant-promo-card {
+    padding: 14px 0 18px !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+  }
+  html.dw-active .page .merchant-promo-card:last-child { border-bottom: 0 !important; padding-bottom: 6px !important; }
+  html.dw-active .page #merchantPromotionsList { gap: 0 !important; }
+
+  /* The Exchange reads top to bottom as what it does: You send, the conversion connector,
+     You receive, the rate, one action. The flip control centres between the two groups so the
+     flow is visible as structure, not explained in prose (minimal-information law). */
+  html.dw-active #tv81ExTabSwap .flip-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 12px auto;
+  }
+  html.dw-active #tv81ExTabSwap .ex-card { padding-top: 12px; }
+}
+
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  /* Below 1280 the task region grid has not formed, so the host's children stack in one
+     column: they keep the 560 task measure, and a spanning action spans exactly that.
+     !important against the lit language's `.app-section { max-width: none !important }`. */
+  html.dw-active .page[data-dw="task"] [data-mx-regions] > * { max-width: var(--dw-measure-task) !important; }
+  html.dw-active .page[data-dw="task"] [data-mx-regions] > * {
+    margin-inline: auto !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  html.dw-active .page[data-dw="task"] [data-mx-regions] > :is(input, select, textarea) {
+    display: block;
+  }
+}
+
+@media (min-width: 1280px) {
+
+  html.dw-active .page.active[data-dw="home"] {
+    display: block;
+  }
+  html.dw-active .page.active[data-dw="home"] > * { min-width: 0; }
+
+  /* ONE CENTRED COLUMN (founder 2026-09-01: "keep the elements centered as much as possible on
+     the desktop version too, so put the element one under the other when they don't require a
+     full width display").
+
+     This supersedes the side-by-side task/context pane for these pages. Width was being spent on
+     an arrangement rather than on the content: the form sat against the left edge of the frame
+     with its supporting truth floated off to the right, so the eye had two starting points and the
+     page read lopsided at every desktop size. Stacked and centred, a desktop page is the same page
+     as the phone, given room to breathe.
+
+     Only the ARRANGEMENT changes. Every region, its order, its content and its hooks are
+     untouched, so nothing is hidden and no capability moves; the regions simply follow one
+     another. An element that genuinely needs the full frame (the Trade workstation) is not a task
+     composition and keeps its own width. */
+  html.dw-active .page[data-dw="task"] [data-mx-regions] {
+    display: grid;
+    grid-template-columns: minmax(0, var(--dw-measure-task));
+    justify-content: center;
+    gap: var(--ui-space-3, 12px) 0;
+    align-items: start;
+  }
+  html.dw-active .page[data-dw="task"] [data-mx-regions] > * { grid-column: 1; min-width: 0; }
+  /* Supporting truth follows the task it supports, in source order, in the same column. */
+  html.dw-active .page[data-dw="task"] [data-mx-regions] > [data-mx-region="context"] {
+    grid-column: 1;
+    align-self: start;
+  }
+
+  html.dw-active .page.active[data-dw="document"] {
+    display: grid;
+    grid-template-columns: minmax(0, var(--dw-measure-read));
+    justify-content: center;
+    gap: var(--ui-space-3, 12px) 0;
+    align-items: start;
+  }
+  html.dw-active .page.active[data-dw="document"] > * { grid-column: 1; min-width: 0; margin-inline: auto !important; width: 100%; }
+  /* A section index belongs above the reading it indexes, not beside it. */
+  html.dw-active .page.active[data-dw="document"] > [data-mx-region="context"] { grid-column: 1; }
+  /* Sticky belonged to a side column. In one stacked column it would pin the index over the
+     prose it indexes as the page scrolls. */
+  /* The index rows are data-role="quiet" link-actions, but the blanket `.btn-w` accent
+     background (north-star-adoption) paints them as six primary slabs, which spends the accent
+     six times on navigation. Beside a document they present as their registered quiet role: an
+     open list of text actions, current reading order, hairline separated. */
+  /* Geometry is the registered one (compact height, 12px radius): only surface and alignment
+     change, or the same quiet role would wear two shapes on one page (P6). */
+  html.dw-active #legalSectionIndex .btn {
+    display: block;
+    width: 100% !important;
+    max-width: none;
+    background: transparent !important;
+    border: 0 !important;
+    color: var(--t) !important;
+    text-align: left;
+    font-weight: 650 !important;
+    min-height: 44px;
+    padding: 10px 2px;
+    border-bottom: 1px solid var(--border-subtle) !important;
+  }
+  html.dw-active #legalSectionIndex .btn:last-child { border-bottom: 0 !important; }
+  html.dw-active #legalSectionIndex .btn:hover { color: var(--c) !important; }
+  html.dw-active #legalSectionIndex .card {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+
+  /* WORKSTATION: the Trade view spends the frame. Chart and book form the market column with
+     the order ticket beside them; the two truth panels share a row. Scoped to the view
+     container because Exchange and Trade share one page implementation.
+
+     THE ROOT RULE OF THIS GRID (founder finding 2026-08-09: elements touching, no structure):
+     panels that share a row own their separation as LAYOUT — the grid's gap — never as
+     borrowed chrome. The mobile terminal spaced its panels with borders and card surfaces,
+     which the lit language deliberately stands down; stacked on a phone nothing shows, but
+     side by side on a desktop the stood-down chrome left the book running into the ticket. */
+  html.dw-active #tv81ExTabLiquidity .tv81-terminal-grid {
+    grid-template-columns: minmax(0, 1fr) 400px;
+    grid-template-areas: "chart ticket" "book ticket";
+    gap: 28px 40px;
+    align-items: start;
+  }
+  html.dw-active #tv81ExTabLiquidity .tv81-ticket-panel {
+    grid-area: ticket;
+  }
+  /* The market bar anchors the terminal: pair on the left, figures on the right, one clear
+     band of air before the panels begin. */
+  html.dw-active #tv81ExTabLiquidity .tv81-market-bar {
+    padding: 8px 0 24px;
+  }
+  html.dw-active #tv81ExTabLiquidity .tv81-truth-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0 40px;
+    margin-top: 28px;
+  }
+
+  /* ------------------------------------------------------- dialogs and screens */
+
+  /* A dialog centres on the canvas, not on the monitor. .dback (the adopted navigation) is a
+     different class and is untouched. */
+  html.dw-active .mback {
+    left: 0;
+    right: var(--dw-sidebar);
+  }
+
+  /* One box, not two: the positioning frame never paints a surface. */
+  html.dw-active .mback .ui-modal-frame {
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* A task screen keeps its bounded column and full height, but on a desktop canvas it no
+     longer IS the whole surface, so the backdrop returns behind it and hairlines mark its
+     edges. Same markup, same controls, same back gesture. */
+  html.dw-active .mback:has(.modal[data-modal-shape="screen"]) {
+    background: var(--overlay-backdrop) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    backdrop-filter: blur(8px) !important;
+  }
+  html.dw-active .mback .modal[data-modal-shape="screen"] {
+    border-inline: 1px solid var(--border-subtle) !important;
+  }
+
+  /* ----------------------------------------------- element law, desktop axis */
+
+  /* AN ACTION ALIGNS TO THE COLUMN IT LIVES IN (founder 2026-08-09). The root law:
+       - inside a bounded 560px task column, a full-layout action SPANS the column, exactly like
+         the fields above it (M-EL-ACTION fullWidthRule);
+       - in a standard 720px single-column page or an open region, an action keeps its natural
+         width, capped at the registered 320px, so page-width consistency never creates a slab. */
+  /* The registered natural maximum binds every action in an open region, whatever stretched
+     it (a flex row, a grid track, a utility class). The span rules below override it inside
+     bounded columns, where full width is earned. */
+  html.dw-active .page .btn { max-width: 320px; }
+  html.dw-active .page .btn-w,
+  html.dw-active .page .mx-action[data-layout="full"],
+  html.dw-active .page .btn.ui-flex-1 { max-width: 320px; }
+  html.dw-active .page[data-dw="task"] [data-mx-regions] .btn-w,
+  html.dw-active .page[data-dw="task"] [data-mx-regions] .mx-action[data-layout="full"],
+  html.dw-active #tv81ExTabLiquidity .tv81-ticket-panel .mx-action[data-layout="full"] {
+    width: 100% !important;
+    max-width: none;
+  }
+  /* The wallet's two verbs stay centred under the balance they act on. */
+  html.dw-active #walletSendReceiveRow {
+    max-width: 320px !important;
+    margin-inline: auto !important;
+  }
+
+  /* Pair rule: TWO equal-weight actions share one row at natural width, never stacked full
+     width. The pair must be PURE: a container holding anything besides the two buttons is a
+     content block, and rowing it crushes everything in it (found on My shop: an input, a label,
+     a divider and two buttons were flattened into one row). A declared `.ui-action-stack` is a
+     stack by definition and never rows: a primary above a secondary is hierarchy, not a pair
+     (found on Ambassadors: the child rule fired inside a grid stack the row rule could not
+     convert, producing three different widths). `display` deliberately carries no !important
+     and the rule skips hidden containers: an arrangement rule must lose to any state that
+     decides availability. */
+  html.dw-active .page *:has(> .btn ~ .btn):not(:has(> .btn ~ .btn ~ .btn)):not(:has(> :not(.btn))):not(.ui-action-stack):not([hidden]) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+  /* The pair divides its row completely, so both actions end on the column's own edges —
+     aligned to the fields above them, not to an arbitrary cap. */
+  html.dw-active .page *:has(> .btn ~ .btn):not(:has(> .btn ~ .btn ~ .btn)):not(:has(> :not(.btn))):not(.ui-action-stack) > .btn {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0;
+  }
+
+  /* A DIRECTION PAIR rows even inside a declared stack (founder board finding 2026-08-09:
+     Deposit and Withdraw sit side by side). Two commit verbs carrying the same registered
+     transaction role are peers of one operation, not hierarchy — the stack exemption protects
+     mixed-role stacks only. The pair pins to its column's edges and each verb keeps the
+     registered 320px maximum. */
+  html.dw-active .page .ui-action-stack:has(> .btn[data-role="transaction"] ~ .btn[data-role="transaction"]):not(:has(> .btn ~ .btn ~ .btn)):not(:has(> :not(.btn))):not([hidden]) {
+    display: flex;
+    /* Stated in full: the stack's own column direction survives a bare display:flex. */
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  html.dw-active .page .ui-action-stack:has(> .btn[data-role="transaction"] ~ .btn[data-role="transaction"]):not(:has(> .btn ~ .btn ~ .btn)):not(:has(> :not(.btn))) > .btn {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0;
+    max-width: 320px;
+  }
+
+  /* One function, one appearance: an action's height comes from its definition and its label,
+     never from a taller flex sibling. */
+  html.dw-active .page .mx-action { align-self: center; }
+  html.dw-active .page .mx-action[data-size="compact"] { min-height: 48px !important; }
+
+  /* The house glass rule: every backdrop-filter carries a solid fallback. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    html.dw-active #dwSidebar { background: rgba(22, 51, 79, .94); }
+  }
+}

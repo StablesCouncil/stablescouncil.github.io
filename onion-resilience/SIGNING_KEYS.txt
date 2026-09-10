@@ -1,0 +1,11 @@
+Stables signing keys
+
+Status: pending first public continuity signing key.
+
+Planned use:
+- BCP activation notices
+- release manifests
+- MiniDapp artifact manifests
+- essentials archive manifests
+
+Until a signing key is published here, use SHA256SUMS.txt and MANIFEST.json for local integrity checks.
