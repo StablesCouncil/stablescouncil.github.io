@@ -2698,6 +2698,8 @@
     const cfg = tv81AnchorCfg(registry); if (!cfg) return false;
     await ensureCovenantTracked(cfg.page_address, cfg.page_script, 'tracking the book-anchor page covenant', 30000);
     await ensureCovenantTracked(cfg.head_address, cfg.head_script, 'tracking the book-anchor head covenant', 30000);
+    const m=registry.maintenance;
+    if(m && m.faucet_script) await ensureCovenantTracked(m.faucet_address,m.faucet_script,'tracking free maintenance supplies',30000);
     return true;
   }
   function tv81AnchorPort(coin, p) {
@@ -2777,14 +2779,8 @@
       rejectedGenerationHeads: candidateHeads.length,
       tip: tip
     };
-    const pageData = await tv81CoinsAtAddress(String(cfg.page_address).toLowerCase());
     const pagesByCoinId = {};
-    rowsOf(pageData).filter(function (c) {
-      return c && !c.spent
-        && String(tv81AnchorPort(c, 0)) === '1'
-        && String(tv81AnchorPort(c, 2) || '').toLowerCase() === generation;
-    })
-      .forEach(function (c) { pagesByCoinId[c.coinid.toLowerCase()] = c; });
+    let pageReads=0;
     let lastReason = 'no complete valid snapshot';
     for (let h = 0; h < heads.length; h++) {
       const head = heads[h];
@@ -2795,10 +2791,17 @@
         const wantRoot = String(tv81AnchorPort(head, 7) || '').toLowerCase();
         const idsHex = String(tv81AnchorPort(head, 20) || '').replace(/^0x/i, '');
         if (!(pageCount >= 1 && pageCount <= (bounds.max_pages || 64))) throw new Error('page count bounds');
-        if (idsHex.length !== pageCount * 64) throw new Error('page id list length');
+        if (!/^[0-9a-f]+$/i.test(idsHex) || idsHex.length !== pageCount * 64) throw new Error('page id list length');
         const pageHashes = []; let total = 0; let missing = null;
         for (let i = 0; i < pageCount; i++) {
           const id = '0x' + idsHex.substr(i * 64, 64);
+          if (!Object.prototype.hasOwnProperty.call(pagesByCoinId,id.toLowerCase())) {
+            if (++pageReads > 64) throw new Error('page read budget exceeded');
+            const data=rowsOf(await mdsCmdData('coins coinid:'+id));
+            pagesByCoinId[id.toLowerCase()]=data.find(c=>c && !c.spent && String(c.coinid).toLowerCase()===id.toLowerCase()
+              && String(c.address).toLowerCase()===String(cfg.page_address).toLowerCase()
+              && String(tv81AnchorPort(c,0))==='1' && String(tv81AnchorPort(c,2)).toLowerCase()===generation) || null;
+          }
           const pc = pagesByCoinId[id.toLowerCase()];
           if (!pc) { missing = id; break; }
           if (String(tv81AnchorPort(pc, 4) || '').toLowerCase() !== String(snapId || '').toLowerCase()) {
@@ -2850,7 +2853,8 @@
       // recognised by the vault covenant address so they never enter the book source list.
       const vaultAddr = String(((registry || {}).xwiniwa_vault || {}).address || '').toLowerCase();
       const vault2Addr = String(((tv81VaultV2(registry) || {}).address) || '').toLowerCase();
-      const atVaultAddr = function (a) { const x = String(a || '').toLowerCase(); return !!x && ((!!vaultAddr && x === vaultAddr) || (!!vault2Addr && x === vault2Addr)); };
+      const sandAddr=String((registry.maintenance||{}).faucet_address||'').toLowerCase();
+      const atVaultAddr = function (a) { const x = String(a || '').toLowerCase(); return !!x && ((!!vaultAddr && x === vaultAddr) || (!!vault2Addr && x === vault2Addr) || (!!sandAddr && x === sandAddr)); };
       const headData = await mdsCmdData('coins coinid:' + snap.headCoin);
       const head = Array.isArray(headData) ? headData[0] : headData;
       const idsHex = String(tv81AnchorPort(head, 20) || '').replace(/^0x/i, '');
@@ -2904,11 +2908,7 @@
   }
   window.tv81AnchorGapFill = tv81AnchorGapFill;
 
-  // ---- R4: OPT-IN in-app publisher. When the "Publish book snapshots" setting is ON, the app
-  // publishes a snapshot of the live book to the anchor covenants (one page + head), funded by a
-  // trace of the wallet's own Winiwa. Default OFF. Single-page (<=16 orders) in this version; a
-  // deep book publishes its first page (a fuller multi-page publisher is a follow-up). Posts real
-  // transactions — same txn-builder idiom as order placement.
+  // Shared recovery publication uses free SAND exclusively and retains a durable operation journal.
   const TV81_ANCHOR_PUBLISH_PREF = 'stables_anchor_publish_enabled';
   function tv81AnchorPublishEnabled() {
     /* THE SAME 'trade' GATE WAS HERE, AND IT WAS THE ONE THAT MATTERED (measured 2026-09-07).
@@ -2945,25 +2945,67 @@
   }
   window.tv81AnchorPublishable = tv81AnchorPublishable;
 
-  async function tv81AnchorPublishSnapshot() {
-    if (!tv81AnchorPublishable().length) {
-      releaseRequireFeature('faucet', 'Publishing on-chain proofs');
-      return { error: 'release feature deferred' };
-    }
-    if (_tv81AnchorPublishing) return { skipped: 'already publishing' };
-    _tv81AnchorPublishing = true;
+  // Read-only Settings figure. No startup task, timer loop, refill or transaction is triggered here.
+  let tv81SandBalanceRequest = 0;
+  window.stablesRefreshSandBalance = async function () {
+    const el = document.getElementById('settingsSandBalance');
+    if (!el) return;
+    const request = ++tv81SandBalanceRequest;
+    const deadline = Date.now() + 12000;
+    el.textContent = 'Checking...';
+    let timer;
     try {
-      const registry = await tv81AppRegistry();
-      const cfg = tv81AnchorCfg(registry);
-      const dcfg = tv81DirectCfg(registry);
-      if (!cfg || !dcfg) return { error: 'no anchor/market config' };
-      const bounds = cfg.bounds || {};
-      const rowsOf = function (d) { return Array.isArray(d) ? d : (d && Array.isArray(d.coins) ? d.coins : (d ? [d] : [])); };
+      const read = async function () {
+        const M = window.StablesMaintenance;
+        if (!M) throw Error('Unavailable');
+        const keys = await mdsCmdData('keys');
+        if (!keys || !(Array.isArray(keys) ? keys.length : Array.isArray(keys.keys) && keys.keys.length)) throw Error('Unavailable');
+        // Compare the same canonical public key used by maintenance, not mutable use counters.
+        const identity = function (data) {
+          const rows = Array.isArray(data) ? data : ((data || {}).keys || []);
+          const key = String((rows[0] || {}).publickey || '').toLowerCase();
+          if (!/^0x[0-9a-f]+$/.test(key)) throw Error('Wallet identity unavailable');
+          return key;
+        };
+        const owner = identity(keys);
+        const data = await mdsCmdData('coins relevant:true sendable:true checkmempool:true tokenid:' + M.TOKEN);
+        if (!Array.isArray(data) && !(data && Array.isArray(data.coins))) throw Error('Unavailable');
+        let total = 0n;
+        const addresses = new Map();
+        for (const coin of M.rows(data)) {
+          if (request !== tv81SandBalanceRequest || Date.now() >= deadline) throw Error('Unavailable');
+          if (coin.spent || Number(coin.created) <= 0 || !Number.isFinite(Number(coin.created)) ||
+              String(coin.tokenid).toLowerCase() !== M.TOKEN || (coin.state || []).length) continue;
+          if (!/^0x[0-9a-f]+$/i.test(coin.address)) throw Error('Unavailable');
+          if (!addresses.has(coin.address)) {
+            if (addresses.size >= 32) throw Error('Unavailable');
+            const address = await mdsCmdData('checkaddress address:' + coin.address);
+            if (!address || typeof address.simple !== 'boolean') throw Error('Unavailable');
+            addresses.set(coin.address, address.simple);
+          }
+          if (addresses.get(coin.address)) total += M.atoms(coin.tokenamount);
+        }
+        if (request !== tv81SandBalanceRequest || Date.now() >= deadline) throw Error('Unavailable');
+        if (owner !== identity(await mdsCmdData('keys'))) throw Error('Wallet changed');
+        return M.amount(total) + ' SAND';
+      };
+      const value = await Promise.race([read(), new Promise(function (_, reject) {
+        timer = setTimeout(function () { reject(Error('Unavailable')); }, 12000);
+      })]);
+      if (request === tv81SandBalanceRequest) el.textContent = value;
+    } catch (_) {
+      if (request === tv81SandBalanceRequest) el.textContent = 'Unavailable';
+    } finally { clearTimeout(timer); }
+  };
+
+  async function tv81MaintenanceRecords(registry, recipient) {
+      const dcfg=tv81DirectCfg(registry);
+      const rowsOf=window.StablesMaintenance.rows;
       // live order coins (state port 2 present, unspent). A release without the order book publishes
       // no order records and does not read the market address for them.
       const orderData = releaseFeatureAllowed('trade') ? await tv81CoinsAtAddress(String(dcfg.order_address).toLowerCase()) : [];
       const live = rowsOf(orderData).filter(function (c) { return c && !c.spent && (c.state || []).some(function (s) { return Number(s.port) === 2; }); });
-      const pageMax = bounds.page_orders || 16;
+
       const records = [];
       // FAUCET-PROOF EXTENSION (V9, dependency-free law): carry the faucet pool + state coin proofs
       // in the snapshot so a FRESH node can CLAIM Winiwa with zero VPS. The reader imports every
@@ -2981,13 +3023,14 @@
           const flist = [fpool, fstate];
           for (let fi = 0; fi < flist.length; fi++) {
             const fc = flist[fi];
-            if (!fc) continue;
+            if (!fc) throw Error('Required faucet proof unavailable');
             const ex = await mdsCmdData('coinexport coinid:' + fc.coinid);
             const blob = (ex && ex.data) ? ex.data : ex;
+            if (typeof blob !== 'string' || blob.length <= 10) throw Error('Proof export unavailable');
             if (typeof blob === 'string' && blob.length > 10) { records.push({ coinid: fc.coinid, blob: blob }); faucetRecs++; }
           }
         }
-      } catch (_) { /* faucet proof is best-effort; a book-only snapshot is still valid */ }
+      } catch (e) { throw Error('Required faucet proofs unavailable: '+String(e.message||e)); }
       // VAULT-PROOF EXTENSION (2026-07-26, founder report: "there is a problem with the minting").
       // Minting refused with "The vault balance state coin is not visible yet" on BOTH peers, because
       // the vault's coins were created at deployment and are days older than the ~1,080-block unpruned
@@ -3005,97 +3048,91 @@
         for (let vai = 0; vai < vaddrs.length; vai++) {
           const va = vaddrs[vai];
           const vcoins = rowsOf(await tv81CoinsAtAddress(va)).filter(function (c) { return c && !c.spent; });
+          if (!vcoins.length && va===String((tv81VaultV2(registry)||{}).address||'').toLowerCase()) throw Error('Vault proofs unavailable');
           for (let vi = 0; vi < vcoins.length; vi++) {
             const ex = await mdsCmdData('coinexport coinid:' + vcoins[vi].coinid);
             const blob = (ex && ex.data) ? ex.data : ex;
+            if (typeof blob !== 'string' || blob.length <= 10) throw Error('Proof export unavailable');
             if (typeof blob === 'string' && blob.length > 10) { records.push({ coinid: vcoins[vi].coinid, blob: blob }); vaultRecs++; }
           }
         }
-      } catch (_) { /* vault proof is best-effort, like the faucet proof */ }
-      const capped = live.slice(0, Math.max(0, pageMax - faucetRecs - vaultRecs));
+      } catch (e) { throw Error('Required vault proofs unavailable: '+String(e.message||e)); }
+      const capped = live;
       for (let i = 0; i < capped.length; i++) {
         const ex = await mdsCmdData('coinexport coinid:' + capped[i].coinid);
         const blob = (ex && ex.data) ? ex.data : ex;
         if (typeof blob === 'string' && blob.length > 10) records.push({ coinid: capped[i].coinid, blob: blob });
       }
-      if (!records.length) return { skipped: 'nothing to publish (no orders, no faucet coins)' };
-      const page = await tv81AnchorEncodePage(records);
-      const pub = await tv81WalletPubkey();
-      const wallet = await fetchTesterWallet();
-      const dust = '0.000001';
-      const WINIWA = String(dcfg.quote_token_id).toLowerCase();
-      // pick a short-decimal Winiwa funding coin (RPC 34-sig-digit precision law)
-      const fundData = await mdsCmdData('coins relevant:true sendable:true tokenid:' + WINIWA);
-      const funds = rowsOf(fundData).filter(function (c) {
-        if (!c || c.spent || (c.state || []).length) return false;
-        const amt = String(c.tokenamount != null ? c.tokenamount : c.amount);
-        return (amt.split('.')[1] || '').length <= 12 && Number(amt) >= 0.001;
-      }).sort(function (a, b) { return Number(a.tokenamount || a.amount) - Number(b.tokenamount || b.amount); });
-      if (!funds.length) return { error: 'no clean Winiwa funding coin' };
-      const fund = funds[0];
-      const fundAmt = String(fund.tokenamount != null ? fund.tokenamount : fund.amount);
-      const change = tv81FbaFmt(Number(fundAmt) - Number(dust));
-      const gen = tv81AnchorGeneration(cfg), reghash = '0x' + '00'.repeat(32); // V9 generation tag "TV91" (was "TV81" 0x54563831)
-      const snapId = '0x' + (BigInt(Date.now()) * 1000n).toString(16).padStart(64, '0').slice(-64).toUpperCase();
-      // ---- page txn ----
-      const pageTxn = 'stables_anchor_page';
-      try { await directOrMdsCmd('txndelete id:' + pageTxn, 'clearing draft', 15000); } catch (_) {}
-      const pSteps = ['txncreate id:' + pageTxn,
-        'txninput id:' + pageTxn + ' coinid:' + fund.coinid,
-        'txnoutput id:' + pageTxn + ' amount:' + dust + ' address:' + String(cfg.page_address).toLowerCase() + ' tokenid:' + WINIWA + ' storestate:true',
-        'txnoutput id:' + pageTxn + ' amount:' + change + ' address:' + wallet.address + ' tokenid:' + WINIWA + ' storestate:false'];
-      const pState = { 0: '1', 1: cfg.schema_page, 2: gen, 3: reghash, 4: snapId, 5: '0', 6: '1', 7: String(records.length), 8: page.pageHash, 10: pub, 20: page.payloadHex };
-      Object.keys(pState).forEach(function (p) { pSteps.push('txnstate id:' + pageTxn + ' port:' + p + ' value:' + pState[p]); });
-      await directOrMdsCmdBatch(pSteps, 'building the book snapshot page', 120000);
-      await directOrMdsCmd('txnbasics id:' + pageTxn, 'funding the snapshot page', 120000);
-      await directOrMdsCmd('txnsign id:' + pageTxn + ' publickey:auto', 'signing the snapshot page', 120000);
-      const pv = (mdsPayload(await directOrMdsCmd('txncheck id:' + pageTxn, 'validating the page', 90000)) || {}).valid || {};
-      if (!(pv.scripts && pv.basic && pv.mmrproofs)) return { error: 'page validation failed', valid: pv };
-      await directOrMdsCmd('txnpost id:' + pageTxn + ' txndelete:true', 'posting the snapshot page', 90000);
-      // ---- wait for the page coin to confirm, then head ----
-      let pageCoinId = null;
-      for (let t = 0; t < 30 && !pageCoinId; t++) {
-        await new Promise(function (r) { setTimeout(r, 6000); });
-        const pd = rowsOf(await tv81CoinsAtAddress(String(cfg.page_address).toLowerCase()));
-        const hit = pd.find(function (c) { return c && !c.spent && (c.state || []).some(function (s) { return Number(s.port) === 8 && String(s.data).toLowerCase() === page.pageHash.toLowerCase(); }); });
-        if (hit) pageCoinId = hit.coinid;
+      const maintenance = window.StablesMaintenance;
+      const sand = maintenance.faucetPlan(await tv81CoinsAtAddress(maintenance.FAUCET), recipient);
+      for (const coin of sand.inputs) {
+        const ex = await mdsCmdData('coinexport coinid:' + coin.coinid);
+        records.push({coinid:coin.coinid,blob:ex && ex.data ? ex.data : ex});
       }
-      if (!pageCoinId) return { error: 'page not confirmed in time' };
-      const pagesRoot = await tv81AnchorPagesRoot(snapId, [page.pageHash], records.length);
-      const tipData = await mdsCmdData('status');
-      const tip = Number(tipData && tipData.chain && tipData.chain.block) || 0;
-      const fund2Data = await mdsCmdData('coins relevant:true sendable:true tokenid:' + WINIWA);
-      const funds2 = rowsOf(fund2Data).filter(function (c) {
-        if (!c || c.spent || (c.state || []).length) return false;
-        const amt = String(c.tokenamount != null ? c.tokenamount : c.amount);
-        return (amt.split('.')[1] || '').length <= 12 && Number(amt) >= 0.001;
-      }).sort(function (a, b) { return Number(a.tokenamount || a.amount) - Number(b.tokenamount || b.amount); });
-      if (!funds2.length) return { error: 'no funding coin for head', pageCoinId: pageCoinId };
-      const fund2 = funds2[0];
-      const fund2Amt = String(fund2.tokenamount != null ? fund2.tokenamount : fund2.amount);
-      const change2 = tv81FbaFmt(Number(fund2Amt) - Number(dust));
-      const headTxn = 'stables_anchor_head';
-      try { await directOrMdsCmd('txndelete id:' + headTxn, 'clearing draft', 15000); } catch (_) {}
-      const hSteps = ['txncreate id:' + headTxn,
-        'txninput id:' + headTxn + ' coinid:' + fund2.coinid,
-        'txnoutput id:' + headTxn + ' amount:' + dust + ' address:' + String(cfg.head_address).toLowerCase() + ' tokenid:' + WINIWA + ' storestate:true',
-        'txnoutput id:' + headTxn + ' amount:' + change2 + ' address:' + wallet.address + ' tokenid:' + WINIWA + ' storestate:false'];
-      const hState = { 0: '2', 1: cfg.schema_head, 2: gen, 3: reghash, 4: snapId, 5: '1', 6: String(records.length), 7: pagesRoot, 8: String(tip), 10: pub, 20: pageCoinId };
-      Object.keys(hState).forEach(function (p) { hSteps.push('txnstate id:' + headTxn + ' port:' + p + ' value:' + hState[p]); });
-      await directOrMdsCmdBatch(hSteps, 'building the book snapshot head', 120000);
-      await directOrMdsCmd('txnbasics id:' + headTxn, 'funding the snapshot head', 120000);
-      await directOrMdsCmd('txnsign id:' + headTxn + ' publickey:auto', 'signing the snapshot head', 120000);
-      const hv = (mdsPayload(await directOrMdsCmd('txncheck id:' + headTxn, 'validating the head', 90000)) || {}).valid || {};
-      if (!(hv.scripts && hv.basic && hv.mmrproofs)) return { error: 'head validation failed', valid: hv, pageCoinId: pageCoinId };
-      await directOrMdsCmd('txnpost id:' + headTxn + ' txndelete:true', 'posting the snapshot head', 90000);
-      try { console.log('[STABLES-ANCHOR] published snapshot: ' + records.length + ' orders, page ' + pageCoinId.slice(0, 14)); } catch (_) {}
-      /* `records` is every proof written: faucet and vault coins first, then order coins when the
-         release has a book. `orders` is kept for older readers of this result. */
-      return { published: true, records: records.length, faucetProofs: faucetRecs, vaultProofs: vaultRecs, orders: records.length, pageCoinId: pageCoinId, snapshotId: snapId };
-    } catch (e) {
-      try { console.log('[STABLES-ANCHOR] publish error: ' + ((e && e.message) || e)); } catch (_) {}
-      return { error: String((e && e.message) || e) };
-    } finally { _tv81AnchorPublishing = false; }
+      return records;
+  }
+  let _tv81MaintenanceResumeJob=null;
+  function tv81MaintenancePending() {
+    try {const j=JSON.parse(localStorage.getItem('stables_sand_maintenance_v1')||'null');return !!(j&&!j.done);}catch(_){return false;}
+  }
+  async function tv81AnchorPublishSnapshot() {
+    if (!tv81AnchorPublishable().length || !tv81AnchorPublishEnabled()) {
+      if(_tv81MaintenanceResumeJob){_tv81MaintenanceResumeJob.stop();_tv81MaintenanceResumeJob=null;}
+      return {skipped:'publishing disabled'};
+    }
+    if (document.hidden) return {skipped:'app is not visible'};
+    if (_tv81AnchorPublishing) return {skipped:'already publishing'};
+    _tv81AnchorPublishing=true;
+    try {
+      const M=window.StablesMaintenance, registry=await tv81AppRegistry(), cfg=tv81AnchorCfg(registry);
+      if(!M || !cfg || String((registry.maintenance||{}).token_id).toLowerCase()!==M.TOKEN) throw Error('Maintenance token unavailable');
+      await tv81AnchorEnsureTracked(registry);
+      const cmd=async function(command) {
+        const response=await directOrMdsCmd(command,'maintaining shared recovery records',120000);
+        if(!response || response.pending || response.status===false || response.error) throw Error('Maintenance request was not completed');
+        return mdsPayload(response);
+      };
+      const a={storage:localStorage,cmd:cmd,read:mdsCmdData,owner:async function(){
+          const data=await mdsCmdData('keys');
+          const keys=Array.isArray(data)?data:((data||{}).keys||[]);
+          const owner=String((keys[0]||{}).publickey||'').toLowerCase();
+          if(!/^0x[0-9a-f]+$/.test(owner))throw Error('Maintenance wallet unavailable');
+          return owner;
+        },
+        recipient:async function(){return (await fetchTesterWallet()).address;},
+        tip:async function(){const d=await mdsCmdData('status');return Number(d.chain.block);},
+        fresh:async function(){const x=await tv81AnchorReadSnapshot();return x.state==='READY_WITH_COVERAGE'&&x.headAge<=600;},
+        faucet:async function(){return tv81CoinsAtAddress(M.FAUCET);},
+        funds:async function(){
+          const coins=M.rows(await mdsCmdData('coins relevant:true sendable:true checkmempool:true tokenid:'+M.TOKEN));
+          const owned=[];
+          for(const c of coins) {
+            if(String(c.tokenid).toLowerCase()!==M.TOKEN || c.spent || (c.state||[]).length)continue;
+            const address=await mdsCmdData('checkaddress address:'+c.address);
+            if(address && address.simple===true)owned.push(Object.assign({},c,{walletOwned:true}));
+          }
+          return owned;
+        },
+        records:function(recipient){return tv81MaintenanceRecords(registry,recipient);},
+        bounds:cfg.bounds||{},encode:tv81AnchorEncodePage,pageAddress:cfg.page_address,headAddress:cfg.head_address,
+        snapshotId:async function(j){return tv81Sha256('0x'+Array.from(j.id).map(c=>c.charCodeAt(0).toString(16).padStart(2,'0')).join(''));},
+        pageState:function(j,i){return {0:'1',1:cfg.schema_page,2:tv81AnchorGeneration(cfg),3:'0x'+'00'.repeat(32),4:j.snapshotId,5:String(i),6:String(j.pages.length),7:String(j.pageCounts[i]),8:j.pages[i].pageHash,10:j.owner,20:j.pages[i].payloadHex};},
+        headState:async function(j){return {0:'2',1:cfg.schema_head,2:tv81AnchorGeneration(cfg),3:'0x'+'00'.repeat(32),4:j.snapshotId,5:String(j.pages.length),6:String(j.count),7:await tv81AnchorPagesRoot(j.snapshotId,j.pages.map(p=>p.pageHash),j.count),8:String(await a.tip()),10:j.owner,20:'0x'+j.pages.map((_,i)=>j.ops['page'+i].outputIds[0].slice(2)).join('')};}
+      };
+      const run=function(){return M.publish(a);};
+      const result=typeof navigator!=='undefined'&&navigator.locks ? await navigator.locks.request('stables-maintenance',{ifAvailable:true},function(lock){return lock?run():{skipped:'already publishing'};}) : await run();
+      window.__STABLES_MAINTENANCE__=Object.assign({at:Date.now()},result);
+      // Only an unfinished transaction earns a confirmation pass. No background polling.
+      const journal=JSON.parse(localStorage.getItem('stables_sand_maintenance_v1')||'null');
+      if(result.pending && journal && Date.now()-(journal.recoveredAt||journal.created)<900000 && typeof window.stablesRepeatWhileVisible==='function') {
+        if(!_tv81MaintenanceResumeJob) _tv81MaintenanceResumeJob=window.stablesRepeatWhileVisible('sand-maintenance-confirmation',function(){tv81AnchorPublishSnapshot();},60000);
+      } else if(_tv81MaintenanceResumeJob) {_tv81MaintenanceResumeJob.stop();_tv81MaintenanceResumeJob=null;}
+      return result;
+    } catch(e) {
+      if(_tv81MaintenanceResumeJob){_tv81MaintenanceResumeJob.stop();_tv81MaintenanceResumeJob=null;}
+      return {error:String(e&&e.message||e)};
+    }
+    finally {_tv81AnchorPublishing=false;}
   }
   window.tv81AnchorPublishSnapshot = tv81AnchorPublishSnapshot;
   window.tv81AnchorPublishEnabled = tv81AnchorPublishEnabled;
@@ -12423,7 +12460,7 @@
                   if (!tv81AnchorPublishable().length) return say('holding', 'nothing-to-carry', s);
                   if (!tv81AnchorPublishEnabled()) return say('holding', 'switched-off', s);
                   const age = Number(s.headAge) || 0;
-                  if (s.state === 'READY_WITH_COVERAGE' && age <= 600) return say('holding', 'proof-fresh', s);
+                  if (!tv81MaintenancePending() && s.state === 'READY_WITH_COVERAGE' && age <= 600) return say('holding', 'proof-fresh', s);
                   say('writing', s.state !== 'READY_WITH_COVERAGE' ? 'state-unproven' : 'proof-stale', s);
                   /* The attempt's own outcome was silent as well: it could decide to write and then
                      refuse or throw, and nothing said so. */

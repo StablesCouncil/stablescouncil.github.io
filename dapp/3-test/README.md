@@ -4,19 +4,17 @@ Stables is an experimental, protocol-focused research project built on Winiwa.
 The project explores minting, burning, oracle, and collateralization mechanisms
 for a non-custodial, censorship-resistant monetary system.
 
-## What changed in this version (test v0.0.11.88)
+## What changed in this version (test v0.0.11.94)
 
-This coordinated testing update includes the changes since public version .63:
+This coordinated testing update includes the changes since public version .88:
 
-- Notes grouped by address, retaining amount, age and selection across groups.
-- Four xWiniwa vault lanes and corrected coordination of concurrent mint and burn operations.
-- MAX uses spendable funds; arriving amounts and privacy states are clearer.
-- Retail testing groundwork binds QR payment matching to recipient, token, exact amount and invoice identity, with fresh confirmation checks. Merchant business tools remain deferred from the public test scope.
-- Failed wallet proofs remain retryable, and concurrent receive-address requests share one node read.
-- Standalone Android loads the app while its node starts. Payment actions still require fresh node proof.
-- Clearer recovery errors, rate displays, unavailable-asset states and proof-sharing diagnostics.
-
-This is a testing release. Faster screen loading does not establish cold-payment readiness. End-to-end card-speed checkout and isolated battery efficiency remain under measurement.
+- Your maintenance balance stays readable when the same wallet's key-use counters change, so Settings shows the confirmed figure instead of reporting it unavailable.
+- An interrupted maintenance publication restarts safely, keeping its receipts and its retirement history, and never discarding an uncertain transaction.
+- Unsigned maintenance refills recover after a verified competing spend, with attempt evidence preserved and retries bounded. An unknown outcome never authorizes a new claim.
+- Settings shows the confirmed available SAND with plain free-refill wording. Payment balances remain separate.
+- Update checks read the coordinated public release and report a retryable failure instead of reusing standalone installer metadata.
+- Resync entry and confirmation use one standard control, with acknowledgement unchanged.
+- Centered groups keep their actions centered with readable labels, and StablesAgent fits the visible screen and its safe area.
 
 ## Status
 

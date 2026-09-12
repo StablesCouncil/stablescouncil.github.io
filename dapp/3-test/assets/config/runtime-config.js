@@ -59,9 +59,9 @@ window.STABLES_CONFIG = {
    * (vote-vault, per-launch auction); stablecoins born later via pledge→vote→auction→pool. App
    * rebuilt to genesis-6 per V6_APP_WIRING_PLAN.md (slice 1: config + pool reader).
    */
-  APP_BUILD_ITERATION: 88,
+  APP_BUILD_ITERATION: 94,
   /** Date this build was published to GitHub (ISO YYYY-MM-DD). */
-  APP_BUILD_DATE: '2026-09-10',
+  APP_BUILD_DATE: '2026-09-12',
   /**
    * TX radar (dev instrument, test channel only): timestamps send FIRED, node event arrival,
    * and new relevant history rows to measure early incoming notification. true = on-screen
@@ -300,13 +300,13 @@ window.STABLES_CONFIG = {
    * Use the same segment count as APP_BUILD_VERSION so semver-like compare is meaningful.
    */
   APP_UPDATE_POLICY: {
-    latestPublishedVersion: '0.0.11.88',
+    latestPublishedVersion: '0.0.11.94',
     whenUpdateNeeded: {
       criticality: 'low',
       whatChanged:
-        'The coordinated test build includes the current website and app experience plus verified standalone Android updates.',
+        'Your maintenance balance stays readable, and an interrupted maintenance publication restarts safely.',
       details:
-        'Install only the release matching the published SHA-256 and Stables signing identity.'
+        'Get updates through Stables or our official website.'
     }
   },
   /**
@@ -315,12 +315,12 @@ window.STABLES_CONFIG = {
    */
   ANDROID_APK_UPDATE: {
     /** SHA-256 and signer fingerprint are filled from the exact signed artifact before publication. */
-    latestVersion: '0.0.11.63',
-    versionCode: 11063,
+    latestVersion: '0.0.11.94',
+    versionCode: 11094,
     expectedPackageName: 'org.stablescouncil.stables',
     downloadUrl:
-      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.11.63/Stables_v0.0.11.63.apk',
-    sha256: '311f22116063fd557f017caa16d694b6510644dfbb8cdc6975528cb43ded9f06',
+      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.11.94/Stables_v0.0.11.94.apk',
+    sha256: '88fe4429de4648aa0743a18fb3b0bb03bedc6b857164190a62d51df8be0ab669',
     signerSha256: 'dabb1b2a79b134b6008e6401735d649c140b51f2c4a83eb001b2ffdad5ce5dd4',
     releasesPageUrl: 'https://github.com/StablesCouncil/stables-app/releases',
     /** Dedicated immutable-shape metadata used by hardened standalone builds. */

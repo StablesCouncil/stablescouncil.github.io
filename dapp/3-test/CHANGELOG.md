@@ -2,6 +2,42 @@
 
 ## [Unreleased]
 
+## [0.0.11.94] - 2026-09-12
+
+### 0.0.11.94 development candidate, 2026-09-12
+
+- Keep maintenance balance readable when the same wallet's key-use counters change.
+- Restart stale page-only maintenance publications, preserving receipts and delayed SAND recycling. Uncertain transactions and existing head drafts cannot be discarded.
+
+### 0.0.11.93 development candidate, 2026-09-11
+
+- Recover unsigned maintenance refills after a verified competing spend, preserving attempt evidence and bounding retries. Unknown outcomes never authorize a new claim.
+- Check the coordinated public release from Core-connected Settings, with an explicit retryable failure state and no standalone installer metadata reuse.
+
+### 0.0.11.92 development candidate, 2026-09-10
+
+- Show the confirmed available SAND maintenance balance in Settings, with plain-language free-refill information. Read only when Settings opens, with checking and unavailable states; payment balances remain separate.
+
+### 0.0.11.91 development candidate, 2026-09-10
+
+- Replace monetary recovery-record funding with pinned SAND, automatic free refill and exact amount conservation.
+- Persist maintenance drafts and output identities across restart; use multiple proof pages and retire owned expired records after a confirmed replacement.
+- Fetch only pages referenced by candidate heads, with a bounded request budget. Integration validation remains required before release.
+
+### 0.0.11.90 development candidate, 2026-09-10
+
+- Standardize resync entry and confirmation controls using the same centered full-width secondary action. Keep acknowledgement and execution behavior unchanged.
+
+
+### 0.0.11.89 development candidate, 2026-09-10
+
+- Center actions in centered narrative groups and retain readable button labels.
+- Replace technical update copy and raw fingerprints with ordinary-language checks.
+- Show available updates on More and promote the existing drawer update action.
+- Fit StablesAgent to the visible viewport, reserve the bottom safe area and allow short-screen scrolling.
+- Release the standalone service binding before orderly update shutdown, preserving all download verification and completion checks.
+- Device installation and visual verification remain pending; .88 remains the public release.
+
 ## [0.0.11.88] - 2026-09-10
 
 ### Changed

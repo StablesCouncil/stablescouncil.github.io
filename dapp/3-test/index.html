@@ -167,6 +167,17 @@
                 var number = Number(value);
                 return (Number.isFinite(number) && number > 0 ? number : 0) + 'px';
             }
+            function syncVisibleViewport() {
+                var viewport = window.visualViewport;
+                document.documentElement.style.setProperty('--agent-visible-height', (viewport ? viewport.height : window.innerHeight) + 'px');
+                document.documentElement.style.setProperty('--agent-visible-top', (viewport ? viewport.offsetTop : 0) + 'px');
+            }
+            window.addEventListener('resize', syncVisibleViewport);
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', syncVisibleViewport);
+                window.visualViewport.addEventListener('scroll', syncVisibleViewport);
+            }
+            syncVisibleViewport();
             window.stablesApplyNativeSafeArea = function (value) {
                 try {
                     var inset = typeof value === 'string' ? JSON.parse(value) : (value || {});
@@ -4175,8 +4186,8 @@
         /* Fill viewport - avoids a dead band under the panel (old max-height: 85dvh) */
         #agentDrawer .agent-drawer-panel {
             height: 100%;
-            min-height: 100dvh;
-            max-height: none;
+            min-height: 0;
+            max-height: 100%;
         }
 
         /* The simulator is a routed page. Its stablecoin-era controls remain feature-gated. */
@@ -8015,18 +8026,18 @@
     </style>
     <!-- App UI System layer: must load render-blocking AFTER the legacy styles above so
          documented component geometry wins in the cascade without a flash of unstyled UI. -->
-    <link rel="stylesheet" href="assets/app-ui-system.css?v=tv81-1188">
+    <link rel="stylesheet" href="assets/app-ui-system.css?v=tv81-1194">
     <!-- Machinery product adapter: reusable mx-* definitions, loaded after the legacy layer. -->
-    <link rel="stylesheet" href="assets/machinery-app.css?v=tv81-1188">
-    <link rel="stylesheet" href="assets/machinery-ui.css?v=tv81-1188">
-    <link rel="stylesheet" href="assets/machinery-shell.css?v=tv81-1188">
+    <link rel="stylesheet" href="assets/machinery-app.css?v=tv81-1194">
+    <link rel="stylesheet" href="assets/machinery-ui.css?v=tv81-1194">
+    <link rel="stylesheet" href="assets/machinery-shell.css?v=tv81-1194">
     <!-- The wallet legacy adapter loads before the final shared identity so it cannot override R001. -->
-    <link rel="stylesheet" href="assets/machinery-wallet.css?v=tv81-1188">
-    <link rel="stylesheet" href="assets/machinery-language.css?v=tv81-1188">
-    <link rel="stylesheet" href="assets/north-star-adoption.css?v=tv81-1188">
+    <link rel="stylesheet" href="assets/machinery-wallet.css?v=tv81-1194">
+    <link rel="stylesheet" href="assets/machinery-language.css?v=tv81-1194">
+    <link rel="stylesheet" href="assets/north-star-adoption.css?v=tv81-1194">
     <!-- D029 desktop composition. Gated on the web surface AND 1024px, so the MiniDapp and the
          APK keep the shipped mobile composition at every width. -->
-    <link rel="stylesheet" href="assets/desktop-web.css?v=tv81-1188">
+    <link rel="stylesheet" href="assets/desktop-web.css?v=tv81-1194">
     <script>
         /* Surface flag for the D029 desktop layer. The preview bootstrap above resolves the local
            preview channel; on the real web it returns early, and the web surface is the default.
@@ -8202,8 +8213,8 @@
                 <div id="walletResyncNeeded" class="ui-text-center" hidden>
                     <div class="ui-tone-text ui-label-strong ui-mb-2" id="walletResyncNeededTitle">Your bank is out of date</div>
                     <div class="xs mu ui-mb-3" id="walletResyncNeededBody"></div>
-                    <button data-layout="full" data-role="primary" type="button"
-                        class="btn btn-w btn-lg btn-primary mx-action" id="walletResyncNeededBtn"
+                    <button data-size="compact" data-layout="full" data-role="secondary" type="button"
+                        class="btn btn-w btn-secondary mx-action" id="walletResyncNeededBtn"
                         onclick="stablesResyncWithNetwork()">Resync with the network</button>
                     <div class="xs mu ui-mt-2" id="walletResyncNeededNote">A few minutes. Keep the phone charging.</div>
                 </div>
@@ -11190,7 +11201,7 @@
             </div>
             <div class="card card--prose-centered app-section-card ui-mb-2 app-section-card--dense" id="settings-app-updates">
                 <div class="xs mu ui-tone-text ui-mb-3 ui-support-strong" id="settingsAppUpdateTitle">
-                    Download the latest Stables MiniDapp package for your Minima node (MDS zip on GitHub).
+                    Get the latest Stables app for MinimaOS.
                 </div>
                 <div id="settingsApkVersionLine" class="xs mu ui-text-center ui-mb-3" style="display:none"></div>
                 <div id="settingsApkUpdateStatus" class="xs ui-mb-3 ui-text-center ui-support-strong" style="display:none"></div>
@@ -11203,11 +11214,22 @@
                 <a data-size="compact" data-layout="full" data-role="quiet" id="settingsMdsZipLink" class="btn btn-w btn-link-action ui-flex-1 ui-text-center mx-action"
                     href="#" target="_blank" rel="noopener">Download Stables package (.mds.zip)</a>
                 <a data-size="compact" data-layout="full" data-role="secondary" id="settingsApkReleasesLink" class="btn btn-w btn-secondary ui-mt-2 ui-text-center mx-action" hidden
-                    href="#" target="_blank" rel="noopener">View releases on GitHub</a>
+                    href="#" target="_blank" rel="noopener">View available updates</a>
                 <div class="xs mu ui-mt-2 ui-text-center" id="settingsMdsZipUrlLabel" style="opacity:.75"></div>
                 <div class="xs mu ui-tone-accent ui-mt-2 ui-text-center ui-support-strong" id="settingsApkProgress" style="display:none;opacity:.85"></div>
             </div>
             </div>
+
+            <section class="app-section app-section--caption-bottom app-section--caption-bottom--mt20" aria-labelledby="settingsMaintenanceTitle">
+                <div class="stitle-row"><h2 class="stitle" id="settingsMaintenanceTitle">App maintenance</h2></div>
+                <div class="card app-section-card app-section-card--standard">
+                    <div class="set-row">
+                        <div class="set-label">Available SAND</div>
+                        <div class="ui-support-strong" id="settingsSandBalance" role="status" aria-live="polite">Unavailable</div>
+                    </div>
+                    <p class="xs mu">Free tokens used to keep Stables running smoothly. Refilled automatically, without using your payment funds.</p>
+                </div>
+            </section>
 
             <!-- Standalone app only: network status and block height. Shown via stablesInitNetworkSection(). -->
             <div id="stablesNetworkSection" class="app-section app-section--caption-bottom app-section--caption-bottom--mt20" style="display:none;scroll-margin-top:calc(var(--th) + var(--safe-top) + 32px)">
@@ -11228,8 +11250,8 @@
                          (founder 2026-09-04: "we should guide the user in doing so"). Shown only
                          when the node is behind AND has stopped gaining blocks, so it never nags
                          during an ordinary start-up. -->
-                    <div class="ui-row-end ui-mt-3" id="stablesNetworkResyncRow" hidden>
-                        <button type="button" data-role="secondary" class="btn btn-secondary mx-action"
+                    <div class="ui-text-center ui-mt-3" id="stablesNetworkResyncRow" hidden>
+                        <button type="button" data-size="compact" data-layout="full" data-role="secondary" class="btn btn-w btn-secondary mx-action"
                             onclick="stablesResyncWithNetwork()">Resync with the network</button>
                     </div>
                 </div>
@@ -11263,8 +11285,10 @@
                         </span>
                     </label>
 
-                    <button data-size="compact" data-layout="full" data-role="danger" type="button"
-                        class="btn btn-w btn-danger mx-action" id="stablesChainResyncBtn" disabled onclick="stablesStartChainResync()">Resync from MegaMMR</button>
+                    <div class="ui-text-center">
+                    <button data-size="compact" data-layout="full" data-role="secondary" type="button"
+                        class="btn btn-w btn-secondary mx-action" id="stablesChainResyncBtn" disabled onclick="stablesStartChainResync()">Start resync</button>
+                    </div>
                     <div class="xs ui-mt-3 mx-status" id="stablesChainResyncStatus" role="status" aria-live="polite" hidden></div>
                 </div>
             </div>
@@ -13299,13 +13323,14 @@
         <button class="ntab" id="tab-slot-5" data-page=""><span class="nicon">•</span><span class="nlabel"></span></button>
     </nav>
 
-    <script src="assets/config/runtime-config.js?v=tv81-1188"></script>
-    <script src="assets/testv008-registry.js?v=tv81-1188"></script>
+    <script src="assets/config/runtime-config.js?v=tv81-1194"></script>
+    <script src="assets/sand-maintenance.js?v=tv81-1194"></script>
+    <script src="assets/testv008-registry.js?v=tv81-1194"></script>
     <!-- The budget must exist before anything that reads the node or repaints the wallet. -->
-    <script src="assets/node-read-budget.js?v=tv81-1188"></script>
-    <script src="assets/retail-payment.js?v=tv81-1188"></script>
+    <script src="assets/node-read-budget.js?v=tv81-1194"></script>
+    <script src="assets/retail-payment.js?v=tv81-1194"></script>
     <!-- Exact arithmetic and the app's wording for notes; every error path calls stablesHumanNodeError. -->
-    <script src="assets/notes-manager.js?v=tv81-1188"></script>
+    <script src="assets/notes-manager.js?v=tv81-1194"></script>
     <script>
         (function () {
             var s = String((window.STABLES_CONFIG || {}).APP_STAGE || 'test').trim().toLowerCase();
@@ -13804,7 +13829,7 @@
             setTimeout(function () { window.stablesReadiness.arm(); }, 1200);
         }
     </script>
-    <script src="assets/test-channel-bootstrap.js?v=tv81-1188"></script>
+    <script src="assets/test-channel-bootstrap.js?v=tv81-1194"></script>
     <!-- Minima MiniDapp hub does not inject a global MDS; ship mds.js in the package so hub URLs connect without Connect node. -->
     <script src="assets/lib/mds.js"></script>
     <script src="assets/qrcode.js"></script>
@@ -14882,6 +14907,12 @@
         }
 
         function stablesResolveApkUpdateConfig() {
+            if (window.__STABLES_CORE_CONNECTED_APP) {
+                const version = window.__STABLES_CORE_UPDATE_VERSION
+                    || ((window.STABLES_CONFIG || {}).APP_UPDATE_POLICY || {}).latestPublishedVersion || '';
+                return { latestVersion: version, expectedPackageName: 'org.stablescouncil.stables.core',
+                    releasesPageUrl: 'https://stablescouncil.org/payment-app/', downloadUrl: '', sha256: '', signerSha256: '' };
+            }
             const remote = window.__STABLES_REMOTE_APK_UPDATE;
             const cfg = window.STABLES_CONFIG || {};
             const apk = cfg.ANDROID_APK_UPDATE && typeof cfg.ANDROID_APK_UPDATE === 'object' ? cfg.ANDROID_APK_UPDATE : {};
@@ -14970,6 +15001,35 @@
         };
 
         function stablesRefreshRemoteApkUpdateConfig(userInitiated) {
+            if (window.__STABLES_CORE_CONNECTED_APP) {
+                if (window.__STABLES_REMOTE_APK_UPDATE_FETCHING) return;
+                window.__STABLES_REMOTE_APK_UPDATE_FETCHING = true;
+                window.__STABLES_REMOTE_APK_UPDATE_ATTEMPTED = true;
+                window.__STABLES_CORE_UPDATE_ERROR = false;
+                syncAppUpdatesSection();
+                // The public manifest names the coordinated test release. Core installs from the
+                // access page; standalone package URLs, hashes and installer metadata are not reused.
+                const controller = new AbortController();
+                const timer = setTimeout(function () { controller.abort(); }, 12000);
+                return fetch('https://stablescouncil.org/releases/android-update.json', {cache:'no-store',signal:controller.signal})
+                    .then(function (r) { if (!r.ok) throw Error('Update check failed'); return r.text(); })
+                    .then(function (text) {
+                        if (text.length > 32768) throw Error('Invalid update information');
+                        const doc = JSON.parse(text);
+                        if (doc.schema !== 'org.stablescouncil.android-update.v1' || doc.channel !== 'test'
+                            || doc.packageName !== 'org.stablescouncil.stables'
+                            || !/^\d+(?:\.\d+){3}$/.test(doc.versionName)
+                            || !Number.isSafeInteger(doc.versionCode) || doc.versionCode <= 0) throw Error('Invalid update information');
+                        const known = stablesResolveApkUpdateConfig().latestVersion;
+                        if (!known || stablesCompareSemverLike(known,doc.versionName)<=0) window.__STABLES_CORE_UPDATE_VERSION=doc.versionName;
+                    }).catch(function (error) {
+                        window.__STABLES_CORE_UPDATE_ERROR=true;
+                        console.warn('[STABLES-UPDATE] Core discovery failed: ' + String(error && error.message || 'Unknown error'));
+                    })
+                    .finally(function () {
+                        clearTimeout(timer);window.__STABLES_REMOTE_APK_UPDATE_FETCHING=false;syncAppUpdatesSection();
+                    });
+            }
             if (!window.__STABLES_ANDROID_APP) return;
             const bundled = (window.STABLES_CONFIG && window.STABLES_CONFIG.ANDROID_APK_UPDATE) || {};
             const url = String(bundled.remoteManifestUrl || bundled.remoteConfigUrl
@@ -14982,7 +15042,7 @@
             if (!window.StablesNative || typeof window.StablesNative.fetchText !== 'function') {
                 window.__STABLES_REMOTE_APK_UPDATE_ATTEMPTED = true;
                 if (userInitiated && typeof showToast === 'function') {
-                    showToast('This app build cannot check online yet. Install the latest APK once, then in-app updates will work.');
+                    showToast('Get the latest Stables app from our website to enable update checks.');
                 }
                 syncAppUpdatesSection();
                 return;
@@ -15054,21 +15114,21 @@
             if (!window.__STABLES_ANDROID_APP) return;
             const cfg = stablesResolveApkUpdateConfig();
             if (!cfg.downloadUrl) {
-                if (typeof showToast === 'function') showToast('APK download URL is not configured yet.');
+                if (typeof showToast === 'function') showToast('The update download is not available yet. Please check again later.');
                 return;
             }
             if (!/^[0-9a-f]{64}$/i.test(String(cfg.sha256 || '').replace(/:/g, '').trim())) {
-                if (typeof showToast === 'function') showToast('The release manifest is missing a valid SHA-256.');
+                if (typeof showToast === 'function') showToast('We could not verify this update. Please check again later.');
                 return;
             }
             if (!cfg.versionCode || !cfg.expectedPackageName
                     || !/^[0-9a-f]{64}$/i.test(String(cfg.signerSha256 || '').replace(/:/g, '').trim())) {
-                if (typeof showToast === 'function') showToast('The release manifest is incomplete. The update was not opened.');
+                if (typeof showToast === 'function') showToast('We could not verify this update, so installation has not started.');
                 return;
             }
             if (!stablesNativeApkUpdateSupported()) {
                 if (typeof showToast === 'function') {
-                    showToast('Install the latest Stables APK once from stablescouncil.org. After that, updates run inside the app.');
+                    showToast('Get the latest Stables app from our website to enable updates here.');
                 }
                 return;
             }
@@ -15143,8 +15203,12 @@
 
             wrap.classList.remove('drawer-version-status--ok', 'drawer-version-status--update', 'drawer-version-status--checking');
             wrap.classList.add(stateClass);
+            document.body.classList.toggle('app-update-available', stateClass === 'drawer-version-status--update');
+            document.querySelectorAll('.bnav .ntab[data-page="more"]').forEach(function (button) {
+                button.setAttribute('aria-label', stateClass === 'drawer-version-status--update' ? 'More, update available' : 'More');
+            });
             versionEl.textContent = displayVersion;
-            stateEl.textContent = stateText;
+            stateEl.textContent = stateText === 'Update available' ? 'Get the new version' : stateText;
             stateEl.style.display = stateText ? '' : 'none';
             const ariaText = stateText
                 ? 'App version ' + displayVersion + '. ' + stateText + '. Open app updates.'
@@ -15180,12 +15244,12 @@
 
                 if (title) {
                     title.textContent = coreConnected
-                        ? 'This Core-connected app opens signed Stables APK releases in your browser. Install the update through Android; Minima Core and your wallet stay separate.'
+                        ? 'Download the update in your browser, then follow the Android installation steps. Your wallet stays in Minima Core.'
                         : (nativeUpdates
                             ? (needsUpdate
-                                ? 'A newer Stables app is available. Stables verifies its SHA-256, package, version, and signing certificate before opening Android\'s installer.'
-                                : 'Updates are handled inside the app. Stables checks stablescouncil.org for the latest signed APK when you open this page.')
-                            : 'Install the latest Stables APK once from stablescouncil.org. Newer builds can update themselves from here.');
+                                ? 'A new Stables version is available. We check the update before asking you to install it.'
+                                : 'Stables checks for updates here. Your wallet stays on this device.')
+                            : 'Get the latest Stables app from our website, then follow the Android installation steps.');
                 }
                 if (apkVersionLine) {
                     apkVersionLine.style.display = '';
@@ -15198,6 +15262,9 @@
                     if (checking) {
                         apkStatus.style.color = 'var(--m)';
                         apkStatus.textContent = 'Checking for updates…';
+                    } else if (coreConnected && window.__STABLES_CORE_UPDATE_ERROR) {
+                        apkStatus.style.color = 'var(--m)';
+                        apkStatus.textContent = 'Could not check for updates. Please try again.';
                     } else if (needsUpdate) {
                         apkStatus.style.color = '#fbbf24';
                         apkStatus.textContent = 'Update available';
@@ -15221,26 +15288,22 @@
                     apkBtn.textContent = 'Download and install update';
                 }
                 if (apkCheckBtn) {
-                    apkCheckBtn.hidden = !nativeUpdates;
+                    apkCheckBtn.hidden = !(nativeUpdates || coreConnected);
                     apkCheckBtn.disabled = checking;
                     apkCheckBtn.textContent = checking ? 'Checking…' : 'Check for updates';
                 }
                 if (link) link.hidden = true;
                 if (apkReleases) {
                     apkReleases.hidden = coreConnected ? false : !needsUpdate;
-                    apkReleases.href = apkCfg.releasesPageUrl;
-                    apkReleases.textContent = coreConnected ? 'Open Stables APK releases' : 'Open GitHub releases';
+                    apkReleases.href = 'https://stablescouncil.org/payment-app/';
+                    apkReleases.textContent = 'Download from our website';
                 }
                 if (label) {
                     label.textContent = coreConnected
-                        ? 'The Core-connected app has no Internet permission. This link opens in your device browser.'
-                        : (needsUpdate && apkCfg.sha256
-                        ? ('SHA-256 ' + apkCfg.sha256)
-                        : (nativeUpdates
-                            ? 'Play Protect may warn on sideloaded updates. Stables verifies the release before opening it.'
-                            : 'Play Protect may warn on sideloaded updates. Verify the SHA-256 on GitHub if you prefer.'));
+                        ? 'The download opens in your browser.'
+                        : 'Stables checks the update before installation. Your wallet stays on this device.';
                 }
-                if (!checking && !window.__STABLES_REMOTE_APK_UPDATE && nativeUpdates && !window.__STABLES_REMOTE_APK_UPDATE_ATTEMPTED) {
+                if (!checking && !window.__STABLES_REMOTE_APK_UPDATE && (nativeUpdates || coreConnected) && !window.__STABLES_REMOTE_APK_UPDATE_ATTEMPTED) {
                     stablesRefreshRemoteApkUpdateConfig(false);
                 }
                 if (!checking) stablesSetApkUpdateProgress('');
@@ -15664,6 +15727,7 @@
             if (p === 'wallet-management') { try { if (typeof stablesInitWalletManagement === 'function') stablesInitWalletManagement(); } catch (_) { /* ignore */ } }
             if (p === 'settings-updates') {
                 syncAppUpdatesSection();
+                if (typeof window.stablesRefreshSandBalance === 'function') window.stablesRefreshSandBalance();
                 if (window.__STABLES_ANDROID_APP) {
                     try { stablesRefreshRemoteApkUpdateConfig(false); } catch (_) { /* ignore */ }
                 }
@@ -21792,6 +21856,7 @@
                 if (icon) icon.textContent = c.icon;
                 if (label) label.textContent = c.label;
             });
+            syncDrawerVersionStatus();
             // Keep the selects in Settings in step when the bar is changed from anywhere.
             STABLES_NAV_SLOTS.forEach(function (_, i) {
                 const sel = document.getElementById('stablesNavSel' + i);
@@ -22284,7 +22349,7 @@
             if (btn) {
                 btn.textContent = state === 'checking' ? 'Checking MegaMMR node…'
                     : (state === 'running' ? 'Resyncing from MegaMMR…'
-                    : (state === 'restarting' ? 'Restarting your bank…' : 'Resync from MegaMMR'));
+                    : (state === 'restarting' ? 'Restarting your bank…' : 'Start resync'));
                 btn.setAttribute('aria-busy', STABLES_CHAIN_RESYNC_RUNNING ? 'true' : 'false');
             }
             if (status) {
@@ -35663,15 +35728,15 @@
         })();
     </script>
     <script src="assets/theme.js"></script>
-    <script src="assets/payment-security.js?v=tv81-1188"></script>
-    <script src="assets/routes/activity-contacts.js?v=tv81-1188"></script>
+    <script src="assets/payment-security.js?v=tv81-1194"></script>
+    <script src="assets/routes/activity-contacts.js?v=tv81-1194"></script>
     <script src="assets/routes/trust-retro.js"></script>
-    <script src="assets/mx-dropdown.js?v=tv81-1188"></script>
-    <script src="assets/desktop-web.js?v=tv81-1188"></script>
-    <script src="assets/vendor/stables-sealedbox.js?v=tv81-1188"></script>
-    <script src="assets/chat-onchain.js?v=tv81-1188"></script>
+    <script src="assets/mx-dropdown.js?v=tv81-1194"></script>
+    <script src="assets/desktop-web.js?v=tv81-1194"></script>
+    <script src="assets/vendor/stables-sealedbox.js?v=tv81-1194"></script>
+    <script src="assets/chat-onchain.js?v=tv81-1194"></script>
     <script src="assets/routes/feedback.js"></script>
-    <script src="assets/tx-mirror.js?v=tv81-1188"></script>
+    <script src="assets/tx-mirror.js?v=tv81-1194"></script>
     <script src="assets/tx-radar.js"></script>
 
     <script>

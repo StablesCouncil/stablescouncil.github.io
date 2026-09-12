@@ -1527,3 +1527,46 @@ html.stables-self-hosted-node [data-requires-node-connection] { display: none !i
            incoming nor outgoing, so neither the green nor the red, and no sign. */
         .tx-ic.self-ic { background: rgba(103, 232, 249, .10); }
         .tx-amt.self { color: var(--t); }
+
+/* D052: centered narrative actions, discoverable updates, reachable Agent composer. */
+.card--prose-centered > .mx-action,
+.ui-text-center > .mx-action {
+    margin-inline: auto;
+    justify-content: center;
+    text-align: center;
+}
+#agentDrawer {
+    top: var(--agent-visible-top, 0px);
+    height: var(--agent-visible-height, 100dvh);
+    bottom: auto;
+}
+.agent-dlg-shell {
+    padding-bottom: var(--safe-bottom, 0px) !important;
+    box-sizing: border-box;
+}
+.app-update-available .bnav .ntab[data-page="more"] { position: relative; }
+.app-update-available .bnav .ntab[data-page="more"]::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    right: calc(50% - 20px);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--c);
+}
+.drawer-version-status--update {
+    background: var(--c);
+    color: var(--bg);
+    border-color: var(--c);
+}
+.drawer-version-status--update .drawer-version-status__state {
+    color: var(--bg);
+    white-space: normal;
+    font-size: 12px;
+}
+.drawer-version-status--update .drawer-version-status__version { color: var(--bg); }
+
+/* Short screens must allow the entire conversation panel to scroll to its composer. */
+.agent-dlg-panel { overflow-y: auto; }
+.agent-dlg-bubbles { min-height: 0; }
