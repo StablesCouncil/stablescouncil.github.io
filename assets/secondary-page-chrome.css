@@ -255,7 +255,7 @@ html:has(body.secondary-chrome-page) {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    padding: 1rem 0 1.15rem;
+    padding: 1rem 0 calc(2.75rem + env(safe-area-inset-bottom, 0px));
   }
 
   body.secondary-chrome-page .secondary-chrome-footer {
