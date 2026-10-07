@@ -37,9 +37,6 @@
             <span class="new-brand__role">Be your bank</span>
           </span>
         </a>
-        <nav class="new-nav" aria-label="Application access">
-          <a class="new-access-link" href="payment-app/">Access dApp</a>
-        </nav>
       </div>
     </header>
 
@@ -47,10 +44,7 @@
       <section class="new-hero new-frame" aria-labelledby="new-hero-title">
         <div>
           <h1 id="new-hero-title">A banking system merchants <span class="new-gradient-text">own.</span></h1>
-          <p class="new-hero__promise">The world's only <strong>Secure</strong>, <strong>Pseudonymous</strong> and <strong>Unstoppable</strong> merchant-owned banking system.</p>
-          <div class="new-actions">
-            <a class="new-button new-button--primary" href="payment-app/">Access dApp</a>
-          </div>
+          <p class="new-hero__promise">The world's only <strong>Secure</strong>, <strong>Pseudonymous</strong> and <strong>Unstoppable</strong> banking system.</p>
         </div>
 
         <div class="new-system" role="img" aria-label="The Stables system connects the merchant economy with Stables currencies, the Community Treasury, open xMinima equity participation, and Stables Council coordination">
@@ -73,11 +67,17 @@
         </div>
       </section>
 
-      <section class="new-cta new-frame" id="app" aria-labelledby="new-cta-title">
+      <section class="new-cta new-frame" id="download" aria-labelledby="new-cta-title">
         <p class="new-eyebrow">Testing phase</p>
         <h2 id="new-cta-title">Join us in testing Stables payments.</h2>
-        <div class="new-actions">
-          <a class="new-button new-button--primary" href="payment-app/">Access dApp</a>
+        <div class="new-downloads">
+          <a class="new-download new-download--android" data-android-test-download="standalone" href="https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.12.068/Stables_v0.0.12.068.apk">Download for Android</a>
+          <span class="new-download new-download--windows" role="note">Download for Windows<span class="new-download__state">Coming soon</span></span>
+        </div>
+        <p class="new-download-version" data-android-test-version>Test channel v0.0.12.068. Test tokens only, no value, no risk!</p>
+        <div class="new-scan">
+          <img src="assets/android-download-qr.png" width="116" height="116" alt="A code to scan with an Android phone. It downloads Stables.">
+          <p>On your Android phone, scan this code. It downloads Stables in one step.</p>
         </div>
       </section>
 
@@ -96,7 +96,6 @@
       <div class="new-footer__inner new-frame">
         <p><a class="new-footer__signature" href="./">Stables | Be your Bank</a></p>
         <nav class="new-footer__links" aria-label="Supporting links">
-          <a class="new-access-link" href="payment-app/">Access dApp</a>
           <a href="links.html">All links</a>
           <a href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer">X</a>
           <a href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer">Telegram</a>
@@ -105,6 +104,7 @@
       </div>
     </footer>
   </div>
+  <script src="assets/site-download-version.js"></script>
   <script src="assets/stables-agent-widget.js"></script>
 </body>
 </html>

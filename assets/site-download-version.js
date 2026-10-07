@@ -6,16 +6,16 @@
 // people to a build we no longer stand behind. The demo version is kept here because the links hub
 // still labels the demo track honestly as superseded, but it is no longer a download target.
 //
-// THE TEST CHANNEL IS THE ACTIVE OFFER, and it is reached through /payment-app/ (the access page, at the site root since 2026-09-03) rather than as
-// a bare zip link. That page states which Minima node each package needs, which is the thing a
-// person has to understand before installing anything; a naked zip link answers none of it.
+// THE TEST CHANNEL IS THE ACTIVE OFFER. The homepage carries Download for Android and a desktop
+// QR code. The Android app itself asks whether to use its built-in node or Minima Core.
+// /payment-app/ only redirects to /#download. /android/ starts the APK download for a scanned code.
 //
 // One published test version drives the coordinated downloads. DEMO_FROZEN_VERSION
 // labels the historical demo separately; its name must not be used for current links.
 //
 // Bump PUBLISHED_DEMO_VERSION at publication, and keep the zip present at
 // the path below. Elements are marked:
-//   [data-demo-download]          the site Download control, now routed to the access page
+//   [data-demo-download]          a Download control, routed to the homepage download section
 //   [data-demo-published-version] shows the demo label, e.g. the links hub badge
 //   [data-test-channel-download]  a real link to the current test package
 //   [data-test-channel-version]   the current test label and its truth statement
@@ -32,12 +32,11 @@
   var ANDROID_TEST_VERSION = PUBLISHED_DEMO_VERSION;
   var ANDROID_APK_URL = 'https://github.com/StablesCouncil/stables-app/releases/download/app-v'
     + ANDROID_TEST_VERSION + '/Stables_v' + ANDROID_TEST_VERSION + '.apk';
-  var ACCESS_PAGE = '/payment-app/';
+  var ACCESS_PAGE = '/#download';
   var TEST_ZIP_PATH = '/dapp/latest-version/Stables_v' + TEST_CHANNEL_VERSION + '.mds.zip';
 
   function apply() {
-    // The former demo download becomes the way in to the app-access page. Its label names the
-    // active line rather than a version that is no longer offered.
+    // A general Download control opens the homepage section. The Android button is a direct APK link.
     var downloadNodes = document.querySelectorAll('[data-demo-download]');
     for (var i = 0; i < downloadNodes.length; i++) {
       downloadNodes[i].setAttribute('href', ACCESS_PAGE);
@@ -68,12 +67,12 @@
     }
     var androidVersionNodes = document.querySelectorAll('[data-android-test-version]');
     for (var b = 0; b < androidVersionNodes.length; b++) {
-      androidVersionNodes[b].textContent = 'Test channel v' + ANDROID_TEST_VERSION + '. Test tokens only, no value.';
+      androidVersionNodes[b].textContent = 'Test channel v' + ANDROID_TEST_VERSION + '. Test tokens only, no value, no risk!';
     }
     var testVersionNodes = document.querySelectorAll('[data-test-channel-version]');
     for (var m = 0; m < testVersionNodes.length; m++) {
       testVersionNodes[m].textContent =
-        'Test channel v' + TEST_CHANNEL_VERSION + '. Test tokens only, no value.';
+        'Test channel v' + TEST_CHANNEL_VERSION + '. Test tokens only, no value, no risk!';
     }
   }
 
