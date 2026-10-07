@@ -1116,11 +1116,36 @@ body.d028-page {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  /* The agent stays its own floating circle. A 44px box here shrank only the width
+     of the 58px disc, so the icon turned into an oval and sat in the footer padding. */
   .d028-page .agent-fab {
-    width: 44px !important;
-    min-width: 44px !important;
-    height: 44px !important;
-    min-height: 44px !important;
+    position: fixed !important;
+    z-index: 9000 !important;
+    right: 20px !important;
+    bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)) !important;
+    width: 58px !important;
+    min-width: 58px !important;
+    max-width: 58px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    max-height: 58px !important;
+    flex: 0 0 58px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    overflow: visible !important;
+  }
+
+  .d028-page .agent-fab-btn {
+    width: 58px !important;
+    min-width: 58px !important;
+    max-width: 58px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    max-height: 58px !important;
+    flex: 0 0 58px !important;
+    aspect-ratio: 1 !important;
+    border-radius: 50% !important;
   }
 
   .d028-page .agent-avatar {
