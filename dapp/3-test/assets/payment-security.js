@@ -8,6 +8,7 @@
   var SETTINGS_KEY = 'stables_payment_security_v1';
   var PIN_HASH_KEY = 'stables_payment_code_v1';
   var DAILY_KEY = 'stables_quick_pay_daily_v1';
+  var CARD_SPEND_KEY = 'stables_card_spend_v1';
   var LOCKOUT_KEY = 'stables_payment_code_lockout_v1';
   var LEGACY_CONFIRM_TARGET_KEY = 'stables_confirm_target_v1';
   var CONFIRM_MIGRATED_KEY = 'stables_confirmation_policy_migrated_v1';
@@ -24,11 +25,12 @@
 
   /**
    * Value thresholds are in the wallet primary currency (same unit as quick-pay limits).
-   * Founder 2026-09-03: "by default make just one 3 blocks confirmation, not multiple". One level,
-   * every amount complete at 3 blocks; a person can still add value tiers.
+   * Founder 2026-09-03: "by default make just one 3 blocks confirmation, not multiple". One level; a person can
+   * still add value tiers. Founder 2026-10-04 (build 0.0.12.025): "by default, let's make the default of block to 1
+   * in the confirmation": every amount complete at 1 block.
    */
   var DEFAULT_CONFIRMATION_LEVELS = [
-    { label: 'All', upTo: null, blocks: 3 }
+    { label: 'All', upTo: null, blocks: 1 }
   ];
   /** The five-tier default shipped before 2026-09-03. A stored copy that still equals it was never
       chosen by the person, so it follows the new default; anything else is theirs and stays. */
@@ -77,6 +79,7 @@
     return {
       quickPayEnabled: saved.quickPayEnabled !== false,
       quickPayLimit: finiteNum(saved.quickPayLimit, DEFAULTS.quickPayLimit),
+      cardLevels: normalizeCardLevels(saved.cardLevels),
       significantThreshold: finiteNum(saved.significantThreshold, DEFAULTS.significantThreshold),
       dailyQuickPayCap: finiteNum(saved.dailyQuickPayCap, DEFAULTS.dailyQuickPayCap),
       quickPayUndo: !!saved.quickPayUndo,
@@ -84,6 +87,132 @@
       confirmationPolicyEnabled: saved.confirmationPolicyEnabled !== false,
       confirmationLevels: normalizeConfirmationLevels(isLegacyDefaultLevels(saved.confirmationLevels) ? null : saved.confirmationLevels)
     };
+  }
+
+  /**
+   * Stables card levels (build 0.0.12.036, Machinery D098; founder 2026-10-04: "the one touch, confirmation or pin/bio
+   * confirmation should be set for single transaction, day and week level, let's have this match what we already have
+   * at the global app level"). The three steps the Savings tiers have (Quick pay, Standard pay, Protected pay), for
+   * the card, each bounded per payment, per day and per week:
+   *   - One touch: holding the phones together pays, nothing to press;
+   *   - Confirm: Confirm send, then the tap;
+   *   - above both: the payment code or fingerprint, then the tap.
+   * A payment takes the first step whose three limits it fits, counting what the card already paid today and in the
+   * last 7 days. A per-payment limit of 0 switches that step off; a day or week limit of 0 sets no limit, as the
+   * Savings daily cap does. Payments are counted in the main currency, as the Savings tiers count them.
+   */
+  var CARD_LEVEL_DEFAULTS = {
+    tap: { payment: 50, day: 200, week: 500 },
+    confirm: { payment: 500, day: 1000, week: 3000 }
+  };
+  var CARD_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+  /* Build 0.0.12.038 (founder's Pro: "The quick pay required 2 touches"): the card's levels no longer start from the
+     Savings quick-pay limit. His was below 22, so a 22 Winiwa tap fell to Confirm although the card showed 50. The card
+     has its own defaults until the person sets its levels on the card's window. */
+  function normalizeCardLevels(raw) {
+    var out = {};
+    ['tap', 'confirm'].forEach(function (step) {
+      var src = raw && raw[step] ? raw[step] : {};
+      var def = CARD_LEVEL_DEFAULTS[step];
+      out[step] = {
+        payment: Math.max(0, finiteNum(src.payment, def.payment)),
+        day: Math.max(0, finiteNum(src.day, def.day)),
+        week: Math.max(0, finiteNum(src.week, def.week))
+      };
+    });
+    return out;
+  }
+  function cardSpendLog() {
+    var log = readJson(CARD_SPEND_KEY, []);
+    var since = Date.now() - CARD_WEEK_MS;
+    return Array.isArray(log) ? log.filter(function (x) { return x && x.at > since && finiteNum(x.fiat, 0) > 0; }) : [];
+  }
+  /** What the card paid today (calendar day) and in the last 7 days, in the main currency. */
+  function cardSpend() {
+    var start = new Date(); start.setHours(0, 0, 0, 0);
+    var day = 0, week = 0;
+    cardSpendLog().forEach(function (x) { var f = finiteNum(x.fiat, 0); week += f; if (x.at >= start.getTime()) day += f; });
+    return { day: day, week: week };
+  }
+  function recordCardSpend(fiatAmount) {
+    var amt = finiteNum(fiatAmount, 0);
+    if (!(amt > 0)) return;
+    var log = cardSpendLog();
+    log.push({ at: Date.now(), fiat: amt });
+    writeJson(CARD_SPEND_KEY, log);
+  }
+  function fitsCardStep(lim, fiat, spent) {
+    return lim.payment > 0 && fiat <= lim.payment + 1e-9
+      && (!(lim.day > 0) || spent.day + fiat <= lim.day + 1e-9)
+      && (!(lim.week > 0) || spent.week + fiat <= lim.week + 1e-9);
+  }
+  /** 'tap' (one touch), 'confirm', or 'code' (payment code or fingerprint) for a card payment of this value. */
+  function cardTier(fiatTotal) {
+    var fiat = finiteNum(fiatTotal, 0);
+    if (!(fiat > 0)) return 'code';
+    var lv = getSettings().cardLevels, spent = cardSpend();
+    if (fitsCardStep(lv.tap, fiat, spent)) return 'tap';
+    if (fitsCardStep(lv.confirm, fiat, spent)) return 'confirm';
+    return 'code';
+  }
+  /** What one touch can still pay at once: the per-payment limit, less what the day and week have used. */
+  function cardTapRoom() {
+    var lim = getSettings().cardLevels.tap, spent = cardSpend();
+    if (!(lim.payment > 0)) return 0;
+    var room = lim.payment;
+    if (lim.day > 0) room = Math.min(room, lim.day - spent.day);
+    if (lim.week > 0) room = Math.min(room, lim.week - spent.week);
+    return Math.max(0, room);
+  }
+  function cardTapAllows(fiatTotal) { return cardTier(fiatTotal) === 'tap'; }
+  /* D123 (founder 2026-10-06): one card payment made by code (at a distance) is capped at the card's one-touch DAY
+     level, 200 by default, so it follows what the person set for the card. 0 there means no day limit: the default
+     cap of 200 then applies. */
+  function cardDistanceCap() {
+    var day = getSettings().cardLevels.tap.day;
+    return day > 0 ? day : CARD_LEVEL_DEFAULTS.tap.day;
+  }
+
+  function cardLevelsEsc(t) {
+    return String(t == null ? '' : t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
+  }
+  /**
+   * The card levels as one table (One touch / Confirm by Payment / Day / Week), drawn into every
+   * [data-card-levels] host: the card's own window and Payment security show the same values, saved on change.
+   */
+  function renderCardLevels() {
+    var hosts = document.querySelectorAll('[data-card-levels]');
+    if (!hosts.length) return;
+    var lv = getSettings().cardLevels, spent = cardSpend(), unit = displayPrimaryCcy();
+    var names = { tap: 'One touch', confirm: 'Confirm' };
+    var cols = [['payment', 'Payment'], ['day', 'Day'], ['week', 'Week']];
+    Array.prototype.forEach.call(hosts, function (host) {
+      if (host.contains(document.activeElement)) return;     // never redraw under the person's typing
+      var html = '<div class="card-levels__grid" role="table" aria-label="Stables card levels, in ' + cardLevelsEsc(unit) + '">'
+        + '<span role="columnheader"></span>' + cols.map(function (c) { return '<span class="card-levels__col" role="columnheader">' + c[1] + '</span>'; }).join('');
+      ['tap', 'confirm'].forEach(function (step) {
+        html += '<span class="card-levels__step" role="rowheader">' + names[step] + '</span>';
+        cols.forEach(function (c) {
+          html += '<input class="finput card-levels__in" data-financial-amount type="text" inputmode="decimal" autocomplete="off"'
+            + ' data-card-step="' + step + '" data-card-limit="' + c[0] + '" aria-label="' + names[step] + ', up to per ' + c[1].toLowerCase() + ' (' + cardLevelsEsc(unit) + ')"'
+            + ' value="' + cardLevelsEsc(groupInputAmount(lv[step][c[0]])) + '">';
+        });
+      });
+      html += '</div><p class="xs mu card-levels__note">Above these: payment code or fingerprint. Paid today '
+        + cardLevelsEsc(formatPrimaryAmount(spent.day)) + ', last 7 days ' + cardLevelsEsc(formatPrimaryAmount(spent.week)) + ' ' + cardLevelsEsc(unit) + '.</p>';
+      host.innerHTML = html;
+      Array.prototype.forEach.call(host.querySelectorAll('.card-levels__in'), function (inp) {
+        inp.addEventListener('change', function () {
+          var next = getSettings().cardLevels;
+          var v = finiteNum(inp.value, NaN);
+          if (Number.isFinite(v) && v >= 0) next[inp.getAttribute('data-card-step')][inp.getAttribute('data-card-limit')] = v;
+          saveSettings({ cardLevels: next });
+          inp.blur();
+          renderCardLevels();
+          try { window.dispatchEvent(new CustomEvent('stables:card-levels')); } catch (_) { /* old WebView */ }
+        });
+      });
+    });
   }
 
   function saveSettings(partial) {
@@ -94,8 +223,16 @@
   }
 
   function finiteNum(v, fallback) {
-    /* Amount fields are grouped as a person types, so "1,000" arrives here. */
-    var n = Number(String(v == null ? '' : v).replace(/,/g, ''));
+    /* Amount fields are grouped as a person types, so "1,000" arrives here.
+       A MISSING or empty value is the default, never zero (build 102). The comma handling of
+       2026-09-07 turned `undefined` into `Number('')`, which is 0, so a person who had never saved
+       the Security page got a quick-pay limit, a significant threshold and a daily cap of 0: every
+       send was Protected pay and quick pay never ran, against the defaults above (50, 500, 200).
+       Before that change `Number(undefined)` was NaN and fell back, as it does again here. An
+       explicit 0 is still honoured. */
+    var s = String(v == null ? '' : v).replace(/,/g, '').trim();
+    if (s === '') return fallback;
+    var n = Number(s);
     return Number.isFinite(n) && n >= 0 ? n : fallback;
   }
 
@@ -300,6 +437,24 @@
     } catch (_) { /* ignore */ }
   }
   migrateLegacyConfirmTarget();
+
+  /* "set it this way too on my 2 phones for the next update" (founder 2026-10-04, build 0.0.12.025). Once per
+     install: a policy that is still the previous one-level default (3 blocks) becomes the new default (1 block). A
+     policy the person changed (another block count, value tiers) is theirs and stays. */
+  var CONFIRM_ONE_BLOCK_KEY = 'stables_confirmation_default_1_v1';
+  function migrateToOneBlockDefault() {
+    try {
+      if (localStorage.getItem(CONFIRM_ONE_BLOCK_KEY)) return;
+      var saved = readJson(SETTINGS_KEY, {});
+      var lv = saved.confirmationLevels;
+      if (Array.isArray(lv) && lv.length === 1 && lv[0] && (lv[0].upTo === null || lv[0].upTo === undefined) && Number(lv[0].blocks) === 3) {
+        saved.confirmationLevels = defaultConfirmationLevels();
+        writeJson(SETTINGS_KEY, saved);
+      }
+      localStorage.setItem(CONFIRM_ONE_BLOCK_KEY, '1');
+    } catch (_) { /* ignore */ }
+  }
+  migrateToOneBlockDefault();
 
   function normalizeContactTier(tier) {
     var t = String(tier || 'inherit').toLowerCase();
@@ -698,6 +853,7 @@
     return {
       quickPayEnabled: !!(qe && qe.checked),
       quickPayLimit: finiteNum(ql && ql.value, DEFAULTS.quickPayLimit),
+      cardLevels: cur.cardLevels,
       significantThreshold: finiteNum(sig && sig.value, DEFAULTS.significantThreshold),
       dailyQuickPayCap: finiteNum(cap && cap.value, DEFAULTS.dailyQuickPayCap),
       quickPayUndo: !!(undo && undo.checked),
@@ -886,6 +1042,7 @@
       else el.value = groupInputAmount(map[id]);
     });
     syncPrimaryCurrencyLabels(fav);
+    renderCardLevels();
     var dailyLbl = document.getElementById('paySecDailySpent');
     if (dailyLbl) {
       var spent = getDailyQuickSpend();
@@ -901,10 +1058,12 @@
     var hasCode = hasPaymentCode();
     var codeBtn = document.getElementById('paySecCodeBtn');
     if (codeBtn) {
+      /* Page review 2026-10 (D121): a row action stays secondary either way; the Security page has one main
+         action ("Open Minima Security app"). */
       codeBtn.textContent = hasCode ? 'Change' : 'Set';
-      codeBtn.classList.toggle('btn-primary', !hasCode);
-      codeBtn.classList.toggle('btn-secondary', hasCode);
-      codeBtn.setAttribute('data-role', hasCode ? 'secondary' : 'primary');
+      codeBtn.classList.remove('btn-primary');
+      codeBtn.classList.add('btn-secondary');
+      codeBtn.setAttribute('data-role', 'secondary');
     }
     var codeCopy = document.getElementById('paySecCodeCopy');
     if (codeCopy) {
@@ -973,6 +1132,13 @@
     displayPrimaryCcy: displayPrimaryCcy,
     formatPrimaryAmount: formatPrimaryAmount,
     classifyTier: classifyTier,
+    cardTapAllows: cardTapAllows,
+    cardDistanceCap: cardDistanceCap,
+    cardTier: cardTier,
+    cardTapRoom: cardTapRoom,
+    cardSpend: cardSpend,
+    recordCardSpend: recordCardSpend,
+    renderCardLevels: renderCardLevels,
     requiresPaymentCode: requiresPaymentCode,
     tierLabel: tierLabel,
     hasPaymentCode: hasPaymentCode,

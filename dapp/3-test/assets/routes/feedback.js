@@ -128,35 +128,18 @@
 
   function buildFeedbackRoadmapBlock() {
     var roadmap = getDemoFeedbackRoadmapConfig();
+    /* Page review 2026-10 (D120): what this test covers, after the form, as three plain rows. The version kicker
+       and the summary paragraph named an older build than the one running (0.0.11.88 under 0.0.12.059). */
+    void getAppBuild;
     return (
-      '<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">' +
+      '<div class="app-section app-section--caption-bottom">' +
       '<div class="stitle-row">' +
-      '<div class="stitle">Demo roadmap</div>' +
+      '<div class="stitle">What this test covers</div>' +
       '</div>' +
-      '<div class="card app-section-card"  style="padding:14px 16px;margin-bottom:14px">' +
-      '<div  style="font-size:12px;font-weight:900;color:var(--c);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Demo v' +
-      getAppBuild() +
-      '</div>' +
-      '<p class="sec-body" style="margin:0 0 12px;line-height:1.55;font-weight:800;color:var(--t)">' +
-      roadmap.summary +
-      '</p>' +
-      '<div style="display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:12px;row-gap:8px;padding:8px 10px;border-radius:10px;align-items:start">' +
-      '<span class="xs mu" style="white-space:nowrap"><strong style="color:var(--t)">Now review</strong></span>' +
-      '<span style="font-weight:800;color:var(--t);line-height:1.45">' +
-      roadmap.nowReview +
-      '</span>' +
-      '<span class="xs mu" style="white-space:nowrap"><strong style="color:var(--am)">Coming soon</strong></span>' +
-      '<span style="font-weight:800;color:var(--t);line-height:1.45">' +
-      roadmap.comingSoon +
-      '</span>' +
-      '<span class="xs mu" style="white-space:nowrap"><strong style="color:var(--t)">Next modules</strong></span>' +
-      '<span style="font-weight:800;color:var(--t);line-height:1.45">' +
-      roadmap.nextModules +
-      '</span>' +
-      '</div>' +
-      '<p class="xs mu" style="margin:12px 0 0;line-height:1.5;font-weight:800;color:var(--muted)">' +
-      roadmap.footnote +
-      '</p>' +
+      '<div class="ui-list">' +
+      '<div class="ui-list-row feedback-roadmap-row"><span class="ui-list-row__main"><span class="ui-list-row__name">To review now</span><span class="ui-list-row__sub">' + roadmap.nowReview + '</span></span></div>' +
+      '<div class="ui-list-row feedback-roadmap-row"><span class="ui-list-row__main"><span class="ui-list-row__name">Coming soon</span><span class="ui-list-row__sub">' + roadmap.comingSoon + '</span></span></div>' +
+      '<div class="ui-list-row feedback-roadmap-row"><span class="ui-list-row__main"><span class="ui-list-row__name">Later</span><span class="ui-list-row__sub">' + roadmap.nextModules + '</span></span></div>' +
       '</div></div>'
     );
   }
@@ -223,16 +206,13 @@
   function buildFeedbackFormHtml() {
     var dbUrl = getFeedbackDbUrl();
     return (
+      /* Page review 2026-10 (D120): the form is the page, so it comes first. That everything sent is public is
+         safety copy and stays, said once and plainly by the Send button instead of five times over the page. */
       '<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">' +
       '<div class="stitle-row">' +
-      '<div class="stitle">Public feedback (GitHub)</div>' +
+      '<div class="stitle">Send feedback</div>' +
       '</div>' +
-      '<div class="card app-section-card"  style="padding:14px 16px;margin-bottom:14px">' +
-      '<div  style="font-size:12px;font-weight:900;color:#fbbf24;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Public ledger</div>' +
-      '<p class="sec-body" style="margin:0 0 10px;line-height:1.55;font-weight:800;color:var(--t)">Do not include personal data, private keys, seed phrases, or anything you are not comfortable sharing <strong>forever</strong> in the open.</p>' +
-      '<p class="xs mu" style="margin:0;line-height:1.5;font-weight:700">Submissions go to a <a href="' + dbUrl + '" target="_blank" rel="noopener noreferrer" style="color:var(--c);font-weight:900;text-decoration:underline">public GitHub folder</a>. Anyone can read them. Optional fields below are still <strong>public</strong>.</p>' +
-      '</div>' +
-      '<div class="card app-section-card"  style="padding:14px 16px;margin-bottom:14px">' +
+      '<div class="card app-section-card feedback-form-card">' +
       '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Topic area</label>' +
       '<select data-mx-dropdown class="fsel" id="feedbackStructDomain" style="width:100%;margin-bottom:8px" aria-label="Topic area">' +
       '<option value="">Choose…</option>' +
@@ -286,36 +266,31 @@
       '<input class="finput" id="feedbackStructTitle" type="text" aria-label="Feedback title" maxlength="200" style="width:100%;margin-bottom:12px" placeholder="One line summary" />' +
       '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Details</label>' +
       '<textarea class="finput" id="feedbackStructBody" aria-label="Feedback details" rows="5" style="width:100%;margin-bottom:12px;resize:vertical" placeholder="What you want the Council / builders to know"></textarea>' +
-      '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:var(--muted)">Minima address (optional) <span aria-hidden="true">🚜</span></label>' +
-      '<p class="xs mu" style="margin:0 0 8px;line-height:1.45;font-weight:800;color:var(--muted)">Hey, we never know what the future will be made of. This field is optional and <strong>public</strong>. <strong>No engagement, no promise</strong> here. Everything will be decided by the Council.</p>' +
-      '<p class="xs mu" style="margin:0 0 8px;line-height:1.45;font-weight:800;color:var(--t)">We <strong>strongly recommend</strong> a <strong>new Minima address used only for this feedback</strong>, separate from your main wallet. That matters <strong>even more</strong> if you also add an <strong>email</strong> (or other contact) in the <strong>next step</strong>.</p>' +
-      '<input class="finput" id="feedbackStructMinimaAddr" type="text" aria-label="Optional public Minima address" maxlength="200" style="width:100%;margin-bottom:12px" placeholder="Optional Minima address (public if filled)" />' +
-      '<label class="xs mu" style="display:block;font-weight:900;margin-bottom:6px;color:#fbbf24">Public contact (optional)</label>' +
-      '<p class="xs mu" style="margin:0 0 6px;line-height:1.45;font-weight:800;color:#fbbf24">If you fill this, it is <strong>published with the JSON</strong>. Use only a contact you already treat as public. If you add <strong>email</strong> here, the feedback-only Minima address above is <strong>especially</strong> recommended.</p>' +
-      '<input class="finput" id="feedbackStructContact" type="text" aria-label="Optional public contact" style="width:100%;margin-bottom:12px" placeholder="e.g. public @handle or email (optional)" />' +
-      '<label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:14px">' +
-      '<input type="checkbox" id="feedbackStructConsent" style="margin-top:4px;flex-shrink:0" />' +
-      '<span class="xs mu" style="line-height:1.45;font-weight:800;color:var(--t)">I confirm this message is OK to publish on GitHub, contains no personal secrets, and I understand anyone can read it (including any optional address or contact I add).</span></label>' +
-      '<button type="button" id="feedbackStructSend" class="btn btn-w btn-disabled" style="width:100%;margin-bottom:10px" disabled onclick="window.feedbackSend()">Send</button>' +
-      '<a href="' +
-      dbUrl +
-      '" id="feedbackPublicDbLink" target="_blank" rel="noopener noreferrer" data-role="secondary" data-size="compact" class="btn btn-secondary btn-w mx-action" style="display:block;width:100%;text-align:center;box-sizing:border-box;text-decoration:none;padding:14px 16px;font-size:14px;font-weight:900;border-radius:16px">See what others sent (GitHub)</a>' +
+      '<details class="ui-disclosure feedback-optional">' +
+      '<summary class="ui-list-row"><span class="ui-list-row__ic" aria-hidden="true">&#x1F464;</span><span class="ui-list-row__main"><span class="ui-list-row__name">Add a public address or contact</span><span class="ui-list-row__sub">Optional, published with your feedback</span></span><span class="ui-list-row__chev" aria-hidden="true"></span></summary>' +
+      '<div class="ui-disclosure__body">' +
+      '<p class="xs mu" style="margin:0 0 10px">Use a new Minima address kept only for this, never your main wallet.</p>' +
+      '<label class="flabel" for="feedbackStructMinimaAddr">Minima address</label>' +
+      '<input class="finput" id="feedbackStructMinimaAddr" type="text" aria-label="Optional public Minima address" maxlength="200" style="width:100%;margin-bottom:12px" placeholder="Mx..." />' +
+      '<label class="flabel" for="feedbackStructContact">Public contact</label>' +
+      '<input class="finput" id="feedbackStructContact" type="text" aria-label="Optional public contact" style="width:100%;margin-bottom:4px" placeholder="e.g. a public @handle" />' +
+      '</div></details>' +
+      '<p class="feedback-public-line">Everything you send is public on GitHub, for ever. Never include personal data, keys or your Vault key.</p>' +
+      '<label class="feedback-consent">' +
+      '<input type="checkbox" id="feedbackStructConsent" />' +
+      '<span>I understand this is public</span></label>' +
+      '<button type="button" id="feedbackStructSend" class="btn btn-w btn-lg btn-primary" disabled onclick="window.feedbackSend()">Send</button>' +
+      '</div></div>' +
+      '<div class="app-section app-section--caption-bottom">' +
+      '<div class="ui-list">' +
+      '<a class="ui-list-row" href="' + dbUrl + '" id="feedbackPublicDbLink" target="_blank" rel="noopener noreferrer"><span class="ui-list-row__ic" aria-hidden="true">&#x1F4C2;</span><span class="ui-list-row__main"><span class="ui-list-row__name">See what others sent</span><span class="ui-list-row__sub">GitHub</span></span><span class="ui-list-row__chev" aria-hidden="true"></span></a>' +
+      '<a class="ui-list-row" href="https://t.me/stablescommunity" id="feedbackTelegramMain" target="_blank" rel="noopener"><span class="ui-list-row__ic" aria-hidden="true">&#x1F4AC;</span><span class="ui-list-row__main"><span class="ui-list-row__name">Telegram community</span><span class="ui-list-row__sub">In private: @stablescouncil</span></span><span class="ui-list-row__chev" aria-hidden="true"></span></a>' +
       '</div></div>'
     );
   }
 
-  const FEEDBACK_TELEGRAM_BLOCK =
-    '<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20">' +
-    '<div class="stitle-row">' +
-    '<div class="stitle">Telegram</div>' +
-    '</div>' +
-    '<div class="card app-section-card"  style="padding:14px 14px;border-radius:14px">' +
-    '<div  style="font-size:14px;font-weight:900;color:var(--accent);margin-bottom:12px">Community &amp; team</div>' +
-    '<p class="xs mu ui-mb-4 ui-support-strong">' +
-    'There are two ways to reach us, both on Telegram. Use the button below to open the Stables community: share feedback there with everyone and join the discussion. To contact the core dev team in private, open Telegram and start a chat with <strong style="color:var(--t)">@stablescouncil</strong>.' +
-    '</p>' +
-    '<a href="https://t.me/stablescommunity" id="feedbackTelegramMain" target="_blank" rel="noopener" data-role="secondary" data-size="compact" class="btn btn-secondary btn-w mx-action" style="display:block;width:100%;text-align:center;text-decoration:none;box-sizing:border-box;padding:16px 18px;font-size:15px;font-weight:900;border-radius:16px;border:1px solid rgba(103,232,249,0.3);background:linear-gradient(135deg, rgba(103,232,249,0.35), rgba(167,139,250,0.35));color:rgba(255,255,255,.96);box-shadow:0 0 20px rgba(103,232,249,0.18)">' +
-    'Open Stables on Telegram: t.me/stablescommunity</a></div></div>';
+  // D120: the Telegram row now sits with "See what others sent" under the form.
+  const FEEDBACK_TELEGRAM_BLOCK = '';
 
   function collectTopicSub(domain) {
     if (domain === 'financial_structure') return el('feedbackStructFinancialSub').value;
@@ -545,7 +520,7 @@
     if ($ && $('pageDesc')) $('pageDesc').textContent = '';
     if (typeof ctx.setHeaderButtons === 'function') ctx.setHeaderButtons([]);
     if (!app) return;
-    app.innerHTML = '<div  style="display:grid;gap:0">' + buildFeedbackRoadmapBlock() + buildFeedbackFormHtml() + FEEDBACK_TELEGRAM_BLOCK + '</div>';
+    app.innerHTML = '<div>' + buildFeedbackFormHtml() + buildFeedbackRoadmapBlock() + FEEDBACK_TELEGRAM_BLOCK + '</div>';
     wireFeedbackForm(app);
   }
 
@@ -565,7 +540,7 @@
   window.renderFeedbackPage = function renderFeedbackPage() {
     var root = document.getElementById('feedbackApp');
     if (!root) return;
-    root.innerHTML = '<div  style="display:grid;gap:0">' + buildFeedbackRoadmapBlock() + buildFeedbackFormHtml() + FEEDBACK_TELEGRAM_BLOCK + '</div>';
+    root.innerHTML = '<div>' + buildFeedbackFormHtml() + buildFeedbackRoadmapBlock() + FEEDBACK_TELEGRAM_BLOCK + '</div>';
     wireFeedbackForm(root);
   };
 

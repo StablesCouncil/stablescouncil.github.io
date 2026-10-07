@@ -1,0 +1,37 @@
+{
+  "v": 2,
+  "apps": [
+    {
+      "id": "the-pool",
+      "name": "The Pool",
+      "publisher": "Minima Bay",
+      "summary": "The on-chain order book: trade Winiwa, xWiniwa and the test tokens.",
+      "icon": "apps/the-pool.png",
+      "web": "https://github.com/minima-bay/the-minima-pool",
+      "android": {
+        "package": "io.github.minimabay.thebay",
+        "launch": {
+          "action": "io.github.minimabay.thebay.OPEN",
+          "extras": {
+            "app": "pool",
+            "from": "stables"
+          }
+        },
+        "versionCode": 12008,
+        "versionName": "0.0.12.008",
+        "apkUrl": "TODO (Bay): https://github.com/<bay-org>/<bay-repo>/releases/download/v<version>/TheBay_v<version>.apk",
+        "apkSha256": "TODO (Bay): 64 hex",
+        "signerSha256": "7934a2bc9c5ad8396650ce51cda26755a99c0c8b987743342cb0186ef9e5d0a1",
+        "minSdk": 28
+      },
+      "preinstalled": true,
+      "package": {
+        "url": "",
+        "sha256": "",
+        "entry": "index.html?host=stables&app=pool",
+        "version": "",
+        "status": "awaiting-package"
+      }
+    }
+  ]
+}

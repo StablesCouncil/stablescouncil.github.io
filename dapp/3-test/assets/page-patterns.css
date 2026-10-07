@@ -1,0 +1,379 @@
+/* Page patterns (page review 2026-10, D117 onwards).
+ *
+ * The house patterns settled in the week of D109 to D116 were drawn for the Wallet, the card and
+ * My profile. This sheet makes them the rule for every other page, so a page is built from them
+ * instead of restating its own numbers:
+ *
+ *   1. A section: a title, the Wallet's hairline above it, 20 px above the line, 44 px from the
+ *      line to the title, 18 px from the title to the content (measured on #walletInstantSection).
+ *   2. A list is rows: an icon in a small glass square, a name, a control at the right, hairlines
+ *      between rows ("Show on Home", D115).
+ *   5. One owner per gap: the section sets the spacing, its children carry none.
+ *
+ * Loaded after north-star-adoption.css and before desktop-web.css, so the desktop composition
+ * still has the last word at its own widths. The Wallet keeps its own measured rules
+ * (machinery-wallet.css) and is excluded here wherever the two would add up.
+ */
+
+/* ---- 1. The section rule --------------------------------------------------------------------- */
+
+/* Title to content is 18 px on every page, owned by the title row. The card under it adds nothing
+   above itself: before this it was 0, 12, 14, 16, 18 or 20 px depending on the page. */
+.page:not(#page-wallet) .app-section > .stitle-row { margin: 0 0 18px !important; }
+.page:not(#page-wallet) .app-section > .stitle-row + * { margin-top: 0 !important; padding-top: 0 !important; }
+
+/* Line to title is 44 px (the section's 24 px margin under the line plus 20 px of its own top
+   padding). A section that opens a wrapper which follows another section lost its top padding to
+   the first-child rule and sat 24 px under the line (My shop, Council). */
+.page .app-section + :not(.app-section) > .app-section:first-child { padding-top: 20px !important; }
+
+/* The extra 20 px top margin is for a page's first section only. Where sections stack in a flex
+   column their margins do not collapse, and the line-to-title grew to 64 px (Feedback). */
+.page .app-section ~ .app-section--caption-bottom--mt20 { margin-top: 0 !important; }
+
+/* A page ends clean: the last section a person can see draws no hairline under itself, even when
+   hidden sections follow it in the markup (Contacts, My shop, Council, Security, Settings).
+   stablesMarkLastSection() marks it where it is drawn. */
+.page .app-section.app-section--last { border-bottom: 0 !important; }
+
+/* ---- StablesAgent on the title line (priority 1) --------------------------------------------- */
+
+/* The header already keeps 62 px free at its right end (machinery-language.css). The button sits
+   there, centred on the page mark, and scrolls away with the header instead of floating over
+   whatever passes under a fixed point. stablesSeatAgentFab() moves it; a dragged position wins. */
+.page .app-page-header { position: relative; }
+.app-page-header > .agent-fab.agent-fab--seated {
+  position: absolute !important;
+  top: 3px !important;
+  right: 0 !important;
+  left: auto !important;
+  bottom: auto !important;
+  width: 48px !important;
+  height: 48px !important;
+  margin: 0 !important;
+  z-index: 5;
+}
+/* D124 (founder 2026-10-06: "the agent should always be available everywhere"): in a full-screen sheet the button sits
+   at the end of the sheet's own header line (back arrow, title, then the agent). The overlay rule that hides the
+   floating button while a sheet is open (index.html) is outranked here, for this seated button only. */
+html body .mx-screen-head > .agent-fab.agent-fab--seated.agent-fab--in-sheet {
+  display: grid !important;
+  place-items: center;
+  position: relative !important;
+  inset: auto !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  margin: 0 0 0 8px !important;
+  flex: 0 0 auto;
+  order: 99;
+  z-index: 1;
+}
+html body .mx-screen-head:has(> .agent-fab--in-sheet) > .mttl { flex: 1 1 auto; min-width: 0; }
+
+/* ---- 2. Rows ---------------------------------------------------------------------------------- */
+
+/* BLK-010 List row. One row per thing a person picks or switches: an icon in a 34 px glass square,
+   a name with at most one muted line under it, and one control at the trailing edge (a switch, a
+   value, a chevron). Rows are at least 54 px, hairlines between them, none after the last.
+   The geometry is D115's "Show on Home" row, lifted out of its id so every page can use it. */
+.ui-list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.ui-list-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 54px;
+  padding: 8px 0;
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 0;
+  background: transparent;
+  color: var(--mx-ink, var(--t));
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+.ui-list > .ui-list-row:last-child,
+.ui-list > :last-child > .ui-list-row { border-bottom: 0; }
+button.ui-list-row, a.ui-list-row, label.ui-list-row { cursor: pointer; }
+button.ui-list-row:disabled, .ui-list-row[aria-disabled="true"] { cursor: default; }
+.ui-list-row:focus-visible { outline: 3px solid #67e8f9; outline-offset: 2px; border-radius: 10px; }
+.ui-list-row__ic {
+  width: 34px; height: 34px; flex: 0 0 34px;
+  display: grid; place-items: center;
+  border-radius: 10px;
+  background: var(--mx-glass, rgba(255, 255, 255, .05));
+  border: 1px solid var(--mx-glass-line, rgba(255, 255, 255, .12));
+  font-size: 18px; line-height: 1; overflow: hidden;
+}
+.ui-list-row__ic img, .ui-list-row__ic svg { width: 22px; height: 22px; object-fit: contain; }
+.ui-list-row__main { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ui-list-row__name { font-size: 15px; line-height: 1.35; font-weight: 650; color: var(--mx-ink, var(--t)); overflow-wrap: anywhere; }
+.ui-list-row__sub { font-size: 13px; line-height: 1.4; font-weight: 500; color: rgba(255, 255, 255, .72); overflow-wrap: anywhere; }
+.ui-list-row__end {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 700; color: rgba(255, 255, 255, .80);
+  font-variant-numeric: tabular-nums; text-align: right;
+}
+.ui-list-row__end--soon { color: rgba(255, 255, 255, .58); font-weight: 600; }
+.ui-list-row__chev { width: 10px; height: 10px; border-right: 2px solid rgba(255, 255, 255, .55); border-top: 2px solid rgba(255, 255, 255, .55); transform: rotate(45deg); margin-right: 4px; }
+.ui-list-row[aria-disabled="true"] .ui-list-row__name,
+button.ui-list-row:disabled .ui-list-row__name { color: rgba(255, 255, 255, .62); }
+
+/* A small heading above a group of rows inside one section (as "On Home" in D115). */
+.ui-list-group-title {
+  margin: 18px 0 4px;
+  font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--mx-ink-soft, rgba(255, 255, 255, .72));
+}
+.ui-list-group-title:first-child { margin-top: 0; }
+
+/* BLK-011 Disclosure row. A list row that opens its content in place (a <details> whose <summary> is a
+   .ui-list-row). For a less frequent part of a page that a person opens on purpose (an invoice's
+   reference and tip, a shop's locations), so the page stays one screen of its main task. The chevron
+   turns down while open. The content keeps the page's own field and button components. */
+details.ui-disclosure { border-bottom: 1px solid rgba(255, 255, 255, .08); }
+.ui-list > details.ui-disclosure:last-child { border-bottom: 0; }
+details.ui-disclosure > summary.ui-list-row { list-style: none; border-bottom: 0; cursor: pointer; }
+details.ui-disclosure > summary.ui-list-row::-webkit-details-marker { display: none; }
+details.ui-disclosure > summary .ui-list-row__chev { transition: transform .15s ease; }
+details.ui-disclosure[open] > summary .ui-list-row__chev { transform: rotate(135deg); }
+details.ui-disclosure[aria-disabled="true"] > summary { cursor: default; }
+.ui-disclosure__body { padding: 4px 0 18px 48px; }
+.ui-disclosure__body > :first-child { margin-top: 0 !important; }
+@media (max-width: 380px) { .ui-disclosure__body { padding-left: 0; } }
+
+/* ---- The one switch (X7)---------------------------------------------------------------------- */
+
+/* An on/off setting is a switch at the trailing edge of its row, everywhere. The native checkbox
+   keeps its id, its change handler and its checked state; only its drawing changes. The visible
+   track is 44 by 24 px, and the row it sits in is the touch target. */
+input[type="checkbox"].ui-switch {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  flex: 0 0 44px;
+  width: 44px !important;
+  height: 24px !important;
+  min-width: 44px;
+  margin: 0 !important;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, .24);
+  background: rgba(255, 255, 255, .14);
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+  accent-color: auto;
+}
+input[type="checkbox"].ui-switch::before {
+  content: "";
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: transform .15s ease;
+}
+input[type="checkbox"].ui-switch:checked { background: #67e8f9; border-color: #67e8f9; }
+input[type="checkbox"].ui-switch:checked::before { transform: translateX(20px); background: #07222c; }
+input[type="checkbox"].ui-switch:disabled { opacity: .45; cursor: default; }
+input[type="checkbox"].ui-switch:focus-visible { outline: 3px solid #67e8f9; outline-offset: 3px; }
+
+/* ---- Currency buttons on pages (X6) ----------------------------------------------------------- */
+
+/* A page's currency button shows the currency only. The balance repeated under it in 10 px, to
+   six decimals, beside an "Available" line that already gives it (Exchange, Invest, Invoice).
+   The menu rows still show each balance. The Send and Receive sheets are not pages and keep it. */
+.page .ex-ccy-dd__btn .ex-ccy-dd__bal { display: none !important; }
+
+/* ---- Wave 1: the money pages (D118) ----------------------------------------------------------- */
+
+/* Mint and burn. One state line by the amount: the vault-proof line stands down once Ready. */
+#xwmVaultProofState[hidden] { display: none !important; }
+/* The info rows share one rhythm. "Rate" is a 44 px text action (it turns the pair round), so every
+   row is 44 px and the row tops step evenly instead of 42, 28 and 36 px. */
+#panelXwm .calc-row { min-height: 44px; margin: 0 !important; display: flex; align-items: center; justify-content: space-between; }
+#panelXwm .calc-row .ui-text-action { min-height: 44px !important; }
+/* The Treasury link inside the footnote is a 44 px target without moving the text around it. */
+#panelXwm [data-mx-region="context"] a { padding-block: 14px; margin-block: -14px; }
+
+/* Exchange (D124): the two boxes come from the card page's rules (machinery-wallet.css .card-move); the form keeps its
+   rate line and button under them with the same gap as the card page. */
+#page-exchange .ex-move { margin-bottom: 16px; }
+/* The state line is a line, not an empty box: it carried a border and a fill with no padding, so its
+   words touched the frame. */
+#tv81ExImpact { border: 0 !important; background: transparent !important; padding: 0 !important; border-radius: 0 !important; color: rgba(255, 255, 255, .80) !important; }
+
+/* On/off ramp. The route is two short numbered lists, the numbers in the muted ink, 8 px between steps. */
+.ramp-steps { margin: 0 0 18px; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.45; color: var(--mx-ink, var(--t)); }
+.ramp-steps li::marker { color: rgba(255, 255, 255, .62); font-weight: 700; }
+.ramp-steps + .ui-list-group-title { margin-top: 4px; }
+
+/* Activity. The row's second line is one line; the state under the amount is readable.
+   Founder 2026-10-06 ("the recent activity transaction and same on the activity page are misaligned"): a one-line detail
+   cannot shrink unless its column may, so a long one ("06 Oct · 12:27 · On-chain faucet covenant") pushed the amount
+   column off the screen, and on Activity widened the whole list past the page edge. The text column now takes the
+   space left and cuts its line; the amount column keeps its own width, right-aligned, on every row. */
+.tx-row { min-width: 0; max-width: 100%; }
+.tx-row > .tx-info { flex: 1 1 auto; min-width: 0; overflow: hidden; }
+/* The Activity card is a grid: its list would otherwise take its content's natural width (386 px in a 342 px card). */
+.app-section-card > .tx-list, .app-section-card > .mx-cmp-data-list { min-width: 0; max-width: 100%; }
+.tx-row > .tx-amt-wrap { flex: 0 0 auto; margin-left: auto; max-width: 62%; }
+.tx-row .tx-d { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tx-conf-amt { font-size: 13px !important; }
+.tx-conf-amt::first-letter { text-transform: uppercase; }
+#page-activity .activity-toolbar { justify-content: flex-end !important; }
+
+/* ---- Wave 2: the merchant pages (D119) -------------------------------------------------------- */
+
+/* Merchants. The offers filter spans the column like every other selector (it was 222 px wide and its
+   "My merchants" broke onto two lines in a 55 px segment). "View merchant" starts on the text edge. */
+#merchantPromotionsSection .ui-segmented { width: 100% !important; }
+#merchantPromotionsSection .merchant-promo-card .ui-text-action { padding-inline: 0 !important; justify-content: flex-start !important; min-height: 44px !important; }
+#page-spend .mcard[hidden], #page-spend .app-section[hidden], .merchant-promo-card.is-filtered-out { display: none !important; }
+#page-spend .badge { font-size: 12px !important; }
+
+/* A merchant's page (agentActionModal): head row, Pay, facts as rows, offers, then the quiet actions. */
+#agentActionContent .shop-profile-head { border-bottom: 0; }
+#agentActionContent .shop-profile-head .ui-list-row__ic { width: 44px; height: 44px; flex-basis: 44px; font-size: 24px; }
+#agentActionContent .shop-profile-head .ui-list-row__name { font-size: 18px; font-weight: 800; }
+.shop-profile-offers { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; line-height: 1.45; }
+.shop-profile-quiet { display: flex; flex-direction: column; align-items: flex-start; gap: 0; margin-top: 18px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .08); }
+.shop-profile-quiet .ui-text-action { padding-inline: 0 !important; min-height: 44px !important; color: rgba(255, 255, 255, .80) !important; font-weight: 650 !important; }
+
+/* Chat. The messaging switch row while messaging is off; no empty code square; search only when useful. */
+#chatMessagingRow { margin-bottom: 12px; }
+#chatMessagingRow[hidden], #chatMyQr[hidden], #chatSearchInput[hidden], #contactsSearchInput[hidden] { display: none !important; }
+
+/* My shop. The account switch row; the switch keeps its own drawing. */
+#settingsMerchantSection .ui-list-row .toggle { flex: 0 0 44px; }
+
+/* ---- Wave 3: community, help and pages not open yet (D120) ----------------------------------- */
+
+/* A data row: a label and a figure, no icon square (the row pattern without its icon). */
+.council-data-row { min-height: 48px; padding: 6px 0; }
+.council-data-row .ui-list-row__end { font-size: 15px; font-weight: 800; color: var(--mx-ink, var(--t)); }
+.council-data-row .council-figure { font-size: 20px; font-weight: 900; }
+.council-state-line { margin: 4px 0 0; font-size: 14px; line-height: 1.45; font-weight: 600; color: rgba(255, 255, 255, .80); }
+#page-council .council-vote { padding: 0 !important; border: 0 !important; background: transparent !important; }
+.council-slider-head { display: flex; justify-content: space-between; align-items: baseline; margin: 16px 0 8px; font-size: 15px; font-weight: 650; }
+.council-slider-head:first-child { margin-top: 0; }
+.council-slider-head span { font-variant-numeric: tabular-nums; font-weight: 800; }
+.council-total { margin: 16px 0 16px; border-top: 1px solid rgba(255, 255, 255, .08); border-bottom: 0; }
+
+/* Invest. The coverage fund pair side by side; its figures in two columns with room for their words. */
+.cf-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#page-invest .cf-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 14px 16px !important; }
+#page-invest .cf-grid .ps-val { overflow-wrap: anywhere; }
+#page-invest tr.invest-row td { padding-block: 12px !important; }
+
+/* Portfolio simulator. Its table was the smallest type in the app (10 px headers, 12 px cells). */
+#simBody table { font-size: 13px !important; }
+#simBody thead tr { font-size: 12px !important; }
+#simBody .treasury-slider-price-row, #simBody .treasury-slider-thumb-price, #simBody .treasury-slider-thumb-pct { font-size: 13px !important; }
+
+/* Feedback. Field labels as everywhere; the public line said once, by the consent and Send. */
+#feedbackApp .feedback-form-card { padding: 0 !important; }
+#feedbackApp label.xs.mu { font-size: 12px !important; font-weight: 700 !important; letter-spacing: .06em !important; text-transform: uppercase !important; color: rgba(255, 255, 255, .80) !important; margin-bottom: 6px !important; }
+#feedbackApp .feedback-form-card label.xs.mu { margin-top: 16px !important; }
+#feedbackApp .feedback-form-card > label.xs.mu:first-child { margin-top: 0 !important; }
+#feedbackApp .feedback-optional { margin: 16px 0 8px; border-top: 1px solid rgba(255, 255, 255, .08); }
+.feedback-public-line { margin: 12px 0 10px; font-size: 14px; line-height: 1.45; font-weight: 700; color: #fbbf24; }
+.feedback-consent { display: flex; align-items: center; gap: 10px; min-height: 44px; margin: 0 0 12px; cursor: pointer; font-size: 15px; font-weight: 650; }
+.feedback-roadmap-row { align-items: flex-start; }
+
+/* Treasury. A reference row: name, role, then the full id (founder convention 2026-07-05: ids in full). */
+.treasury-ref-row { align-items: flex-start; padding: 10px 0; }
+.treasury-ref-id { display: block; margin-top: 4px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.45; word-break: break-all; overflow-wrap: anywhere; }
+#treasuryState[hidden] { display: none !important; }
+
+/* D123: paying with the Stables card at a distance. The way switch is a quiet action at the trailing edge; the signer
+   panel sits under the code field: the name, one identity line in its tone, then reference, validity and a short key. */
+.instant-far-row { display: flex; justify-content: flex-end; margin: 0 0 12px; }
+.instant-far-row[hidden] { display: none !important; }
+.instant-who { margin: 4px 0 12px; padding: 12px 0; border-top: 1px solid rgba(255, 255, 255, .08); border-bottom: 1px solid rgba(255, 255, 255, .08); }
+.instant-who[hidden] { display: none !important; }
+.instant-who__name { font-size: 17px; font-weight: 800; line-height: 1.3; overflow-wrap: anywhere; }
+.instant-who__line { margin-top: 4px; font-size: 14px; font-weight: 700; line-height: 1.4; }
+.instant-who__line--ok { color: #34d399; }
+.instant-who__line--amber { color: #fbbf24; }
+.instant-who__line--danger { color: #f87171; }
+.instant-who__meta { margin-top: 6px; font-size: 13px; line-height: 1.4; color: rgba(255, 255, 255, .72); overflow-wrap: anywhere; }
+
+/* D127: the steps of a tap payment, under its banner: a mark (done, now, next, failed), the step, its time. */
+.tap-steps { list-style: none; margin: 10px 0 14px; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.tap-steps[hidden] { display: none !important; }
+.tap-step { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; align-items: center; gap: 10px; font-size: 15px; line-height: 1.35; }
+.tap-step__mark { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 13px; font-weight: 800; }
+.tap-step__time { font-size: 13px; color: rgba(255, 255, 255, .62); font-variant-numeric: tabular-nums; }
+.tap-step--done .tap-step__mark { background: rgba(52, 211, 153, .18); color: #34d399; }
+.tap-step--now .tap-step__mark { background: rgba(251, 191, 36, .18); color: #fbbf24; animation: tapStepPulse 1s ease-in-out infinite; }
+.tap-step--next { color: rgba(255, 255, 255, .55); }
+.tap-step--next .tap-step__mark { border: 1px solid rgba(255, 255, 255, .3); color: transparent; }
+.tap-step--failed .tap-step__mark { background: rgba(248, 113, 113, .18); color: #f87171; }
+@keyframes tapStepPulse { 50% { opacity: .45; } }
+@media (prefers-reduced-motion: reduce) { .tap-step--now .tap-step__mark { animation: none; } }
+
+/* D124: the card code's Copy and Share, one equal pair under the code (house pattern 3), each with its icon; the code text
+   itself is visually hidden. Outranks the Savings address row it shares its classes with (machinery-wallet.css). */
+html body #recvModal .recv-addr-row.instant-code-actions {
+  display: flex !important; gap: 12px !important; justify-content: center !important;
+  border-bottom: 0 !important; padding: 0 !important; margin: 12px 0 8px !important;
+}
+html body #recvModal .instant-code-actions .instant-code-btn {
+  flex: 1 1 0 !important; max-width: 200px !important; min-width: 0 !important; min-height: 48px !important;
+  display: inline-flex !important; align-items: center; justify-content: center; gap: 8px !important;
+  padding: 0 16px !important; border: 1px solid var(--mx-border, rgba(255, 255, 255, .16)) !important;
+  background: var(--mx-glass, rgba(255, 255, 255, .06)) !important; color: var(--mx-ink, #fff) !important;
+  font-size: 15px !important; font-weight: 700 !important; border-radius: 14px !important;
+}
+html body #recvModal .instant-code-actions .instant-code-btn[hidden] { display: none !important; }
+html body #recvModal .instant-code-actions .instant-code-btn::before { content: none !important; }
+html body #recvModal .instant-code-actions .instant-code-btn__icon { flex: 0 0 auto; color: var(--am, #fbbf24); }
+
+/* The Wallet's hide-amounts button sits at the end of its grid cell (was an inline style the UI contract audit counts). */
+#balHideBtn { justify-self: end; }
+
+/* ---- Wave 4 (D121): settings pages, side menu, Home, StablesAgent ---- */
+/* A setting row: words then the switch at the trailing edge, at least 54 px, like every list row. */
+#page-wallet-management .wm-settings label,
+#page-wallet-management .wm-settings .ui-row-top-divided,
+.settings-switch-row { display: flex !important; align-items: center !important; gap: 12px !important; min-height: 54px; padding-block: 8px !important; }
+.settings-switch-row { justify-content: space-between; }
+#page-wallet-management .ui-num-field { width: 96px !important; text-align: right; }
+#page-wallet-management #wmAdvancedDetails { border-top: 1px solid rgba(255, 255, 255, .08); }
+#page-wallet-management #wmAdvancedDetails .set-row { padding-inline: 0 !important; }
+/* Export and Import: a pair, side by side (house pattern 3). */
+.settings-move-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.settings-move-pair > .btn { width: 100% !important; margin: 0 !important; }
+/* My profile: the Council identity as a disclosure, the destructive quiet actions at the trailing edge. */
+#settingsCouncilDetails .ui-disclosure__body { padding-top: 4px; }
+#page-settings-profile .profile-nft-fields { display: grid; grid-template-columns: 1fr; gap: 12px; }
+/* Security: the payment code is a section of rows, not an outlined box inside a section (laws 11 and 12). */
+#page-settings-security #paySecConfirmWays { border: 0 !important; background: none !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
+#page-settings-security .paysec-toggle.settings-switch-row { margin: 4px 0 !important; }
+#page-settings-security .paysec-toggle.settings-switch-row > span { font-size: 15px; }
+#page-settings-security .paysec-unit-line { margin: 0 0 8px; }
+#page-settings-security .paysec-intro, #page-settings-security .paysec-daily { text-align: left !important; }
+#settings-app-updates #settingsApkStatusRow { justify-content: flex-start !important; margin-bottom: 0 !important; }
+#settings-app-updates.card--prose-centered { text-align: left !important; }
+/* Treasury: each full id is a copy target, so it gets the 44 px a target needs. */
+.treasury-ref-id { min-height: 44px; display: flex !important; align-items: center; }
+#page-settings-security .paysec-confirm-actions { display: flex !important; margin-top: 12px; }
+#page-settings-security #settingsSeedPhraseSection { text-align: left !important; }
+/* Side menu on desktop: name only, one line (the descriptions said "Full page ·" or the future). */
+#drawer .ddesc { display: none !important; }
+/* Home: the current language carries a mark. */
+.app-lang-menu-item[aria-current="true"] { color: #67e8f9 !important; font-weight: 800 !important; }
+.app-lang-menu-item[aria-current="true"]::after { content: "\2713"; margin-left: 8px; }
+/* StablesAgent: choices at least 44 px; Back and Next only inside a tour. */
+#agentWelcomeChoices button { min-height: 44px !important; font-size: 14px !important; }
+#agentWelcomeControls:not(:has(button:not(:disabled))) { display: none !important; }
+.agent-dlg-warn { text-transform: none !important; letter-spacing: 0 !important; font-size: 13px !important; font-weight: 700 !important; }
+.agent-dlg-back { flex: 0 0 auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  input[type="checkbox"].ui-switch, input[type="checkbox"].ui-switch::before { transition: none; }
+}

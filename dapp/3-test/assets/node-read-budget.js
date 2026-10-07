@@ -214,7 +214,13 @@
     activity: function () {
       try {
         if (typeof W.stablesGetUserActivityRows !== 'function') return null;
-        return digestRows(W.stablesGetUserActivityRows(), 60);
+        /* The rows alone are not what the Activity page draws: the page number, the filters, the sort and the
+           search decide WHICH rows. Without them, "See next 25" inside the five-second window painted nothing
+           (found 2026-09-30 while proving founder law 35). The view state is part of the signature; when the
+           page cannot say it, paint. */
+        var view = (typeof W.stablesActivityViewSignature === 'function') ? W.stablesActivityViewSignature() : null;
+        if (view === null || view === undefined) return null;
+        return digestRows(W.stablesGetUserActivityRows(), 60) + '|' + view;
       } catch (_) { return null; }
     },
     balances: function () {

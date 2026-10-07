@@ -29,11 +29,11 @@ window.STABLES_CONFIG = {
   FIRST_TEST_RELEASE_PROFILE: Object.freeze({
     id: 'xwiniwa-core',
     allowedRoutes: Object.freeze([
-      'wallet', 'invest', 'mint', 'exchange', 'trade', 'onoff-ramp', 'ambassador',
+      'wallet', 'invest', 'mint', 'exchange', 'onoff-ramp', 'ambassador',
       'my-shop', 'spend', 'chat', 'council-comms', 'activity', 'contacts', 'feedback',
       'help-academy', 'help-links', 'council', 'treasury', 'faucet', 'settings-profile',
       'wallet-management', 'settings-updates', 'settings-security', 'settings-legal',
-      'invoice', 'portfolio-simulator'
+      'invoice', 'portfolio-simulator', 'apps', 'hosted-app'
     ]),
     enabledFeatures: Object.freeze([
       'wallet', 'send', 'receive', 'faucet', 'xwiniwa-mint-burn', 'activity',
@@ -49,7 +49,7 @@ window.STABLES_CONFIG = {
     releaseAssets: Object.freeze(['WINIMA', 'Winiwa', 'xWiniwa'])
   }),
   /** Shipped build (keep in sync with dapp.conf "version" when you release). */
-  APP_BUILD_VERSION: '0.0.11.0',
+  APP_BUILD_VERSION: '0.0.12.0',
   /**
    * Dev build iteration for the current version line. Bump on EVERY change during testing so
    * each build is uniquely identifiable in the top-bar pill (e.g. v0.0.0.2.01, .02, …) and the
@@ -59,9 +59,9 @@ window.STABLES_CONFIG = {
    * (vote-vault, per-launch auction); stablecoins born later via pledge→vote→auction→pool. App
    * rebuilt to genesis-6 per V6_APP_WIRING_PLAN.md (slice 1: config + pool reader).
    */
-  APP_BUILD_ITERATION: 94,
+  APP_BUILD_ITERATION: 68,
   /** Date this build was published to GitHub (ISO YYYY-MM-DD). */
-  APP_BUILD_DATE: '2026-09-12',
+  APP_BUILD_DATE: '2026-10-07',
   /**
    * TX radar (dev instrument, test channel only): timestamps send FIRED, node event arrival,
    * and new relevant history rows to measure early incoming notification. true = on-screen
@@ -102,6 +102,29 @@ window.STABLES_CONFIG = {
   // recorded as xwiniwa_vault_v2_dustprove; a proof run selects it here or through the local
   // override key stables_tv81_vault_v2_key.
   TEST_XWINIWA_VAULT_V2_KEY: '',
+  /**
+   * Instant payments step 2 (build 103): the two covenants that load and offload the Instant payments
+   * balance, PROVEN on Minima mainnet by STEP2-PRESEED-01-R1 (2026-09-29, green, L2 for these shapes).
+   * ONE HOME for their identity: instant-chain.js builds with them, tx-mirror.js and the activity
+   * reconcilers treat both addresses as protocol infrastructure (a tracked vault coin is never a
+   * Savings coin and never a "Received" row, UX law 9b).
+   * The scripts are the EXACT single-line runscript clean forms, byte for byte the frozen files
+   * work/simcard/kiss/step2/instant_registration_v2.clean.txt (589 bytes, SHA-256 a033264f...2d9e) and
+   * instant_vault_v2.clean.txt (465 bytes, SHA-256 e63e0452...6f6a). Register and spend ONLY these
+   * texts: a multi-line or re-typed form files a phantom address (txn-building laws 2 and 3; the
+   * phantoms 0xC4B574EA... and 0x5FF94F30... must never appear). verify-instant-balance.mjs checks
+   * every byte against the frozen files.
+   */
+  INSTANT_CHAIN: Object.freeze({
+    REG: '0x5337459E075F10B5340ACF645B7815D016570787ACBF632CD5ADBB19C8F45449',
+    REG_MX: 'MxG082J6T2PS1QV22QJ82MFCHDNG5EG2PBGF1TCNTHWPYDDNCCSHT2K96PU118J',
+    VAULT: '0xE23CA9F24CF5BDC49B75964DA145A0AE75F69E6DFD37BDCEAB5765AEB3A53413',
+    VAULT_MX: 'MxG08727WKV4J7YNN29MTCM9MGKB85EENR9SRFT6UUSTAQNCMNB799K2EU5DAJE',
+    REG_SCRIPT: 'LET op=STATE(8) ASSERT @INPUT EQ 0 ASSERT SIGNEDBY(PREVSTATE(2)) IF op EQ 2 THEN ASSERT STATE(11) EQ @AMOUNT RETURN VERIFYOUT(0 PREVSTATE(3) STATE(11) @TOKENID FALSE) ENDIF ASSERT SAMESTATE(0 3) ASSERT SAMESTATE(12 12) ASSERT op EQ 1 LET w=STATE(7) ASSERT w GT 0 ASSERT STATE(11) EQ @AMOUNT LET t=PREVSTATE(12) LET d=0 IF @TOKENID EQ t THEN LET d=@AMOUNT ENDIF LET c=SUMINPUTS(t)-d-w ASSERT STATE(10) EQ c ASSERT VERIFYOUT(0 PREVSTATE(3) w t FALSE) IF c GT 0 THEN ASSERT @TOTOUT EQ 3 ELSE ASSERT c EQ 0 ASSERT @TOTOUT EQ 2 ENDIF RETURN VERIFYOUT(@TOTOUT-1 @ADDRESS STATE(11) @TOKENID TRUE)',
+    VAULT_SCRIPT: 'LET op=STATE(8) IF op EQ 1 THEN ASSERT GETINADDR(0) EQ 0x5337459E075F10B5340ACF645B7815D016570787ACBF632CD5ADBB19C8F45449 ASSERT @TOKENID EQ STATE(12) LET c=STATE(10) IF c GT 0 THEN RETURN VERIFYOUT(1 @ADDRESS c @TOKENID FALSE) ENDIF RETURN c EQ 0 ENDIF IF op EQ 3 THEN ASSERT GETINADDR(0) EQ @ADDRESS ASSERT GETINTOK(0) EQ @TOKENID ASSERT @TOTOUT EQ 1 ASSERT STATE(10) EQ SUMINPUTS(@TOKENID) RETURN VERIFYOUT(0 @ADDRESS STATE(10) @TOKENID FALSE) ENDIF RETURN FALSE',
+    /** A registration for a currency Savings does not hold is one atom of Winiwa (design section 5). */
+    DUST_TOKEN: '0xD4F5DD3546F25D327CBF2B6867E193CE5DB6491AC9C65BBDCECACA1A6688063F'
+  }),
   /** Browser projection of the active registry. Values are populated only after controlled TestV008 deployment. */
   // V9 GENESIS RESET (2026-07-24): fresh token set + full-release faucet on Hot/Cold wallets.
   // On-chain identity is V9; the internal namespace strings (TestV008 / v0.0.8.1 / tv81 /
@@ -300,11 +323,11 @@ window.STABLES_CONFIG = {
    * Use the same segment count as APP_BUILD_VERSION so semver-like compare is meaningful.
    */
   APP_UPDATE_POLICY: {
-    latestPublishedVersion: '0.0.11.94',
+    latestPublishedVersion: '0.0.12.068',
     whenUpdateNeeded: {
       criticality: 'low',
       whatChanged:
-        'Your maintenance balance stays readable, and an interrupted maintenance publication restarts safely.',
+        'The public download is one Android app. It uses the built-in node, or Minima Core if you choose that. The separate Core-connected app is no longer offered.',
       details:
         'Get updates through Stables or our official website.'
     }
@@ -315,12 +338,12 @@ window.STABLES_CONFIG = {
    */
   ANDROID_APK_UPDATE: {
     /** SHA-256 and signer fingerprint are filled from the exact signed artifact before publication. */
-    latestVersion: '0.0.11.94',
-    versionCode: 11094,
+    latestVersion: '0.0.12.068',
+    versionCode: 12068,
     expectedPackageName: 'org.stablescouncil.stables',
     downloadUrl:
-      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.11.94/Stables_v0.0.11.94.apk',
-    sha256: '88fe4429de4648aa0743a18fb3b0bb03bedc6b857164190a62d51df8be0ab669',
+      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.12.068/Stables_v0.0.12.068.apk',
+    sha256: '5fdeba126f17918ecb9336cadd3ae6f7b55c8a0a8f82c51585c57b57c795e02e',
     signerSha256: 'dabb1b2a79b134b6008e6401735d649c140b51f2c4a83eb001b2ffdad5ce5dd4',
     releasesPageUrl: 'https://github.com/StablesCouncil/stables-app/releases',
     /** Dedicated immutable-shape metadata used by hardened standalone builds. */
@@ -358,7 +381,7 @@ window.STABLES_CONFIG = {
   // was showing a phantom "next claim in…" with no recent claim.
   FAUCET_WINIWA_LAST_CLAIM_STORAGE_KEY: 'stables_test_faucet_winiwa_last_claim_tv81',
   /** Public test MiniDapp package download (target URL; not published until Council approves the test zip). */
-  MDS_ZIP_URL: 'https://stablescouncil.org/dapp/latest-version/Stables_v0.0.11.88.mds.zip',
+  MDS_ZIP_URL: 'https://stablescouncil.org/dapp/latest-version/Stables_v0.0.12.068.mds.zip',
   /**
    * Feedback page → Demo roadmap block (More → Feedback). Bump on every publish so reviewers
    * see the current build label, review focus, and next modules. Keep aligned with CHANGELOG.
@@ -478,26 +501,10 @@ window.STABLES_CONFIG = {
   COUNCIL_COMMUNICATIONS: {
     intro:
       'This channel is for Stables Council only: security incidents, required updates, and other critical communication. It is not for casual chat.',
-    items: [
-      {
-        title: 'Test channel v0.0.1.206 in development',
-        date: '2026-06-23',
-        body:
-          'Test channel is the active development line. Trustless Winiwa faucet, market-rated USDw mint/burn, on-chain xWiniwa mint/burn, and Winiwa/USDw/xWiniwa transfers are live on mainnet Test11. Demo will be marked superseded once the test zip/APK parity gate passes.'
-      },
-      {
-        title: 'Demo channel frozen',
-        date: '2026-06-23',
-        body:
-          'Demo v0.0.0.3.52 is the last demo line build and is now frozen. New work happens on the test channel only; production mapping (Winiwa → Minima, real token minting) is a future phase.'
-      },
-      {
-        title: 'Prototype build',
-        date: '2026-03-19',
-        body:
-          'No live signed council feed is wired in this prototype. In production, verified council messages will appear on the Council communications page (More, Community).'
-      }
-    ]
+    // Page review 2026-10 (D120): the three notices of 2026-03 and 2026-06 described builds long gone (v0.0.1.206,
+    // the demo line, "this prototype"); UX law 31: present the app as it will be handed to users. Add a notice here
+    // when the Council has one to give.
+    items: []
   },
   CONTACT_NOTES_KEY: 'stables_contact_notes_v1',
   SUSPICIOUS_TX_KEY: 'stables_suspicious_tx_ids_v1',

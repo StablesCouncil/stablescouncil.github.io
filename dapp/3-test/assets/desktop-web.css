@@ -462,7 +462,7 @@
 
   /* The selected rail row is the desktop page title. Keep the source heading in the
      accessibility tree while removing its duplicate visual treatment from the canvas. */
-  html.dw-active .page.active > .app-page-header {
+  html.dw-active:has(#dwSidebar .ditem[aria-current="page"]) .page.active > .app-page-header:not(:has(button, a, input, select, textarea)) {
     position: absolute !important;
     width: 1px !important;
     height: 1px !important;

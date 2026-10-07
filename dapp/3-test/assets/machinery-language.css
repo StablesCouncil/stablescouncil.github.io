@@ -309,6 +309,22 @@ body:has(.page.active[data-machinery-lit]) .topbar .brand-sub {
   transform: translateY(-3px) !important;
 }
 
+/* Build 0.0.12.053 (founder 2026-10-05: "on every page the page name is not in the middle of the back arrow"). The
+ * "‹" character sits where its font puts it: Inter in the preview put its ink 2 px under the title's centre, and the
+ * phone's font differs again, so no single nudge is right. The chevron is now a drawn shape, centred geometrically in
+ * the 44 px control, whose centre is the title line's centre on every screen and every font. The character stays in
+ * the markup for screen readers that read it, but is not painted. */
+.modal[data-modal-shape="screen"] .mx-screen-back__glyph {
+  width: 12px !important;
+  height: 20px !important;
+  font-size: 0 !important;
+  color: transparent !important;
+  transform: none !important;
+  background: var(--mx-ink-soft) !important;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 20'%3E%3Cpath d='M10 2 2 10l8 8' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat !important;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 20'%3E%3Cpath d='M10 2 2 10l8 8' fill='none' stroke='%23000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat !important;
+}
+
 .modal[data-modal-shape="screen"] .mx-screen-head .mttl {
   flex: 1 1 auto !important;
   margin: 0 !important;
@@ -801,9 +817,17 @@ body:has(.page.active[data-machinery-lit]) .topbar .brand-sub {
  * role class from `.btn-primary` to `.btn-disabled` could not take effect and EVERY disabled
  * transaction commit in the app rendered as the recommended next step. Traced to this clause under
  * the Revision Protocol and classified C, bad definition: the app conformed and the result was
- * still wrong. The exceptions are the fix; the app follows. */
-[data-machinery-lit] .btn-primary:not(.btn-danger):not(.btn-disabled):not([aria-disabled="true"]),
-[data-machinery-lit] .action-transaction:not(.btn-danger):not(.btn-choice):not(.btn-disabled):not([aria-disabled="true"]) {
+ * still wrong. The exceptions are the fix; the app follows.
+ *
+ * NATIVE `disabled` IS THE SAME STATE (founder approval 2026-09-28, build 102). The exceptions above
+ * named `.btn-disabled` and `aria-disabled` but not the native `disabled` attribute, which is how a
+ * form refuses in place ("Confirm send" on Savings and on Instant payments while the amount cannot be
+ * paid, UX law 11). So a natively disabled commit kept the full accent at full opacity and looked
+ * live (D058 note 5). UI reference 6.1 registers "`btn-disabled` or native `disabled`" as ONE role and
+ * M-EL-ACTION forbids "primary styling for an unavailable action", so native `:disabled` joins the
+ * exceptions here and the unavailable paint below. The enabled look is untouched. */
+[data-machinery-lit] .btn-primary:not(.btn-danger):not(.btn-disabled):not([aria-disabled="true"]):not(:disabled),
+[data-machinery-lit] .action-transaction:not(.btn-danger):not(.btn-choice):not(.btn-disabled):not([aria-disabled="true"]):not(:disabled) {
   border: 0 !important;
   background: var(--mx-accent) !important;
   background-image: none !important;
@@ -816,8 +840,8 @@ body:has(.page.active[data-machinery-lit]) .topbar .brand-sub {
  * 2026-08-10: burn, sell and every other-side action box go light red). The same law the
  * .btn-danger rule below states for destructive OPERATIONS, keyed off the direction the
  * control carries; the :not() chain mirrors the accent rule so this stays the heavier voice. */
-[data-machinery-lit] .action-transaction[data-side="burn"]:not(.btn-choice):not(.btn-disabled):not([aria-disabled="true"]),
-[data-machinery-lit] .action-transaction[data-side="sell"]:not(.btn-choice):not(.btn-disabled):not([aria-disabled="true"]) {
+[data-machinery-lit] .action-transaction[data-side="burn"]:not(.btn-choice):not(.btn-disabled):not([aria-disabled="true"]):not(:disabled),
+[data-machinery-lit] .action-transaction[data-side="sell"]:not(.btn-choice):not(.btn-disabled):not([aria-disabled="true"]):not(:disabled) {
   background: #fb7185 !important;
   color: #2c070e !important;
 }
@@ -827,8 +851,10 @@ body:has(.page.active[data-machinery-lit]) .topbar .brand-sub {
  * tokens as the `.btn-disabled` role so the Machinery layer and the button hierarchy agree. */
 [data-machinery-lit] .action-transaction.btn-disabled,
 [data-machinery-lit] .action-transaction[aria-disabled="true"],
+[data-machinery-lit] .action-transaction:disabled,
 [data-machinery-lit] .btn-primary.btn-disabled,
-[data-machinery-lit] .btn-primary[aria-disabled="true"] {
+[data-machinery-lit] .btn-primary[aria-disabled="true"],
+[data-machinery-lit] .btn-primary:disabled {
   background: var(--surface-disabled) !important;
   background-image: none !important;
   color: var(--m) !important;
@@ -957,6 +983,9 @@ body:has(.page.active[data-machinery-lit]) .page.active[data-machinery-lit] {
   display: flex !important;
   margin: 29px auto 4px !important;
 }
+
+/* The seam already supplies the receive label gap: no second section gap. */
+[data-machinery-lit] .flip-btn + .ui-amount-head { margin-top: 0 !important; }
 
 /* One quick-amount control, one place (founder 2026-07-25). Whatever the set is,
  * a half, a MAX, or a row of percentages, it reads as text actions on the line

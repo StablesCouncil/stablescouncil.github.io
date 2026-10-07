@@ -26,7 +26,9 @@
  * product name, no section label above the balance, no editing affordance
  * competing with it. Everything removed here stays present and reachable on
  * every other page, so nothing is hidden from the product, only from this
- * screen where it earns no place.
+ * screen where it earns no place. (Since law 22, 2026-09-28, the two ACCOUNT
+ * names are the exception: under Receive and Send, "Instant balance" first,
+ * then "Savings", because two balances need their names. See below.)
  */
 
 /* ---- The mark, quietly (founder 2026-07-25) ----------------------------
@@ -73,9 +75,11 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
 /* The balance needs no label above it: the hero already names the unit. */
 [data-machinery-scope="wallet"] .app-section:has(.w-hero) > .stitle-row:first-child { display: none !important; }
 
-/* The holdings list needs no name: the balance above it and the rows themselves
-   already say what they are. */
-[data-machinery-scope="wallet"] #walletCurrenciesSection > .stitle-row:first-child { display: none !important; }
+/* The holdings list used to need no name ("the balance above it and the rows themselves already say
+   what they are", 2026-07-25). Law 22 (founder 2026-09-28) puts the Instant balance directly under
+   Receive and Send, first of the balances, and "the rest should be labelled as saving": with two
+   accounts on the page each needs its name, so the holdings list's title reads "Savings" and is
+   shown, like the "Instant balance" title above it. */
 
 /* The list editing pen stands down; currencies are managed from settings. */
 [data-machinery-scope="wallet"] .ccy-edit-pen { display: none !important; }
@@ -99,7 +103,45 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
  * read as the subject of the screen instead of the first item in a list.
  */
 
-[data-machinery-scope="wallet"] .w-hero { padding: 62px 0 0 !important; }
+/* D109 (build 0.0.12.052): the door chose the account, so the selector inside the sheets is not shown; the Manage
+   control sits at the head's right on the card; the Savings pair sits under the Savings title. */
+#sendModal [data-payment-account-choice], #recvModal [data-payment-account-choice] { display: none !important; }
+/* Build 0.0.12.053: the head's gear was too easy to miss ("these look optional"); the card's tools are a row of two
+   plain buttons at the foot of the card screen, in the Wallet pair's glass, the icons in the card's amber. */
+/* D127 (founder 2026-10-07): the row now sits under the Stables card on the Wallet (#walletCardTools), same look. */
+#walletCardTools.card-tools {
+  display: grid !important; grid-template-columns: 1fr !important; gap: 14px !important; margin: 14px 0 0 !important; }
+#walletCardTools .act-btn {
+  display: inline-flex !important; flex-direction: row !important; align-items: center !important; justify-content: center !important;
+  gap: 8px !important; min-height: 54px !important; padding: 0 14px !important; border-radius: 16px !important;
+  border: 1px solid var(--mx-glass-line) !important; background: var(--mx-glass) !important; color: var(--mx-ink) !important; }
+#walletCardTools .act-icon { color: var(--am) !important; font-size: 18px !important; line-height: 1 !important; }
+#walletCardTools .act-lbl { color: inherit !important; font-size: 16px !important; font-weight: 750 !important; }
+/* D110 (build 0.0.12.053): the currency page. The holding is the subject, then three verbs, then its activity. */
+#currencyModal .mx-screen-head .ccy-page-star { margin-left: auto; width: 44px; height: 44px; border-radius: 12px; border: 0;
+  background: transparent; color: var(--mx-ink-soft); font-size: 22px; display: grid; place-items: center; cursor: pointer; }
+#currencyModal .mx-screen-head .ccy-page-star[aria-pressed="true"] { color: var(--mx-accent); }
+#currencyModal .ccy-page-hero { padding: 6px 0 0; }
+#currencyModal .ccy-page-hero .w-ccy { margin-bottom: 0; }
+/* Build 0.0.12.054: Receive and Send the Wallet's large pair; Exchange, the less frequent alternative, its own quieter line. */
+#currencyModal [data-machinery-scope="wallet"] .act-row.ccy-page-actions { grid-template-columns: 1fr 1fr !important; gap: 14px !important; margin: 32px 0 12px !important; }
+#currencyModal [data-machinery-scope="wallet"] .ccy-page-actions .act-btn[data-role="primary"] {
+  border-color: transparent !important; background: var(--mx-accent) !important; color: var(--mx-on-accent) !important; }
+#currencyModal [data-machinery-scope="wallet"] .act-btn.ccy-page-exchange { display: flex !important; width: 100%; min-height: 48px !important; margin: 0 0 32px; }
+#currencyModal [data-machinery-scope="wallet"] .act-btn.ccy-page-exchange .act-lbl { font-size: 15px !important; font-weight: 650 !important; color: var(--mx-ink-soft) !important; }
+#currencyModal .stitle-row { margin-bottom: 10px; }
+/* On the card the one strip is its two verbs, Get paid | Pay (D109): shown there, in the card's colour; Savings keeps its two
+   doors on the Wallet and no strip in the sheet. */
+#sendModal[data-sheet-mode="card"] > .ui-modal-frame > .modal > .ui-segmented[data-payment-direction],
+#recvModal[data-sheet-mode="card"] > .ui-modal-frame > .modal > .ui-segmented[data-payment-direction] { display: flex !important; }
+#sendModal[data-sheet-mode="card"] [data-payment-direction] .ui-segment.active,
+#recvModal[data-sheet-mode="card"] [data-payment-direction] .ui-segment.active { border-color: transparent !important; background: var(--am) !important; color: var(--mx-on-accent) !important; }
+#walletInstantSection .stables-card { cursor: pointer; }
+
+/* Build 0.0.12.050: the eye moved to the top bar, so the hero starts at the top of its card; the balance section loses its
+   20 px head too. Everything on the Wallet sits higher (founder: "bring everything up"). */
+[data-machinery-scope="wallet"] .w-hero { padding: 6px 0 0 !important; }
+#walletBalanceSection.app-section { padding-top: 4px !important; }
 
 /* The total is painted with a gradient text fill, which ignores `color` entirely.
    D021 gives the accent to the primary action alone, so the balance is solid white. */
@@ -143,7 +185,7 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
  * the registered icon-action geometry (48 px, 10 px padding, 12 px radius, which
  * is invisible on a transparent background) so it is one of the family rather
  * than a local variant, and it still sits bare on the surface. */
-[data-machinery-scope="wallet"] #balHideBtn {
+.topbar #balHideBtn {
   display: grid !important;
   width: 48px !important;
   height: 48px !important;
@@ -170,9 +212,9 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
  *
  * The lesson is wider than this button: any `!important` display rule on an id silently defeats
  * `el.hidden`. Where one exists, it must carry its own `[hidden]` companion. */
-[data-machinery-scope="wallet"] #balHideBtn[hidden] { display: none !important; }
+.topbar #balHideBtn[hidden] { display: none !important; }
 
-[data-machinery-scope="wallet"] #balHideBtn:focus-visible {
+.topbar #balHideBtn:focus-visible {
   border-radius: 50% !important;
   outline: 3px solid color-mix(in srgb, var(--c) 55%, transparent) !important;
   outline-offset: 2px !important;
@@ -500,11 +542,16 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
   color: var(--mx-ink) !important;
 }
 
-/* One accent, used once: the action that moves money. */
-#sendModal .btn-primary,
-#recvModal .btn-primary,
-#sendModal .action-transaction,
-#recvModal .action-transaction {
+/* One accent, used once: the action that moves money. A commit that cannot run yet is not that
+   action (founder approval 2026-09-28, build 102): natively disabled, `.btn-disabled` or
+   `aria-disabled` commits are excepted here, where the sheet's id outweighed every other rule, and take
+   the one unavailable paint of machinery-language.css section 9 (UI reference 6.1: "btn-disabled or
+   native disabled", one role; M-EL-ACTION forbids primary styling for an unavailable action). Savings
+   and Instant payments alike; the enabled look is this rule, unchanged. */
+#sendModal .btn-primary:not(:disabled):not(.btn-disabled):not([aria-disabled="true"]),
+#recvModal .btn-primary:not(:disabled):not(.btn-disabled):not([aria-disabled="true"]),
+#sendModal .action-transaction:not(:disabled):not(.btn-disabled):not([aria-disabled="true"]),
+#recvModal .action-transaction:not(:disabled):not(.btn-disabled):not([aria-disabled="true"]) {
   border: 0 !important;
   background: var(--mx-accent) !important;
   background-image: none !important;
@@ -529,9 +576,15 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
  * gone from the markup, so the code itself has to look and behave like the
  * control it now is: a real target, a visible press, a focus ring, and a
  * button role announced to assistive technology.
+ *
+ * Scoped to the address code by id (v0.0.11.98): the Receive sheet now also
+ * carries the Instant balance request code (law 21), which is not a button and
+ * keeps the plain white code frame it had on its own screen.
  */
 
-#recvModal .recv-qr-host {
+#recvModal #recvQrHost,
+#recvModal #instantRecvQr,
+#sendModal #instantPayQr {
   /* It is a real button now, and a button is inline level, so it has to be made
      block level before auto margins can centre it. */
   display: flex !important;
@@ -549,24 +602,42 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
   transition: transform 120ms ease-out, background 120ms ease-out;
 }
 
-#recvModal .recv-qr-host:hover { background: rgba(255, 255, 255, .17) !important; }
-#recvModal .recv-qr-host:active { transform: scale(.985); }
+/* The address frame carries its square shape and its clip inline; the Instant codes wear the same
+   frame, so they take the same two properties here (law 22: the same interface). */
+#recvModal #instantRecvQr,
+#sendModal #instantPayQr {
+  aspect-ratio: 1;
+  overflow: hidden;
+}
 
-#recvModal .recv-qr-host:focus-visible {
+#recvModal #recvQrHost:hover,
+#recvModal #instantRecvQr:hover,
+#sendModal #instantPayQr:hover { background: rgba(255, 255, 255, .17) !important; }
+#recvModal #recvQrHost:active,
+#recvModal #instantRecvQr:active,
+#sendModal #instantPayQr:active { transform: scale(.985); }
+
+#recvModal #recvQrHost:focus-visible,
+#recvModal #instantRecvQr:focus-visible,
+#sendModal #instantPayQr:focus-visible {
   outline: 3px solid color-mix(in srgb, var(--c) 55%, transparent) !important;
   outline-offset: 3px !important;
 }
 
 /* While there is no address yet the frame explains itself quietly. It is a
  * lifecycle state, not a headline. */
-#recvModal .recv-qr-host:not(.recv-qr-host--ready) {
+#recvModal #recvQrHost:not(.recv-qr-host--ready),
+#recvModal #instantRecvQr:not(.recv-qr-host--ready),
+#sendModal #instantPayQr:not(.recv-qr-host--ready) {
   cursor: default;
   font-size: 13.5px !important;
   line-height: 1.45 !important;
 }
 
 /* Once the code is drawn it sits on white, so a camera can always read it. */
-#recvModal .recv-qr-host--ready { background: var(--mx-ink) !important; }
+#recvModal #recvQrHost.recv-qr-host--ready,
+#recvModal #instantRecvQr.recv-qr-host--ready,
+#sendModal #instantPayQr.recv-qr-host--ready { background: var(--mx-ink) !important; }
 #recvModal .receive-qr { background: transparent !important; border: 0 !important; }
 
 /* ---- Receive, cleaned up ------------------------------------------------
@@ -576,7 +647,8 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
  */
 
 /* The address is one line, not a boxed field with a button bolted to its side. */
-#recvModal .recv-addr-row {
+#recvModal .recv-addr-row,
+#sendModal #instantPayShow .recv-addr-row {
   align-items: center !important;
   gap: 4px !important;
   margin-bottom: 4px !important;
@@ -587,14 +659,17 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
 /* Colour only. The field keeps the one registered field geometry (height, padding,
  * radius, type size); making it look like a line is done by taking its surface
  * away, not by giving it a size no other field in the app has. */
-#recvModal #recvAddrInput {
+#recvModal #recvAddrInput,
+#recvModal #instantRecvCodeText,
+#sendModal #instantPayText {
   border-color: transparent !important;
   background: transparent !important;
   color: var(--mx-ink) !important;
   text-align: left !important;
 }
 
-#recvModal .recv-copy-btn {
+#recvModal .recv-copy-btn,
+#sendModal #instantPayShow .recv-copy-btn {
   flex: 0 0 auto !important;
   padding: 0 6px !important;
   border: 0 !important;
@@ -604,12 +679,15 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
   font-size: 13.5px !important;
 }
 
-/* The check is a reassurance, not a headline. */
-#recvModal #recvAddrValidateHint {
+/* The check is a reassurance, not a headline. The Instant code's line in the same place carries
+   only what went wrong, in the danger tone. */
+#recvModal #recvAddrValidateHint,
+#recvModal #instantRecvHint {
   margin: 0 0 22px !important;
   color: var(--mx-ink-faint) !important;
   text-align: left !important;
 }
+#recvModal #instantRecvHint.ui-tone-danger { color: var(--mx-danger) !important; }
 
 /* Amount and its unit read as one control. */
 #recvModal .ui-field-row--mb10 { margin-bottom: 26px !important; }
@@ -640,9 +718,11 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
  * from a saved photo is rare, so it stops looking like a primary route.
  */
 
-/* The Send / Receive switcher at the head of each dialog stands down. */
-#sendModal > .ui-modal-frame > .modal > .ui-segmented,
-#recvModal > .ui-modal-frame > .modal > .ui-segmented { display: none !important; }
+/* The Send / Receive switcher at the head of each dialog stands down. Named by its
+ * own attribute (v0.0.11.98) so the account choice (law 21), the other selector at
+ * the head of both sheets, is not caught by it. */
+#sendModal > .ui-modal-frame > .modal > .ui-segmented[data-payment-direction],
+#recvModal > .ui-modal-frame > .modal > .ui-segmented[data-payment-direction] { display: none !important; }
 
 /* Quick-size chips: REINSTATED in Send (founder 2026-09-02, "we need the 1/2 and
  * max in the sending page too as we have else where, in the minting page for
@@ -668,3 +748,334 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
   font-weight: 650 !important;
   text-decoration: underline;
 }
+
+/* ---- Instant balance: the same sheets, its own colour (law 22, Machinery D057) -----
+ * Founder 2026-09-28: "switching to instant payment should stay on the same interface as main
+ * balance, only the color should make it clear that this is an instant payment, the process should
+ * be the same". The Instant bodies of Send and Receive are the Savings bodies element for element,
+ * so the ONLY thing choosing the account changes here is one token, the accent, re-pointed for the
+ * whole sheet to the registered warning tone --am (D028 baseline: "Warning. Test releases, pending
+ * states, funds you are willing to lose"; UI reference 4.1: caution and risk attention). That is
+ * the truth of this account: its balance lives on this device alone, and it is test money. No new
+ * hue: Savings keeps the brand accent --c. Everything that reads the accent follows it: the commit
+ * ("Confirm send"), the Copy actions, the protection hint, the focus ring. Two places at the head of
+ * the sheet, where the eye lands first, carry the same mark:
+ *   - the chosen account itself: "Instant balance" fills with its colour when selected. The
+ *     registered precedent is the selected Sell/Burn segment, which fills with its consequence
+ *     colour ("direction is meaning, not decoration"). Savings keeps the lifted glass.
+ *   - the code and camera frames: a hairline of the same hue at the baseline's fixed border ratio
+ *     (22 to 32 percent). The code itself stays black on white, so a camera can always read it.
+ */
+#sendModal[data-payment-account="instant"],
+#recvModal[data-payment-account="instant"] {
+  --mx-accent: var(--am);
+  --c: var(--am);
+}
+
+/* Same place, not just same order: the Savings recipient row sits below the contact-chips row
+   (on-chain contacts, empty until there are some), whose -4 / 8 px margins leave 4 px. The Instant
+   form keeps that 4 px (as padding: a margin would collapse into the scanner's), so switching the
+   account moves nothing on screen. */
+#sendInstantBody > #instantPayForm { padding-top: 4px; }
+
+#sendModal[data-payment-account="instant"] [data-payment-account-choice] .ui-segment.active,
+#recvModal[data-payment-account="instant"] [data-payment-account-choice] .ui-segment.active {
+  border-color: transparent !important;
+  background: var(--am) !important;
+  color: var(--mx-on-accent) !important;
+}
+
+#sendModal[data-payment-account="instant"] #sendCamStrip > div:first-child,
+#recvModal[data-payment-account="instant"] #sendCamStrip > div:first-child,
+#recvModal #instantRecvQr,
+#sendModal #instantPayQr {
+  border-color: color-mix(in srgb, var(--am) 32%, transparent) !important;
+}
+
+/* The currency list of an Instant payments sheet (founder, build 100: "the selected ring stays cyan
+   inside the amber Instant sheet"). The list is moved to <body> while it is open, so it escapes the
+   sheet's clipping, and with it the sheet's re-pointed accent: the chosen currency's ring (which
+   reads --c) and its row tint (a fixed cyan) came back cyan. index.html copies the sheet's account
+   onto the list as it opens (positionVaultCurrencyDropdownPanel), and the list takes the same one
+   token back: the ring follows --c, the tint and hairline are the same hue at the selected-state
+   ratios the row already uses (16 and 22 percent). Savings lists are untouched. */
+.ex-ccy-dd__panel[data-payment-account="instant"] {
+  --mx-accent: var(--am);
+  --c: var(--am);
+}
+
+.ex-ccy-dd__panel[data-payment-account="instant"] .ex-ccy-dd__row--active {
+  background: color-mix(in srgb, var(--am) 16%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--am) 22%, transparent);
+}
+
+/* Instant payments by NFC (build 101, Machinery D059): one status banner per Instant sheet, the
+   registered M-EL-STATUS banner (mx-status-banner) unchanged. It sets its own display, so its
+   [hidden] is restated here (as the node banner's is), and it keeps the sheet's rhythm: the gap
+   under it is the 12 px the quiet commands' row leaves. Its icon reads the sheet accent, amber here;
+   the "NFC is off" state is the warning tone and a refusal the danger tone, both registered. */
+#sendModal #instantPayNfc[hidden],
+#recvModal #instantRecvNfc[hidden] { display: none !important; }
+
+#sendModal #instantPayNfc,
+#recvModal #instantRecvNfc { margin: 0 0 12px; }
+
+/* ---- Instant payments: ONE page, one column, one owner per gap (law 25, Machinery D062, D063) -----
+ * Founder 2026-09-29, starting the demo on build 103: "the instant payments where we had fund should
+ * look better and the button should be add and remove to instant payment, the following screen looks
+ * really bad with all elements touching each other"; and after testing build 104: "We have one
+ * intermediairy windows there that we can get rid of ... please combine these". Build 104's two screens
+ * are ONE page (#instantMoveModal, drawn by instant-balance.js), and the page is ONE column whose
+ * container owns every gap between its blocks (--ui-space-6, the scale's major separation): the children
+ * state no outer margin of their own, so no gap is ever the sum of two decisions (one gap, one owner, UI
+ * reference 23b). A block keeps its own inner rhythm (the account truth's unit under its figure, the money
+ * field's head 4 px above its input, a reason line 8 px under what it explains, the approval line 8 px
+ * under the commit). Top to bottom: the account truth, Remove | Add, From -> To, the money field, the
+ * commit, the currency rows, the retired test credit. The money-field head's outer 16 px and the unit's
+ * 18 px foot stand down inside the column; the segmented control declares none.
+ */
+#instantMoveBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ui-space-6);
+}
+
+#instantMoveBody > * {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* The money field is the column's block: its head gives up only its OUTER 16 px (the column decides
+   what separates it from From -> To); its 4 px to the input is the component's own and stays. */
+#instantMoveAmount > .ui-amount-head { margin-top: 0 !important; }
+
+#instantAccountTruth .w-ccy { margin-bottom: 0 !important; }
+
+/* The account's total wears the account's mark, the token that already marks it in Send and Receive
+   (--am, D057; UI reference 4.1). A state word ("Unavailable") keeps the muted state paint. */
+#instantAccountTruth[data-payment-account="instant"] .w-total:not(.w-total--state) {
+  color: var(--am) !important;
+  -webkit-text-fill-color: var(--am) !important;
+}
+
+/* On the page's From -> To the Instant payments account wears the same mark on whichever side it stands
+   (To for Add, From for Remove); Savings and the figures stay in ink, the commit in the app's accent. */
+#instantMoveFrom[data-payment-account="instant"] #instantMoveFromName,
+#instantMoveTo[data-payment-account="instant"] #instantMoveToName {
+  color: var(--am) !important;
+}
+
+/* An Instant payments currency row is name and amount only (law 25): one line beside the 38 px mark,
+   so the line is centred on the mark (a Savings row's two lines fill the mark's height by themselves;
+   one line would sit high, as it did for the main currency in builds 100 to 103). */
+[data-machinery-scope="wallet"] .ccy-sec-row[data-instant-ccy] .ccy-sec-tag {
+  display: flex;
+  align-items: center;
+  min-height: 38px;
+}
+
+/* D093 (founder 2026-10-04, build 0.0.12.030): the Stables card on the Wallet is drawn as a card: a deep gradient face,
+   the chip, and how it pays. The currency rows sit on it unchanged. */
+/* A domain card that carries its own chrome (app-ui-system.css: "Domain cards may carry chrome"): the flat-surface
+   rules (north-star-adoption.css) clear every card with !important, so this one face answers in kind. */
+#walletInstantSection .stables-card.card.app-section-card {
+  background: linear-gradient(135deg, #1f5a86 0%, #16334f 58%, #0f6f7a 120%) !important;
+  border: 1px solid rgba(103, 232, 249, .28) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .28) !important;
+  padding: 16px 16px 8px !important;
+}
+#walletInstantSection .stables-card-face {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+#walletInstantSection .stables-card-chip {
+  width: 34px;
+  height: 26px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #f6d77a 0%, #c9a227 100%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .25);
+}
+#walletInstantSection .stables-card-face-end { display: inline-flex; align-items: center; gap: 8px; }
+/* Option C (build 0.0.12.053): the contactless mark says the Wallet answers a tap; full amber while the phone listens. */
+#walletInstantSection .stables-card-listen { display: inline-grid; place-items: center; color: var(--am); opacity: .55; transform: rotate(0deg); }
+#walletInstantSection .stables-card-listen[data-live="1"] { opacity: 1; }
+#walletInstantSection .stables-card-listen[hidden] { display: none !important; }
+#walletInstantSection .stables-card-hint { color: rgba(255, 255, 255, .72); font-weight: 600; letter-spacing: .02em; }
+
+/* D095 (founder 2026-10-04, build 0.0.12.032): the Stables card's Send and Receive read like a card terminal: one large
+   panel says where the payment stands ("Hold near the other phone", "Paid", "Received"), the tap symbol pulses while it
+   waits, green when done, red when refused. It uses the room the sheet had empty. */
+#sendModal[data-payment-account="instant"] #instantPayNfc.mx-status-banner,
+#recvModal[data-payment-account="instant"] #instantRecvNfc.mx-status-banner {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  text-align: center;
+  gap: 14px;
+  min-height: 230px;
+  padding: 28px 18px;
+  margin: 8px 0 16px;
+  border-radius: 20px;
+  background: var(--mx-glass, var(--card));
+  border-color: var(--mx-accent);
+}
+#sendModal[data-payment-account="instant"] #instantPayNfc .mx-status-banner__icon,
+#recvModal[data-payment-account="instant"] #instantRecvNfc .mx-status-banner__icon {
+  width: 96px;
+  height: 96px;
+  font-size: 40px;
+  border-width: 2px;
+  animation: stablesTapPulse 1.6s ease-in-out infinite;
+}
+#sendModal[data-payment-account="instant"] #instantPayNfc .mx-status-banner__body strong,
+#recvModal[data-payment-account="instant"] #instantRecvNfc .mx-status-banner__body strong { font-size: 21px; line-height: 1.25; }
+#sendModal[data-payment-account="instant"] #instantPayNfc .mx-status-banner__body small,
+#recvModal[data-payment-account="instant"] #instantRecvNfc .mx-status-banner__body small { font-size: 16px; line-height: 1.35; }
+#instantPayNfc[data-tone="success"] .mx-status-banner__icon,
+#instantRecvNfc[data-tone="success"] .mx-status-banner__icon { color: var(--gr, #34d399); animation: none; background: rgba(52, 211, 153, .14); }
+#instantPayNfc[data-tone="danger"] .mx-status-banner__icon,
+#instantRecvNfc[data-tone="danger"] .mx-status-banner__icon,
+#instantPayNfc[data-tone="warning"] .mx-status-banner__icon,
+#instantRecvNfc[data-tone="warning"] .mx-status-banner__icon { animation: none; }
+@keyframes stablesTapPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(103, 232, 249, .45); }
+  50% { box-shadow: 0 0 0 16px rgba(103, 232, 249, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #instantPayNfc .mx-status-banner__icon, #instantRecvNfc .mx-status-banner__icon { animation: none !important; }
+}
+/* The card's title stands clear of the card (founder: "Stables card is just written too close to the actual card"). */
+/* Measured on the Wallet (build 0.0.12.033): the card border touched its title (0 px) while Savings shows about 20 px
+   from its title to its first row; the section layout clears row margins, so the card itself takes the gap. */
+#walletInstantSection .stables-card.card.app-section-card { margin-top: 18px !important; }
+/* D097 (founder 2026-10-04): the same distance on both sheets: Send measures 64 px from the panel to the amount box
+   (its "Available" line sits in between), Receive measured 16 px; the Receive panel keeps the difference below it. */
+#recvModal[data-payment-account="instant"] #instantRecvNfc.mx-status-banner { margin-bottom: 64px; }
+/* D098 (build 0.0.12.036; founder: "the window should be yellow designed like the Stables card tab in sending and
+   receiving"): the card's own window takes the card's colour, as the Send and Receive sheets do on the Stables card. */
+#instantMoveModal[data-payment-account="instant"] {
+  --mx-accent: var(--am);
+  --c: var(--am);
+}
+#instantMoveModal[data-payment-account="instant"] [data-instant-direction] .ui-segment.active {
+  border-color: transparent !important;
+  background: var(--am) !important;
+  color: var(--mx-on-accent) !important;
+}
+#instantMoveModal[data-payment-account="instant"] .max-link { color: var(--am) !important; }
+/* Build 0.0.12.048: a pop-up dialog (stablesConfirm opts.popup, the mined-block message, the address picker): a card
+   centred over the page, the page dimmed behind it, a short pop-in; a tap outside closes it. */
+#stablesConfirmModal .stables-msgbox--popup {
+  max-width: min(380px, calc(100vw - 32px)) !important;
+  max-height: 80vh;
+  border: 1px solid var(--mx-border, rgba(255,255,255,.14)) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 24px 64px rgba(0,0,0,.45);
+  animation: stablesPopIn 260ms cubic-bezier(.2,.9,.3,1.2);
+}
+#stablesConfirmModal .stables-msgbox--popup .mx-screen-back { display: none; }
+#stablesConfirmModal .stables-msgbox--popup .mhandle { display: none; }
+#stablesConfirmModal .stables-msgbox--popup .mx-screen-head { margin-bottom: 14px; }
+#stablesConfirmModal .stables-msgbox--popup .mx-screen-head { justify-content: center; text-align: center; }
+.stables-popup-card { max-width: min(400px, calc(100vw - 32px)) !important; max-height: 82vh; border-radius: 24px !important;
+  box-shadow: 0 24px 64px rgba(0,0,0,.45); animation: stablesPopIn 260ms cubic-bezier(.2,.9,.3,1.2); }
+@keyframes stablesPopIn { from { opacity: 0; transform: scale(.86) translateY(12px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { #stablesConfirmModal .stables-msgbox--popup, .stables-popup-card { animation: none; } }
+
+/* D103 (build 0.0.12.044): the Savings address a card move uses; the row opens the list of addresses. */
+/* Build 0.0.12.051 (founder: "it is clearly visible that the address dropdown menu can be selected, now it is aligned like
+   information text"): the row is drawn as the currency selector is, a bordered control with its chevron. */
+#instantMoveModal .card-addr-row { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 56px; padding: 8px 14px;
+  background: var(--mx-glass, rgba(255,255,255,.04)); border: 1px solid color-mix(in srgb, var(--am) 40%, transparent); border-radius: var(--ui-radius-control, 14px);
+  text-align: left; cursor: pointer; color: inherit; }
+#instantMoveModal .card-addr-row:active { background: color-mix(in srgb, var(--am) 12%, transparent); }
+/* Build 0.0.12.054: the card page's sections are titled like the Wallet's (Card balance, Manage); Manage is also a head link. */
+/* Build 0.0.12.055 (founder 2026-10-05: "using the horizontal line dividers and spacing the elements a bit more would help
+   the user understand that these are separate sections"): each titled section starts as the Wallet's do, the Wallet's own
+   hairline (1 px, white 16 %), 20 px above it and 44 px from it to the title, 18 px from the title to its content. */
+#instantMoveModal .card-page-stitle { margin: 24px 0 18px !important; padding-top: 44px; border-top: 1px solid rgba(255, 255, 255, .16); }
+#instantMoveModal .card-levels-section { padding-bottom: 24px; }
+#instantMoveModal #instantCardLevelsTitle { margin-bottom: 12px !important; }
+#instantMoveModal #instantWalletTapRow { margin-top: 22px; padding-top: 22px; gap: 14px; }
+#instantMoveModal .mx-screen-head .card-page-manage-link { margin-left: auto; color: var(--am); font-weight: 700; font-size: 15px; padding: 10px 4px; }
+#instantMoveModal .card-addr-row .ui-col { align-items: flex-start; text-align: left; }
+#instantMoveModal .card-addr-row__chev { color: var(--am); font-size: 16px; padding-left: 10px; }
+/* Build 0.0.12.048: the card page as the Exchange page: two boxes, the swap arrow between them. */
+#instantMoveModal [data-instant-direction][hidden] { display: none !important; }   /* the swap arrow replaces Remove | Add */
+/* D124 (founder 2026-10-06: "one and only one design style for similar elements, so the Exchange and the Stables card
+   manage funds should look and feel the same"): the same two boxes and swap arrow on the card page and on the Exchange,
+   from these rules only. The card's own box keeps its amber edge; the Exchange keeps its page accent. */
+:is(#instantMoveModal, #page-exchange) .card-move { display: flex; flex-direction: column; gap: 0; }
+:is(#instantMoveModal, #page-exchange) .card-move-box { border: 1px solid var(--mx-border, rgba(255,255,255,.14)); border-radius: 18px; padding: 14px;
+  background: var(--mx-glass, rgba(255,255,255,.04)); }
+#instantMoveModal .card-move-box[data-payment-account="instant"] { border-color: color-mix(in srgb, var(--am) 45%, transparent); }
+:is(#instantMoveModal, #page-exchange) .card-move-box .ui-amount-head { margin: 0 0 10px !important; }
+:is(#instantMoveModal, #page-exchange) .card-move-box .ui-field-row { margin: 0 !important; }
+#instantMoveModal .card-move-box #instantMoveAmount { margin: 0 !important; }
+:is(#instantMoveModal, #page-exchange) .card-move-flip { margin: -10px auto !important; position: relative; z-index: 2; }
+#instantMoveModal .card-addr-row { margin-top: 10px; }
+
+/* The swap arrow, one clear control on both pages (founder: "make the arrow clearly clickable even on the exchange page"):
+   a round button in the page's accent, a bold two-way arrow, a lift shadow, and a half turn when pressed. */
+[data-machinery-lit] .flip-btn.mx-action {
+  width: 52px !important; min-width: 52px !important; height: 52px !important; min-height: 52px !important;
+  border-radius: 50% !important; padding: 0 !important;
+  background: var(--mx-accent, var(--c)) !important; color: var(--mx-on-accent, #08202e) !important;
+  border: 3px solid var(--bg, #16334f) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,.35), 0 0 0 1px color-mix(in srgb, var(--mx-accent, var(--c)) 40%, transparent) !important;
+  display: flex !important; align-items: center; justify-content: center; cursor: pointer;
+  transition: transform .25s ease, box-shadow .2s ease !important;
+}
+[data-machinery-lit] .flip-btn.mx-action:active { transform: scale(.92); }
+[data-machinery-lit] .flip-btn.mx-action svg { width: 24px; height: 24px; }
+.flip-btn.flip-btn--turn svg { animation: stablesFlipTurn .35s ease; }
+@keyframes stablesFlipTurn { from { transform: rotate(0deg); } to { transform: rotate(180deg); } }
+@media (prefers-reduced-motion: reduce) { .flip-btn.flip-btn--turn svg { animation: none; } }
+
+/* Build 0.0.12.048: the address picker is its own pop-up (#cardAddrModal) with a scrolling list. */
+#cardAddrModal { z-index: 330; }
+#cardAddrModal .card-addr-popup { --mx-accent: var(--am); display: flex; flex-direction: column; padding: 20px 16px 16px !important; overflow: hidden; }
+#cardAddrModal .card-addr-popup__title { font-size: 18px; margin-bottom: 6px; }
+#cardAddrModal .card-addr-popup__note { margin: 0 0 6px; line-height: 1.4; }
+#cardAddrModal .card-addr-popup__count { margin-bottom: 8px; }
+/* No Close button (founder: "only a click outside should close it"): the list runs to the card's foot. */
+#cardAddrModal .card-addr-list { display: flex; flex-direction: column; gap: 8px; min-height: 120px; max-height: 58vh; overflow-y: auto;
+  overscroll-behavior: contain; padding-right: 2px; margin-bottom: 4px; scrollbar-width: thin; }
+#cardAddrModal .card-addr-opt { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; width: 100%; padding: 11px 12px; flex: 0 0 auto;
+  border-radius: 14px; border: 1px solid var(--mx-border, rgba(255,255,255,.12)); background: var(--mx-glass, rgba(255,255,255,.04)); color: inherit; text-align: left; }
+#cardAddrModal .card-addr-opt--on { border-color: var(--am); box-shadow: inset 0 0 0 1px var(--am); background: color-mix(in srgb, var(--am) 10%, transparent); }
+#cardAddrModal .card-addr-opt__top { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+#cardAddrModal .card-addr-opt__title { font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; }
+#cardAddrModal .card-addr-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--mx-border, rgba(255,255,255,.18)); }
+#cardAddrModal .card-addr-tag--main { border-color: var(--am); color: var(--am); }
+#cardAddrModal .card-addr-tag--fresh { border-color: color-mix(in srgb, var(--gr, #4ade80) 60%, transparent); color: var(--gr, #4ade80); }
+#cardAddrModal .card-addr-tag--new { opacity: .8; }
+#cardAddrModal .card-addr-list__wait { padding: 8px 2px; }
+/* The card levels: one table, Payment / Day / Week across, One touch and Confirm down (card window and Payment security). */
+.card-levels__grid { display: grid; grid-template-columns: minmax(84px, auto) repeat(3, minmax(0, 1fr)); gap: 8px; align-items: center; }
+.card-levels__col { font-size: 12px; font-weight: 700; text-align: right; color: var(--mu); padding-right: 10px; }
+.card-levels__step { font-size: 14px; font-weight: 700; }
+.card-levels .card-levels__in { min-width: 0; width: 100%; margin: 0 !important; text-align: right; padding: 8px 10px; }
+.card-levels__note { margin: 10px 0 0; line-height: 1.4; }
+#instantMoveModal[data-payment-account="instant"] .card-levels__in:focus { border-color: var(--am); }
+.paysec-card-levels { margin: 16px 0; }
+
+/* Build 0.0.12.058: Show on Home (My profile), a grouped list of rows instead of a run of checkboxes. */
+#stablesHomeVisibility { display: block; margin-bottom: 18px; }
+#stablesHomeVisibility .home-vis-group + .home-vis-group { margin-top: 22px; }
+#stablesHomeVisibility .home-vis-title { font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--mx-ink-soft, var(--m)); margin: 0 0 4px; }
+#stablesHomeVisibility .home-vis-row { display: flex; align-items: center; gap: 14px; min-height: 54px; padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .08); }
+#stablesHomeVisibility .home-vis-group .home-vis-row:last-child { border-bottom: 0; }
+#stablesHomeVisibility .home-vis-ic { width: 34px; height: 34px; flex: 0 0 34px; display: grid; place-items: center; border-radius: 10px;
+  background: var(--mx-glass, rgba(255,255,255,.05)); border: 1px solid var(--mx-glass-line, rgba(255,255,255,.12)); font-size: 18px; line-height: 1; overflow: hidden; }
+#stablesHomeVisibility .home-vis-ic img, #stablesHomeVisibility .home-vis-ic svg { width: 22px; height: 22px; object-fit: contain; }
+#stablesHomeVisibility .home-vis-name { flex: 1 1 auto; min-width: 0; font-size: 15px; font-weight: 650; color: var(--mx-ink, var(--t)); }
+#stablesHomeVisibility .toggle { padding: 0 !important; width: 44px !important; height: 24px !important; min-height: 24px !important; min-width: 44px !important;
+  flex: 0 0 44px !important; border-radius: 12px !important; box-shadow: none !important; }
+/* Build 0.0.12.059: the Payment sounds switch is a button; it keeps the switch's own size. */
+#stablesSoundsToggle.toggle { padding: 0 !important; width: 44px !important; height: 24px !important; min-height: 24px !important; min-width: 44px !important;
+  flex: 0 0 44px !important; border-radius: 12px !important; box-shadow: none !important; }

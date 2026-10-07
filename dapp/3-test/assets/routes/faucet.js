@@ -2,7 +2,7 @@ function renderFaucet(ctx) {
   const { $, app, setHeaderButtons, faucetGrant, navigate, safeRender } = ctx;
 
   // ✅ LIBRARY COMPLIANT: No page title/description
-  $('pageTitle').textContent = 'Faucet (test)';
+  $('pageTitle').textContent = 'Faucet';
   $('pageDesc').textContent = '';
   setHeaderButtons([]);
 

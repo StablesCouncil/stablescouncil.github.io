@@ -16,7 +16,16 @@
   var CFG = window.STABLES_CONFIG || {};
   if (!CFG.DEMO_REAL_ONCHAIN_WALLET) return;
 
-  var DEFAULT_TARGET = 3;
+  /* The confirmation target when a row carries none: the person's own setting (Settings, confirmation levels), whose
+     default is 1 block since build 0.0.12.025 (founder 2026-10-04); 3 was hard-coded here before. */
+  function defaultTarget() {
+    try {
+      var ps = window.StablesPaymentSecurity;
+      var b = ps && typeof ps.confirmationTargetFor === 'function' ? Number(ps.confirmationTargetFor({ fiatTotal: 0 }).blocks) : NaN;
+      if (b >= 1 && b <= 30) return b;
+    } catch (_) { /* the setting is not loaded yet */ }
+    return 1;
+  }
   var known = null;     // txpowid -> true once represented (or out of scope)
   var pending = {};     // txpowid -> { rows: [{ id, dirIn, target }] } still on the ladder
   var checking = false;
@@ -197,6 +206,14 @@
         });
       });
       add(CFG.TEST_GENESIS3_PROD_FAUCET_ADDRESS, 'faucet');
+      // Instant payments step 2 (build 103): the registration and vault covenants. Every app tracks
+      // the vault (trackall), so the whole pool is wallet-relevant here; a load or a move to Savings
+      // is represented ONCE, by the Instant payments row that made it (instant-balance.js, law 2).
+      var ic = CFG.INSTANT_CHAIN || {};
+      add(ic.REG, 'instant');
+      add(ic.REG_MX, 'instant');
+      add(ic.VAULT, 'instant');
+      add(ic.VAULT_MX, 'instant');
     }
     // TV81 protocol addresses load async from the app registry projection. Merge them on every
     // call so the first arm (before the registry promise resolves) does not permanently freeze
@@ -583,6 +600,10 @@
   // live detections only, never the initial history import.
   function representTxn(txpowid, entries, state, adoptLocal, notifyIncoming, covKind, meta) {
     if (txpowIsDead(txpowid)) return; // proved unminable: its Failed row stands
+    // A load into Instant payments, or a move back to Savings (build 103): its ONE row is the Instant
+    // payments row that made it, which follows the chain itself. A node row here would be a second
+    // row for the same operation (law 2), and another wallet's load or withdrawal is not this one's.
+    if (covKind === 'instant') return;
     var tracked = [];
     // REAL on-chain time (the txpow header's timemilli), never the import/recovery time. The
     // displayed date, the row's ts, and all twin/adoption matching anchor on chain truth.
@@ -824,9 +845,9 @@
             var rawHeader = legacyMeta && legacyMeta.rawHeader;
             representTxn(legacyTxid, legacyEntries, {
               found: true,
-              confs: parseInt(String(onchain.confirmations || DEFAULT_TARGET + 1), 10) || DEFAULT_TARGET + 1,
+              confs: parseInt(String(onchain.confirmations || defaultTarget() + 1), 10) || defaultTarget() + 1,
               block: parseInt(String(onchain.block || (rawHeader && rawHeader.block) || '0'), 10) || 0,
-              target: DEFAULT_TARGET,
+              target: defaultTarget(),
               timemilli: Number(rawHeader && rawHeader.timemilli) || 0
             }, true, false, legacyKind, legacyMeta);
             try { console.log('[TxMirror] migrated pre-law operation row ' + row.id.slice(0, 24)); } catch (_) { /* ignore */ }
@@ -971,6 +992,14 @@
     return { key: nonRowKey(), remembered: c.order.length };
   };
 
+  /* An Instant payment carried over the network (build 0.0.12.021, Machinery D087): one atom of dust to the
+     receiver's Savings address with the signed payment in its state. It is the envelope of an Instant payment,
+     never a Savings row of its own, on either phone (law 2: one row per operation; the Instant row is it).
+     The receiver's Instant payments takes the payment out of it (instant-balance.js takeCarrier). */
+  function takeCarrier(txpow) {
+    try { return typeof window.stablesInstantTakeCarrier === 'function' && window.stablesInstantTakeCarrier(txpow) === true; } catch (_) { return false; }
+  }
+
   function importMissing(txpows, details, notifyIds) {
     if (importing) return;
     importing = true;
@@ -979,6 +1008,7 @@
       if (idx >= txpows.length) { importing = false; return; }
       var i = idx++;
       var id = String((txpows[i] || {}).txpowid || '');
+      if (takeCarrier(txpows[i])) { next(); return; }
       var baseEntries = txnEntries(details && details[i]);
       if (!id || (!baseEntries.length && !zeroNetInScope(details && details[i]))
         || (typeof window.stablesHasNodeActivityRow === 'function' && window.stablesHasNodeActivityRow(nodeId(id)))
@@ -1013,8 +1043,7 @@
         var freshIncoming = false;
         try {
           if (known !== null && chainMs > 0 && (Date.now() - chainMs) < LIVE_RECEIVE_WINDOW_MS) {
-            var recv = document.getElementById('recvModal');
-            if (recv && recv.classList.contains('open')
+            if (receiveWaitsOnChain()
               && entries.some(function (e) { return e.amt > 0; })) freshIncoming = true;
           }
         } catch (_) { /* the urgent path still applies */ }
@@ -1027,7 +1056,7 @@
             found: false,
             confs: 0,
             block: 0,
-            target: DEFAULT_TARGET,
+            target: defaultTarget(),
             timemilli: chainMs
           }, true, true, covKind, meta);
           next();
@@ -1042,7 +1071,7 @@
             found: r.found === true || r.found === 'true',
             confs: parseInt(String(r.confirmations || '0'), 10) || 0,
             block: parseInt(String(r.block || '0'), 10) || 0,
-            target: DEFAULT_TARGET,
+            target: defaultTarget(),
             timemilli: chainMs
           }, true, false, covKind, meta);
           next();
@@ -1093,7 +1122,18 @@
         if (!tx) { fail(); return; }
         runCmd('txpow onchain:' + tx, function (res) {
           var p = payload(res);
-          if (!(p && (p.found === true || p.found === 'true'))) fail();
+          if (!(p && (p.found === true || p.found === 'true'))) { fail(); return; }
+          /* On chain and two hours old: it settled long ago; only its row missed the moment (founder's Graphene,
+             2026-10-04: a faucet claim from 02:11 still read "receiving" in yellow at 16:35). It is confirmed, said in
+             white like every other settled row (build 0.0.12.029). */
+          try {
+            var blk = Number(p.block) || 0;
+            if (typeof window.stablesUpsertUserActivityRows === 'function') {
+              window.stablesUpsertUserActivityRows([{ id: r.id, status: 'Confirmed', pendingIncoming: false, block: blk || r.block || 0 }]);
+              if (typeof window.renderActivity === 'function') window.renderActivity();
+              if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
+            }
+          } catch (_) { /* the next sweep tries again */ }
         });
       });
     } catch (_) { /* ignore */ }
@@ -1198,7 +1238,7 @@
             var found = p && (p.found === true || p.found === 'true');
             var confs = parseInt(String((p && p.confirmations) || '0'), 10) || 0;
             var block = parseInt(String((p && p.block) || '0'), 10) || 0;
-            var target = Number(r.confirmTarget) || DEFAULT_TARGET;
+            var target = Number(r.confirmTarget) || defaultTarget();
             if (found && confs >= target) {
               var up = { id: r.id, status: 'Confirmed', pendingIncoming: false, minimaOnChain: true };
               if (block > 0) up.block = block;
@@ -1459,6 +1499,109 @@
   // the first successful `history` right after node boot, when `checkaddress`/`txpow` lookups
   // are most likely to time out; the delayed pass retries on a calm node. Imports are limited
   // to txpows from the last 48h so pre-mirror-era history is never resurrected as new rows.
+  /* ---------- WHICH OF THE WALLET'S ADDRESSES WERE EVER USED (build 0.0.12.051) ----------
+   * Founder 2026-10-05: "why it shows used beside all addresses, I didn't use them all in the past ... the app will need
+   * to go retrieve all past transactions per address, store that and update it as transactions occur". The node's key
+   * signature counts say "used" for nearly every address, because Minima gives each transaction's change to a different
+   * one of the wallet's addresses. What the person means by used is their own history: money received at, or spent
+   * from, that address. So this keeps, per wallet address, how many times it received and spent, from the node's
+   * history: ONE paged read of the whole history after the first open (20 TxPoW a page, resumed where it stopped if
+   * interrupted), then every new TxPoW the live poll sees. Ownership is the wallet's own simple scripts, read once. */
+  var USAGE_KEY = 'stables_address_usage_v1';
+  var USAGE_PAGE = 20;
+  var _usage = null, _usageScripts = null, _usageBackfilling = false;
+  function usageLoad() {
+    if (_usage) return _usage;
+    try { var v = JSON.parse(localStorage.getItem(USAGE_KEY) || 'null'); if (v && v.v === 1 && v.addr) _usage = v; } catch (_) { /* fresh */ }
+    if (!_usage) _usage = { v: 1, addr: {}, seen: [], offset: 0, backfilled: false, updatedAt: 0 };
+    return _usage;
+  }
+  function usageSave() {
+    var u = usageLoad();
+    u.updatedAt = Date.now();
+    if (u.seen.length > 400) u.seen = u.seen.slice(-300);
+    try { localStorage.setItem(USAGE_KEY, JSON.stringify(u)); } catch (_) { /* the next pass writes it */ }
+  }
+  /** The wallet's own addresses (its simple scripts), read once per session. cb(set) with lowercased 0x addresses. */
+  function usageOwnAddresses(cb) {
+    if (_usageScripts) { cb(_usageScripts); return; }
+    runCmd('scripts', function (res) {
+      var r = payload(res);
+      var set = {};
+      (Array.isArray(r) ? r : []).forEach(function (sc) {
+        if (sc && sc.simple && sc.address) set[String(sc.address).toLowerCase()] = true;
+      });
+      if (Object.keys(set).length) _usageScripts = set;
+      cb(set);
+    });
+  }
+  /** Count one TxPoW's coins at the wallet's own addresses. Returns true when something was recorded. */
+  function usageApplyTxpow(tp, own) {
+    var u = usageLoad();
+    var id = String((tp && tp.txpowid) || '').toLowerCase();
+    if (!id || u.seen.indexOf(id) >= 0) return false;
+    var txn = tp && tp.body && tp.body.txn;
+    if (!txn) return false;
+    var block = Number(tp.header && tp.header.block) || 0;
+    var touched = false;
+    var note = function (o, dir) {
+      var a = String((o && o.address) || '').toLowerCase();
+      if (!a || !own[a]) return;
+      var rec = u.addr[a] || (u.addr[a] = { in: 0, out: 0, first: block, last: block });
+      rec[dir] += 1;
+      if (block && (!rec.first || block < rec.first)) rec.first = block;
+      if (block > rec.last) rec.last = block;
+      touched = true;
+    };
+    (txn.outputs || []).forEach(function (o) { note(o, 'in'); });
+    (txn.inputs || []).forEach(function (o) { note(o, 'out'); });
+    u.seen.push(id);
+    return touched;
+  }
+  /** New TxPoW from the live poll: counted at once. */
+  function usageApply(txpows) {
+    if (!Array.isArray(txpows) || !txpows.length) return;
+    usageOwnAddresses(function (own) {
+      if (!Object.keys(own).length) return;
+      var any = false;
+      txpows.forEach(function (tp) { if (usageApplyTxpow(tp, own)) any = true; });
+      usageSave();
+      if (any) { try { console.log('[STABLES-ADDRESS-USAGE] counted ' + txpows.length + ' new TxPoW'); } catch (_) { /* ignore */ } }
+    });
+  }
+  /** The whole history, once, a page at a time, while the app is open; resumed from the saved offset. */
+  function usageBackfill() {
+    var u = usageLoad();
+    if (u.backfilled || _usageBackfilling || document.hidden) return;
+    _usageBackfilling = true;
+    usageOwnAddresses(function (own) {
+      if (!Object.keys(own).length) { _usageBackfilling = false; return; }
+      (function page() {
+        if (document.hidden) { _usageBackfilling = false; return; }
+        runCmd('history max:' + USAGE_PAGE + ' offset:' + u.offset, function (res) {
+          var r = payload(res);
+          var list = r && Array.isArray(r.txpows) ? r.txpows : null;
+          if (!list) { _usageBackfilling = false; return; }         // the node did not answer: the next open resumes
+          list.forEach(function (tp) { usageApplyTxpow(tp, own); });
+          u.offset += list.length;
+          if (list.length < USAGE_PAGE) { u.backfilled = true; }
+          usageSave();
+          try { console.log('[STABLES-ADDRESS-USAGE] history read: ' + u.offset + ' TxPoW' + (u.backfilled ? ', complete' : '')); } catch (_) { /* ignore */ }
+          if (u.backfilled) { _usageBackfilling = false; return; }
+          setTimeout(page, 2500);
+        });
+      })();
+    });
+  }
+  window.stablesAddressUsage = {
+    get: function (addr) { return usageLoad().addr[String(addr || '').toLowerCase()] || null; },
+    all: function () { return usageLoad().addr; },
+    complete: function () { return !!usageLoad().backfilled; },
+    backfill: usageBackfill
+  };
+  setTimeout(usageBackfill, 25000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) setTimeout(usageBackfill, 5000); });
+
   function deepReconcilePass() {
     // max:250 (was 60): oracle rate updates are wallet-relevant to every covenant-tracking
     // wallet and can push the user's real transactions deep into history; zero-difference
@@ -1506,6 +1649,7 @@
         if (recheck) { recheck = false; check(); }
         return;
       }
+      try { usageApply(r.txpows); } catch (_) { /* the usage count is a convenience */ }
       if (known === null) {
         known = {};
         for (var i = 0; i < r.txpows.length; i++) known[String(r.txpows[i].txpowid || '')] = true;
@@ -1518,7 +1662,7 @@
               var txpowid = u.id.replace(/^NODE-/, '').replace(/:.*$/, '');
               if (!txpowid || txpowIsDead(txpowid)) return;
               if (!pending[txpowid]) pending[txpowid] = { rows: [] };
-              pending[txpowid].rows.push({ id: u.id, dirIn: u.dirIn, target: u.target || DEFAULT_TARGET });
+              pending[txpowid].rows.push({ id: u.id, dirIn: u.dirIn, target: u.target || defaultTarget() });
               try { console.log('[TxMirror] re-tracking ' + u.id.slice(0, 22)); } catch (_) { /* ignore */ }
             });
           }
@@ -1551,6 +1695,7 @@
         if (!id || known[id]) continue;
         known[id] = true;
         delete urgentTxpowIds[id];
+        if (takeCarrier(r.txpows[j])) continue;
         var baseEntries = txnEntries(r.details && r.details[j]);
         if (!baseEntries.length && !zeroNetInScope(r.details && r.details[j])) continue;
         // Covenant/faucet/mint transactions are app-initiated and create their own correctly
@@ -1561,7 +1706,7 @@
           resolveEntries(txid, detail, function (entries, covKind, meta) {
             if (!entries || !entries.length) return;
             if (typeof window.stablesHasNodeActivityRow === 'function' && window.stablesHasNodeActivityRow(nodeId(txid))) return;
-            representTxn(txid, entries, { found: false, confs: 0, block: 0, target: DEFAULT_TARGET, timemilli: timemilli }, true, true, covKind, meta);
+            representTxn(txid, entries, { found: false, confs: 0, block: 0, target: defaultTarget(), timemilli: timemilli }, true, true, covKind, meta);
           });
         })(id, r.details && r.details[j], Number(((r.txpows[j] || {}).header || {}).timemilli) || 0);
       }
@@ -1608,10 +1753,19 @@
   var _lastPollAt = 0;
   var _lastUserActionAt = 0;
   window.stablesNoteUserPaymentAction = function () { _lastUserActionAt = Date.now(); };
+  /* Receive waits for the chain only while it shows Savings; an offline Instant request
+     waits for a scan and needs no node reads at all (law 21, v0.0.11.98). */
+  function receiveWaitsOnChain() {
+    // An Instant Receive whose code carries this phone's address waits for a payment over the network
+    // (build 0.0.12.021, D087): the same fast read as a Savings Receive, so it lands in seconds.
+    try { if (window.StablesInstant && window.StablesInstant.receiveWaitsOnNetwork && window.StablesInstant.receiveWaitsOnNetwork()) return true; } catch (_) { /* ignore */ }
+    if (typeof window.stablesReceiveSheetWaitsOnChain === 'function') return window.stablesReceiveSheetWaitsOnChain();
+    var m = document.getElementById('recvModal');
+    return !!(m && m.classList && m.classList.contains('open'));
+  }
   function paymentInPlay() {
     try {
-      var m = document.getElementById('recvModal');
-      if (m && m.classList && m.classList.contains('open')) return true;
+      if (receiveWaitsOnChain()) return true;
     } catch (_) { /* ignore */ }
     if (Date.now() - _lastUserActionAt < 120000) return true;
     try {

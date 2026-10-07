@@ -51,7 +51,9 @@
     'chat': { t: 'workstation' }, /* two-pane: contacts list beside the conversation */
     'council': { t: 'focus' },
     'help-academy': { t: 'focus' },
-    'help-links': { t: 'focus' }
+    'help-links': { t: 'focus' },
+    'apps': { t: 'focus' },
+    'hosted-app': { t: 'focus' }
   };
 
   var mounted = false;

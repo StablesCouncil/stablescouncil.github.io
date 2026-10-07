@@ -336,6 +336,8 @@
     _mintBurnInFlight[dir] = true;
     return true;
   }
+  /* Build 0.0.12.039: the background notes tidy (index.html) never combines while a mint or burn is being built. */
+  window.stablesMintBurnBusy = function () { try { return _mintBurnAnyInFlight(); } catch (_) { return false; } };
   function mintBurnEndInFlight(op) {
     if (op === 'mint' || op === 'burn') { _mintBurnInFlight[op] = false; return; }
     _mintBurnInFlight.mint = false; _mintBurnInFlight.burn = false;
@@ -1369,6 +1371,11 @@
       lastReadyAt: state === 'ready' ? now : Number(prev.lastReadyAt || 0)
     };
     window.__STABLES_WALLET_PROOF_STATE__ = next;
+    /* Build 0.0.12.050: one line per transition, so a phone log says when and why the wallet proof left Ready
+       (founder: "why is syncing of Winiwa in Savings always lagging"; the lab re-proves every minute and never shows it). */
+    if (String(prev.state || '') !== String(next.state)) {
+      try { console.log('[STABLES-PROOF] ' + (prev.state || 'none') + ' -> ' + next.state + ' after ' + (prev.updatedAt ? Math.round((now - Number(prev.updatedAt)) / 1000) + 's' : 'start') + (prev.lastReadyAt ? ', ready ' + Math.round((now - Number(prev.lastReadyAt)) / 1000) + 's ago' : '') + ': ' + next.reason); } catch (_) { /* ignore */ }
+    }
     try { if (typeof window.stablesApplyReleaseProofUi === 'function') window.stablesApplyReleaseProofUi(); } catch (_) { /* fail closed */ }
     try { if (typeof window.updateGlobalUI === 'function') window.updateGlobalUI(); } catch (_) { /* fail closed */ }
     return next;
@@ -2855,6 +2862,12 @@
       const vault2Addr = String(((tv81VaultV2(registry) || {}).address) || '').toLowerCase();
       const sandAddr=String((registry.maintenance||{}).faucet_address||'').toLowerCase();
       const atVaultAddr = function (a) { const x = String(a || '').toLowerCase(); return !!x && ((!!vaultAddr && x === vaultAddr) || (!!vault2Addr && x === vault2Addr) || (!!sandAddr && x === sandAddr)); };
+      // Instant payments vault coins (build 0.0.12.015): imported so a fresh install can move money to Savings,
+      // counted apart, never book orders.
+      const instantAddr = String((((window.STABLES_CONFIG || {}).INSTANT_CHAIN) || {}).VAULT || '').toLowerCase();
+      const atInstantAddr = function (a) { return !!instantAddr && String(a || '').toLowerCase() === instantAddr; };
+      status.instantProof = 0;
+      const mergedIds = [];
       const headData = await mdsCmdData('coins coinid:' + snap.headCoin);
       const head = Array.isArray(headData) ? headData[0] : headData;
       const idsHex = String(tv81AnchorPort(head, 20) || '').replace(/^0x/i, '');
@@ -2868,12 +2881,14 @@
           const rec = records[r];
           let atFaucet = false;
           let atVault = false;
+          let atInstant = false;
           try {
             const local = await mdsCmdData('coins coinid:' + rec.coinid);
             const localCoin = Array.isArray(local) ? local[0] : local;
             const held = !!(localCoin && localCoin.coinid);
             if (held && faucetAddr && String(localCoin.address || '').toLowerCase() === faucetAddr) atFaucet = true;
             if (held && atVaultAddr(localCoin.address)) atVault = true;
+            if (held && atInstantAddr(localCoin.address)) atInstant = true;
             if (held) tv81NoteSnapshotCoin(localCoin.address, localCoin.coinid);
             if (held) {
               status.held++;
@@ -2886,20 +2901,48 @@
                 const ac = Array.isArray(after) ? after[0] : after;
                 if (ac && faucetAddr && String(ac.address || '').toLowerCase() === faucetAddr) atFaucet = true;
                 if (ac && atVaultAddr(ac.address)) atVault = true;
+                if (ac && atInstantAddr(ac.address)) atInstant = true;
                 if (ac) tv81NoteSnapshotCoin(ac.address, ac.coinid);
               } catch (_) {}
             }
           } catch (_) { status.failed++; continue; /* spent/stale records fail import by design and drop */ }
+          if (atInstant) { status.instantProof++; continue; }
           if (atFaucet) { status.faucetProof = (status.faucetProof || 0) + 1; continue; }
           if (atVault) { status.vaultProof = (status.vaultProof || 0) + 1; continue; }
           try {
             window.__TV81_BOOK_SOURCE_COINS__ = window.__TV81_BOOK_SOURCE_COINS__ || [];
-            if (window.__TV81_BOOK_SOURCE_COINS__.indexOf(String(rec.coinid)) < 0) { window.__TV81_BOOK_SOURCE_COINS__.push(String(rec.coinid)); status.merged++; }
+            if (window.__TV81_BOOK_SOURCE_COINS__.indexOf(String(rec.coinid)) < 0) { window.__TV81_BOOK_SOURCE_COINS__.push(String(rec.coinid)); status.merged++; mergedIds.push(String(rec.coinid)); }
           } catch (_) {}
         }
       }
-      try { window.__STABLES_ANCHOR__ = Object.assign({}, snap, { at: Date.now(), gapfill: { imported: status.imported, held: status.held, failed: status.failed, merged: status.merged, faucetProof: status.faucetProof || 0, vaultProof: status.vaultProof || 0 } }); } catch (_) {}
-      try { console.log('[STABLES-ANCHOR] gap-fill: state=' + status.state + ' merged=' + status.merged + ' imported=' + status.imported + ' held=' + status.held + ' failed=' + status.failed + ' faucetProof=' + (status.faucetProof || 0) + ' vaultProof=' + (status.vaultProof || 0)); } catch (_) {}
+      // A coin imported a moment ago is not always listed by `coins coinid:` straight away, so its first
+      // classification can miss: measured on build 0.0.12.015, the three old Instant vault coins a fresh node
+      // imported were filed as book orders (and counted as no Instant proof, which would make every fresh
+      // install ask for a new snapshot). Read them again once the pass is done and move what is not an order.
+      try {
+        const bookList = window.__TV81_BOOK_SOURCE_COINS__ || [];
+        for (let m = 0; m < mergedIds.length; m++) {
+          const again = await mdsCmdData('coins coinid:' + mergedIds[m]);
+          const coin = Array.isArray(again) ? again[0] : again;
+          if (!coin || !coin.coinid) continue;
+          const kind = atInstantAddr(coin.address) ? 'instant'
+            : (faucetAddr && String(coin.address || '').toLowerCase() === faucetAddr ? 'faucet' : (atVaultAddr(coin.address) ? 'vault' : ''));
+          if (!kind) continue;
+          const at = bookList.indexOf(mergedIds[m]);
+          if (at >= 0) bookList.splice(at, 1);
+          status.merged--;
+          if (kind === 'instant') status.instantProof++;
+          else if (kind === 'faucet') status.faucetProof = (status.faucetProof || 0) + 1;
+          else status.vaultProof = (status.vaultProof || 0) + 1;
+          try { tv81NoteSnapshotCoin(coin.address, coin.coinid); } catch (_) {}
+        }
+      } catch (_) { /* the book reader filters by order address anyway; the counts are what matter here */ }
+      // What this node itself sees at the Instant vault, so an older snapshot that carries none of it is
+      // noticed (tv81AnchorLacksInstant) and replaced once.
+      status.instantSeen = 0;
+      if (instantAddr) { try { status.instantSeen = (await tv81CoinsAtAddress(instantAddr)).filter(function (c) { return c && !c.spent; }).length; } catch (_) { /* unknown: 0 */ } }
+      try { window.__STABLES_ANCHOR__ = Object.assign({}, snap, { at: Date.now(), gapfill: { imported: status.imported, held: status.held, failed: status.failed, merged: status.merged, faucetProof: status.faucetProof || 0, vaultProof: status.vaultProof || 0, instantProof: status.instantProof, instantSeen: status.instantSeen } }); } catch (_) {}
+      try { console.log('[STABLES-ANCHOR] gap-fill: state=' + status.state + ' merged=' + status.merged + ' imported=' + status.imported + ' held=' + status.held + ' failed=' + status.failed + ' faucetProof=' + (status.faucetProof || 0) + ' vaultProof=' + (status.vaultProof || 0) + ' instantProof=' + status.instantProof + ' instantSeen=' + status.instantSeen); } catch (_) {}
     } catch (e) {
       status.error = String((e && e.message) || e);
       try { console.log('[STABLES-ANCHOR] gap-fill error: ' + status.error); } catch (_) {}
@@ -2998,6 +3041,21 @@
     } finally { clearTimeout(timer); }
   };
 
+  const TV81_INSTANT_SNAPSHOT_PER_TOKEN = 4;   // the largest Instant vault coins carried per currency
+  const TV81_INSTANT_SNAPSHOT_MAX = 8;         // and at most this many in all (one page holds 16 records)
+  const TV81_INSTANT_REPUBLISH_KEY = 'stables_anchor_instant_republish_at';
+  /* True when the newest valid snapshot carries no Instant vault coin although this node sees some: the
+     snapshot predates build 0.0.12.015. One republish fixes it for everybody, so a device asks for it at
+     most once every eight hours (the normal cadence), never on every pass. */
+  function tv81AnchorLacksInstant() {
+    const s = window.__STABLES_ANCHOR__ || {};
+    const g = s.gapfill;
+    if (s.state !== 'READY_WITH_COVERAGE' || !g) return false;
+    if (!(Number(g.instantSeen) > 0) || Number(g.instantProof) > 0) return false;
+    try { if (Date.now() - Number(localStorage.getItem(TV81_INSTANT_REPUBLISH_KEY) || 0) < 8 * 3600 * 1000) return false; } catch (_) { /* no store: allow */ }
+    return true;
+  }
+  window.tv81AnchorLacksInstant = tv81AnchorLacksInstant;
   async function tv81MaintenanceRecords(registry, recipient) {
       const dcfg=tv81DirectCfg(registry);
       const rowsOf=window.StablesMaintenance.rows;
@@ -3057,6 +3115,35 @@
           }
         }
       } catch (e) { throw Error('Required vault proofs unavailable: '+String(e.message||e)); }
+      // INSTANT PAYMENTS VAULT EXTENSION (founder 2026-10-03, build 0.0.12.015). A node sees a vault coin
+      // only if it was watching the vault when the coin was made, or the coin is inside its ~1,000-block
+      // unpruned window. Measured on a freshly started lab node (9301): it saw the three newest Instant
+      // vault coins and none of the older ones (716.62 Winiwa, 611.195 and 666 xWiniwa), so a new or
+      // reinstalled app could not move money to Savings from them, and after a quiet day from none at all.
+      // The snapshot now carries the largest Instant vault coins of each currency, so every install can
+      // import them exactly as it imports the faucet and the xWiniwa vault. Not required: a node that
+      // sees no Instant vault coin carries none, and a failure here never blocks the snapshot.
+      let instantRecs = 0;
+      try {
+        const ia = String((((window.STABLES_CONFIG || {}).INSTANT_CHAIN) || {}).VAULT || '').toLowerCase();
+        if (ia) {
+          const icoins = rowsOf(await tv81CoinsAtAddress(ia)).filter(function (c) { return c && !c.spent && Number(c.created) > 0; });
+          const byToken = {};
+          icoins.forEach(function (c) { const t = String(c.tokenid || '').toLowerCase(); (byToken[t] = byToken[t] || []).push(c); });
+          const amt = function (c) { return Number(c.tokenamount != null ? c.tokenamount : c.amount) || 0; };
+          const carry = [];
+          Object.keys(byToken).forEach(function (t) {
+            byToken[t].sort(function (x, y) { return amt(y) - amt(x); });
+            byToken[t].slice(0, TV81_INSTANT_SNAPSHOT_PER_TOKEN).forEach(function (c) { carry.push(c); });
+          });
+          for (let ii = 0; ii < carry.length && instantRecs < TV81_INSTANT_SNAPSHOT_MAX; ii++) {
+            const ex = await mdsCmdData('coinexport coinid:' + carry[ii].coinid);
+            const blob = (ex && ex.data) ? ex.data : ex;
+            if (typeof blob === 'string' && blob.length > 10 && blob.length <= 2 + 2 * 4096) { records.push({ coinid: carry[ii].coinid, blob: blob }); instantRecs++; }
+          }
+        }
+      } catch (e) { try { console.log('[STABLES-ANCHOR] Instant vault proofs not carried: ' + String((e && e.message) || e)); } catch (_) {} }
+      try { console.log('[STABLES-ANCHOR] snapshot records: faucet=' + faucetRecs + ' vault=' + vaultRecs + ' instant=' + instantRecs); } catch (_) {}
       const capped = live;
       for (let i = 0; i < capped.length; i++) {
         const ex = await mdsCmdData('coinexport coinid:' + capped[i].coinid);
@@ -3101,7 +3188,13 @@
         },
         recipient:async function(){return (await fetchTesterWallet()).address;},
         tip:async function(){const d=await mdsCmdData('status');return Number(d.chain.block);},
-        fresh:async function(){const x=await tv81AnchorReadSnapshot();return x.state==='READY_WITH_COVERAGE'&&x.headAge<=600;},
+        fresh:async function(){
+          const x=await tv81AnchorReadSnapshot();
+          if(!(x.state==='READY_WITH_COVERAGE'&&x.headAge<=600))return false;
+          // Fresh but without the Instant vault (a snapshot from before build 0.0.12.015): republish once.
+          if(tv81AnchorLacksInstant()){try{localStorage.setItem(TV81_INSTANT_REPUBLISH_KEY,String(Date.now()));}catch(_){}return false;}
+          return true;
+        },
         faucet:async function(){return tv81CoinsAtAddress(M.FAUCET);},
         funds:async function(){
           const coins=M.rows(await mdsCmdData('coins relevant:true sendable:true checkmempool:true tokenid:'+M.TOKEN));
@@ -4278,7 +4371,32 @@
 
   // Execute one par vault operation through the node. op 0 = deposit Winiwa -> mint xWiniwa,
   // op 1 = burn xWiniwa -> receive Winiwa; `amount` is the xWiniwa quantity either way (par 1:1).
+  /**
+   * A mint or burn the node refuses as too large is combined and tried again (build 0.0.12.039; founder's Pro,
+   * 2026-10-04: "the burn on the pro failed, too many notes ... There was a message to tidy up the notes. we should
+   * have an agent doing all this automatically"). The app's size estimate counts every input alike, but the vault's
+   * three covenant inputs carry long scripts, so it can say "fits" and the node still refuse (also seen 2026-09-08:
+   * 14 notes and 3 covenant inputs). Rather than a better guess, the node's answer decides: each retry allows half the
+   * notes the refused one used, so gatherUserCoinsFitted combines first (asking only when automatic combining is
+   * off), and the vault coins are read afresh. Two retries; then the plain message.
+   */
   async function tv81VaultOnChain(op, amount) {
+    try {
+      for (let attempt = 0; ; attempt++) {
+        try {
+          return await tv81VaultOnChainBody(op, amount);
+        } catch (e) {
+          if (attempt >= 2 || !(e && e.sizeRefused) || !(e.userNotes > 1)) throw e;
+          stablesOpInputCap = Math.max(1, Math.floor(e.userNotes / 2));
+          try { console.log('[tv81-vault] the node refused the size with ' + e.userNotes + ' notes; combining to at most ' + stablesOpInputCap + ' and trying again'); } catch (_) { /* ignore */ }
+        }
+      }
+    } finally {
+      stablesOpInputCap = null;
+    }
+  }
+
+  async function tv81VaultOnChainBody(op, amount) {
     const registry = await tv81AppRegistry();
     if (!winiwaTokenId || !xwiniwaTokenId) throw new Error('TV81 token identities are missing.');
     if (op !== 0 && op !== 1) throw new Error('Unknown vault operation.');
@@ -4457,10 +4575,15 @@
       steps.push('txnstate id:' + txnId + ' port:' + p + ' value:' + ports[p]);
     });
 
-    await directOrMdsCmdBatch(steps, 'building the xWiniwa vault transaction', 90000);
-    await directOrMdsCmd('txnsign id:' + txnId + ' publickey:auto', 'signing the xWiniwa vault transaction', 180000);
-    await directOrMdsCmd('txnbasics id:' + txnId, 'finalizing the xWiniwa vault transaction', 120000);
-    const checkRes = await directOrMdsCmd('txncheck id:' + txnId, 'validating the xWiniwa vault transaction', 90000);
+    let checkRes;
+    try {
+      await directOrMdsCmdBatch(steps, 'building the xWiniwa vault transaction', 90000);
+      await directOrMdsCmd('txnsign id:' + txnId + ' publickey:auto', 'signing the xWiniwa vault transaction', 180000);
+      await directOrMdsCmd('txnbasics id:' + txnId, 'finalizing the xWiniwa vault transaction', 120000);
+      checkRes = await directOrMdsCmd('txncheck id:' + txnId, 'validating the xWiniwa vault transaction', 90000);
+    } catch (e) {
+      throw stablesTagSizeRefusal(e, txnId, userCoins.length);
+    }
     const checkBody = mdsPayload(checkRes) || {};
     const valid = checkBody.valid || {};
     const flags = 'scripts=' + valid.scripts + ' basic=' + valid.basic
@@ -4473,7 +4596,12 @@
       }
       throw new Error('The vault transaction could not be validated. Please try again.');
     }
-    const postRes = await directOrMdsCmd('txnpost id:' + txnId + ' txndelete:true', 'posting the xWiniwa vault transaction', 70000);
+    let postRes;
+    try {
+      postRes = await directOrMdsCmd('txnpost id:' + txnId + ' txndelete:true', 'posting the xWiniwa vault transaction', 70000);
+    } catch (e) {
+      throw stablesTagSizeRefusal(e, txnId, userCoins.length);
+    }
     const extracted = extractTxidsFromMdsPost(postRes);
     if (!extracted || (!extracted.explorerTxId && !extracted.pendingTxnId)) {
       throw new Error('Vault operation posted but no transaction id was returned. Check Activity or the console.');
@@ -6636,10 +6764,11 @@
     const map = { Winiwa: (d.Winiwa || {}).available, xWiniwa: (d.xWiniwa || {}).available, USDw: (d.USDw || {}).available };
     const av = map[from];
     const line = document.getElementById('exSendAvailLine');
-    if (line) line.textContent = 'Available: ' + (av != null ? fmtTokenAmt(av) + ' ' + from : '—');
+    // D124 (founder 2026-10-06): the figure alone, beside "You send · Savings" / "You receive · Savings", as on the card page.
+    if (line) line.textContent = av != null ? fmtTokenAmt(av) + ' ' + from : '-';
     const bal = document.getElementById('exRecvAvailLine');
     const to = String((document.getElementById('exToCcy') || {}).value || '');
-    if (bal) bal.textContent = 'Balance: ' + (map[to] != null ? fmtTokenAmt(map[to]) + ' ' + to : '—');
+    if (bal) bal.textContent = map[to] != null ? fmtTokenAmt(map[to]) + ' ' + to : '-';
   };
 
   window.tv81ExchangeExecute = function () {
@@ -7986,6 +8115,120 @@
   }
   window.__STABLES_TEST_USER_COINS_IN_FLIGHT__ = function () { return Object.keys(_userCoinsInFlight); };
 
+  /* AMOUNTS COMPARE IN ATOMS, EXACTLY (founder 2026-09-30, live demo on build 107: "make sure the users never
+     face the issues we faced here, please apply a permanent fix").
+     This picker used a float tolerance of 1e-7, ten times ONE ATOM (1e-8). For a one-atom target, which is
+     what an Instant payments registration needs (instant-chain.js: one atom of the currency, else of Winiwa),
+     the loop never picked a coin and the picker answered "nothing", so the settle-wait below ran its full
+     150 s per currency and ended as "still settling" with 47,642 xWiniwa and 405 Winiwa sitting spendable in
+     Savings (the founder's first Remove in a currency he had never Added, Pixel 7 Pro, 00:41 local). A tolerance
+     that swallows the smallest legal amount is not a tolerance, it is a hole. Every amount is now an integer
+     number of atoms (8 decimals), the largest coin first, and the pick is exact. */
+  const STABLES_ATOMS_PER_UNIT = 100000000;
+  function stablesAtomsOf(value) {
+    let s = String(value == null ? '' : value).trim();
+    /* A NUMBER IS NOT ITS TEXT. The Instant payments registration asks for one atom as the NUMBER 1e-8, and
+       String(1e-8) is "1e-8", not "0.00000001". Build 108 read only plain decimals, took "1e-8" for nothing, and
+       the one-atom pick failed exactly as before (founder, Pixel 7 Pro, 2026-09-30 09:32: "failed again"); its
+       gate had tested the text "0.00000001", never the number the app passes. A number, or text in exponent
+       form, is first written out to eight decimals. */
+    if (typeof value === 'number' || /e/i.test(s)) {
+      const n = Number(value);
+      if (!Number.isFinite(n) || n < 0) return 0;
+      s = n.toFixed(8);
+    }
+    if (!/^\d+(\.\d+)?$/.test(s)) return 0;
+    const parts = s.split('.');
+    const frac = (parts[1] || '').slice(0, 8).padEnd(8, '0');
+    return Number(parts[0]) * STABLES_ATOMS_PER_UNIT + Number(frac);
+  }
+  /** The fewest coins (largest first) whose atoms sum to at least the target's atoms; [] when they cannot. Pure. */
+  function stablesPickCoinsExact(usable, target) {
+    const need = stablesAtomsOf(target);
+    const sorted = (usable || []).slice().sort(function (a, b) { return stablesAtomsOf(b.tokenamount) - stablesAtomsOf(a.tokenamount); });
+    const picked = [];
+    let sum = 0;
+    for (let i = 0; i < sorted.length && sum < need; i++) {
+      picked.push(sorted[i]);
+      sum += stablesAtomsOf(sorted[i].tokenamount);
+    }
+    return sum >= need ? picked : [];
+  }
+  window.__STABLES_TEST_PICK_COINS_EXACT__ = stablesPickCoinsExact;
+  window.__STABLES_TEST_ATOMS_OF__ = stablesAtomsOf;
+
+  /**
+   * The Savings addresses for the Stables card's address choice (build 0.0.12.044; founder 2026-10-05: "presenting the
+   * balance and utxo count per address and letting the user pick one"). One entry per address that holds sendable coins
+   * of this currency: {address (0x), mx, amount (display units), notes}, the largest first. The wallet's main address
+   * is always listed (amount 0 when it holds none), so a move to Savings can be sent there.
+   */
+  async function stablesSavingsAddresses(tokenId) {
+    const coins = await findCovenantCoinsUrgent(['coins', 'relevant:true', 'sendable:true', 'tokenid:' + tokenId]);
+    const by = {};
+    coins.forEach(function (c) {
+      if (!coinIsUnspent(c) || userCoinInFlight(c) || isTestInfraCoinAddress(c.address) || isTestInfraCoinAddress(c.miniaddress)) return;
+      const a = String(c.address || '').toLowerCase();
+      if (!a) return;
+      if (!by[a]) by[a] = { address: a, mx: String(c.miniaddress || ''), amount: 0, notes: 0 };
+      by[a].amount += Number(String(c.tokenamount != null ? c.tokenamount : c.amount || 0).replace(/,/g, '')) || 0;
+      by[a].notes += 1;
+    });
+    try {
+      const w = await fetchTesterWallet();
+      const main = String((w && w.address) || '').toLowerCase();
+      if (/^0x[0-9a-f]{64}$/.test(main) && !by[main]) by[main] = { address: main, mx: String((w && w.miniaddress) || ''), amount: 0, notes: 0 };
+      if (by[main]) by[main].main = true;
+    } catch (_) { /* the list stands without the main address */ }
+
+    return Object.keys(by).map(function (k) { return by[k]; }).sort(function (a, b) { return b.amount - a.amount; });
+  }
+
+  /** Mark each listed address fresh or used before, and offer one fresh address (a second, slower read). */
+  async function stablesSavingsAddressUsage(list, all) {
+    const by = {};
+    (list || []).forEach(function (e) { by[e.address] = e; });
+    /* Used or never used (build 0.0.12.051; founder: "why it shows used beside all addresses, I didn't use them all in the
+       past"): from the wallet's own stored history (tx-mirror.js stablesAddressUsage: received at, or spent from, the
+       address), not from the node's key signature counts (Minima gives every transaction's change to a different address,
+       so those say used for nearly all). Used = ever received or spent there, or holds coins now. With the all flag, every
+       wallet address (its simple scripts) is listed, the empty ones too. */
+    try {
+      const scripts = await mdsCmdData('scripts');
+      const usage = (window.stablesAddressUsage && typeof window.stablesAddressUsage.all === 'function') ? window.stablesAddressUsage.all() : {};
+      const simple = (Array.isArray(scripts) ? scripts : []).filter(function (sc) { return sc && sc.simple && sc.address; });
+      if (all) {
+        simple.forEach(function (sc) {
+          const a = String(sc.address).toLowerCase();
+          if (!by[a]) by[a] = { address: a, mx: String(sc.miniaddress || ''), amount: 0, notes: 0 };
+        });
+      }
+      Object.keys(by).forEach(function (k) {
+        const rec = usage[k];
+        by[k].used = by[k].notes > 0 || !!(rec && (rec.in > 0 || rec.out > 0));
+      });
+      if (!all) {
+        const fresh = simple.find(function (sc) { const a = String(sc.address).toLowerCase(); return !by[a] && !usage[a]; });
+        if (fresh) { const a = String(fresh.address).toLowerCase(); by[a] = { address: a, mx: String(fresh.miniaddress || ''), amount: 0, notes: 0, used: false, freshOffer: true }; }
+      }
+    } catch (_) { /* fresh or used stays unmarked */ }
+    return Object.keys(by).map(function (k) { return by[k]; }).sort(function (a, b) { return b.amount - a.amount; });
+  }
+  /** Notes of one currency from ONE Savings address, enough for `target`, within the size a transaction can carry. */
+  async function gatherFromAddress(tokenId, target, label, address, covenantInputs, outputs) {
+    const a = String(address || '').toLowerCase();
+    const coins = await findCovenantCoinsUrgent(['coins', 'relevant:true', 'sendable:true', 'tokenid:' + tokenId]);
+    const usable = coins.filter(function (c) {
+      return coinIsUnspent(c) && !userCoinInFlight(c) && String(c.address || '').toLowerCase() === a;
+    });
+    const picked = stablesPickCoinsExact(usable, target);
+    const sum = (picked || []).reduce(function (t, c) { return t + (Number(String(c.tokenamount || 0).replace(/,/g, '')) || 0); }, 0);
+    if (!picked || !picked.length || sum + 1e-9 < target) throw new Error('This Savings address does not hold enough ' + label + '. Pick another address.');
+    const fit = stablesNotesFit(picked, covenantInputs, outputs);
+    if (!fit.fits) throw new Error('This Savings address holds its ' + label + ' in too many notes for one transaction (' + picked.length + '). Pick another address, or let Stables choose.');
+    return picked;
+  }
+
   async function gatherSendableUserCoins(tokenId, target) {
     const coins = await findCovenantCoinsUrgent(['coins', 'relevant:true', 'sendable:true', 'tokenid:' + tokenId]);
     const usable = coins
@@ -7994,16 +8237,8 @@
           && !userCoinInFlight(c)
           && !isTestInfraCoinAddress(c.address)
           && !isTestInfraCoinAddress(c.miniaddress);
-      })
-      .sort(function (a, b) { return Number(b.tokenamount) - Number(a.tokenamount); });
-    const picked = [];
-    let sum = 0;
-    const tol = 1e-7;
-    for (let i = 0; i < usable.length && sum < target - tol; i++) {
-      picked.push(usable[i]);
-      sum += Number(usable[i].tokenamount);
-    }
-    return sum >= target - tol ? picked : [];
+      });
+    return stablesPickCoinsExact(usable, target);
   }
 
   /**
@@ -8045,8 +8280,8 @@
       const all = await findCovenantCoinsUrgent(['coins', 'relevant:true', 'tokenid:' + tokenId]);
       const totalAnyDepth = all
         .filter(function (c) { return coinIsUnspent(c) && !isTestInfraCoinAddress(c.address) && !isTestInfraCoinAddress(c.miniaddress); })
-        .reduce(function (s, c) { return s + Number(c.tokenamount); }, 0);
-      if (!(totalAnyDepth >= target - 1e-7)) {
+        .reduce(function (s, c) { return s + stablesAtomsOf(c.tokenamount); }, 0);
+      if (!(totalAnyDepth >= stablesAtomsOf(target))) {
         throw new Error('Not enough ' + tokenLabel + ' in your wallet for ' + target + '. Claim from the faucet or lower the amount.');
       }
       if (Date.now() > deadline) {
@@ -8075,13 +8310,27 @@
    */
   const STABLES_MAX_OP_INPUTS = 36;      // keeps txnbasics' reply well under Core's 100,000-char cap
   const STABLES_COMBINE_MAX_PASSES = 8;  // `consolidate` merges at most 20 notes per pass
+  /* Build 0.0.12.039: a tighter input cap for the retry after the node refused a mint/burn on size (tv81VaultOnChain). */
+  let stablesOpInputCap = null;
+  const STABLES_SIZE_REFUSAL_RE = /Result too long|TxPoW size too large|too large|MAX\(100000\)/i;
+  /** A node error on size, tagged for the combine-and-retry, its draft deleted; any other error unchanged. */
+  function stablesTagSizeRefusal(e, txnId, userNotes) {
+    const msg = String((e && e.message) || e || '');
+    if (!STABLES_SIZE_REFUSAL_RE.test(msg)) return e;
+    try { directOrMdsCmd('txndelete id:' + txnId, 'clearing the refused draft', 20000).catch(function () { /* already gone */ }); } catch (_) { /* ignore */ }
+    const out = e instanceof Error ? e : new Error(msg);
+    out.sizeRefused = true;
+    out.userNotes = Number(userNotes) || 0;
+    return out;
+  }
 
   function stablesNotesFit(picked, extraInputs, outputs) {
     const N = (typeof window !== 'undefined' && window.stablesNotes) ? window.stablesNotes : null;
     const inputs = (picked ? picked.length : 0) + (Number(extraInputs) || 0);
     const limit = N && N.TXPOW_MAX_BYTES ? N.TXPOW_MAX_BYTES : 65536;
     const bytes = N && typeof N.estimateTxnBytes === 'function' ? Number(N.estimateTxnBytes(inputs, outputs)) : 0;
-    return { fits: bytes <= limit && inputs <= STABLES_MAX_OP_INPUTS, inputs: inputs, bytes: bytes, limit: limit };
+    const userCap = stablesOpInputCap != null ? stablesOpInputCap : Infinity;   // 0.0.12.039: the retry's cap counts the person's notes
+    return { fits: bytes <= limit && inputs <= STABLES_MAX_OP_INPUTS && (picked ? picked.length : 0) <= userCap, inputs: inputs, bytes: bytes, limit: limit };
   }
 
   function stablesAutoCombineOn() {
@@ -8169,6 +8418,56 @@
     throw new Error('Your ' + tokenLabel + ' is still spread over too many notes. Open Wallet management, Tidy up notes, then try again.');
   }
   window.__STABLES_TEST_NOTES_FIT__ = stablesNotesFit;
+
+  /* ── Instant payments step 2 (build 103): the node adapter for instant-chain.js ──────────────────
+   * Loading Instant payments from Savings and moving it back are real transactions on the two
+   * covenants of runtime-config INSTANT_CHAIN. instant-chain.js builds them; every node read and write
+   * it makes goes through THIS object, so it uses the app's one transport decision (directOrMdsCmd:
+   * RPC on the web preview and the standalone app, MDS in a MiniDapp, where txnsign comes back
+   * needsConfirmation for the person's approval), the relevant:false-safe covenant reads
+   * (tv81CoinsAtAddress / tv81CoinsById, never an inline query), and the same Savings note picking
+   * and in-flight memory as a mint (gatherUserCoinsFitted, noteUserCoinsInFlight). A test harness
+   * wraps `cmd` here to intercept a post. */
+  window.__STABLES_INSTANT_NODE__ = {
+    cmd: async function (command, label, timeoutMs) {
+      const res = await directOrMdsCmd(command, label || 'Instant payments', timeoutMs || 60000);
+      return mdsPayload(res);
+    },
+    batch: function (steps, label, timeoutMs) { return directOrMdsCmdBatch(steps, label || 'building the transaction', timeoutMs || 90000); },
+    coinsAt: function (address, extraParts) { return tv81CoinsAtAddress(address, extraParts); },
+    coinsById: function (coinid) { return tv81CoinsById(coinid); },
+    gather: function (tokenId, amount, label, covenantInputs, outputs, fromAddress) {
+      if (fromAddress) return gatherFromAddress(tokenId, Number(amount), label || 'Savings', fromAddress, covenantInputs || 0, outputs || 2);
+      return gatherUserCoinsFitted(tokenId, Number(amount), label || 'Savings', covenantInputs || 0, outputs || 2);
+    },
+    /** Build 0.0.12.044: the Savings addresses holding this currency, with their sendable balance and notes. */
+    addresses: function (tokenId) { return stablesSavingsAddresses(tokenId); },
+    addressUsage: function (list, all) { return stablesSavingsAddressUsage(list, all); },
+    wallet: function () { return fetchTesterWallet(); },
+    tip: async function () {
+      const L = window.__STABLES_LIVE_NODE;
+      const b = Number(L && L.block);
+      if (b > 0) return b;
+      const s = await mdsCmdData('status');
+      return Number(s && s.chain && s.chain.block) || 0;
+    },
+    platform: function () {
+      if (window.__STABLES_CORE_CONNECTED_APP) return 'core';
+      if (window.__STABLES_ANDROID_APP) return 'standalone';
+      const p = typeof window.stablesPlatform === 'function' ? window.stablesPlatform() : 'web';
+      return p === 'minidapp' ? 'minidapp' : 'web';
+    },
+    coreAdmin: function () { const c = window.__STABLES_CORE_CONNECTION; return !!(c && c.admin === true); },
+    connected: function () {
+      const t = typeof window.stablesNodeCommandTransport === 'function' ? window.stablesNodeCommandTransport() : 'mds';
+      const L = window.__STABLES_LIVE_NODE;
+      return t !== 'none' && !!(L && Number(L.block) > 0);
+    },
+    // Core hands back no reply over 100,000 characters: the pool is never listed whole there.
+    canListVault: function () { return !window.__STABLES_CORE_CONNECTED_APP; },
+    noteInFlight: function (coins) { noteUserCoinsInFlight(coins); },
+    visible: function () { return typeof window.stablesAppVisible === 'function' ? !!window.stablesAppVisible() : true; }
+  };
 
   let _mintBurnPrewarmPromise = null;
   function prewarmMintBurnCovenant(reason) {
@@ -11754,12 +12053,12 @@
       }
     }
 
-    let address;
-    try {
-      address = await fetchTesterAddress();
-    } catch (e) {
-      return showToast('Connect your node first.', { tone: 'amber', durationMs: 5000 });
-    }
+    /* No node call between the press and the row (build 0.0.12.040; founder 2026-10-05: "the burning showed nothing for
+       multiple seconds, almost a minute, this is unacceptable. As soon a transaction is triggered it should be listed in
+       activities and its progression needs to be made accessible"). The address only labels the row, and the node's one
+       command queue can be busy behind a slow history read for most of a minute; it is asked for in the background and
+       filled in when it answers. A node that is not there fails the operation in its own row, with its own reason. */
+    const address = fetchTesterAddress().catch(function () { return ''; });
 
     // ONE quote semantic (v0.0.3.15): the input field is the WINIWA you contribute. Compute the
     // exact covenant terms HERE so the page quote, the confirm modal, the activity rows and the
@@ -11846,7 +12145,7 @@
           date: dateText,
           amt: Math.abs(mintAmt),
           ccy: 'xWiniwa',
-          address: address || '',
+          address: typeof address === 'string' ? address : '',
           fee: 0,
           explorerTxId: '',
           pendingTxnId: '',
@@ -11866,6 +12165,7 @@
         void spendRow;
         receiveRow.note = 'For ' + fmtTokenAmt(collOut) + ' Winiwa.';
         if (upsertFn) upsertFn([receiveRow]); else appendFn(receiveRow);
+        if (upsertFn) Promise.resolve(address).then(function (a) { if (a) upsertFn([{ id: mintReceiveRowId, address: a }]); });
         if (typeof window.renderActivity === 'function') window.renderActivity();
         if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
       }
@@ -11874,12 +12174,20 @@
     const baseWiniwa = stablesDisplayedBalanceForOptimistic('Winiwa');
     const baseXwm = stablesDisplayedBalanceForOptimistic('xWiniwa');
     const expectWiniwaAfter = Math.max(0, baseWiniwa - collOut);
-    if (typeof WALLET_WINIWA !== 'undefined') WALLET_WINIWA = expectWiniwaAfter;
-    if (typeof WALLET_XWM !== 'undefined') WALLET_XWM = baseXwm + mintAmt;
-    try { stablesSetOptimisticBalance('Winiwa', expectWiniwaAfter, 'out'); stablesSetOptimisticBalance('xWiniwa', baseXwm + mintAmt, 'in'); } catch (_) { /* ignore */ }
-    clearTestTokenBalanceDetails(['Winiwa', 'xWiniwa']);
-    if (typeof saveWalletVaultState === 'function') saveWalletVaultState();
-    if (typeof updateGlobalUI === 'function') updateGlobalUI();
+    /* The balances move when the node has ACCEPTED the transaction, not at the press (build 0.0.12.039; founder's Pro,
+       2026-10-04: a burn that failed on too many notes showed "the amount on both sides, Winiwa and xWiniwa" for a while:
+       "it would be good to avoid that"). Combining notes first can take minutes of real xWiniwa transactions, during
+       which a live read put xWiniwa back while the early Winiwa credit stayed. Until the post the row and the progress
+       pop-up say what is happening; the figures stay what the chain says. */
+    const applyMintMove = function () {
+      if (typeof WALLET_WINIWA !== 'undefined') WALLET_WINIWA = expectWiniwaAfter;
+      if (typeof WALLET_XWM !== 'undefined') WALLET_XWM = baseXwm + mintAmt;
+      try { stablesSetOptimisticBalance('Winiwa', expectWiniwaAfter, 'out'); stablesSetOptimisticBalance('xWiniwa', baseXwm + mintAmt, 'in'); } catch (_) { /* ignore */ }
+      clearTestTokenBalanceDetails(['Winiwa', 'xWiniwa']);
+      if (typeof saveWalletVaultState === 'function') saveWalletVaultState();
+      if (typeof updateGlobalUI === 'function') updateGlobalUI();
+      try { if (typeof window.stablesFlashBalanceUpdate === 'function') window.stablesFlashBalanceUpdate(['Winiwa', 'xWiniwa']); } catch (_) {}
+    };
     if (typeof calcXwm === 'function') calcXwm();
     if (typeof navigate === 'function') navigate('wallet');
 
@@ -11889,10 +12197,10 @@
         amount: fmtTokenAmt(mintAmt) + ' xWiniwa', address: 'Protocol (xWiniwa)', building: true
       });
     } catch (_) {}
-      try { if (typeof window.stablesFlashBalanceUpdate === 'function') window.stablesFlashBalanceUpdate(['Winiwa','xWiniwa']); } catch (_) {}
     let posted;
     try {
       posted = await window.__STABLES_TEST_XWINIWA_COVENANT__(0, mintAmt);
+      applyMintMove();
     } catch (e) {
       let errMsg = (e && e.message) || 'xWiniwa covenant mint failed';
       const notSent = !!(e && e.quietAbort);
@@ -12018,12 +12326,12 @@
       return window.stablesFieldError('xwmBurnAmt', hasDetail ? 'Not enough xWiniwa' : 'xWiniwa balance is still loading, try again in a moment.');
     }
 
-    let address;
-    try {
-      address = await fetchTesterAddress();
-    } catch (e) {
-      return showToast('Connect your node first.', { tone: 'amber', durationMs: 5000 });
-    }
+    /* No node call between the press and the row (build 0.0.12.040; founder 2026-10-05: "the burning showed nothing for
+       multiple seconds, almost a minute, this is unacceptable. As soon a transaction is triggered it should be listed in
+       activities and its progression needs to be made accessible"). The address only labels the row, and the node's one
+       command queue can be busy behind a slow history read for most of a minute; it is asked for in the background and
+       filled in when it answers. A node that is not there fails the operation in its own row, with its own reason. */
+    const address = fetchTesterAddress().catch(function () { return ''; });
     // Quote the covenant's exact burn payout for the confirm modal (was shown 1:1):
     // Winiwa out = floor8(xWiniwa in × rateburn) — the same formula the builder enforces.
     // TV81 D13 par vault: burn is strict par (1 xWiniwa -> 1 Winiwa) while L_par = 0; do not read
@@ -12121,7 +12429,7 @@
           date: dateText,
           amt: Math.abs(payoutWiniwa),
           ccy: 'Winiwa',
-          address: address || '',
+          address: typeof address === 'string' ? address : '',
           fee: 0,
           explorerTxId: '',
           pendingTxnId: '',
@@ -12141,6 +12449,7 @@
         void spendRow;
         receiveRow.note = 'For ' + fmtTokenAmt(burnAmt) + ' xWiniwa.';
         if (upsertFn) upsertFn([receiveRow]); else appendFn(receiveRow);
+        if (upsertFn) Promise.resolve(address).then(function (a) { if (a) upsertFn([{ id: burnReceiveRowId, address: a }]); });
         if (typeof window.renderActivity === 'function') window.renderActivity();
         if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
       }
@@ -12148,12 +12457,20 @@
 
     const baseXwm = stablesDisplayedBalanceForOptimistic('xWiniwa');
     const baseWiniwa = stablesDisplayedBalanceForOptimistic('Winiwa');
-    if (typeof WALLET_XWM !== 'undefined') WALLET_XWM = Math.max(0, baseXwm - burnAmt);
-    if (typeof WALLET_WINIWA !== 'undefined') WALLET_WINIWA = baseWiniwa + payoutWiniwa;
-    try { stablesSetOptimisticBalance('xWiniwa', Math.max(0, baseXwm - burnAmt), 'out'); stablesSetOptimisticBalance('Winiwa', baseWiniwa + payoutWiniwa, 'in'); } catch (_) { /* ignore */ }
-    clearTestTokenBalanceDetails(['Winiwa', 'xWiniwa']);
-    if (typeof saveWalletVaultState === 'function') saveWalletVaultState();
-    if (typeof updateGlobalUI === 'function') updateGlobalUI();
+    /* The balances move when the node has ACCEPTED the transaction, not at the press (build 0.0.12.039; founder's Pro,
+       2026-10-04: a burn that failed on too many notes showed "the amount on both sides, Winiwa and xWiniwa" for a while:
+       "it would be good to avoid that"). Combining notes first can take minutes of real xWiniwa transactions, during
+       which a live read put xWiniwa back while the early Winiwa credit stayed. Until the post the row and the progress
+       pop-up say what is happening; the figures stay what the chain says. */
+    const applyBurnMove = function () {
+      if (typeof WALLET_XWM !== 'undefined') WALLET_XWM = Math.max(0, baseXwm - burnAmt);
+      if (typeof WALLET_WINIWA !== 'undefined') WALLET_WINIWA = baseWiniwa + payoutWiniwa;
+      try { stablesSetOptimisticBalance('xWiniwa', Math.max(0, baseXwm - burnAmt), 'out'); stablesSetOptimisticBalance('Winiwa', baseWiniwa + payoutWiniwa, 'in'); } catch (_) { /* ignore */ }
+      clearTestTokenBalanceDetails(['Winiwa', 'xWiniwa']);
+      if (typeof saveWalletVaultState === 'function') saveWalletVaultState();
+      if (typeof updateGlobalUI === 'function') updateGlobalUI();
+      try { if (typeof window.stablesFlashBalanceUpdate === 'function') window.stablesFlashBalanceUpdate(['xWiniwa', 'Winiwa']); } catch (_) {}
+    };
     if (typeof calcXwmBurn === 'function') calcXwmBurn();
     if (typeof navigate === 'function') navigate('wallet');
 
@@ -12163,10 +12480,10 @@
         amount: fmtTokenAmt(burnAmt) + ' xWiniwa → Winiwa', address: 'Protocol (xWiniwa)', building: true
       });
     } catch (_) {}
-      try { if (typeof window.stablesFlashBalanceUpdate === 'function') window.stablesFlashBalanceUpdate(['xWiniwa','Winiwa']); } catch (_) {}
     let posted;
     try {
       posted = await window.__STABLES_TEST_XWINIWA_COVENANT__(1, burnAmt);
+      applyBurnMove();
     } catch (e) {
       let errMsg = (e && e.message) || 'xWiniwa covenant burn failed';
       /* A declined combine is not a failure: the person said "not now". One honest row, no red.
@@ -12441,7 +12758,7 @@
                  from, so a future session reads the cadence out of logcat instead of reconstructing
                  it, the same way `[STABLES-NODE-READS]` made the read cadence legible.
                  Reasons are a closed, greppable vocabulary so they can be counted:
-                   writing        state-unproven | proof-stale
+                   writing        state-unproven | proof-stale | instant-uncovered (a fresh snapshot without the Instant vault)
                    holding        switched-off | nothing-to-carry | proof-fresh
                    wrote / refused / failed   the OUTCOME of an attempt, which used to be silent too
                  Cost: one console line per boot and per 30-minute pass. Not a node read. */
@@ -12460,8 +12777,9 @@
                   if (!tv81AnchorPublishable().length) return say('holding', 'nothing-to-carry', s);
                   if (!tv81AnchorPublishEnabled()) return say('holding', 'switched-off', s);
                   const age = Number(s.headAge) || 0;
-                  if (!tv81MaintenancePending() && s.state === 'READY_WITH_COVERAGE' && age <= 600) return say('holding', 'proof-fresh', s);
-                  say('writing', s.state !== 'READY_WITH_COVERAGE' ? 'state-unproven' : 'proof-stale', s);
+                  const lacksInstant = tv81AnchorLacksInstant();
+                  if (!tv81MaintenancePending() && s.state === 'READY_WITH_COVERAGE' && age <= 600 && !lacksInstant) return say('holding', 'proof-fresh', s);
+                  say('writing', s.state !== 'READY_WITH_COVERAGE' ? 'state-unproven' : (age > 600 ? 'proof-stale' : 'instant-uncovered'), s);
                   /* The attempt's own outcome was silent as well: it could decide to write and then
                      refuse or throw, and nothing said so. */
                   Promise.resolve(tv81AnchorPublishSnapshot()).then(function (r) {

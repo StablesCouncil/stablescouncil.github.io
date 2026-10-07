@@ -529,13 +529,24 @@
 
     /* --- You: your contact code (encryption key + Minima address), shareable by QR or copy --- */
     var idEl = document.getElementById('chatMyIdShort');
+    /* Page review 2026-10 (D119): messaging is switched on from the Chat page itself while it is off (the same
+       setting as in Settings and updates). The address pop-up draws no empty white square while there is no code. */
+    var pageRow = document.getElementById('chatMessagingRow');
+    var pageSwitch = document.getElementById('chatOnchainTogglePage');
+    if (pageRow) pageRow.hidden = enabled();
+    if (pageSwitch) pageSwitch.checked = enabled();
+    var settingsSwitch = document.getElementById('chatOnchainToggle');
+    if (settingsSwitch) settingsSwitch.checked = enabled();
+    var qrHost = document.getElementById('chatMyQr');
     if (enabled()) {
       window.StablesChatOnchain.myContactCode().then(function (code) {
         if (idEl) idEl.textContent = code ? shortId(code) : 'Connect a node to derive your code.';
         if (code) paintQr(code);
+        if (qrHost) qrHost.hidden = !code;
       });
-    } else if (idEl) {
-      idEl.textContent = 'Turn on on-chain messaging in Preferences.';
+    } else {
+      if (idEl) idEl.textContent = 'Turn on messaging on the Chat page to get your address.';
+      if (qrHost) qrHost.hidden = true;
     }
 
     /* --- Chats: every saved contact, plus the address book, searchable, most-recent first --- */
@@ -581,7 +592,10 @@
           + '<span class="chat-contact-text"><span class="chat-contact-top"><span class="ui-tone-text ui-label-strong chat-contact-name">' + esc(c.name || shortAddr(c.mx || c.chatId)) + '</span>'
           + (when ? '<span class="xs mu chat-contact-time">' + esc(when) + '</span>' : '') + '</span>'
           + '<span class="xs mu ui-block chat-contact-preview">' + esc(preview) + '</span></span></button>';
-      }).join('') : ('<div class="xs mu">' + (q ? 'No contacts match “' + esc(_chatSearch) + '”.' : 'No chats yet. Tap New chat and paste an address.') + '</div>');
+      }).join('') : ('<div class="xs mu">' + (q ? 'No contacts match “' + esc(_chatSearch) + '”.' : 'No chats yet.') + '</div>');
+      /* Page review 2026-10 (D119): the search appears once there is something to search. */
+      var searchInput = document.getElementById('chatSearchInput');
+      if (searchInput) searchInput.hidden = !merged.length && !q;
 
       /* Show-hidden toggle: only when something is hidden. */
       var toggle = document.getElementById('chatShowHidden');
@@ -738,7 +752,7 @@
     var input = document.getElementById('chatComposerInput');
     var text = input ? String(input.value || '').trim() : '';
     if (!enabled()) {
-      try { window.showToast('Messaging is off. Turn on on-chain messaging in Preferences.', { durationMs: 4600 }); } catch (_) { /* ignore */ }
+      try { window.showToast('Turn on messaging at the top of the Chat page to send.', { durationMs: 4600 }); } catch (_) { /* ignore */ }
       return;
     }
     if (!text) return;

@@ -2,6 +2,545 @@
 
 ## [Unreleased]
 
+## [0.0.12.068] - 2026-10-07
+
+### 0.0.12.068 development candidate, 2026-10-07
+
+- The public Stables download is one Android app. It uses the built-in node, or Minima Core if you choose that on first open or in Settings and updates, Your node. The separate Core-connected app is no longer offered.
+
+### 0.0.12.067 development candidate, 2026-10-07
+
+- One Android app for both ways of reaching Minima (D128). On first open, if Minima Core is on the phone, Stables asks whether to use it or to connect to the network itself. Otherwise it connects itself, as before.
+- With Minima Core chosen, the built-in node never starts, and Stables works through your Core wallet exactly as the separate Core-connected app did. The card's tap and Bluetooth now work in that mode too.
+- Settings and updates has a new "Your node" row to switch later. Each choice is its own wallet: switching moves no funds and restarts Stables.
+- The separate Core-connected app is retired.
+
+### 0.0.12.066 development candidate, 2026-10-07
+
+- Paying by tap shows each step as it happens, with its time: Payment sent, Waiting for confirmation, then Confirmed by the other phone and Paid. The receiving phone shows Payment received, Checked and credited, Confirmation sent (D127).
+- When a payment needs your confirmation, the screen says to hold the phones together once more.
+- Manage funds now sits under the Stables card on the Wallet instead of inside the card screens, and the card page no longer has a Manage link at the top.
+
+### 0.0.12.065 development candidate, 2026-10-06
+
+- "Currencies to display" (which currencies the Wallet shows, the primary one, the total and the badges) moved from My profile to Wallet management, where it is the first section (D126).
+
+### 0.0.12.064 development candidate, 2026-10-06
+
+- Paying with the card by code: your phone now says "Broadcasted" the moment the payment is on the network, which is when the receiver's phone sees and credits it, instead of "Sending" until the next block. "In a block" then makes it final, usually within a minute (D125).
+- Activity rows line up again on the Wallet and the Activity page: a long second line is cut short instead of pushing the amount off the screen (on Activity it had widened the whole list past the page edge). The faucet's row no longer names "On-chain faucet covenant".
+
+### 0.0.12.063 development candidate, 2026-10-06
+
+- StablesAgent is always one tap away: in the header of every page and now of every full-screen sheet too (Send, Receive, the card's Pay and Get paid, Manage funds, transaction details). The "Ask StablesAgent" row on On/off ramp is gone (D124).
+- Merchants opens with Offers again, then the shops.
+- The Exchange looks like the card's Manage funds: two boxes, "You send · Savings" and "You receive · Savings", each with what you hold, the amount and currency inside, the swap arrow between them.
+- The card's Get paid no longer shows its code as cut-off text: Copy and Share sit side by side under the code, with their usual icons.
+
+### 0.0.12.062 development candidate, 2026-10-06
+
+- The Stables card can be paid at a distance. On Get paid, "Share a payment request" makes a request signed by your card, with your bank name, an optional reference, and 24 hours to pay it once; Copy or Share sends it through any app as a stables: link. On Pay, "Pay with a code" takes a request scanned, pasted or opened from a link (D123).
+- Before you confirm, the card says who signed the request: paid before, a first payment, or a name you know under a different key (it may not be them). A changed, expired or already paid request is refused. A payment by code is capped at the card's one-touch day level (200 by default), always asks for Confirm send, and goes over the Minima network, app to app.
+- A phone without NFC (and the web) now opens the card's Pay and Get paid on the code way instead of saying it cannot pay.
+
+### 0.0.12.061 development candidate, 2026-10-06
+
+- A scanned Stables card code never pays by itself: the scan fills in who is paid and how much, and you press Confirm send. A code on a web page or a sticker over a shop's code can no longer take a payment unseen. Paying by tap still takes one touch (D122).
+
+### 0.0.12.060 development candidate, 2026-10-06
+
+- Every page not reworked lately was reviewed and rebuilt to the same rules (D117 to D121). The StablesAgent button sits in the page header instead of over the page's own controls, and moves wherever you drag it. Every section has the same spacing under its title, lists are rows, and every on and off setting is the same switch.
+- Activity: one row per transaction, one line of date, no "Note" mark, tiny amounts shown in full. The list no longer empties itself when you open the page.
+- Mint and burn, Faucet, Exchange: one state line, one button name ("Mint xWiniwa"). On/off ramp is rows and two numbered lists.
+- Invoice: amount, currency you hold, note, then Show code. My shop is one switch, Create invoice, and sections that open in place. Merchants can be searched. A merchant's profile has Pay. Contacts can be added and are kept. Chat shows its messaging switch at the top while messaging is off.
+- Council, Treasury, Invest and the simulator say plainly what is a sample or still loading. Council communications, All links, Legal, Academy and Feedback are rows; Feedback starts with the form.
+- My profile, Wallet management, Security and Settings and updates: switches at the right, one short line per setting, Payment protection split into Quick pay, Stables card, Payment code and Confirmation policy. App updates says which version the web is on.
+- StablesAgent has a Back arrow, names the page you asked from, and hides Back and Next until a tour uses them. The language menu marks the current language.
+
+### 0.0.12.059 development candidate, 2026-10-05
+
+- A short, joyful tone when a payment is sent (a Savings send the node accepted, a card tap that paid) and a brighter one when a payment is received (card or on-chain). On by default; Payment sounds in My profile turns them off (D116).
+- Get paid and Receive open on a currency you hold (the card, else Savings), like Pay and Send.
+
+### 0.0.12.058 development candidate, 2026-10-05
+
+- Show on Home (My profile) is a proper list: grouped as the Home screen is (the icons on Home, then each folder under its name), one row per page with its Home icon, its name and a switch, hairlines between rows (D115).
+
+### 0.0.12.057 development candidate, 2026-10-05
+
+- Every transaction with an on-chain record now links to the explorer: Savings sends, faucet, mint and burn, combining notes, card moves, and card payments delivered over the network (paying and receiving side). A tap or Bluetooth card payment never touches the chain and says so (D114).
+- Currency menus open on a currency you hold: when the default has no balance on the side that pays, the other one is chosen (the card's Pay and Manage funds, including when the direction is swapped; Savings Send; Exchange swaps its sides when the one it pays from is empty).
+- Card moves and network payments are checked the moment a new block arrives instead of up to 15 s later.
+
+### 0.0.12.056 development candidate, 2026-10-05
+
+- Adding to and bringing back from the Stables card now links to the Minima explorer (View transaction), including moves made before: the app finds each move's transaction in its block. The "will be added at a later stage" notice is gone (D113).
+- The card screens' button reads Manage funds.
+- On the Wallet, the logo opens your profile; on every other page it still goes back to the Wallet.
+- View progress, opened from a transaction's details, goes back to those details with the back arrow or a swipe right.
+
+### 0.0.12.055 development candidate, 2026-10-05
+
+- The card page reads as separate sections, as the Wallet does: the Wallet's hairline divider and spacing before Card balance and before Manage, and more room between the two Manage settings (D112).
+
+### 0.0.12.054 development candidate, 2026-10-05
+
+- The card screens end with one button, Add funds. The card page it opens has a Manage link at the top and titled sections: Card balance (Winiwa, xWiniwa) and Manage (one touch levels, security, paying from the Wallet by tap) (D111).
+- Back from the card page, by the arrow or a swipe right, returns to the Stables card screen it was opened from, not the Wallet.
+- The Savings address chooser on the card page uses the same glass as the boxes above it, not a dark panel.
+- The currency page: Receive and Send are the Wallet's large pair; Exchange, used less often, has its own quieter line below.
+
+### 0.0.12.053 development candidate, 2026-10-05
+
+- Each currency has its own page: tap Winiwa or xWiniwa in Savings to see the holding, Receive, Send and Exchange, and that currency's latest activity with "See all" (Activity opens filtered to it). Receive and Send left the Wallet (D110).
+- The Wallet answers a tap: while the Wallet is on screen, holding the phone to a shop's phone pays with the card within one touch; above it, the card opens to confirm. On by default ("Pay from the Wallet by tap" in the card's settings); a contactless mark on the card shows it.
+- The card's Pay and Get paid screens end with two clear buttons, Add funds and Manage, replacing the small gear.
+- Back arrows are centred on the page title on every screen (a drawn chevron, the same in every font).
+
+### 0.0.12.052 development candidate, 2026-10-05
+
+- The Stables card is the pay surface (founder: people seeing "Tap to pay" expect the interface ready to pay): tapping the card on the Wallet opens it ready for the tap, with "Get paid | Pay" and a Manage control for Add, Remove, levels and address. The card sits right under the balance (D109).
+- Receive and Send are Savings actions and now sit under the Savings title; the account switch inside the sheets is gone (the button you pressed decides).
+
+### 0.0.12.051 development candidate, 2026-10-05
+
+- The Faucet is marked as part of the test phase: its icon sits in a yellow circle on Home and in the menu, and the words on its page are yellow (founder: "to clearly indicate that this is testing phase specific") (D108).
+- Savings address list: Used or Never used now comes from your own stored transaction history (received at or spent from the address), read once in full and kept up to date as transactions occur; the node's own count had marked nearly every address as used because Minima gives each transaction's change to a different address. No Close button: a tap outside closes the list. The address row on the card page looks like the selector it is.
+
+### 0.0.12.050 development candidate, 2026-10-05
+
+- The Wallet sits higher: the privacy eye moved into the top bar and the empty band above the balance is gone, so more shows from the start (founder: "bring everything up") (D108).
+- Discreet mode now hides amounts only on the Wallet and the payment sheets (Send, Receive, the Stables card); Activity, Exchange and the other pages show their figures.
+- In the Savings address list each row leads with its balance (or "Empty") and is tagged Used or Never used; the "new" tag is gone.
+- The wallet proof logs every transition ([STABLES-PROOF]) and the Wallet no longer says "updating" during a routine re-proof.
+
+### 0.0.12.049 development candidate, 2026-10-05
+
+- Moving an icon on Home pushes the icons after its new place along by one, live, as on a phone home screen (founder: "Dragging a page in between apps should push them on the side"); before, the icon already there jumped to the first free place (D107).
+- Fixed: while an icon was carried on Home, the screen could slide with the finger (the new sheet swipe took Home for a sheet), so the icon landed in the wrong place.
+
+### 0.0.12.048 development candidate, 2026-10-05
+
+- The Stables card page now works like the Exchange page: the two accounts in two boxes, one above the other, and a swap arrow between them to turn the direction round (D106).
+- The swap arrow is a clear round button on both the card page and the Exchange page, and turns when pressed.
+- Swiping the card page (and every full sheet) now follows the finger and slides out smoothly, or springs back.
+- The Savings address picker is a pop-up listing all your addresses (64 on a standard wallet) in a scrolling list, each with its tags (main, fresh, used before, new), balance and notes.
+- "You mined a block" is a pop-up over the page; a tap outside closes it.
+- The background notes tidy no longer logs "timed out" for combines that land.
+
+### 0.0.12.047 development candidate, 2026-10-05
+
+- Every screen swipes both ways (founder: "make sure that for every pages we can always swipe right and left"): on the Stables card window and the other full sheets, swiping right goes back (the card to the Wallet) and swiping left goes on to the next page; the last page goes round to the Wallet; pages outside the order go back to where they were opened from and on to the next page (D105).
+
+### 0.0.12.046 development candidate, 2026-10-05
+
+- Stables asks once to keep running in the background (founder's Graphene: an incoming 1,000 Winiwa alert came 18 minutes late; Stables was not exempt from battery optimisation there). Settings, under Node, shows "Background running" with Allow until it is on (D104).
+- "You mined a block" instead of "found": the pop-up, the Node rows and the phone notification.
+
+### 0.0.12.045 development candidate, 2026-10-05
+
+- The Savings address list for card moves says whether each address is fresh or used before (founder: "we should also show if the address is fresh or has been used in the past"), and a Remove is offered one fresh address. The list shows at once; the marks follow a moment later (D103).
+- A registration's change now goes back to the address its coin came from (found on the on-chain test of 0.0.12.044).
+
+### 0.0.12.044 development candidate, 2026-10-05
+
+- Moving money between the Stables card and Savings lets you pick the Savings address (founder: "we should be able to specify the wallet address to use ... presenting the balance and utxo count per address"): the card window lists your addresses with their balance and number of notes. Add takes from the picked address and returns its change there; Remove pays the picked address. The first Remove to a new address adds a short preparing step, because the card's on-chain rules pay only an address registered for it (D103).
+
+### 0.0.12.043 development candidate, 2026-10-05
+
+- Zoomed-in pages: the 0.0.12.042 change that made moving sideways worse (founder: "we cant even move sideways after zooming") is undone; in the Android app a sideways drag always reaches the zoomed view (D102).
+
+### 0.0.12.042 development candidate, 2026-10-05
+
+- The top of the app is the logo alone (no name, no slogan); tapping it goes to the Wallet (founder, D102).
+- Zoomed in, a page moves left and right straight away, without first moving it up or down (founder: "we need to move the page a bit up or down before being able to move it right left").
+
+### 0.0.12.041 development candidate, 2026-10-05
+
+- Zoomed in with two fingers, a page now scrolls left and right as well as up and down (founder: "scrolling needs to also be possible left right when zoomed in"); zoomed out, a sideways swipe turns the page as before (D101).
+
+### 0.0.12.040 development candidate, 2026-10-05
+
+- Every page can be zoomed with two fingers (founder: "let's make the whole app, all pages zoomable with the 2 fingers on the phone"). While zoomed in, a sideways drag moves around the page instead of turning it (D101).
+- Burn and mint answer the press at once (founder: "the burning showed nothing for multiple seconds, almost a minute"): the button says "Preparing…", the confirmation (burn) or the activity row and its progress (mint) come straight away, and the node is no longer asked for anything before that.
+
+### 0.0.12.039 development candidate, 2026-10-04
+
+- A mint or burn the node refuses as too large now combines your notes and tries again by itself (twice at most), instead of asking you to tidy up notes (founder's Pro: "the burn on the pro failed, too many notes") (D100).
+- Mint and burn move your balances when the node has accepted the transaction, not at the press: a failed burn no longer shows the amount on both sides, Winiwa and xWiniwa, for a while.
+- Keep my notes tidy in the background (Wallet management): offered once when a currency is spread over many notes; while the app is open and idle, Stables combines them so payments never wait.
+- The Stables card pool stays usable for everyone without a server: a cash-out merges as many rounds as it needs, tiny coins can never block it, each cash-out sweeps small coins into its change, and every open app tidies the pool a little. Proven on mainnet test nodes (a 42-coin pool merged to 23 by the app).
+- The found-block pop-up says where to see how many blocks your phone has found (Settings, under Node) and has "Keep showing me these"; the Node section has the same switch.
+
+### 0.0.12.038 development candidate, 2026-10-04
+
+- Fixed: a Stables card payment within one touch still took two touches on the founder's Pro (three taps only read a 22 Winiwa request; Confirm and a fourth tap paid it). The card's levels started from the Savings quick-pay limit, his below 22; the card now keeps its own defaults (one touch up to 50) until its levels are set on the card's window (D098).
+- A tap the card's levels hold back now says why in the panel ("Press Confirm send, then hold the phones together", the amount and the one-touch room) instead of only filling the form, and the log names the level.
+
+### 0.0.12.037 development candidate, 2026-10-04
+
+- On opening, a remembered balance shows with one "updating" word only: the second "Syncing your balance…" line under it is gone (seen on the founder's Pro on 0.0.12.036) (D098).
+
+### 0.0.12.036 development candidate, 2026-10-04
+
+- The payer sets the Stables card's levels on the card's window (founder: "the one touch, confirmation or pin/bio confirmation should be set for single transaction, day and week level") (D098): One touch (default 50 a payment, 200 a day, 500 a week) and Confirm (500, 1,000, 3,000); above them, the payment code or fingerprint. The same table is in Payment security. The card's window is now in the card's yellow, like the Stables card tab in Send and Receive.
+- The Wallet is readable the moment the app opens (founder: "it must be ready to use as soon as I open it"): the last known balance at full size with "updating" in the currency line, and each row its last known amount, instead of "Syncing…" while the node proves the wallet.
+- The discreet eye has three states (founder, D099): shown, latest shown (every amount hidden except the newest transaction's, so what was just paid or received stays readable), all hidden. A hidden balance stays hidden after the update.
+
+### 0.0.12.035 development candidate, 2026-10-04
+
+- Fixed: a Stables card payment above quick pay, confirmed with the payment code, could still not be paid by the tap: the confirmation was cleared by a redraw before the tap, which then only read the request (founder: "even the 222 xWiniwa are not sending"). A confirmation is now kept for 5 minutes, until Send closes or another amount is typed, and the tap pays it (D097).
+- "Change amount" is gone from the card's Send; Back closes Send.
+- When the card cannot cover the amount, the panel says so in red ("Not enough on your card", what it holds and what the payment is), not only a disabled button.
+- Stables card Send and Receive have the same distance from the panel to the amount and currency.
+
+### 0.0.12.034 development candidate, 2026-10-04
+
+- A block found by the phone is celebrated (founder: "should be a bit more joyful in its design"): a festive pop-up, "Your phone found a block!", with the block number and the thanks, confetti falling across the screen and a happy vibration; closed with "Wonderful".
+
+### 0.0.12.033 development candidate, 2026-10-04
+
+- Fixed: holding the phones together did nothing after a first tap that only read the other phone (no amount typed yet). The phone's reader was switched off after that read; it now stays on until a payment is made, so the next tap, with the amount typed, pays (founder's report on 0.0.12.032).
+- Stables card Receive now matches Send: the card panel on top, the amount and currency underneath.
+- The Stables card sits the same distance under its title as Savings does under its own.
+
+### 0.0.12.032 development candidate, 2026-10-04
+
+- The Stables card pays like a shop card (founder, 2026-10-04: "tap, signal is gone, signal it's coming on the other side, done!") (D095):
+  - Type the amount, then hold the phones together: within quick pay that one tap pays. There is no Confirm to press; above quick pay, Confirm send (with the payment code) readies the card and the tap pays.
+  - Fixed: a first tap that only read the other phone, then Confirm, left a signed payment waiting for a second tap that nobody knew to make, so nothing arrived. Confirm on the card now only readies it; after a tap that only read the other phone, the screen says "Enter the amount, then hold the phones together again".
+  - Send and Receive on the card show one large panel, like a card terminal: "Hold near the other phone to pay 2.00 Winiwa", then "Paid" on the payer's phone and "Received +2.00 Winiwa" on the receiver's, in green, with a short vibration; then the Wallet, the row flashing.
+- More room between the "Stables card" title and the card on the Wallet.
+
+### 0.0.12.031 development candidate, 2026-10-04
+
+- Savings payments by Bluetooth (Android app; founder, 2026-10-04) (D094):
+  - Instant notice: once the payer's node has accepted a Savings payment, the payer's phone tells the receiver's phone by Bluetooth, which shows it at once in Recent activity as "Incoming" (flashing) before its own node has seen it.
+  - Relay when the payer has no internet: the payer's phone signs the payment itself and hands it to the receiver's phone, which puts it on the Minima network. The payer keeps a copy and sends it itself once back online, unless the receiver already did. Whichever phone is online first sends it.
+  - Until the payment is in a block, the receiver's row says "Incoming", never "Received".
+  - No QR code changes: the receiver's phone is found from the Savings address the payer scanned.
+- Turning Bluetooth on is offered as an optional pop-up in Savings Send and Receive only, once per session. Nothing else asks for it.
+
+### 0.0.12.030 development candidate, 2026-10-04
+
+- Instant payments is now the Stables card (founder, 2026-10-04): the same balance, drawn on the Wallet as a card with its chip and "Tap to pay", and named Stables card everywhere (Send and Receive, its page, messages, activity rows "Paid" / "Received", the Android notification). It is the software version of the production card (a SIM or a card) (D093).
+- The Stables card pays by tap only (NFC): the "By QR code" way is gone from it, with its QR, its camera and its Bluetooth question. A device without NFC (web preview, MiniDapp, Core companion) says so plainly; Add and Remove still work there.
+
+### 0.0.12.029 development candidate, 2026-10-04
+
+- Turning Bluetooth on is asked in a pop-up when Send or Receive opens on Instant payments by QR code, once per opening, instead of a line under the code that was easy to miss.
+- Fixed: after a QR scan, Confirm send could stay disabled with nothing paid. The camera read the same code again (for example after the Bluetooth prompt) and the payment the scan had started stopped without giving the button back. A second read now changes nothing, and any stop gives the button back.
+- Moving money between Savings and Instant payments no longer asks for the payment code or the fingerprint. Only payments leaving the person's account do (founder, 2026-10-04).
+- An arriving payment no longer shows a notice: its row in Recent activity flashes its background four times.
+- A payment received over the network links its transaction in the explorer and reads "Receiving" until that transaction is in a block. Payments received earlier get their link the next time the app reads its history.
+- A faucet claim that stayed "receiving" (yellow) long after it went through now shows as confirmed.
+- Just after the app opens, a payment waits up to 10 seconds for the node connection before showing its QR.
+
+### 0.0.12.028 development candidate, 2026-10-04
+
+- Instant payments go from phone to phone by Bluetooth (Android app). The receiver's code carries a one-time link while its phone listens; after the scan the payer's phone hands the payment over directly and the receiving phone answers. If Bluetooth cannot reach the other phone within 12 seconds, the payment goes over the Minima network as before, and with no network its QR is shown (D092).
+- Send and Receive offer "Turn on Bluetooth" while it is off or not allowed; the phone then shows its own permission and Bluetooth prompts.
+- The moment a payment leaves, a small progress pop-up (closed with one tap) follows it step by step: finding and connecting to the receiver's phone, sending, received; or, over the network, sending (about 20 seconds), on the network, delivered (founder, 2026-10-04).
+- When the phone finds a Minima block, the app thanks the person ("Your phone found block ... Thank you for helping keep the banking network secure") and the Node section shows Blocks found and Last block found (D091).
+
+### 0.0.12.027 development candidate, 2026-10-04
+
+- Swiping right goes back to the page you came from. A page opened from Home goes back to Home; pages reached one by one from the Wallet go back one by one. Swiping left still goes to the next page in the order shown on Home (founder, 2026-10-04; D090).
+
+### 0.0.12.026 development candidate, 2026-10-04
+
+- An Instant payments Add ("To Instant payments") or Remove ("To Savings") now waits for the confirmations set in Settings, like a Savings payment: 1 block by default, so its progress reads "Confirming 0/1" and it is added after one block, where it read "0/3" and waited three (founder, 2026-10-04). The node's own rule for how old a coin must be before it is spent is unchanged.
+
+### 0.0.12.025 development candidate, 2026-10-04
+
+- Payments are complete at 1 block by default (was 3). A phone still on the previous default moves to 1 block once with this update; a confirmation setting the person changed stays as it is (founder, 2026-10-04).
+- The Trade page is gone from the app: not in the swipe between pages, the menu or Home. The Pool app replaces it; a link that still points to Trade opens Apps, where the Pool is (D089).
+
+### 0.0.12.024 development candidate, 2026-10-04
+
+- The Wallet total no longer pulses for ever. On the founder's Pro an Instant payments move to Savings from 3.6 days earlier read "Proof unavailable" (the phone's node can no longer see it) and still counted as settling, so the total kept flashing. A move that can no longer be proven is not settling: no pulse, no "+X" on Savings; its row still says "Proof unavailable".
+
+### 0.0.12.023 development candidate, 2026-10-04
+
+- The pages now lie to the RIGHT of Home (founder, on the Pro): swiping left goes Home, Wallet, Faucet, Mint and on through every page in order; swiping right walks back to Wallet and then Home. This reverses the direction of 0.0.12.022 (D088, amended).
+- In a transaction's details the dot beside its status says how it stands: green when it is done (Confirmed, Final, Received, Added, Sent), yellow while it is on its way, red when it did not happen or cannot be proven. An Instant payment you paid says where it got to there (QR shown, Sending, Sent, Received) instead of "Final" (founder, 2026-10-04).
+- The app writes one diagnostic line ([STABLES-SETTLING]) naming the payments that keep the Wallet total pulsing, each time that list changes, to find why the Pro's total keeps flashing.
+
+### 0.0.12.022 development candidate, 2026-10-04
+
+- Swiping right from Home now goes to Wallet, then on through every page in the order shown on Home (Faucet, Mint, Activity, ...). Swiping left walks back, and from Wallet opens Home. Before, swiping right on Wallet went back to Home, so the same swipe only went between Home and Wallet (D088, replaces part of D085).
+
+### 0.0.12.021 development candidate, 2026-10-04
+
+- Instant payments by QR now take one scan. The receiver shows their code; the payer scans it and the payment goes straight to the receiver's phone over the Minima network, the way a Savings payment does. Nobody scans anything back (D087).
+- The scan pays at once when the amount is known (the receiver put it in the code, or the payer typed it before scanning) and it is within quick pay, the same rule as a tap. Otherwise the payer enters or checks the amount and confirms.
+- The payer's row reads "Sending", then "Sent". The receiver sees the payment arrive like any other, final at once.
+- With no internet, or no Savings coin to send it with, the payment is shown as its QR for the receiver to scan, as before. Paying by tap is unchanged.
+- The Android app announces an incoming Instant payment with its real amount, and no longer counts its one-atom envelope as a Savings payment.
+
+### 0.0.12.020 development candidate, 2026-10-04
+
+- Instant payments QR codes now fill the space kept for them. They were drawn counting screen points instead of the phone's own pixels, so a code took about two thirds of its frame and was hard to scan from another phone (founder report, 2026-10-04). Every square of the code is still the same size, which the scanner needs.
+- The line "Payment ready. Show this code to the receiver's camera." under a payment code is removed: the banner above already says what to do.
+
+### 0.0.12.019 development candidate, 2026-10-04
+
+- Swiping right on Wallet now brings Home in from the left, just as swiping right on Home brings Wallet back. Swiping left on Wallet still opens Home too (D085).
+
+### 0.0.12.018 development candidate, 2026-10-04
+
+- The Android app no longer says "Payment received" when someone else adds to or removes from Instant payments. The shared vault and registration addresses were missing from the app's list of addresses that are nobody's own money, so every Add or Remove anywhere raised an alert on the phone, with nothing in Activity (founder report, 2026-10-04).
+
+### 0.0.12.017 development candidate, 2026-10-04
+
+- An Add or Remove made while the app is still finishing its first check after opening is followed to the end. Before, if that check finished after the Add, the app stopped following and the Add stayed "+0.70" pending, although it was on chain, until the app was reopened. A check that never finishes (a node that stops answering) no longer blocks the next ones either.
+
+### 0.0.12.016 development candidate, 2026-10-03
+
+- Vault coins a new install imports from the on-chain snapshot are recognised as Instant payments (and faucet or vault) coins even when the node lists them a moment late. Before, the three old coins of the test were filed as order-book entries and the install counted no Instant proof, which would have made every new install ask for a fresh snapshot.
+
+### 0.0.12.015 development candidate, 2026-10-03
+
+- A new or reinstalled app can move Instant payments money back to Savings. A fresh install only saw the vault coins of the last day; the app's on-chain recovery snapshot now also carries the largest Instant payments vault coins, which every app imports, and an older snapshot without them is replaced once.
+- The Instant payments page says that the balance is kept on this phone only, like cash: a lost phone or a deleted app loses it (D084).
+
+### 0.0.12.014 development candidate, 2026-10-03
+
+- The Savings figure takes a move from Instant payments in exactly once. Build 013 removed the double count but let the figure dip back for about one block before the node counted the coin; the "To Savings" row now waits for the same depth the node uses (3 blocks), measured on the lab node.
+
+### 0.0.12.013 development candidate, 2026-10-03
+
+- Moving money from Instant payments to Savings no longer shows the amount twice in Savings while it settles. The "To Savings" row now counts its own block confirmations, like an incoming payment, so the extra "+25" stops as soon as Savings includes the money (founder 2026-10-03, after INSTANT-ABC-01).
+
+### 0.0.12.012 development candidate, 2026-10-03
+
+- "Show payment again" on an Instant payment works. The button did nothing: its press failed before reaching the payment. It now closes the details and shows the same signed payment again, so a payment whose QR was not scanned can be shown to the receiver once more. Found by the INSTANT-ABC-01 lab test.
+
+### 0.0.12.011 development candidate, 2026-10-03
+
+- Instant payments QR codes now fit inside their frame. The receive code and the payment code were drawn larger than the frame and lost their outer edge, so a camera could not read them from the screen (only the enlarged view worked). Found by the INSTANT-ABC-01 lab test before any transaction was made.
+
+### 0.0.12.010 development candidate, 2026-10-03
+
+- Swiping left from Wallet brings in Home beside the finger, then opens Home on release. Short or cancelled drags return to Wallet; the first Home screen still swipes back to Wallet (D083).
+
+### 0.0.12.009 development candidate, 2026-10-03
+
+- Wallet and all Home screens use the same footer with one button: Home on Wallet, Wallet on Home. The footer remains available independently of Home icon visibility and arrangement (D082).
+
+### 0.0.12.008 development candidate, 2026-10-02
+
+- Holding a Home page icon or the Apps widget reveals Hide from Home at the top. Drop there to hide while preserving its saved position; Show on Home in My profile restores it. Groups and the Wallet dock support the same hide action (D081).
+
+### 0.0.12.007 development candidate, 2026-10-02
+
+- Home icons and the Apps widget keep independent positions and gaps after a move. My profile offers Show on Home for each page and the Apps widget, preserving positions and groups when hidden (D080).
+
+### 0.0.12.006 development candidate, 2026-10-02
+
+- Apps icons can be held and moved into saved positions. Home previews the first four apps in that order, skipping empty positions, with a square frame around each mark (D079).
+
+### 0.0.12.005 development candidate, 2026-10-02
+
+- Home Apps slots show each app name below its icon. Empty completed Home pages disappear automatically, including previously saved empty pages; populated layouts keep their order (D078).
+
+### 0.0.12.004 development candidate, 2026-10-02
+
+- Apps has the Home tile's orange background, square app icons that open directly, and an icon-sized + at the bottom. Right-click or hold an app for its information (D077).
+
+### 0.0.12.003 development candidate, 2026-10-02
+
+- **Hosted apps Slice A:** four full-area app slots, Apps page and approved-package storage; Pool preparation page; Wallet on the wallpaper and first-screen swipe to Wallet (D076). Trade remains until the hosted Pool is proven.
+
+### 0.0.12.002 development candidate, 2026-10-01
+
+- The desktop has screens, like a phone. Swipe left or right to go from one screen to the next; the dots under the icons show which one you are on.
+- Carry an icon to the left or right edge and hold it there: it moves to the screen on that side. Past the last screen, a new one opens.
+- See every screen at once: hold the wallpaper between the icons, or pinch in with two fingers. Each screen is a card. Hold a card and carry it to move the whole screen; tap + to add a screen; an empty screen offers Remove; tap a card to go to that screen.
+- Swiping between pages follows the screens: the first screen's pages, then the second's.
+- Reset home screen brings back a single screen, as delivered.
+
+### 0.0.12.001 development candidate, 2026-10-01
+
+- A new version line: 0.0.12. This first build carries everything in 0.0.11.116 (the Apps tile with The Pool, Merchants and On/Off ramp on the desktop, the Merchants group with the merchant account).
+- The build number now has three digits everywhere it is shown: 0.0.12.001, then 0.0.12.002, and so on.
+
+### 0.0.11.116 development candidate, 2026-10-01
+
+- Apps on the desktop. A large orange Apps tile, two icons wide and two high, holds the apps approved for Stables and a +. The first is The Pool, the on-chain order book from Minima Bay.
+- Tap + (or the tile) and the Apps panel opens out of it: each app with its icon, name, publisher, version and a short summary, About, and one button that says what to do. On the Android app: Install, then Downloading with its progress, then Check the installer; Open once it is on the phone; Update when a newer version is listed. On the web and in the MiniDapp: Get the Android app. Tap an installed app's icon on the tile to open it straight away.
+- Stables only installs and opens the apps of the list it ships, checks every download before Android's installer appears, and opens an app only when it is signed by its listed publisher. Otherwise it says: "This app was signed by someone else. Reinstall it from here."
+- The Pool's download arrives when Minima Bay publishes it; until then its row offers About (and Open on a phone that already has The Bay).
+- The Apps tile moves like any icon, never goes into a group, and Reset home screen puts it back.
+- Merchants and On/Off ramp now sit on the desktop, right after Faucet, Mint and Activities.
+- The Merchants group now holds My shop, Invoice and Ambassadors, and appears on the desktop (and in the swipe order) when the merchant account is switched on in Settings. Switched off, it goes away; switched on again, it comes back where it was. A page you carried out of it stays where you put it.
+- A phone that kept its own desktop arrangement gets the new places without losing its own moves.
+
+### 0.0.11.115 development candidate, 2026-09-30
+
+- The Home screen is now the app's desktop, like a modern phone. Large rounded icons with their names on a wallpaper, four to a row. No title, no back button, no instructions.
+- Groups. Faucet, Mint and Activities are icons; the other pages come in groups named as in the menu (My Assets, Merchants, Messages and Contacts, Community, Help, Preferences). Tap a group and it opens out of its icon; tap a page in it to go there; tap outside to close it. Tap a group's name to rename it.
+- Free to move and to join. Hold an icon until it lifts and carry it: the other icons slide out of the way to show where it will land. Rest it on the middle of another icon and let go to join the two into a new group, or to put it into the group under it. Carry an icon out of an open group to put it back on the desktop. A group with nothing left in it disappears.
+- Nothing from the old menu is lost: the app version and its state, the StablesAgent button and the language chooser are at the top of the Home screen.
+- The Wallet sits alone in the dock at the bottom of the Home screen. On every page the bar still has Wallet and Home.
+- Holding a page still opens the Home screen under your finger: rest on a group to open it, slide to a page and let go.
+- Settings, My profile, Reset home screen brings back the delivered desktop, groups included. An arrangement made on build 113 is not carried over.
+
+### 0.0.11.114 development candidate, 2026-09-30
+
+- Instant payments: choose how the payment is handed over. Send and Receive now show one clear choice, By tap (NFC) or By QR code, on phones that have NFC. Your choice is remembered for both.
+- The way you choose is the whole screen. By QR code, nothing about NFC is shown on either phone, and the phone does not answer a tap. By tap, there is no camera, no code and no QR. "Show QR code instead" is gone: the choice at the top switches the same payment between the two.
+- Every waiting screen says what to do next. After Confirm send by tap: "Hold the phones together to pay". When a payment is signed and waiting: "Hold the phones together to hand it over. The payment is signed and waiting on this phone." By QR code: "Payment ready. Show this code to the receiver’s camera." On Receive by QR code: "Show this code to the payer’s camera, then press Scan payment."
+- A tap that the other phone could not take now says what to do ("Get the other phone ready", "Check the other phone") instead of "Not received".
+- By tap with NFC switched off, the screen says so, offers the NFC settings, and Confirm send waits until NFC is on.
+
+### 0.0.11.113 development candidate, 2026-09-30
+
+- A Home screen, like a phone's. Tap Home in the bar and every page is an icon with its name, in groups: Favourites first (Faucet, Mint and Activities), then My Assets, Merchants, Messages and Contacts, Community, Help and Preferences.
+- Arrange it your way. Hold an icon until it lifts, drag it, and let go: before or after another icon, or into another group. Groups with nothing in them show while you are moving an icon, so you can use them. Your arrangement is kept on this phone.
+- The bar is now a dock of two places: Wallet, one tap from anywhere, and Home. The four app slots are gone; what they held is your Favourites.
+- Settings, My profile, Home screen: Reset home screen puts every page back where it was delivered.
+- Swiping between pages follows your arrangement: the Wallet first, then your Favourites, then the rest.
+- Holding a page still opens the Home screen under your finger, so you can slide to an icon and let go. It now only happens when you hold the page itself, never while your finger rests on a button.
+
+### 0.0.11.112 development candidate, 2026-09-30
+
+- A page now slides in exactly where it rests. In the previous build it slid in a little too low and too far left, then jumped into place when the turn finished. The app now measures where each page sits before moving it.
+- Hold a page and every page appears as a small icon with its name, all on one screen. Slide your finger to one and let go to jump straight there, or lift and tap one.
+- The top bar of the Wallet fades with the Wallet as you turn the page, instead of staying behind.
+
+### 0.0.11.111 development candidate, 2026-09-30
+
+- Swiping between pages is now a real page turn, like browsing photos: the page moves under your finger and the neighbouring page comes in beside it, to the left or to the right. Let go past about a quarter of the screen, or flick, and it settles on the new page; let go earlier and it slides back. The first and the last page resist.
+- Scrolling up and down is unchanged, and a drag that starts as a scroll stays a scroll.
+- Exchange and Trade are now two separate steps when swiping, as in the menu.
+- The app writes one short line about each sideways swipe to its own log, so a phone can show what it understood when a swipe does not do what you expect.
+
+### 0.0.11.110 development candidate, 2026-09-30
+
+- The page swipe works with a finger. Build 109 only followed a mouse: on a phone the browser cancels the gesture it was listening to the moment a touch might be a scroll, so no swipe ever finished. The swipe is now read from touch events, and it can start anywhere on the page, on rows and buttons too. Fields, sliders, the scanner and sideways-scrolling strips keep their own gestures.
+- Hiding the Activity filters no longer hides the transaction list. Only the search and filter controls hide; the list and its pager always stay on the page.
+- A first Remove in a currency you never Added yourself now works. The one-atom registration was still not being found, because the amount reached the coin picker as the number 1e-8 and was read as zero. It now builds at once (checked by building the real transaction on a lab node).
+- A left-to-right swipe can no longer be taken by the browser as "back".
+
+### 0.0.11.109 development candidate, 2026-09-30
+
+- Swipe left or right anywhere on a page to move to the next or previous page, in the order they are presented: the bottom bar from left to right, then the side menu from top to bottom. Swipes on a dropdown, a choice strip, a scanner or a sideways-scrolling row are left to that control.
+- Hold a finger still on a page for half a second: the pages open as a carousel in that same order. Sweep through it and tap the page you want, several steps away in one go.
+- The Mint page's asset list shows USDw as coming soon. It cannot be chosen yet.
+- On Activities the search and filters are hidden until you tap Filters. Inside, each label now sits with its own field instead of looking attached to the block above. Your choice to show them is remembered on this phone.
+- After Next 25 or Previous 25 the view returns to the top of the list. Fixed on the way: within five seconds of the last repaint, Next 25 and a filter change could paint nothing at all, because the repaint gate judged the screen unchanged from the rows alone. The page, filters, sort and search are now part of that judgement.
+
+### 0.0.11.108 development candidate, 2026-09-30
+
+- Fixed: moving money to Savings in a currency you had never Added yourself (for example xWiniwa received phone to phone) waited about five minutes and then said "still settling", although Savings held plenty. The registration needs one atom of the currency, and the coin picker rounded that atom away. It now counts in atoms exactly, so the registration is built at once. Seen by the founder on the Pixel 7 Pro during the live demo.
+- The "Test credit retired" line and row are gone from the Instant payments page, the Wallet and Activity. The app shows only what a user will have.
+- View progress in a transaction's details is now a plain button, like Hide and Delete.
+
+### 0.0.11.107 development candidate, 2026-09-29
+
+- View progress on every transaction. Tap any row in Activity or on the Wallet, then View progress: a Savings send or receive, a faucet claim, an Add or Remove, and an Instant payment you paid or received phone to phone. A faucet claim's View progress now opens.
+- An Instant payment's progress reads, in order: Backed on-chain (the money was loaded on the Minima chain), the payment itself (Payment ready on your phone, then Received once the other phone credited it; on the receiving phone, Received, final at the tap), then how it travelled: By NFC tap or By QR code, with no internet. A QR payment says plainly that it is not confirmed back to the payer.
+- One word for one event, everywhere: the transaction details now say "Broadcasted", like the tracker and the row, instead of "Transaction broadcasted".
+- Transaction details offer only what makes sense: an Add or Remove between your own two accounts no longer offers Repeat, Add to contacts, Flag suspicious or a contact field; an Instant payment shows "No fee" and "Off-chain" instead of a fee and an explorer link, and a payment still waiting for its tap offers "Show payment again".
+- Tapping a "Paid offline" or "Received offline" row now opens its transaction details, like every other row.
+
+### 0.0.11.106 development candidate, 2026-09-29
+
+- See an Add or a Remove move, step by step. Tap its row ("To Instant payments" or "To Savings"), then View progress: the same progress view a Savings send has, with the time each step finished and how long the current step has taken. The steps read Ready, Sent, Broadcasted, On-chain, then Confirming with its block count, ending on Added or Received. A first Remove in a currency shows Preparing while your Instant payments registration settles on the chain.
+- The row and its progress view always agree: they read the same record.
+- Once the move is in a block, View transaction opens it in the Minima explorer, from the progress view and from the transaction's details, as for a Savings send.
+- The notice "Link to the Minima explorer will be added at a later stage." now pops up on top of the screen you are on, the moment you tap View transaction, in the same box, font and size as every other notice. It used to open behind the transaction's window, so it only appeared once that window was closed, and its text was larger than any other notice. The first tap outside it only closes it.
+
+### 0.0.11.105 development candidate, 2026-09-29
+
+- Tap any Instant payments currency on the Wallet to go straight to one page where you add and remove money. The screen in between is gone.
+- The page shows your Instant payments total in amber, then a Remove or Add choice with Add on the right and chosen from the start. Below it are From and To, the amount with ½ and MAX, and one button that says what it does, such as "Add 100 Winiwa". The currency you tapped is already chosen, and you can pick any other currency Instant payments holds.
+- Switch between Remove and Add on the page itself. The amount and currency stay, and From and To swap round.
+- What you hold in each currency is listed at the bottom of the page, with the retired test credit as one quiet line under it.
+- Moving money works as before: the button stays off with the reason written under the amount when it cannot work, your payment code is asked only when your usual Savings rules need it, and you land on the Wallet with one activity row.
+
+### 0.0.11.104 development candidate, 2026-09-29
+
+- Instant payments has a clearer screen: its total at the top in amber with "Ready to pay offline", then two buttons, Remove and Add, then one plain line per currency with its name and amount. The retired test credit is one quiet line at the bottom.
+- Add and Remove open one simple screen: From and To (Savings and Instant payments) with what each holds, the amount with its currency, ½ and MAX, and one button that says what it does, such as "Add 100 Winiwa". When it cannot work, the button stays off and the reason is written under the amount. Your payment code is asked only when your usual Savings rules need it.
+- Send is for paying someone again: "My Instant payments" and "My Savings" are no longer offered as recipients there. Moving money between your own accounts is Add and Remove.
+- The Wallet's Instant payments lines show each currency's name once and no stray dash.
+- Nothing touches on these screens any more: each is one column with the same space between its parts.
+
+### 0.0.11.103 development candidate, 2026-09-29
+
+- Add from Savings: tap Instant payments on the Wallet, then Add from Savings. Send opens on Savings with "My Instant payments" as the recipient; enter the amount and currency and press Confirm send. The money moves on the Minima chain and appears in Instant payments after three confirmations. Until then the Instant row shows the amount as "+100.00" beside the figure, and the Wallet total does not dip.
+- Move to Savings: the same place, Move to Savings. Send opens on Instant payments with "My Savings" as the recipient. The amount leaves Instant payments at once and arrives in Savings on the chain; the Savings row shows it as "+25.00" until it settles. The first move in a currency registers your Instant payments account on the chain first ("Preparing").
+- One Activity row for each move, "To Instant payments" or "To Savings", with its status: Sending, Broadcasted, On-chain, Confirming, then Added or Received. If nothing moved, the row says Not sent and your balance is exactly as it was.
+- Refuse a move that cannot happen before anything moves, and say why: more than Savings or Instant payments holds, more than can move to Savings right now, or an Instant payments registration your node cannot see.
+- "My Instant payments" and "My Savings" also appear as recipients at the top of Send.
+- Retire the test credit: Instant payments start again from zero with a new account. The old test figure is shown as "Test credit retired" and is not counted anywhere. Codes from the old test account are refused with a message saying why.
+- Always ask for your payment code when a payment made by holding the phones together is above your quick-pay limit, or beyond what is left of today's quick-pay allowance. Payments by QR and on Savings keep their usual rules.
+
+### 0.0.11.102 development candidate, 2026-09-28
+
+- Pay a friend in one tap in the Android app: enter the amount, press Confirm send, then hold the phones together once. That one tap reads the receiver's code, takes the payment from your Instant payments balance, hands it over and hears back that it was received. Nothing is taken before the tap.
+- Refuse a tap that asks for something else: if the other phone asks for a different amount or currency than the one you confirmed, the app says so and pays nothing. "Change amount" takes you back to the form.
+- Pay a shop's request in one tap: open Send on Instant payments and hold the phones together. A request within your quick-pay limit and daily quick-pay cap (the same settings Savings uses) is paid in that same tap; above it the form fills in, you confirm, with your payment code where the amount needs it, and tap again.
+- Keep the QR code working as before, and finish an interrupted tap by touching the phones again: the same stored payment is sent again and credited once.
+- Show a Confirm send that cannot be pressed as unavailable, on Savings and on Instant payments, instead of in full colour. The button looks the same as before when it can be pressed.
+- Remove two unused options from the shared confirmation dialog, restoring its earlier behaviour.
+
+### 0.0.11.101 development candidate, 2026-09-28
+
+- Pay by holding two phones together in the Android app. After Confirm send, the payer's phone says "Hold the phones together"; the receiver's phone, showing its code in Receive, takes the payment by NFC, and the payer's phone confirms it was received and marks its row "Received". The receiver no longer scans the payer's screen.
+- Read the receiver's code by holding the phones together too, so a whole payment can be made without the camera. Scanning the code still works.
+- Keep the QR code where NFC is missing or off: in the web and MiniDapp versions, on a phone without NFC, and as "Show QR code instead" on the payer's phone for a receiver whose phone has no NFC. When NFC is off, the app says so and offers to open the NFC settings.
+- Finish an interrupted tap by touching the phones again: the same stored payment is sent again and credited once.
+- Call the account "Instant payments" everywhere: the Wallet section, the Savings / Instant payments choice in Send and Receive, its screen, and the messages.
+- Count Instant payments in the Wallet total, converted the same way as Savings.
+- Mark the chosen currency in amber in the currency list of an Instant payments sheet, instead of cyan.
+- Say "Syncing your balance…" instead of naming MINIMA while the Wallet waits for its first balance, and stop waiting once the balance has been read, even when it holds no MINIMA.
+
+### 0.0.11.100 development candidate, 2026-09-28
+
+- Hold Winiwa and xWiniwa in the Instant balance, the same currencies Savings offers. The Wallet shows one row per currency under Instant balance, the same way Savings lists its currencies, and tapping any row opens the Instant balance screen.
+- Choose the amount and the currency in Instant Send and Receive exactly as in Savings. Receive shows its code straight away and takes an optional amount and a currency, like the Savings Receive; a scanned code fills them in on the payer's side.
+- Refuse a payment the Instant balance cannot cover before anything happens: Confirm send stays off and says how much of that currency the Instant balance holds.
+- See an Instant payment arrive the way an on-chain one does: the Wallet opens with the same "Payment detected" message and the amount, marked Final because an Instant payment needs no confirmation.
+- Add test credit in the currency and amount you choose, still temporary and not backed.
+- Sign the currency into every offline payment, so a payment cannot be switched to another currency. Codes and payments from the previous test versions are refused with a message saying why, and an earlier test balance is kept as Winiwa.
+
+### 0.0.11.99 development candidate, 2026-09-28
+
+- Pay from the Instant balance the same way as from Savings. Send looks and works the same for both accounts: scan the receiver's code or paste it, enter the amount, press Confirm send. Only the colour changes: amber marks the Instant balance.
+- Show your Instant balance code straight away in Receive, with no amount to type and no request to create. The code is always the same.
+- Take a payment in the same Receive screen with Scan payment, or Paste payment for the text. This second scan is temporary; an automatic way to pass the payment between phones comes next.
+- See the Instant balance right under Receive and Send on the Wallet page, first of your balances, with your on-chain currencies grouped under Savings below it. Savings replaces "Main balance" everywhere, including the choice inside Send and Receive, and your remembered choice is kept.
+- Keep offline payments valid until the receiver takes them. A payment no longer expires, only the person it names can take it, and only once. If the receiver missed it, open the "Paid offline" row to show the same payment again. Codes from the previous test version are refused with a message saying why.
+
+### 0.0.11.98 development candidate, 2026-09-28
+
+- Choose the account when you pay. The Wallet keeps one Send and one Receive button, and Send and Receive each start with a choice between Main balance and Instant balance. Main balance is the same on-chain Send and Receive as before; Instant balance pays or receives offline by QR code.
+- Remember that choice. The account you pick stays selected in both Send and Receive, also after closing the app, until you pick the other one. Someone who never chose starts on Main balance.
+- Tap the Instant balance on the Wallet to open its own screen with the balance and its actions. For now that is the test credit, labelled as temporary and not backed; it is no longer a button on the Wallet page.
+- Show the offline payment QR inside Send, and open it again from the "Paid offline" row if the receiver missed the scan. An offline request read while Main balance is chosen is not paid from the wrong account: the app says to choose Instant balance.
+- Paste an offline request or payment as text inside Send and Receive, next to the scanner.
+
+### 0.0.11.97 development candidate, 2026-09-28
+
+- Pay and receive Winiwa offline with an Instant balance on the Wallet page. The receiver shows a request QR, the payer scans it and confirms, and the payer's phone then shows a payment QR that the receiver scans. The payment is final at that scan and needs no internet and no node.
+- Keep the payment safe if a scan is missed. The payer's balance is debited and the signed payment is saved before its QR appears, and opening the "Paid offline" row shows the same payment again, so a missed scan can be finished without paying twice.
+- Refuse bad offline payments in plain words: a copy scanned twice, a payment for someone else, a changed amount, an expired request, or a balance that is too low. Nothing is credited or debited when a payment is refused.
+- Add a temporary test credit of 100 Winiwa to try it out. Test credit is not backed and cannot move to savings; moving money in from savings and back out comes in the next step.
+- Keep the balance, the signing key and the payment record in the device's own secure browser storage, never in plain app settings. A device that cannot do this shows the Instant balance as unavailable instead of hiding it.
+
+### 0.0.11.96 development candidate, 2026-09-12
+
+- Say whether the app is current in one line with a status dot, instead of four paragraphs. An update names the installed and latest version on the same line.
+- Cut the app's explanations of its own mechanism where a person cannot act on them: resync, background mode, confirmation policy and signing capacity.
+
+### 0.0.11.95 development candidate, 2026-09-12
+
+- Say the bank is running when it is answering. The network status asked an MDS-session question that the standalone app never answers, so Settings reported the bank as not running directly above its live block height.
+- Close a notice without pressing what is behind it. The tap that dismisses a message is now absorbed by the message.
+
 ## [0.0.11.94] - 2026-09-12
 
 ### 0.0.11.94 development candidate, 2026-09-12

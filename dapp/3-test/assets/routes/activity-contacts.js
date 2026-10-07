@@ -19,6 +19,16 @@
   const SOFT_HIDDEN_TX_KEY = CFG.SOFT_HIDDEN_TX_KEY || 'stables_soft_hidden_tx_ids_v1';
   const HIDDEN_SHOPS_KEY = CFG.HIDDEN_SHOPS_KEY || 'stables_hidden_shop_names_v1';
 
+  /**
+   * An Instant balance row (offline checking account, step 1). Its truth is the durable journal in
+   * IndexedDB, not the chain, so no on-chain pruner, twin match or mirror adoption may touch it:
+   * recognised by its identity (instant flag + INSTANT- id), never by its words (UX law 13).
+   */
+  function isInstantActivityRow(r) {
+    return !!(r && r.instant === true && String(r.id || '').indexOf('INSTANT-') === 0);
+  }
+  window.stablesIsInstantActivityRow = isInstantActivityRow;
+
   function isExplorerTxpowId(id) {
     if (typeof window.stablesIsExplorerTxpowId === 'function') return window.stablesIsExplorerTxpowId(id);
     const t = String(id || '').trim().toLowerCase();
@@ -683,6 +693,27 @@
   }
 
   function reconcileActivityDuplicates() {
+    // Instant balance rows are set aside for the whole pass and put back unchanged: every step
+    // below reasons about on-chain transactions, and several would delete an offline row (an
+    // amount cap on incoming Winiwa, an optimistic row "superseded" by any node row of the same
+    // amount within 30 minutes).
+    const instantRows = USER_ACTIVITY.filter(isInstantActivityRow);
+    if (instantRows.length) USER_ACTIVITY = USER_ACTIVITY.filter(function (r) { return !isInstantActivityRow(r); });
+    try {
+      reconcileOnChainActivityDuplicates();
+    } finally {
+      // Back in time order (the list is kept newest first), so the 200-row cap trims the oldest
+      // rows whatever their kind, never the offline ones because they were put back last.
+      instantRows.forEach(function (row) {
+        const t = Number(row.ts) || 0;
+        let at = USER_ACTIVITY.findIndex(function (r) { return (Number(r && r.ts) || 0) < t; });
+        if (at < 0) at = USER_ACTIVITY.length;
+        USER_ACTIVITY.splice(at, 0, row);
+      });
+    }
+  }
+
+  function reconcileOnChainActivityDuplicates() {
     // Merge a faucet pour row with its node "Received Winiwa" row (keeping the faucet framing) BEFORE the
     // generic optimistic-supersede pruner runs — otherwise that pruner drops the faucet pour as a plain
     // superseded optimistic row, losing the "Faucet claim submitted" framing and briefly showing two rows.
@@ -858,6 +889,11 @@
     }
     if (String(x && x.status) === 'Failed') {
       return '<div class="tx-conf-amt tx-conf--failed">failed</div>';
+    }
+    // An offline Instant balance row has no blocks. Its status says where it got to (law 13):
+    // "QR shown" (payer), "final" (receiver, final at the scan) or "test only" (unbacked credit).
+    if (isInstantActivityRow(x)) {
+      return '<div class="tx-conf-amt tx-conf--done">' + escUi(x.offlineStatus || '') + '</div>';
     }
     const c = txConfirmationsShown(x);
     if (c === null) return '';
@@ -1306,27 +1342,47 @@
   }
 
   function loadUserActivityFromStorage() {
+    /* Page review 2026-10 (D118): a reload from storage never empties a list the app is showing for the
+       same wallet. Opening Activity reloads from storage; when the stored copy was empty (written while
+       the wallet's owner was unknown, as when the node was not answering) the rows on screen were
+       replaced by nothing, and the mirror, which already knew those transactions, never added them
+       back until the app restarted. An unreachable node read as an empty history (law 5). Only a
+       proved change of wallet (the owner check below) may clear the list. */
+    const shown = Array.isArray(USER_ACTIVITY) ? USER_ACTIVITY.slice() : [];
+    const shownOwner = _activityOwnerId;
+    let walletChanged = false;
+    let raw = null;
     USER_ACTIVITY = [];
     if (!DEMO_REAL) return;
     try {
-      const raw = localStorage.getItem(USER_ACTIVITY_STORAGE_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        USER_ACTIVITY = parsed;
-      } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.rows)) {
-        const bundleOwner = String(parsed.ownerId || '').trim().toLowerCase();
-        const storedOwner = readStoredOwnerId();
-        if (bundleOwner && storedOwner && bundleOwner !== storedOwner) {
-          USER_ACTIVITY = [];
-        } else {
-          _activityOwnerId = bundleOwner || storedOwner;
-          USER_ACTIVITY = parsed.rows;
+      raw = localStorage.getItem(USER_ACTIVITY_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          USER_ACTIVITY = parsed;
+        } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.rows)) {
+          const bundleOwner = String(parsed.ownerId || '').trim().toLowerCase();
+          const storedOwner = readStoredOwnerId();
+          if (bundleOwner && storedOwner && bundleOwner !== storedOwner) {
+            USER_ACTIVITY = [];
+            walletChanged = true;
+          } else {
+            _activityOwnerId = bundleOwner || storedOwner;
+            USER_ACTIVITY = parsed.rows;
+          }
         }
       }
     } catch (_) {
       USER_ACTIVITY = [];
     }
+    if (!USER_ACTIVITY.length && shown.length && !walletChanged
+        && (!shownOwner || !_activityOwnerId || shownOwner === _activityOwnerId)) {
+      USER_ACTIVITY = shown;
+      if (!_activityOwnerId) _activityOwnerId = shownOwner;
+      persistUserActivityToStorage();
+      return;
+    }
+    if (!raw) return;
     let beforeReconcile = '';
     try { beforeReconcile = JSON.stringify(USER_ACTIVITY); } catch (_) { beforeReconcile = ''; }
     migrateStaleNodeRowsIfNeeded();
@@ -1615,6 +1671,7 @@
       const anchorTs = Number(row.ts) > 0 ? Number(row.ts) : Date.now();
       const m = USER_ACTIVITY.findIndex(r => r
         && String(r.id || '').indexOf('NODE-') !== 0
+        && !isInstantActivityRow(r) // an offline payment is never an on-chain twin
         && r.dir === row.dir
         && activityCcySame(r.ccy, row.ccy)
         && Math.abs(Math.abs(Number(r.amt) || 0) - Math.abs(Number(row.amt) || 0)) < 1e-9
@@ -1726,6 +1783,14 @@
   }
 
   window.stablesGetSendProgressById = function (id) {
+    /* An Instant payments Add or Remove (founder law 26, build 106): its progress is read from the SAME
+       record its activity row is drawn from (instant-balance.js progressOf), never guessed from the row's
+       words, so the row and the tracker cannot disagree. Every other row is read below, unchanged. */
+    if (window.StablesInstant && typeof window.StablesInstant.isRowId === 'function' && window.StablesInstant.isRowId(id)
+      && typeof window.StablesInstant.progress === 'function') {
+      const instantProgress = window.StablesInstant.progress(id);
+      if (instantProgress) return instantProgress;
+    }
     const latch = SEND_PROGRESS_LATCH[id] || { sent: false, mined: false, confirmed: false, confirmations: 0, txid: '', pendingTxnId: '', snapshot: null, target: 0 };
     let target = (Number(latch.target) >= 1) ? Number(latch.target) : CONFIRM_TARGET;
     const p = {
@@ -1848,6 +1913,21 @@
   let selectedContactName = '';
   let chatContactName = '';
   const CONTACTS_BOOK = new Map(DEMO_CONTACTS.map(c => [c.name, { ...c, saved: false }]));
+  /* Page review 2026-10 (D119): a contact the person saves is kept on this device. The book was memory only, so a
+     contact saved from a payment was gone after a restart, and there was no way to add one by hand. */
+  const SAVED_CONTACTS_KEY = 'stables_saved_contacts_v1';
+  try {
+    (JSON.parse(localStorage.getItem(SAVED_CONTACTS_KEY) || '[]') || []).forEach(function (c) {
+      if (c && typeof c.name === 'string' && c.name) {
+        CONTACTS_BOOK.set(c.name, Object.assign({ category: 'MINIMA', city: '', paymentTier: 'inherit' }, c, { saved: true }));
+      }
+    });
+  } catch (_) { /* a damaged list starts empty */ }
+  function persistSavedContacts() {
+    try {
+      localStorage.setItem(SAVED_CONTACTS_KEY, JSON.stringify(Array.from(CONTACTS_BOOK.values()).filter(c => c && c.saved)));
+    } catch (_) { /* storage unavailable: the book stays for this session */ }
+  }
   const suspiciousTx = new Set(JSON.parse(localStorage.getItem(SUSPICIOUS_TX_KEY) || '[]'));
   const deletedTx = new Set(JSON.parse(localStorage.getItem(HIDDEN_TX_KEY) || '[]'));
   const hiddenTx = new Set(JSON.parse(localStorage.getItem(SOFT_HIDDEN_TX_KEY) || '[]'));
@@ -2661,6 +2741,12 @@
       reg.xwiniwa_covenant_address,
       reg.xwiniwa_covenant_miniaddress,
       cfg.TEST_GENESIS3_PROD_FAUCET_ADDRESS,
+      // Instant payments step 2 (build 103): the vault and registration covenants are tracked by every
+      // app, so their coins sit in wallet-level reads; they are the pool, never this wallet (law 9b).
+      (cfg.INSTANT_CHAIN || {}).REG,
+      (cfg.INSTANT_CHAIN || {}).REG_MX,
+      (cfg.INSTANT_CHAIN || {}).VAULT,
+      (cfg.INSTANT_CHAIN || {}).VAULT_MX,
     ].forEach(function (v) {
       const s = String(v || '').trim().toLowerCase();
       if (s) set.add(s);
@@ -3918,7 +4004,13 @@
   // described. The row itself is untouched: its status still reads honestly in Activity.
   const SETTLING_CUE_MAX_MS = 20 * 60 * 1000;
   function isIncomingSettlingRow(x) {
-    if (!x || x.dir !== 'in' || deletedTx.has(x.id)) return false;
+    if (!x || deletedTx.has(x.id)) return false;
+    // A move to Savings (build 103) is the one Instant payments row that lands in Savings: while its
+    // withdrawal settles, the amount is shown on the Savings currency row as "+X" (law 19), and it
+    // stops the moment instant-balance.js marks it settled. It is counted by its own flag, never by
+    // the on-chain ladder below (it is not a node row).
+    if (isInstantActivityRow(x)) return x.instantChain === 'offload' && x.instantSettling === true;
+    if (x.dir !== 'in') return false;
     if (!x.minimaOnChain && !x.pendingIncoming && !x.localOrigin) return false;
     if (String(x.status) === 'Confirmed' && !x.pendingIncoming) return false;
     const started = Number(x.ts || 0);
@@ -3933,8 +4025,24 @@
   //not at first inclusion, so the overlay must carry the amount through that whole window or
   //the incoming payment vanishes from the displayed balance between 1 conf and full depth.
   const NODE_COIN_CONFIRM_DEPTH = 3;
+  // An Instant "To Savings" row is not a node row (minimaOnChain false), so txConfirmations gave it null and the
+  // overlay added its amount for as long as the row was settling: once the node counted the payout coin, the 25 of a
+  // Remove showed twice (INSTANT-ABC-01-R3: "1,128.00 +25.00" for 1,103.00). It now has its own confirmations from
+  // its payout block (founder 2026-10-03). Measured on the lab node (build 0.0.12.013 sampled every 3 s): the node's
+  // spendable balance takes the payout coin at DEPTH 3 (tip - block >= 3), one block later than the receipt rule
+  // below (tip - block + 1 >= 3), which left a one-block dip. So the overlay stops at depth 3: the depth the node uses,
+  // and the depth at which instant-chain.js marks the move "received" (build 0.0.12.014).
+  const INSTANT_COIN_DEPTH = 3;
+  function instantRowDepth(x) {
+    const b = Number(x.block || 0);
+    const L = window.__STABLES_LIVE_NODE;
+    const tip = Number((L && L.block != null) ? L.block : 0);
+    if (!b || !tip || tip < b) return 0;
+    return tip - b;
+  }
   function incomingRowOverlayAmt(x) {
     if (x && x.balanceAlreadyApplied === true) return 0;
+    if (isInstantActivityRow(x)) return instantRowDepth(x) >= INSTANT_COIN_DEPTH ? 0 : Math.abs(Number(x.amt) || 0);
     const block = Number(x.block || 0);
     const conf = txConfirmations(x);
     if (block > 0 && conf !== null && conf >= NODE_COIN_CONFIRM_DEPTH) return 0;
@@ -3965,8 +4073,10 @@
     let flashCount = 0;
     // Rows can carry different targets; the subline shows the row with the most blocks left.
     let worst = null;
+    const why = [];
     activitySource().forEach(x => {
       if (!isIncomingSettlingRow(x)) return;
+      why.push([String(x.id || '').slice(0, 26), x.title || '', x.status || '', x.offlineStatus || '', x.instantChain || '', new Date(Number(x.ts || 0)).toISOString().slice(0, 16)].join('|'));
       const txKey = nodeTxpowHashFromActivityId(x.id)
         || normalizeTxHash(x.explorerTxId)
         || String(x.id || '');
@@ -3996,6 +4106,7 @@
       appliedByCcy: appliedByCcy,
       flashing: flashCount > 0,
       count: flashCount,
+      why: why,
       confirmations: (flashCount > 0 && worst) ? worst.conf : 1,
       target: (flashCount > 0 && worst) ? worst.target : 1,
     };
@@ -4005,11 +4116,19 @@
   /**
    * Pulses the hero total while incoming payments settle; subline shows block progress.
    */
+  let lastSettlingWhy = null;
   function renderPendingIncomingIndicator() {
     const el = document.getElementById('wHeroPendingIncoming');
     const state = getWalletSettlingState();
     const wTotal = document.querySelector('.w-total');
     if (wTotal) wTotal.classList.toggle('w-total--settling', state.flashing);
+    // Which rows make the total pulse (founder 2026-10-04: "the Pro total balance is constantly flashing"): one
+    // line each time that set changes, so a release phone can say it (no inspector there).
+    const whyKey = state.why.join(';');
+    if (whyKey !== lastSettlingWhy) {
+      lastSettlingWhy = whyKey;
+      try { console.log('[STABLES-SETTLING] ' + (whyKey ? state.count + ' row(s): ' + whyKey : 'none')); } catch (_) { /* ignore */ }
+    }
     if (!el) return;
     // User-facing policy: incoming updates live in the transaction list only.
     // Keep the hero line hidden to avoid duplicate messaging above Send/Receive.
@@ -4028,21 +4147,28 @@
     if (true) return;
   };
 
+  /* THE EXPLORER NOTICE IS A NOTICE (founder law 26, 2026-09-29, live demo on build 105: "the message
+     demo notice only appears when we close the window, make it pop up on top and make the message in
+     the same format and font as others, it is for now too big"). It was a box of its own
+     (#minimaExplorerComingModal) at z-index 640, UNDER the transaction's window (#agentActionModal,
+     645) that the "View transaction" press comes from, so it showed only once that window closed, in
+     20 px / 800 type under an 18 px title where every other notice is the caption size. It is now the
+     app's ONE notice element (#toast via showToast): on top of every window the moment it is raised,
+     the house box, font and size, and the first tap outside it only closes it (law 20). */
   window.openTxExplorer = function () {
-    if (typeof window.openModal === 'function') {
-      window.openModal('minimaExplorerComingModal');
-      return;
-    }
-    if (typeof window.showToast === 'function') {
-      window.showToast('Demo: link to the Minima explorer will be added at a later stage.', { tone: 'amber', durationMs: 3800 });
-    }
+    const text = 'This transaction has no on-chain record to show.';
+    if (typeof window.showToast === 'function') { window.showToast(text, { tone: 'amber' }); return; }
+    if (typeof window.stablesNotify === 'function') window.stablesNotify(text, { tone: 'amber' });
   };
   function fmtAmt(a) {
     const abs = Math.abs(Number(a) || 0);
     if (abs === 0) return '0';
     let minD = 2;
     let maxD = 2;
-    if (abs < 0.001) { minD = 6; maxD = 6; }
+    // Under a millionth, six decimals printed "0.000000" for a real payment (page review 2026-10, D118).
+    // An amount is never shown as zero when it is not: down to the network's own unit, eight decimals.
+    if (abs < 0.000001) { minD = 2; maxD = 8; }
+    else if (abs < 0.001) { minD = 6; maxD = 6; }
     else if (abs < 0.01) { minD = 4; maxD = 4; }
     else if (abs < 1) { minD = 3; maxD = 3; }
     else if (abs < 10) { minD = 2; maxD = 2; }
@@ -4050,6 +4176,19 @@
     return abs.toLocaleString('en-US', { minimumFractionDigits: minD, maximumFractionDigits: maxD });
   }
 
+  /* The second line of an activity row (page review 2026-10, D118): the date and time, then who, only when
+     "who" names someone. "On-chain recipient", "On-chain sender" and "Protocol (xWiniwa)" said the same thing
+     on every row, and "· Note" marked a note without showing it; together they broke the line in two and
+     made every row twice the house height. The note and the counterparty stay in the transaction details. */
+  // D125: "On-chain faucet covenant" names a mechanism, not a person; it only made the line too long.
+  const ACTIVITY_GENERIC_PARTY = /^(on-chain (recipient|sender|faucet covenant)|protocol(\s*\(.*\))?)$/i;
+  function activityRowDetail(x) {
+    const who = (x && x.minimaOnChain && x.counterparty) ? x.counterparty : (x && x.category);
+    const parts = [x && x.date];
+    if (who && !ACTIVITY_GENERIC_PARTY.test(String(who).trim())) parts.push(who);
+    if (x && suspiciousTx.has(x.id)) parts.push('Suspicious');
+    return parts.filter(Boolean).join(' · ');
+  }
   function activityAmtSignedDisplay(x) {
     const outgoing = !!(x && x.dir === 'out');
     const v = Math.abs(Number(x && x.amt) || 0);
@@ -4688,8 +4827,27 @@
   }
 
   window.setActivitySearch = function (value) { activitySearch = String(value || ''); activityPage = 0; window.renderActivity(); };
-  window.showNextActivityPage = function () { const items = getFilteredActivity(); const maxPage = Math.max(0, Math.ceil(items.length / ACTIVITY_PAGE_SIZE) - 1); activityPage = Math.min(maxPage, activityPage + 1); window.renderActivity(); };
-  window.showPrevActivityPage = function () { activityPage = Math.max(0, activityPage - 1); window.renderActivity(); };
+  /* Paging returns the view to the top of the list (founder law 35, 2026-09-30: "when we click next 25, we should
+     be brought at the top of the list"). The list's top is placed just under the app's fixed header. */
+  function scrollActivityListTop() {
+    const list = document.getElementById('activityList');
+    if (!list) return;
+    let headerH = 0;
+    try { const hdr = document.querySelector('.app-topbar, .topbar, header.app-header'); if (hdr) headerH = hdr.getBoundingClientRect().height; } catch (_) { headerH = 0; }
+    const top = list.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop || 0) - headerH - 12;
+    try { window.scrollTo({ top: Math.max(0, top), behavior: 'instant' }); } catch (_) { window.scrollTo(0, Math.max(0, top)); }
+  }
+  window.stablesScrollActivityListTop = scrollActivityListTop;
+  /** What the Activity page is showing besides the rows: the page, the filters, the sort, the search, the dates.
+   *  The render gate (node-read-budget.js) adds it to its signature so a page turn or a filter change is never
+   *  skipped as "the same screen" (found 2026-09-30: Next 25 painted nothing inside the gate's window). */
+  window.stablesActivityViewSignature = function () {
+    return [activityPage, activityFilter, activityCcyFilter, activitySort, activitySearch, activityTimeframe, activityPeriod, activityDateFrom, activityDateTo].join('|');
+  };
+  /** Test hook (read-only): where the pager stands and how many rows the filter passes. */
+  window.__STABLES_TEST_ACTIVITY_PAGING__ = function () { const n = getFilteredActivity().length; return { page: activityPage, filtered: n, pageSize: ACTIVITY_PAGE_SIZE, maxPage: Math.max(0, Math.ceil(n / ACTIVITY_PAGE_SIZE) - 1) }; };
+  window.showNextActivityPage = function () { const items = getFilteredActivity(); const maxPage = Math.max(0, Math.ceil(items.length / ACTIVITY_PAGE_SIZE) - 1); activityPage = Math.min(maxPage, activityPage + 1); window.renderActivity(); scrollActivityListTop(); };
+  window.showPrevActivityPage = function () { activityPage = Math.max(0, activityPage - 1); window.renderActivity(); scrollActivityListTop(); };
 
   function txListLoadingHtml(msg) {
     return '<div class="tx-list-state" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:18px 12px;color:var(--m);font-size:13px;font-weight:600">'
@@ -4754,6 +4912,22 @@
     const start = activityPage * ACTIVITY_PAGE_SIZE;
     return items.slice(start, Math.min(items.length, start + ACTIVITY_PAGE_SIZE));
   }
+
+  /**
+   * The newest transaction the person can see (build 0.0.12.036, Machinery D099). The eye's middle state ("latest
+   * shown") hides every amount except this one, so the person still sees what was just paid or received (founder
+   * 2026-10-04). Newest by time whatever the list's sort; its row carries tx-row--latest in both lists.
+   */
+  function latestVisibleTxId() {
+    let best = null, bestTs = -Infinity;
+    activitySource().forEach(function (x) {
+      if (!x || deletedTx.has(x.id) || hiddenTx.has(x.id) || hiddenShops.has(x.counterparty)) return;
+      const ts = activityTimestamp(x);
+      if (ts > bestTs) { bestTs = ts; best = x.id; }
+    });
+    return best;
+  }
+  window.stablesLatestVisibleTxId = latestVisibleTxId;
 
   function currentWalletRecentItems() {
     return sortActivityItems(
@@ -5008,14 +5182,15 @@
       if (nextBtn) nextBtn.style.display = 'none';
       return;
     }
+    const latestId = latestVisibleTxId();
     items.slice(start, end).forEach(x => {
       const row = document.createElement('button');
-      row.className = 'tx-row';
+      row.className = 'tx-row' + (x.id === latestId ? ' tx-row--latest' : '');
       if (suspiciousTx.has(x.id)) row.style.borderColor = 'rgba(248,113,113,.45)';
       const note = getTxNote(x);
       const amtDisp = activityAmtSignedDisplay(x);
       const ccyDisplay = normalizeActivityCcyLabel(x.ccy);
-      row.innerHTML = `<div class="tx-ic ${activityIconClass(x)}">${x.icon}</div><div class="tx-info"><div class="tx-t">${x.title}</div><div class="tx-d">${[x.date, (x.minimaOnChain && x.counterparty) ? x.counterparty : x.category].filter(Boolean).join(' · ')}${suspiciousTx.has(x.id) ? ' · Suspicious' : ''}${note ? ' · Note' : ''}</div></div><div class="tx-amt-wrap"><div class="tx-amt ${amtDisp.cls} bal-amount">${amtDisp.sign}${amtDisp.value} ${ccyDisplay}</div>${stablesLegSpendLineHtml(x)}${txConfirmLine(x)}</div>`;
+      row.innerHTML = `<div class="tx-ic ${activityIconClass(x)}">${x.icon}</div><div class="tx-info"><div class="tx-t">${x.title}</div><div class="tx-d">${activityRowDetail(x)}</div></div><div class="tx-amt-wrap"><div class="tx-amt ${amtDisp.cls} bal-amount">${amtDisp.sign}${amtDisp.value} ${ccyDisplay}</div>${stablesLegSpendLineHtml(x)}${txConfirmLine(x)}</div>`;
       applyTxRowLadderState(row, x, 'activityList');
       makeTransactionRowClickable(row, x.id);
       list.appendChild(row);
@@ -5081,9 +5256,19 @@
       }
       return;
     }
+    const latestId = latestVisibleTxId();
     items.forEach(x => {
+      list.appendChild(walletTxRow(x, latestId, faucetStatus, 'walletRecentList'));
+    });
+    hydrateTransactionRows('walletRecentList', items);
+    // D110: an open currency page redraws its own list from the same rows.
+    try { if (typeof window.stablesCurrencyPageCode === 'function' && window.stablesCurrencyPageCode()) window.renderCurrencyActivity(window.stablesCurrencyPageCode()); } catch (_) { /* ignore */ }
+  };
+
+  /** One activity row as the Wallet draws it (shared by Recent activity and the currency page, D110). */
+  function walletTxRow(x, latestId, faucetStatus, listId) {
       const row = document.createElement('button');
-      row.className = 'tx-row';
+      row.className = 'tx-row' + (x.id === latestId ? ' tx-row--latest' : '');
       if (suspiciousTx.has(x.id)) row.style.borderColor = 'rgba(248,113,113,.45)';
       const faucetDisplay = faucetSettlementDisplayForRow(x, faucetStatus);
       if (faucetDisplay && faucetDisplay.highlight) {
@@ -5095,17 +5280,33 @@
       const txTitle = faucetDisplay ? faucetDisplay.title : x.title;
       const txDetail = faucetDisplay
         ? faucetDisplay.detail
-        : `${[x.date, (x.minimaOnChain && x.counterparty) ? x.counterparty : x.category].filter(Boolean).join(' · ')}${suspiciousTx.has(x.id) ? ' · Suspicious' : ''}${note ? ' · Note' : ''}`;
+        : activityRowDetail(x);
       const txConf = faucetDisplay
         ? '<div class="tx-conf-amt tx-conf--confirming">' + faucetDisplay.conf + '</div>'
         : txConfirmLine(x);
       const ccyDisplay = normalizeActivityCcyLabel(x.ccy);
       row.innerHTML = `<div class="tx-ic ${activityIconClass(x)}">${x.icon}</div><div class="tx-info"><div class="tx-t">${txTitle}</div><div class="tx-d">${txDetail}</div></div><div class="tx-amt-wrap"><div class="tx-amt ${amtDisp.cls} bal-amount">${amtDisp.sign}${amtDisp.value} ${ccyDisplay}</div>${stablesLegSpendLineHtml(x)}${txConf}</div>`;
-      applyTxRowLadderState(row, x, 'walletRecentList');
+      applyTxRowLadderState(row, x, listId);
       makeTransactionRowClickable(row, x.id);
-      list.appendChild(row);
-    });
-    hydrateTransactionRows('walletRecentList', items);
+      return row;
+  }
+
+  /** The currency page's list (build 0.0.12.053, D110): this currency's latest five, trades included as on Activity. */
+  window.renderCurrencyActivity = function (code) {
+    installTransactionListClickDelegates();
+    const list = document.getElementById('currencyPageActivity');
+    if (!list) return;
+    const label = normalizeActivityCcyLabel(code);
+    const items = stablesGroupCovenantLegs(sortActivityItems(
+      activitySource().filter(x => !deletedTx.has(x.id) && !hiddenTx.has(x.id) && !hiddenShops.has(x.counterparty)
+        && normalizeActivityCcyLabel(x.ccy) === label)
+    )).slice(0, 5);
+    list.innerHTML = '';
+    if (!items.length) { list.innerHTML = txListEmptyHtml('No activity in ' + label + ' yet.'); return; }
+    const faucetStatus = activeFaucetSettlementStatus();
+    const latestId = latestVisibleTxId();
+    items.forEach(x => list.appendChild(walletTxRow(x, latestId, faucetStatus, 'currencyPageActivity')));
+    hydrateTransactionRows('currencyPageActivity', items);
   };
 
   window.renderExchangeRecentList = function () {
@@ -5172,6 +5373,11 @@
   };
 
   window.openActivityDetail = function (id) {
+    // An Instant balance row opens its own screen: a "Paid offline" row shows the SAME payment QR
+    // again (a torn transfer is re-shown, never re-signed); a receipt has nothing more to show.
+    if (window.StablesInstant && window.StablesInstant.isRowId(id)) {
+      try { if (window.StablesInstant.openRow(id)) return; } catch (_) { /* fall back to the generic detail */ }
+    }
     let tx = getTxById(id); if (!tx) return;
     const minedDetailRow = findMinedActivityRowForDetail(tx);
     if (minedDetailRow) tx = minedDetailRow;
@@ -5201,16 +5407,32 @@
     const _confFinal = tx.minimaOnChain
       ? (_hasMinedTxpow && ((_confN === null) ? _statusConfirmed : (_statusConfirmed || _realConf >= _rowTarget)))
       : ((_confN === null) ? _statusConfirmed : (_statusConfirmed || _realConf >= _rowTarget));
-    const statusColor = _confFinal ? 'var(--gr)' : 'var(--am)';
+    /* The dot says how it stands (founder 2026-10-04, build 0.0.12.023): "if final is all ok, the dot beside it should
+       be green, yellow indicates a slight issue, red a problem". Before, only a confirmed on-chain row was green, so an
+       Instant payment's "Final" showed yellow. Green: done (confirmed, final, received, added, sent); red: it did not
+       happen or cannot be proven; yellow: still on its way. A payment this phone has paid but the receiver has not
+       taken yet ("QR shown", "Waiting for tap", "Sending") is on its way, not done. */
+    const _dotWords = String(isInstantActivityRow(tx) && tx.dir === 'out' && tx.offlineStatus ? tx.offlineStatus : (tx.status || '')).toLowerCase();
+    const statusColor = /fail|not sent|not received|unavailable|refused|rejected|dropped|expired|error/.test(_dotWords) ? 'var(--rd)'
+      : (_confFinal || (!tx.minimaOnChain && /^(confirmed|final|received|added|sent)\b/.test(_dotWords))) ? 'var(--gr)' : 'var(--am)';
     const _confShown = _confFinal ? _rowTarget : ((_confN === null || _realConf <= 0) ? 0 : Math.min(Math.max(_confN, 1), _rowTarget));
     const statusText = (_confN === null)
-      ? tx.status
+      // An Instant payment this phone paid says where it got to ("QR shown", "Sending", "Sent", "Received"), as its
+      // row does; "Final" beside a yellow dot would contradict itself (founder 2026-10-04).
+      ? (isInstantActivityRow(tx) && tx.dir === 'out' && tx.offlineStatus ? tx.offlineStatus : tx.status)
       : (_confFinal
         ? ('Confirmed · ' + _confShown + '/' + _rowTarget + ' blocks')
         : (!_hasMinedBlock
-          ? (((pendingInner || _hasMinedTxpow || String(tx.status || '') === 'Broadcasted') ? 'Transaction broadcasted' : (submittedLocalOutgoing ? 'Submitted to node' : 'Generating send id')) + (_confShown > 0 ? (' · ' + _confShown + '/' + _rowTarget + ' blocks') : ''))
+          ? (((pendingInner || _hasMinedTxpow || String(tx.status || '') === 'Broadcasted') ? 'Broadcasted' : (submittedLocalOutgoing ? 'Submitted to node' : 'Generating send id')) + (_confShown > 0 ? (' · ' + _confShown + '/' + _rowTarget + ' blocks') : ''))
           : ('On-chain · ' + _confShown + '/' + _rowTarget + ' blocks')));
     const canRateMerchant = !!SHOP_PROFILES[tx.counterparty] && tx.dir === 'out';
+    /* What the details offer follows what the row IS (founder 2026-09-29, live demo on build 106: "review what we
+       put in transaction details to make sure it makes sense, like flag suspicious on the instant transaction add
+       and remove doesn't make sense"). A move between the person's own two accounts (Add / Remove) has no
+       counterparty to name, add to contacts, rate, flag or repeat as a payment. An offline Instant payment has no
+       address, no fee and no on-chain transaction; it is repeated by paying again. */
+    const _ownMove = !!tx.instantChain;
+    const _offlinePayment = !!(tx.instant && !tx.instantChain && !tx.instantRetired);
     const feeDisp = Number(tx.fee || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const txHashFromNodeId = nodeTxpowHashFromActivityId(tx.id);
     const txHash = String(normalizeTxHash(tx.explorerTxId) || txHashFromNodeId || '');
@@ -5229,16 +5451,32 @@
       ? `<div class="xs mu"  style="margin-top:6px;word-break:break-all;font-size:11px">${escUi(txAddress)}</div>`
       : '';
     const txHashIsMined = !!(txHashFromNodeId || Number(tx.block || 0) > 0 || _realConf > 0 || _statusConfirmed);
-    const hasRealExplorer = !!tx.minimaOnChain && isLikelyTxpowHash(txHash) && txHashIsMined;
+    /* An Instant payments Add or Remove (build 106) is a real transaction on the chain, followed by its own
+       record rather than by the Savings mirror (its row is not minimaOnChain). Once that record has its
+       block and TxPoW id, "View transaction" opens it in the explorer, as the progress view does and as a
+       Savings send's does; before that the explorer notice is raised. */
+    const instantInBlock = !!(tx.instantChain && Number(tx.block || 0) > 0);
+    /* Build 0.0.12.057 (founder 2026-10-05: "please put the transaction link on transactions where it is now missing"):
+       ANY row whose TxPoW id is known and in a block links to the explorer, whatever made it (a Savings send, the faucet,
+       mint and burn, combining notes, a card move, a card payment carried over the network). */
+    const hasRealExplorer = isLikelyTxpowHash(txHash) && (txHashIsMined || instantInBlock);
     const tradeIdBlock = hasRealExplorer
       ? `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction</div><a href="${escUi(txExplorerUrl(tx))}" target="_blank" rel="noopener noreferrer" title="${escUi(txHash)}" class="btn" style="width:auto;padding:0;border:none;background:none;font-size:12px;font-weight:900;color:var(--c);text-decoration:underline;display:inline-block;text-align:left">View transaction</a></div>`
       : (tx.minimaOnChain
         ? (pendingInner
-          ? `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction</div><div  style="font-size:12px;font-weight:800;color:var(--c)">Transaction broadcasted</div><div class="xs mu"  style="margin-top:4px;color:var(--m)">View transaction appears as soon as the transaction is mined.</div></div>`
+          ? `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction</div><div  style="font-size:12px;font-weight:800;color:var(--c)">Broadcasted</div><div class="xs mu"  style="margin-top:4px;color:var(--m)">View transaction appears as soon as the transaction is mined.</div></div>`
           : (submittedLocalOutgoing
-            ? `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction</div><div  style="font-size:12px;font-weight:800;color:var(--c)">Transaction broadcasted</div><div class="xs mu"  style="margin-top:4px;color:var(--m)">View transaction appears after your node exposes the mined receipt.</div></div>`
+            ? `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction</div><div  style="font-size:12px;font-weight:800;color:var(--c)">Broadcasted</div><div class="xs mu"  style="margin-top:4px;color:var(--m)">View transaction appears after your node exposes the mined receipt.</div></div>`
             : `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction</div><div  style="font-size:12px;font-weight:800;color:var(--am)">Syncing transaction</div><div class="xs mu"  style="margin-top:4px;color:var(--m)">View transaction appears after your node posts and the network mines it.</div></div>`))
-        : `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction</div><button class="btn" style="width:auto;padding:0;border:none;background:none;font-size:12px;font-weight:900;color:var(--c);text-decoration:underline;text-align:left" onclick="openTxExplorer()">View transaction</button></div>`);
+        : (_ownMove
+          ? `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction</div><div  style="font-size:12px;font-weight:800;color:var(--c)">${Number(tx.block || 0) > 0 ? 'On-chain' : 'Broadcasted'}</div><div class="xs mu"  style="margin-top:4px;color:var(--m)">${Number(tx.block || 0) > 0 ? 'View transaction appears once the app has found this transaction in its block.' : 'View transaction appears as soon as the transaction is in a block.'}</div></div>`
+          : _offlinePayment
+          ? (isLikelyTxpowHash(txHash) || tx.offlineStatus === 'Receiving'
+            ? `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction</div><div  style="font-size:12px;font-weight:800;color:var(--c)">Over the network</div><div class="xs mu"  style="margin-top:4px;color:var(--m)">View transaction appears as soon as the transaction is in a block.</div></div>`
+            : `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction</div><div  style="font-size:12px;font-weight:800;color:var(--c)">Off-chain</div><div class="xs mu"  style="margin-top:4px;color:var(--m)">Paid phone to phone. Final on the receiving phone; nothing goes on the chain, so there is no transaction to view.</div></div>`)
+          : (isLikelyTxpowHash(txHash)
+            ? `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction</div><div  style="font-size:12px;font-weight:800;color:var(--c)">Broadcasted</div><div class="xs mu"  style="margin-top:4px;color:var(--m)">View transaction appears as soon as the transaction is in a block.</div></div>`
+            : `<div  style="padding:0 4px;margin-bottom:8px"><div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">Transaction</div><div  style="font-size:12px;font-weight:800;color:var(--m)">No on-chain transaction</div><div class="xs mu"  style="margin-top:4px;color:var(--m)">This entry was recorded by the app and has no transaction on the chain to view.</div></div>`)));
     const txAmtDisp = activityAmtSignedDisplay(tx);
     const txAmtDecimals = (tx.ccy === 'MINIMA' || Math.abs(Number(tx.amt) || 0) < 1) ? 6 : 2;
     const txAmtValue = Math.abs(Number(tx.amt) || 0).toLocaleString('en-US', {
@@ -5252,24 +5490,28 @@
        something you want to look back on rather than watch. Any transaction with an on-chain
        identity has a timeline worth reading, including a failed one: when it stopped is as much a
        fact as when it landed. */
-    const _showProgressBtn = !!(tx.minimaOnChain
-      || normalizeTxHash(tx.explorerTxId)
-      || String(tx.pendingTxnId || tx.txnId || '').trim());
+    /* An Instant payments Add or Remove has its progress from the moment it is confirmed (founder law 26,
+       build 106: "adding to instant, in the transaction, we should be able to see the progression"). */
+    /* EVERY transaction offers its progress (founder law 27, build 107: "we need the view progress for all
+       transactions including the instant payments ones"): a Savings send or receive, a faucet claim, an Add or
+       Remove, and an Instant payments tap or QR payment, paid or received. Only the retired test-credit line,
+       which is a note and not a transaction, has none. */
+    const _showProgressBtn = !tx.instantRetired;
     const _policyLine = tx.minimaOnChain
       ? `<div class="xs mu" style="margin-bottom:8px;padding:0 2px">Completion target: ${_rowTarget} block${_rowTarget > 1 ? 's' : ''}${tx.confirmPolicyLabel ? ' · ' + escUi(tx.confirmPolicyLabel) + ' level' : ''}</div>`
       : '';
     const body = `<div  style="margin-bottom:8px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:${statusColor};display:inline-block"></span><span class="xs mu">${statusText}</span></div>
       ${_policyLine}
       <div  style="margin-bottom:16px;padding:0 4px">
-        <div class="fbet"><div><div  style="font-size:16px;font-weight:900;color:var(--t)">${tx.title}</div><div class="xs mu"  style="margin-top:2px">${tx.date}</div></div><div  style="text-align:right"><div class="tx-amt ${txAmtDisp.cls} bal-amount">${txAmtDisp.sign}${txAmtValue} ${normalizeActivityCcyLabel(tx.ccy)}</div><div class="xs mu">Fee ${feeDisp} ${normalizeActivityCcyLabel(tx.ccy)}</div></div></div>
+        <div class="fbet"><div><div  style="font-size:16px;font-weight:900;color:var(--t)">${tx.title}</div><div class="xs mu"  style="margin-top:2px">${tx.date}</div></div><div  style="text-align:right"><div class="tx-amt ${txAmtDisp.cls} bal-amount">${txAmtDisp.sign}${txAmtValue} ${normalizeActivityCcyLabel(tx.ccy)}</div>${_offlinePayment ? '<div class="xs mu">No fee</div>' : `<div class="xs mu">Fee ${feeDisp} ${normalizeActivityCcyLabel(tx.ccy)}</div>`}</div></div>
       </div>
-      <div  style="margin-bottom:16px;padding:0 4px">
+      ${_ownMove || _offlinePayment ? '' : `<div  style="margin-bottom:16px;padding:0 4px">
         <div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">${txAddressLabel}</div>
         <div  style="display:flex;gap:8px">
           <input class="finput" id="txDetailContactInput" value="${escUi(txContactValue)}" style="flex-grow:1;padding:8px;font-size:13px" placeholder="Enter contact name" onblur="saveTransactionContact({silent:true, skipReopen:true})">
         </div>
         ${txAddressSubline}
-      </div>
+      </div>`}
       
       <div  style="margin-bottom:12px">
         <label class="flabel" style="margin-bottom:6px">Transaction note</label>
@@ -5277,11 +5519,12 @@
       </div>
 
       <div class="flex gap8"  style="margin-bottom:16px;flex-wrap:wrap;justify-content:center">
-        ${_showProgressBtn ? '<button class="btn btn-secondary" onclick="reopenTxProgressFromDetail()">View progress</button>' : ''}
-        <button class="btn" onclick="repeatTransactionFromDetail()">Repeat</button>
+        ${_showProgressBtn ? '<button class="btn" onclick="reopenTxProgressFromDetail()">View progress</button>' : ''}
+        ${_ownMove || _offlinePayment ? '' : '<button class="btn" onclick="repeatTransactionFromDetail()">Repeat</button>'}
+        ${_offlinePayment && tx.dir === 'out' && tx.instantRef && tx.offlineStatus !== 'Received' ? '<button class="btn" onclick="stablesReshowInstantFromDetail()">Show payment again</button>' : ''}
         ${canRateMerchant ? '<button class="btn btn-w btn-g" onclick="openTxMerchantRating()">Rate merchant</button>' : ''}
-        <button class="btn" onclick="saveTxCounterpartyToContacts()">Add to contacts</button>
-        <button class="btn" onclick="toggleSuspiciousTx()">${suspicious ? 'Unflag suspicious' : 'Flag suspicious'}</button>
+        ${_ownMove || _offlinePayment ? '' : '<button class="btn" onclick="saveTxCounterpartyToContacts()">Add to contacts</button>'}
+        ${_ownMove ? '' : `<button class="btn" onclick="toggleSuspiciousTx()">${suspicious ? 'Unflag suspicious' : 'Flag suspicious'}</button>`}
         ${hiddenTx.has(tx.id)
           ? `<button class="btn" onclick="unhideTransactionFromHistory()">Show</button>`
           : `<button class="btn" onclick="hideTransactionFromHistory()">Hide</button>`}
@@ -5319,6 +5562,14 @@
   window.closeAgentActionModal = function () {
     const modal = document.getElementById('agentActionModal');
     if (!modal) return;
+    const backTo = modal.dataset.progressFromDetail || '';
+    delete modal.dataset.progressFromDetail;
+    if (backTo && modal.classList.contains('open') && !window.__STABLES_SWIPE_NEXT__ && typeof window.openActivityDetail === 'function') {
+      if (typeof window.stablesStopSendResultModalTxPoll === 'function') window.stablesStopSendResultModalTxPoll();
+      delete modal.dataset.stablesView;
+      window.openActivityDetail(backTo);              // the details, where View progress was pressed
+      return;
+    }
     modal.classList.remove('open', 'agent-action-notice');
     delete modal.dataset.stablesView;
     if (typeof window.stablesStopSendResultModalTxPoll === 'function') window.stablesStopSendResultModalTxPoll();
@@ -5342,6 +5593,18 @@
     window.renderWalletRecentActivity();
     if (typeof window.showToast === 'function') window.showToast('Transaction back in main lists');
   };
+  /** Forget one row by its id, for good (the same local removal Delete does), without a screen. Used by Instant
+   *  payments to drop the "Test credit retired" row earlier builds wrote (founder law 31, build 108). */
+  window.stablesForgetActivityRow = function (id) {
+    const key = String(id || '');
+    if (!key) return false;
+    deletedTx.add(key);
+    hiddenTx.delete(key);
+    persistHiddenTx();
+    persistSoftHidden();
+    try { window.renderActivity(); window.renderWalletRecentActivity(); } catch (_) { /* drawn on the next render */ }
+    return true;
+  };
   window.deleteTransactionFromHistory = function () {
     if (!selectedTxId) return;
     deletedTx.add(selectedTxId);
@@ -5354,11 +5617,51 @@
     if (typeof window.showToast === 'function') window.showToast('Transaction removed from local view');
   };
 
+  // "Show payment again" on an Instant payment that has not been received (build 107, law 27). The button used to
+  // call StablesInstant.reshow(selectedTxId) inline, but selectedTxId lives in this module, not on window, so the
+  // press threw "selectedTxId is not defined" and did nothing (found by INSTANT-ABC-01-R2, build 0.0.12.012). The
+  // details close first; the stored payment (never a new signature) is then drawn in the Send sheet.
+  window.stablesReshowInstantFromDetail = function () {
+    const id = selectedTxId;
+    if (typeof window.closeAgentActionModal === 'function') window.closeAgentActionModal();
+    if (id && window.StablesInstant && typeof window.StablesInstant.reshow === 'function') window.StablesInstant.reshow(id);
+  };
+
   // Reopen the live progress popup for a still-settling row from the transaction details view,
   // so a dismissed sender/receiver popup can always be recovered from the transaction list.
   window.reopenTxProgressFromDetail = function () {
     const tx = getTxById(selectedTxId);
     if (!tx) return;
+    /* Build 0.0.12.056 (founder 2026-10-05: "when we are in view details, swiping the page should show back the
+       transaction details on its left"). The progress view draws over the details in the same window; it remembers
+       the transaction, so Back, by the arrow or a swipe right, redraws its details instead of closing. */
+    const pm = document.getElementById('agentActionModal');
+    if (pm) pm.dataset.progressFromDetail = String(tx.id);
+    setTimeout(function () {
+      const m = document.getElementById('agentActionModal');
+      if (m && (!m.classList.contains('open') || m.dataset.stablesView === 'transaction-detail')) delete m.dataset.progressFromDetail;
+    }, 0);
+    /* An Instant payments tap or QR payment, paid or received (founder law 27, build 107): the same progress view,
+       drawing the steps its record gives (instant-balance.js progressOfPayment): backed on-chain, the payment on the
+       receiving phone, the channel. No address, no receiver sentence, nothing on the chain to poll. */
+    if (tx.instant && !tx.instantChain && !tx.instantRetired && typeof window.stablesShowSendResultModal === 'function') {
+      const iccy = normalizeActivityCcyLabel(tx.ccy);
+      const iamt = Math.abs(Number(tx.amt) || 0);
+      window.stablesShowSendResultModal({
+        title: 'Progress',
+        status: String(tx.title || ''),
+        amount: (typeof tx.amtText === 'string' && tx.amtText ? tx.amtText : iamt.toLocaleString('en-US', { maximumFractionDigits: 8 })) + ' ' + iccy,
+        address: '',
+        txid: '',
+        pendingOnChain: true,
+        progressTitle: 'Status',
+        rowId: String(tx.id),
+        openProgress: true,
+        receiverNote: false,
+        note: 'You can close this. Activity keeps updating.'
+      });
+      return;
+    }
     if (String(tx.dir || '') === 'in') {
       if (typeof window.stablesShowIncomingPaymentWarning === 'function') {
         window.stablesShowIncomingPaymentWarning(tx, { force: true });
@@ -5368,6 +5671,25 @@
     if (typeof window.stablesShowSendResultModal === 'function') {
       const ccy = normalizeActivityCcyLabel(tx.ccy);
       const amt = Math.abs(Number(tx.amt) || 0);
+      /* An Instant payments Add or Remove (build 106, founder law 26): the Savings send's progress view,
+         the same screen and tracker, with the words of a move between the person's own two accounts: no
+         "payment", no address, no receiver's screen to speak of. */
+      if (tx.instantChain) {
+        window.stablesShowSendResultModal({
+          title: 'Progress',
+          status: String(tx.title || ''),
+          amount: (typeof tx.amtText === 'string' && tx.amtText ? tx.amtText : amt.toLocaleString('en-US', { maximumFractionDigits: 8 })) + ' ' + ccy,
+          address: '',
+          txid: normalizeTxHash(tx.explorerTxId) || '',
+          pendingOnChain: true,
+          progressTitle: 'Status',
+          rowId: String(tx.id),
+          openProgress: true,
+          receiverNote: false,
+          note: 'You can close this. Activity keeps updating.'
+        });
+        return;
+      }
       window.stablesShowSendResultModal({
         title: 'Payment progress',
         status: String(tx.title || ('Sending ' + ccy)),
@@ -5423,6 +5745,7 @@
 
     const contactObj = { name: newName, category: tx.category || 'MINIMA', address: tx.address, city: 'Unknown', saved: true, paymentTier: 'inherit' };
     CONTACTS_BOOK.set(newName, contactObj);
+    persistSavedContacts();
     
     activitySource().forEach(t => {
       if (t.address === tx.address) {
@@ -5444,15 +5767,39 @@
   window.saveTxCounterpartyToContacts = function () {
     const tx = getTxById(selectedTxId); if (!tx) return;
     const existing = CONTACTS_BOOK.get(tx.counterparty) || { name: tx.counterparty, category: tx.category, address: tx.address, city: 'Unknown', saved: false };
-    existing.saved = true; CONTACTS_BOOK.set(tx.counterparty, existing); selectedContactName = tx.counterparty;
+    existing.saved = true; CONTACTS_BOOK.set(tx.counterparty, existing); persistSavedContacts(); selectedContactName = tx.counterparty;
     window.closeAgentActionModal();
     if (typeof window.navigate === 'function') window.navigate('contacts');
     window.renderContactsPage();
   };
   window.openTxCounterpartyContact = function () { const tx = getTxById(selectedTxId); if (!tx) return; selectedContactName = tx.counterparty; window.closeAgentActionModal(); if (typeof window.navigate === 'function') window.navigate('contacts'); window.renderContactsPage(); };
 
+  /* D119: add a contact by hand (name and a Minima address), kept with the contacts saved from payments. */
+  window.stablesAddContactFromForm = function () {
+    const nameEl = document.getElementById('contactAddName');
+    const addrEl = document.getElementById('contactAddAddress');
+    const name = String(nameEl?.value || '').trim();
+    const address = String(addrEl?.value || '').trim();
+    if (!name) { if (typeof window.stablesFieldError === 'function') window.stablesFieldError('contactAddName', 'Enter a name'); return; }
+    if (!/^(Mx[0-9A-Z]{20,}|0x[0-9A-Fa-f]{20,})$/.test(address)) {
+      if (typeof window.stablesFieldError === 'function') window.stablesFieldError('contactAddAddress', 'Enter a Minima address (Mx... or 0x...)');
+      return;
+    }
+    const prior = CONTACTS_BOOK.get(name) || {};
+    CONTACTS_BOOK.set(name, Object.assign({ category: 'MINIMA', city: '', paymentTier: 'inherit' }, prior, { name: name, address: address, saved: true }));
+    persistSavedContacts();
+    if (nameEl) nameEl.value = '';
+    if (addrEl) addrEl.value = '';
+    const det = document.getElementById('contactAddDetails');
+    if (det) det.open = false;
+    selectedContactName = name;
+    window.renderContactsPage();
+  };
   window.renderContactsPage = function () {
     const list = document.getElementById('contactsList'); if (!list) return;
+    const searchEl = document.getElementById('contactsSearchInput');
+    // Search appears once the list is longer than a screen, or while a search is typed.
+    if (searchEl) searchEl.hidden = CONTACTS_BOOK.size <= 8 && !String(searchEl.value || '').trim();
     const search = String(document.getElementById('contactsSearchInput')?.value || '').toLowerCase().trim();
     const contacts = Array.from(CONTACTS_BOOK.values()).filter(c => !search || c.name.toLowerCase().includes(search) || c.category.toLowerCase().includes(search));
     // Sort favorites first, then alphabetically
@@ -5467,7 +5814,7 @@
       const row = document.createElement('div');
       row.className = 'tx-row';
       row.style.cssText = 'display:flex;align-items:center;gap:8px';
-      row.innerHTML = '<div class="tx-ic in-ic">👤</div><div class="tx-info"  style="flex:1;min-width:0"><div class="tx-t">No contacts yet</div><div class="tx-d">Your saved contacts will appear here.</div></div>';
+      row.innerHTML = '<div class="tx-ic in-ic">👤</div><div class="tx-info"  style="flex:1;min-width:0"><div class="tx-t">No contacts yet</div></div>';
       list.appendChild(row);
     }
     contacts.forEach(c => {
@@ -5623,16 +5970,9 @@
     const needsUpdate = cmp < 0;
     const zipUrl = typeof cfg.MDS_ZIP_URL === 'string' ? cfg.MDS_ZIP_URL.trim() : '';
 
-    if (!needsUpdate) {
-      return `<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20"><div class="stitle-row"><div class="stitle">App version</div></div><div class="card app-section-card"  style="padding:14px;margin-bottom:8px">
-        <div  style="display:flex;align-items:flex-start;gap:10px">
-          <span style="font-size:22px;line-height:1;flex-shrink:0" aria-hidden="true">✅</span>
-          <div  style="min-width:0">
-            <div  style="font-size:14px;line-height:1.55;font-weight:800;color:var(--muted)">This install is on the latest app version (${escCouncilHtml(displayCurrent)}).</div>
-          </div>
-        </div>
-      </div></div>`;
-    }
+    // Page review 2026-10 (D120): "you are on the latest version" is said by Settings and updates. This page carries
+    // the version only when an update is needed, which is a notice.
+    if (!needsUpdate) return '';
 
     const wu = pol.whenUpdateNeeded && typeof pol.whenUpdateNeeded === 'object' ? pol.whenUpdateNeeded : {};
     const crit = criticalityPresentation(wu.criticality);
@@ -5667,28 +6007,19 @@
     const intro = typeof block.intro === 'string' && block.intro.trim()
       ? block.intro.trim()
       : 'This channel is for Stables Council only: security incidents, required updates, and other critical communication. It is not for casual chat.';
-    let itemsHtml = '';
-    if (!items.length) {
-      itemsHtml = '<div class="xs mu"  style="margin-top:8px;opacity:.9;font-weight:800;line-height:1.45">No council bulletins in this build.</div>';
-    } else {
-      itemsHtml = items.map((it) => {
+    /* Page review 2026-10 (D120): notices are rows, newest first: the date, the title, and the text opening in place
+       (BLK-011). The intro told the reader not to write on a page where nobody can write; it is gone. */
+    void intro;
+    const sorted = items.slice().sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+    const itemsHtml = !sorted.length
+      ? '<p class="xs mu ui-m-0">No notices.</p>'
+      : '<div class="ui-list">' + sorted.map((it) => {
         const title = escCouncilHtml(it.title || 'Notice');
         const date = it.date ? escCouncilHtml(it.date) : '';
         const body = escCouncilHtml(it.body || '').replace(/\n/g, '<br>');
-        return `<div  style="margin-top:10px;padding:10px 12px;border-radius:12px">
-          <div  style="font-size:13px;font-weight:900;color:var(--t)">${title}</div>
-          ${date ? `<div class="xs mu"  style="margin-top:2px;font-weight:700">${date}</div>` : ''}
-          <div class="xs mu"  style="margin-top:6px;line-height:1.5;font-weight:700;color:var(--muted)">${body}</div>
-        </div>`;
-      }).join('');
-    }
-    return `<div class="app-section app-section--caption-bottom"><div class="stitle-row"><div class="stitle">Official notices</div></div><div class="card app-section-card"  style="padding:14px;margin-bottom:8px;background:linear-gradient(135deg,rgba(103,232,249,.05),rgba(167,139,250,.06))">
-      <div  style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">
-        <span style="font-size:22px;line-height:1;flex-shrink:0" aria-hidden="true">🏛️</span>
-        <div  style="min-width:0;font-size:14px;line-height:1.55;font-weight:800;color:var(--muted)">${escCouncilHtml(intro)}</div>
-      </div>
-      ${itemsHtml}
-    </div></div>`;
+        return `<details class="ui-disclosure"><summary class="ui-list-row"><span class="ui-list-row__ic" aria-hidden="true">&#x1F4E2;</span><span class="ui-list-row__main"><span class="ui-list-row__name">${title}</span>${date ? `<span class="ui-list-row__sub">${date}</span>` : ''}</span><span class="ui-list-row__chev" aria-hidden="true"></span></summary><div class="ui-disclosure__body"><p class="sec-body ui-m-0">${body}</p></div></details>`;
+      }).join('') + '</div>';
+    return `<div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20"><div class="stitle-row"><div class="stitle">Notices</div></div>${itemsHtml}</div>`;
   }
 
   window.renderCouncilCommunicationPanels = function () {
@@ -5766,6 +6097,11 @@
     if (typeof window.showToast === 'function') window.showToast('Merchant visible on Merchants again');
   };
 
+  /* D119: paying a merchant opens the Stables card's Pay screen (D109), from the merchant's page. */
+  window.stablesPayMerchant = function () {
+    try { if (typeof window.closeAgentActionModal === 'function') window.closeAgentActionModal(); } catch (_) { /* ignore */ }
+    if (typeof window.stablesOpenCardScreen === 'function') window.stablesOpenCardScreen('pay');
+  };
   window.openShopProfile = function (name) {
     const shop = SHOP_PROFILES[name];
     if (!shop) { if (typeof window.showToast === 'function') window.showToast('No merchant profile available yet'); return; }
@@ -5773,21 +6109,26 @@
     const sn = JSON.stringify(shop.name);
     const shopHidden = hiddenShops.has(shop.name);
     const ratingSummary = buildMerchantRatingSummaryHtml(shop.name);
-    const body = `<div class="mcard"  style="margin-bottom:10px;cursor:default"><div class="mic">${shop.icon}</div><div class="minfo"><div class="mn">${shop.name}</div><div class="mt2">${shop.category} · ${shop.city}</div></div><div class="badge ${shop.status === 'Open' ? 'b-gr' : 'b-cy'}">${shop.status}</div></div>
-      <div  style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px"><div  style="padding:10px;border-radius:10px"><div class="xs mu">Open Hours</div><div  style="font-size:12px;font-weight:800;margin-top:4px">${shop.openHours}</div></div><div  style="padding:10px;border-radius:10px"><div class="xs mu">Average Ticket</div><div  style="font-size:12px;font-weight:800;margin-top:4px">${shop.avgTicket}</div></div></div>
-      <div  style="padding:10px;border-radius:10px;margin-bottom:10px"><div class="xs mu">Accepted Currencies</div><div  style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">${shop.accepts.map(c => `<span class="ccy-pill on" style="cursor:default">${c}</span>`).join('')}</div></div>
-      <div  style="padding:10px;border-radius:10px;margin-bottom:10px"><div  style="font-size:13px;font-weight:800;margin-bottom:6px">Merchant rating</div>${ratingSummary}<div class="xs mu"  style="margin-top:8px">Onchain + signed review framework (weighted by spend).</div></div>
-      <div  style="padding:10px;border-radius:10px;margin-bottom:10px"><div  style="font-size:13px;font-weight:800;margin-bottom:6px">Current promotions</div><ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.4">${promos}</ul></div>
-      <div  style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(103,232,249,.12)">
-        <div  style="font-size:10px;font-weight:800;color:var(--m);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">History &amp; list</div>
-        <div class="flex gap8"  style="flex-wrap:wrap;justify-content:center">
-          <button class="btn btn-w btn-g" onclick="openMerchantRatingComposer(${sn})">Rate merchant</button>
-          <button class="btn" onclick="shopHideAllTransactions(${sn})">Hide all transactions</button>
-          <button class="btn" onclick="shopDeleteAllTransactions(${sn})">Delete all (local)</button>
-          ${shopHidden
-    ? `<button class="btn btn-w btn-g" onclick="shopUnhideFromSpend(${sn})">Show merchant on Merchants</button>`
-    : `<button class="btn" onclick="shopHideFromSpend(${sn})">Hide merchant from Merchants</button>`}
-        </div>
+    /* Page review 2026-10 (D119): a merchant's page leads to paying the merchant (D109: the Stables card is the pay
+       surface), then the facts as rows, then its offers, then the rarer list actions on a quieter line. It had no
+       way to pay, title-case labels, builder text and four buttons of three widths. */
+    const row = (ic, name, end) => `<div class="ui-list-row"><span class="ui-list-row__ic" aria-hidden="true">${ic}</span><span class="ui-list-row__main"><span class="ui-list-row__name">${name}</span></span><span class="ui-list-row__end">${end}</span></div>`;
+    const body = `<div class="ui-list-row shop-profile-head"><span class="ui-list-row__ic" aria-hidden="true">${shop.icon}</span><span class="ui-list-row__main"><span class="ui-list-row__name">${shop.name}</span><span class="ui-list-row__sub">${shop.category} · ${shop.city}</span></span><span class="badge ${shop.status === 'Open' ? 'b-gr' : 'b-cy'}">${shop.status}</span></div>
+      <button type="button" data-layout="full" data-role="primary" class="btn btn-w btn-lg btn-primary mx-action ui-mt-3 ui-mb-4" onclick="window.stablesPayMerchant(${sn})">Pay</button>
+      <div class="ui-list">
+        ${row('&#x1F552;', 'Hours', shop.openHours)}
+        ${row('&#x1F9FE;', 'Usual ticket', shop.avgTicket)}
+        ${row('&#x1F4B1;', 'Accepts', shop.accepts.join(', '))}
+      </div>
+      ${promos ? `<div class="ui-list-group-title ui-mt-4">Offers</div><ul class="shop-profile-offers">${promos}</ul>` : ''}
+      <div class="ui-list-group-title ui-mt-4">Rating</div>${ratingSummary}
+      <div class="ui-row-end ui-mt-4"><button type="button" data-role="secondary" class="btn btn-secondary mx-action" onclick="openMerchantRatingComposer(${sn})">Rate</button></div>
+      <div class="shop-profile-quiet">
+        <button type="button" class="ui-text-action mx-action" onclick="shopHideAllTransactions(${sn})">Hide its transactions</button>
+        <button type="button" class="ui-text-action mx-action" onclick="shopDeleteAllTransactions(${sn})">Delete its transactions on this phone</button>
+        ${shopHidden
+    ? `<button type="button" class="ui-text-action mx-action" onclick="shopUnhideFromSpend(${sn})">Show on Merchants</button>`
+    : `<button type="button" class="ui-text-action mx-action" onclick="shopHideFromSpend(${sn})">Hide from Merchants</button>`}
       </div>`;
     document.getElementById('agentActionTitle').textContent = '';
     const titleRight = document.getElementById('agentActionTitleRight');
@@ -6144,6 +6485,9 @@
     const rest = all.filter(c => !contactFavorites.has(c.name)).sort((a, b) => a.name.localeCompare(b.name));
     // Favourites first, then fill remaining slots with non-favourites, max 5 total
     const shown = [...favs, ...rest].slice(0, MAX_CHIPS);
+    // (Build 103 put the person's own Instant payments here as a recipient chip. Law 25, build 104:
+    // moving money between the person's own accounts is "Add" / "Remove" on its own transfer screen,
+    // never a disguised payment, so this row holds contacts only, as it did before build 103.)
     shown.forEach(c => {
       const chip = document.createElement('button');
       chip.className = 'ccy-pill';

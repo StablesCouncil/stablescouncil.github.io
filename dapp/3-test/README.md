@@ -4,17 +4,12 @@ Stables is an experimental, protocol-focused research project built on Winiwa.
 The project explores minting, burning, oracle, and collateralization mechanisms
 for a non-custodial, censorship-resistant monetary system.
 
-## What changed in this version (test v0.0.11.94)
+## What changed in this version (test v0.0.12.068)
 
-This coordinated testing update includes the changes since public version .88:
+This test release is everything finished in the channel since public version .94.
 
-- Your maintenance balance stays readable when the same wallet's key-use counters change, so Settings shows the confirmed figure instead of reporting it unavailable.
-- An interrupted maintenance publication restarts safely, keeping its receipts and its retirement history, and never discarding an uncertain transaction.
-- Unsigned maintenance refills recover after a verified competing spend, with attempt evidence preserved and retries bounded. An unknown outcome never authorizes a new claim.
-- Settings shows the confirmed available SAND with plain free-refill wording. Payment balances remain separate.
-- Update checks read the coordinated public release and report a retryable failure instead of reusing standalone installer metadata.
-- Resync entry and confirmation use one standard control, with acknowledgement unchanged.
-- Centered groups keep their actions centered with readable labels, and StablesAgent fits the visible screen and its safe area.
+- The public Stables download is one Android app. It uses the built-in node, or Minima Core if you choose that on first open or in Settings and updates, Your node. The separate Core-connected app is no longer offered. Each choice is its own wallet, and switching restarts Stables.
+- The Stables card, payments, Activity, and the pages reviewed since .94 are in this build. The changelog lists each one.
 
 ## Status
 

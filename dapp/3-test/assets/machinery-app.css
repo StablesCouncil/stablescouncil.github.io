@@ -120,8 +120,27 @@
 
 [data-machinery-scope="app"] #page-activity .activity-filter-bar.mx-cmp-filter-bar {
   display: grid;
-  gap: var(--ui-space-3);
+  gap: var(--ui-space-4);
   min-width: 0;
+}
+
+/* The filter controls (law 34): hidden by default as ONE block inside the card; the transaction list under them is
+   never hidden. The controls keep the card's rhythm between themselves. */
+[data-machinery-scope="app"] #page-activity .activity-filter-controls {
+  display: grid;
+  gap: var(--ui-space-4);
+  min-width: 0;
+}
+
+[data-machinery-scope="app"] #page-activity .activity-filter-controls[hidden] {
+  display: none !important;
+}
+
+/* Founder law 34 (2026-09-30): each label sits with its own control. The label's base 6 px bottom margin plus the
+   group's 8 px gap put it 14 px from its field and only 12 px under the block above, so it read as part of that
+   block. The group's gap alone (8 px) separates label and field; the blocks are 16 px apart. */
+[data-machinery-scope="app"] #page-activity .activity-filter-bar .flabel {
+  margin: 0 !important;
 }
 
 [data-machinery-scope="app"] #page-activity .activity-filter-search,
@@ -138,7 +157,7 @@
     "direction"
     "fields"
     "sort";
-  gap: var(--ui-space-3);
+  gap: var(--ui-space-4);
   min-width: 0;
 }
 
@@ -414,3 +433,57 @@
  *
  * Each exemption is revisited during the per-element reviews.
  */
+
+/* D076: an explicit registered section-title role retains the author's sentence case. */
+[data-machinery-scope="app"] .stitle.mx-type[data-role="section-title"] { font-size: 20px !important; line-height: 1.2 !important; font-weight: 800 !important; letter-spacing: 0 !important; text-transform: none !important; }
+
+/* D077: shared external-app collection presentation. Home and Apps use one ground token. */
+:root { --mx-external-ground:linear-gradient(150deg,color-mix(in srgb,var(--or) 82%,#fff 18%),var(--or) 55%,color-mix(in srgb,var(--or) 78%,#000 22%)); --mx-external-ink:#16334f; }
+.scroll-area:has(.page.active[data-ground="external-apps"]) { background:var(--mx-external-ground) !important; display:flex; flex-direction:column; }
+.page.active[data-presentation="launcher"] { display:flex !important; flex-direction:column; flex:1; --mx-ink:var(--mx-external-ink); --mx-muted:var(--mx-external-ink); --t:var(--mx-external-ink); --m:var(--mx-external-ink); }
+.mx-launcher-layout { display:flex; flex-direction:column; flex:1; gap:24px; min-width:0; }
+.mx-launcher-grid { display:grid; grid-template-columns:repeat(auto-fill,72px); gap:24px; align-items:start; padding:0; }
+.mx-launcher-item { display:flex; flex-direction:column; align-items:center; width:72px; gap:8px; }
+.mx-action[data-role="icon"][data-size="launcher"] { width:72px !important; height:72px !important; min-width:72px !important; min-height:72px !important; max-width:72px; padding:0 !important; border-radius:16px !important; display:grid; place-items:center; background:transparent; color:var(--mx-external-ink); border:0; touch-action:pan-y pinch-zoom; -webkit-touch-callout:none; user-select:none; }
+.mx-launcher__image { display:block; width:60px !important; height:60px !important; border-radius:16px; pointer-events:none; }
+.mx-launcher__name { font-size:14px; line-height:1.4; font-weight:750; text-align:center; color:var(--mx-external-ink); overflow-wrap:anywhere; }
+.mx-launcher__note { font-size:12px; line-height:1.4; text-align:center; color:var(--mx-external-ink); overflow-wrap:anywhere; }
+.mx-launcher__note[hidden], #appsCatalogue[hidden], #appsLoadState:empty { display:none; }
+.mx-launcher-footer { margin-top:auto; padding-top:32px; padding-bottom:32px; display:flex; justify-content:center; }
+.mx-action.mx-launcher__add { border:1px solid var(--mx-external-ink) !important; background:rgba(22,51,79,.08) !important; font-size:40px; line-height:1; font-weight:500; }
+.mx-action[data-size="launcher"]:focus-visible { outline:3px solid var(--mx-external-ink); outline-offset:3px; }
+#hostedAppInfoModal { z-index:645; }
+
+[data-presentation="launcher"] .app-page-header__title, [data-presentation="launcher"] .mx-launcher__name, [data-presentation="launcher"] .mx-launcher__note { color:var(--mx-external-ink) !important; }
+
+.mx-action[data-size="launcher"].mx-launcher__add > span { font-size:40px !important; line-height:1 !important; }
+
+.page[data-presentation="launcher"] > .mx-launcher-layout { width:100%; }
+
+body:has(.page.active[data-ground="external-apps"]) #stablesNodeBanner { background:#16334f !important; }
+
+/* D078: the app identity belongs inside every filled Home slot. */
+#pageCarousel .home-apps__name[data-role="micro"] { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; max-width:calc(100% - 8px); font-size:12px; line-height:1.3; font-weight:700; color:var(--mx-external-ink); text-align:center; overflow-wrap:anywhere; pointer-events:none; }
+
+/* D079: one saved launcher arrangement and the framed Home preview. */
+.mx-launcher-slot { width:72px; min-height:120px; }
+.mx-launcher-grid.is-arranging .mx-launcher-slot:empty::before { content:""; display:block; width:72px; height:72px; box-sizing:border-box; border:1px dashed var(--mx-external-ink); border-radius:16px; opacity:.45; }
+.mx-launcher-grid .is-drop-target:empty::before { opacity:1; border-style:solid; outline:2px solid var(--mx-external-ink); outline-offset:3px; }
+.mx-launcher-grid .is-drop-target .mx-launcher__icon { outline:2px solid var(--mx-external-ink); outline-offset:3px; }
+.mx-launcher__icon.is-lifted { opacity:.25; }
+.mx-action.mx-launcher__icon[data-size="launcher"] { background:rgba(22,51,79,.08); border:1px solid rgba(22,51,79,.3); }
+.mx-launcher-preview-frame { width:64px; height:64px; flex:0 0 64px; display:grid; place-items:center; box-sizing:border-box; border:1px solid rgba(22,51,79,.3); border-radius:16px; background:rgba(22,51,79,.08); pointer-events:none; }
+.mx-launcher-group { min-height:200px; }
+.mx-launcher-group__slot { min-height:100px; }
+.mx-launcher-ghost { position:fixed; z-index:700; pointer-events:none; transform:translate(-50%,-30%) scale(1.08); color:var(--mx-external-ink); }
+.mx-launcher-ghost .mx-launcher__icon { opacity:1; background:rgba(22,51,79,.18); }
+.mx-launcher__name { display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
+
+.page[data-presentation="launcher"] { touch-action:pan-y pinch-zoom; }
+
+/* D081 binding of the portable carry-only top hide action. */
+#pageCarousel .home-hide-zone { position: absolute; top: calc(var(--safe-top) + 10px); inset-inline: 12px; max-width: 320px; margin-inline: auto; z-index: 12; }
+#pageCarousel .home-hide-zone[hidden] { display: none; }
+#pageCarousel .home-hide-zone .mx-action { min-height: 56px !important; background: var(--bg) !important; border: 1px solid var(--mx-glass-line) !important; }
+#pageCarousel .home-hide-zone.is-target .mx-action { outline: 2px solid var(--c); outline-offset: 2px; background: linear-gradient(var(--surface-accent-soft),var(--surface-accent-soft)),var(--bg) !important; }
+#pageCarousel .home-ghost.is-hide-target { opacity: .35; }

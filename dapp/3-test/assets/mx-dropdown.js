@@ -72,6 +72,22 @@
       + '</button>';
   }
 
+  /* A menu is never narrower than its words (page review 2026-10, X8, D117). A control in a half
+     column used to open a 167 px panel in which "This week" and "Last 7 days" broke onto two lines.
+     The panel takes at least 240 px and opens towards the side of the screen that has the room. */
+  var PANEL_MIN = 240;
+  function fitPanel(dd) {
+    var p = dd.panel;
+    p.style.minWidth = ''; p.style.left = ''; p.style.right = '';
+    var r = dd.wrap.getBoundingClientRect();
+    if (r.width >= PANEL_MIN) return;
+    var vw = window.innerWidth || document.documentElement.clientWidth || 0;
+    var width = Math.min(PANEL_MIN, Math.max(0, vw - 32));
+    p.style.minWidth = width + 'px';
+    if (r.left + width > vw - 16) { p.style.left = 'auto'; p.style.right = '0'; }
+    else { p.style.left = '0'; p.style.right = 'auto'; }
+  }
+
   function close(dd) {
     if (!dd) return;
     dd.panel.hidden = true;
@@ -84,6 +100,7 @@
     if (OPEN && OPEN !== dd) close(OPEN);
     buildPanel(dd);
     dd.panel.hidden = false;
+    fitPanel(dd);
     dd.trigger.setAttribute('aria-expanded', 'true');
     OPEN = dd;
     var active = dd.panel.querySelector('[aria-selected="true"]') || dd.panel.querySelector('.mx-dropdown__option');
@@ -243,6 +260,8 @@
   });
 
   window.stablesSyncDropdowns = scan;
+  /* A menu belongs to the page that opened it: changing page closes it (D117). */
+  window.stablesCloseDropdowns = function () { if (OPEN) close(OPEN); };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { scan(document); });
   else scan(document);

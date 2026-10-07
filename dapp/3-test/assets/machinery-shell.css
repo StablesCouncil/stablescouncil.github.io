@@ -35,3 +35,13 @@
 [data-machinery-scope="shell"] .nicon {
   font-size: 18px;
 }
+
+/* D082: the Wallet footer is reused inside Home, with exactly one native destination. */
+.bnav .ntab[hidden] { display: none !important; }
+#homeFooter { flex: 0 0 auto; width: 100%; }
+#homeFooter .bnav { position: relative; left: auto; right: auto; width: 100%; height: calc(72px + var(--safe-bottom)); box-sizing: border-box; display: flex !important; transform: none; opacity: 1; }
+html.dw-active #homeFooter .bnav { display: flex !important; }
+
+/* D083: the real Home surface previews beside Wallet; the single footer remains in the shell. */
+#pageCarousel.home--peek { display: flex; pointer-events: none; z-index: 95; will-change: transform; }
+#pageCarousel.home--peek #homeFooter { min-height: calc(72px + var(--safe-bottom)); }
