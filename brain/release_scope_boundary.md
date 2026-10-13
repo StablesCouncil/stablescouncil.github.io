@@ -18,8 +18,9 @@ in the build.
 
 ## What a tester can do
 
-- Install the **standalone Stables Android app** (v0.0.11.88); it runs its own Minima node on the phone. Or, on a phone that already runs the official Minima Core app, install the **Minima Core companion** (also v0.0.11.88), which uses Core's node and wallet.
+- Install the **Stables Android app** (v0.0.13.007). It is one app. It can run its own Minima node, or use Minima Core on the same phone. The person chooses on first open when Core is present, and later under Settings and updates, Your node. Each node is its own wallet. The separate Core-connected app is retired.
 - Claim **Winiwa** from the on-chain faucet covenant.
+- Put Winiwa or xWiniwa on the **Stables card** from Savings (Manage card), **pay another phone by holding the two phones together**, with no network needed, and take money back to Savings. Each coin on the card is held by a one-use key inside the phone's secure chip. The card needs an Android phone whose chip makes one-use keys; it was tested on a Pixel 7 Pro (stock Android) and a Pixel 7 (GrapheneOS). On any other device, and in the web app or MiniDapp, the card shows "Not on this device" and takes nothing. A withdrawal to Savings is approved by the test Council within minutes; if the Council stays silent it pays itself after 20 blocks. The on-chain evidence, every chip signature included, is public at https://stablescouncil.org/stables-card-evidence/.
 - **Mint** Winiwa into **xWiniwa** at par, one for one, through the on-chain vault covenant.
 - **Burn** xWiniwa back into Winiwa at the same par rate, in whole or in part.
 - **Send and receive** Winiwa and xWiniwa using Minima addresses or a QR code.
@@ -73,24 +74,19 @@ test-token address. A tester needs a small amount of real MINIMA to pay signing 
 
 ## How the app reaches the chain
 
-The main Android artifact is the **standalone Stables Android app** (v0.0.11.88, first published 2026-09-03 as v0.0.11.38, coordinated release dated
-2026-09-10). It runs **its own Minima node inside the app**, on the phone. Since 2026-09-06 the same release also carries the **Minima Core companion** (`StablesCore_v0.0.11.88.apk`, first released at v0.0.11.60): no node of its own, no Internet permission, it pairs with the official Minima Core Android app on the same phone and uses Core's node and wallet. It is released as pairing-tested, not rehearsed: proven on one phone (reconnect after install and restarts, faucet claim, mint, partial and full burn, each on the chain); the three-wallet rehearsal has not happened yet. Sends through Core need the payment code set in the app.
+The Android artifact is one **Stables app** (v0.0.13.007, published 2026-10-13). It can run **its own Minima node inside the app**, or use **Minima Core** already on the phone. The person chooses on a new install when Core is present, and later in Settings and updates, Your node. Each choice is its own wallet. Switching moves no funds and restarts the app. The separate Core-connected download is retired.
 
-- Install from **https://stablescouncil.org/payment-app/** (the Download button) or from the GitHub
-  release **StablesCouncil/stables-app, tag app-v0.0.11.88**, file `Stables_v0.0.11.88.apk` (companion: `StablesCore_v0.0.11.88.apk`, same release).
-  Verify the SHA-256 published with the release before installing an APK from anywhere else.
-- Nothing else has to be installed. There is no pairing step, no RPC address and no RPC password:
-  if a user is being asked for one, they are not on the standalone app.
-- **The node, the wallet and the keys live inside the Stables app on the device.** Install a new
-  version over the old one; **do not uninstall**, the wallet stays on the device. Stables never asks
-  for a seed phrase or a vault key. Anyone asking a user for one is attacking them.
+- Install from **https://stablescouncil.org/payment-app/** or from the GitHub release **StablesCouncil/stables-app, tag app-v0.0.13.007**, file `Stables_v0.0.13.007.apk`. Verify the SHA-256 published with the release before installing an APK from anywhere else.
+- With the built-in node, nothing else has to be installed. There is no RPC address and no RPC password. With Minima Core, allow Stables inside Core. Stables does not ask for an RPC address in either case.
+- **Each node keeps its own wallet.** In the built-in mode the wallet lives inside Stables. In Minima Core mode, Minima Core holds the wallet and the seed. Stables never asks for a seed phrase or a vault key. Anyone asking a user for one is attacking them. Install a new version over the old one; **do not uninstall**.
+- A payment through Minima Core is not claimed for this release. The release showed the Core connection and that the built-in wallet returns when you switch back.
 - **Network contribution** is a setting in the app: how much the phone helps run Minima while on
   battery (Pause, Minimum, Balanced, Maximum). On the charger the node always runs at full speed.
   The app shows what the phone contributed: TxPoW today and in total, time online, hash rate, and a
   daily chart.
 - Because the app runs the node, it holds the Android network permission the node needs.
 
-The coordinated v0.0.11.88 release also includes `Stables_v0.0.11.88.mds.zip` for MinimaOS and the web app at `https://stablescouncil.org/dapp/3-test/`. MinimaOS uses its host node; the web app needs a connected node. The Core companion is already an established testing package, not a future product. Its multi-wallet rehearsal remains outstanding.
+The coordinated v0.0.13.007 release also includes `Stables_v0.0.13.007.mds.zip` for MinimaOS and the web app at `https://stablescouncil.org/dapp/3-test/`. MinimaOS uses its host node; the web app needs a connected node. The separate Core-connected app is retired.
 
 Use the versioned downloads on the official access page and GitHub release.
 
@@ -109,8 +105,8 @@ truthful about proof, not a bug.
 
 ## Status of the release itself
 
-Stables v0.0.11.88 is the coordinated testing release dated 2026-09-10 for Web, MinimaOS, standalone Android and Core-connected Android. It succeeds v0.0.11.63 from 2026-09-06. Versions .64 through .87 were development iterations.
+Stables v0.0.13.007 is the coordinated testing release dated 2026-10-13 for the web app, MinimaOS and one Android app, and the first of the 0.0.13 line. It succeeds v0.0.12.068 from 2026-10-07. Its headline is the Stables card working end to end on Minima mainnet. The separate Core-connected app is not part of this release.
 
-The release is `StablesCouncil/stables-app`, tag `app-v0.0.11.88`, with access through https://stablescouncil.org/payment-app/. It is an early testing update for the Minima community. Stablecoin issuance, trading, merchant business tools and production use remain outside this release. Winiwa and xWiniwa have no value. Report problems through the in-app feedback page.
+The release is `StablesCouncil/stables-app`, tag `app-v0.0.13.007`, with access through https://stablescouncil.org/payment-app/. It is an early testing update for the Minima community. Stablecoin issuance, trading, merchant business tools and production use remain outside this release. Winiwa and xWiniwa have no value. Report problems through the in-app feedback page.
 
 The app can appear while the standalone node boots, but payments still require fresh status and wallet proofs. Card-speed checkout, guaranteed cold-payment readiness and isolated battery efficiency have not been established.

@@ -26,18 +26,15 @@ Use the copy below when quoting the site.
 
 ## The application access page: /payment-app/
 
-**https://stablescouncil.org/payment-app/**, headline "You can run Stables on its own." It offers
-four ways to run Stables, in this order, and only the first is available today:
+**https://stablescouncil.org/payment-app/**, headline "You can run Stables on its own." It offers one Android download, the MiniDapp, and the web app. Desktop is a planned prototype.
 
 | Offer | Status on the page |
 |-------|--------------------|
-| **Standalone Android** ("Stables, your wallet, and your Minima node in one mobile app.") | **Download** button, "Test channel v0.0.11.63. Test tokens only, no value." The button downloads `Stables_v0.0.11.63.apk` from the GitHub release `StablesCouncil/stables-app`, tag `app-v0.0.11.63`. |
-| **Stables Desktop** ("Stables and a Minima node you control in one simple desktop installation.") | Planned prototype. |
-| **Minima-connected Android** ("Use Stables with the official Minima Core Android app.") | **Download** button, "Requires the official Minima Core Android app. Test channel v0.0.11.63. Test tokens only, no value." The button downloads `StablesCore_v0.0.11.63.apk` from the same GitHub release as the standalone app (since 2026-09-06). |
-| **MDS MiniDapp** ("Install Stables inside MinimaOS and use your existing node.") | Coming soon. The standalone Android app is released first. |
+| **Android** ("Stables, your wallet, and your Minima node in one mobile app.") | **Download** button for `Stables_v0.0.13.007.apk` from the GitHub release `StablesCouncil/stables-app`, tag `app-v0.0.13.007`. If you already use Minima Core, install Stables and choose Minima Core when it asks. If you have the old Core-connected app, install Stables, choose Minima Core, allow it in Core, then the old app can be removed. |
+| **Stables Desktop** | Planned prototype. For now, open the web app and connect your node. |
+| **MDS MiniDapp** | Download `Stables_v0.0.13.007.mds.zip`. |
 
-If someone asks what they can download today: the standalone Android app, from that page or the
-GitHub release. Everything else on the page is coming soon or planned.
+If someone asks what they can download today: one Android app, the MiniDapp zip, and the web app at https://stablescouncil.org/dapp/3-test/. There is no second Android app.
 
 ## Routes that moved
 

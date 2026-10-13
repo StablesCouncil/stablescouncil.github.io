@@ -1,7 +1,7 @@
 # Stables MiniDapp, Test channel overview (active development line)
 
 *For StablesAgent and external AIs: what the Stables test channel is, what works on-chain today, how
-a tester reaches it, and how it relates to the frozen demo and to future production. Rewritten 2026-08-01 for the first Stables test release; updated 2026-09-10 for the coordinated v0.0.11.88 testing release. The binding scope statement is
+a tester reaches it, and how it relates to the frozen demo and to future production. Rewritten 2026-08-01 for the first Stables test release; updated 2026-09-12 for the coordinated v0.0.11.94 testing release. The binding scope statement is
 **`release_scope_boundary.md`**; where this document and that one disagree, that one wins.*
 
 ## What the test channel is
@@ -58,24 +58,38 @@ later Council decision and a completed handover.
 
 ## How to access the test channel
 
-1. **Standalone Android app, v0.0.11.88, testing release 2026-09-10.** Install from
-   https://stablescouncil.org/payment-app/ (the Download button) or from the GitHub release
-   `StablesCouncil/stables-app`, tag `app-v0.0.11.88`, file `Stables_v0.0.11.88.apk`; verify
-   the SHA-256 published with the release. Install a new version over the old one and never
-   uninstall: the wallet stays on the device.
-2. **Minima Core companion, v0.0.11.88, testing release 2026-09-10 (first released at v0.0.11.60 on 2026-09-05), pairing-tested, not rehearsed.** For
-   phones that already run the official Minima Core Android app: the companion has no node of its
-   own and no Internet permission; it pairs with Core on the same phone and uses Core's node and
-   wallet. Same GitHub release, file `StablesCore_v0.0.11.88.apk`, same signing certificate, and
-   the second Download button on the access page. Sends through Core need the payment code set in
-   the app. Tested on one phone (reconnect, claim, mint, partial and full burn, each on the chain);
-   the three-wallet rehearsal has not happened yet.
-3. **MinimaOS MiniDapp, v0.0.11.88 testing release.** Install or update `Stables_v0.0.11.88.mds.zip` through the MinimaOS hub. It uses that node and its wallet. An existing installation does not update automatically when the download changes.
-4. **Web app, v0.0.11.88 testing release.** Open `https://stablescouncil.org/dapp/3-test/` and connect a node for chain operations. The browser does not contain an embedded node.
+1. **Android app, v0.0.13.007, testing release 2026-10-13.** One app, file `Stables_v0.0.13.007.apk`. Install from https://stablescouncil.org/payment-app/ or from the GitHub release `StablesCouncil/stables-app`, tag `app-v0.0.13.007`. Verify the SHA-256 published with the release. Install a new version over the old one and never uninstall: the wallet stays on the device.
+   The app uses the node built into Stables, or Minima Core on the same phone. On a new install, when Minima Core is present, Stables asks which one to use. Later, Settings and updates, Your node, offers the other one. Each node is its own wallet. Switching moves no funds and restarts Stables. To use Minima Core, allow Stables inside Core. A payment through Minima Core is not claimed for this release.
+2. **The separate Core-connected app is retired.** It is not offered. Someone who still has that old app installs Stables, chooses Minima Core, allows Stables in Core, and can then remove the old app.
+3. **MinimaOS MiniDapp, v0.0.13.007 testing release.** Install or update `Stables_v0.0.13.007.mds.zip` through the MinimaOS hub. It uses that node and its wallet. An existing installation does not update automatically when the download changes.
+4. **Web app, v0.0.13.007 testing release.** Open `https://stablescouncil.org/dapp/3-test/` and connect a node for chain operations. The browser does not contain an embedded node.
 
-This coordinated update succeeds public v0.0.11.63. All four access options are listed at https://stablescouncil.org/payment-app/.
+This coordinated update succeeds public v0.0.11.94. The web app, the MiniDapp and the one Android app are listed at https://stablescouncil.org/payment-app/.
 
-## Startup and retail testing groundwork in v0.0.11.88
+## App maintenance and update checks in v0.0.11.94
+
+Settings has an App maintenance line showing the confirmed available SAND. SAND are free tokens the
+app uses to keep itself running. They are refilled automatically and they never use your payment
+funds, and your payment balances stay separate from them. Before this release the figure could read
+as unavailable when the same wallet's key-use counters changed, even though the balance was fine; it
+now stays readable.
+
+If a maintenance publication is interrupted, it restarts safely: its receipts and its retirement
+history are kept, and a transaction whose outcome is not known is never discarded. An unsigned
+refill that loses a race against a competing spend recovers, keeping the evidence of what was
+attempted and bounding how many times it retries. An unknown outcome never authorizes a new claim.
+
+Checking for an app update reads the coordinated public release. If the check fails it says so and
+you can retry, and it never borrows installer details from a different app.
+
+Resync uses one standard control everywhere in the app, and you still have to acknowledge it before
+it runs.
+
+Not established by this release: update discovery has not been observed against a published manifest
+in the wild, refilling on an empty wallet on a fresh phone is unverified, retirement has not been
+observed at the full threshold, and behaviour with several publishers at once is untested.
+
+## Startup and retail testing groundwork (from v0.0.11.88)
 
 Currency notes are grouped by wallet address, with amounts, ages and individual selection retained. Select all covers every address.
 
@@ -83,7 +97,7 @@ The standalone app opens while its node starts. Payment actions still require fr
 
 Retail testing groundwork binds incoming payment matching to invoice identity, recipient, token, exact amount and expiry, and checks confirmation policy again before release. Merchant business tools remain deferred from the public test scope. Broadcast detection is not block confirmation; no extra Maxima submission message is required.
 
-## Other changes included since public v0.0.11.63 (developed through v0.0.11.82)
+## Other changes included since public v0.0.11.63 (developed through v0.0.11.88)
 
 **Each currency says what is still arriving.** A faucet claim or a mint only counts in your balance
 once the network has confirmed it, which takes a few minutes. Until then the figure on a currency row
