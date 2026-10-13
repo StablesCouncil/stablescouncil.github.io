@@ -396,6 +396,7 @@
 
   /* ---- public surface ---- */
   window.StablesChatOnchain = {
+    ADDRESS: CHAT_ADDRESS,
     isEnabled: enabled,
     setEnabled: function (on) {
       try { localStorage.setItem(ENABLE_KEY, on ? '1' : '0'); } catch (_) { /* ignore */ }

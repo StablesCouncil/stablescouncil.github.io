@@ -2,6 +2,202 @@
 
 ## [Unreleased]
 
+## [0.0.13.007] - 2026-10-13
+
+### 0.0.13.007 release candidate, 2026-10-13
+
+- A new version line, 0.0.13, marks the Stables card milestone.
+- The Stables card works end to end on Minima mainnet. Add money from Savings, pay from phone to phone by touch with no network, and take it back to Savings. Each coin on the card is held by a one-use key inside the phone's secure chip. A withdrawal is approved by the test Council in minutes; if the Council stays silent, it pays itself after 20 blocks.
+- The card needs an Android phone whose chip enforces one-use keys. It is tested on a Pixel 7 Pro (stock Android) and a Pixel 7 (GrapheneOS). Test tokens only (Winiwa). On any other device the card stays on the Wallet, says "Not on this device", and takes nothing.
+- The evidence that the card works as designed, with every chip signature on chain, is public: https://stablescouncil.org/stables-card-evidence/
+- Home: the + button creates a group you can name and rename. Hold a page and drag it into a group, out of a group, or to another place.
+- The agent opens over the page you were on and closes back to it. An eye shows or hides it, and a swipe closes it. Back from an app widget returns to Home.
+- MAX offers only what the transaction can spend now. An amount typed as .001 reads as 0.001. Every balance shows the same way while the app syncs. The faucet is suggested only when the whole wallet, the card included, is empty.
+- The language menu says at once that Stables is in English for now.
+- A finished transaction carries a green check after its status in the lists.
+- A Remove from the card shows its own progress: signed on this phone, the request on chain, waiting for the Council (or the block at which it pays itself, and how many blocks are left), then in Savings.
+- An amount box is empty again once its transaction is done: Get paid, Receive, Exchange and Trade join Pay, Send, Add and Remove, Mint and Burn.
+
+### Development log since 0.0.12.068
+
+- 2026-10-13 (0.0.13.007): The Home app widget presents The Bay, not The Pool (founder: "the pool will be embedded in the bay, as now displayed on the graphene ... we should present the bay, and not the pool"). Its name, summary, icon and entry are The Bay's own, from the Bay project's Stables manifest; tapping it opens The Bay itself, where The Pool now lives.
+- 2026-10-13 (0.0.13.007): Transaction details are laid out again (founder: "there is no logic in how we display the buttons, they look bad and the advanced details is maybe not justified, we could present the transaction link directly"): the transaction and its explorer link sit under the amount, with no "Advanced Details" to open; then one main button, View progress; the actions on this transaction (Repeat, Add contact, Show payment again, Rate merchant) in a two-column grid; and Flag suspicious, Hide and Delete as quiet words at the foot; "Copy raw transaction" is a small link at the very end. The agent's welcome tour is rewritten for the app as it is (founder: "already the first one, the connection is wrong, Stables doesnt necessarily need core"): the built-in node or Minima Core, as chosen; the Stables card, Manage card and paying by touch; your wallet signs. The agent says "About Home" while Home shows (founder: "the agent displays about wallet even when on home").
+- 2026-10-13 (0.0.13.007): Tapping the phone notification for a mined block opens its card with the confetti (founder: "When we get the phone notification that we mined a block, clicking it should bring the block mining card with the confetti"). The card shows whatever the "Keep showing me these" switch says, since the person tapped to see it, and the app asks again every 1.5 seconds until the page can show it; before, a card asked for too early, or with the switch off, was lost.
+- 2026-10-13 (0.0.13.006): Stables on Minima Core no longer gets killed (founder: "the app on graphene doesnt display the card, it is slow and the app keeps crashing"). Core answers by broadcast, and Android killed Stables each time a broadcast could not be delivered ("Can't deliver broadcast", every minute on the Graphene): card withdrawals put 15 to 70 KB transactions into the wallet's history, history replies reached 215 KB, and several arrived at once. Commands that can answer large (history, coins, txpow, runscript) now wait for each other, and history is read 20 transactions at a time. A finished transaction (confirmed, final, received, added, sent, in Savings) carries a green check after its status (founder: "we should have a marker when the transaction is completed"). The agent's eye is 24 px, was 30 (founder: "make the eye of the agent a bit smaller").
+- 2026-10-13 (0.0.13.005): A Remove's progress shows the Council and the wait (founder: "the progress sequence for withdrawals needs to reflect the council confirmation awaiting or for now the 20 blocks waiting time"): four steps, Signed on this phone, Request on chain (its block), Waiting for the Council (or it pays itself at block N, with the blocks left), In Savings. A Remove is no longer marked paid by mistake: the engine called it paid as soon as its request was out of sight and any Savings coin matched the amount (a 1 Winiwa Remove on the Graphene, on Minima Core, read "Received" seconds after it was posted); now it is paid only when the payout's two coins, the amount and the request's 1-atom refund, arrive in the same block. The request contract is registered with the node before the request goes out, so Minima Core follows it too. The logo in the top bar is larger, 42 px (founder: "our logo should be a bit bigger on the Wallet page").
+- 2026-10-13 (0.0.13.004): A card payment this phone made reads "Sent" once the other phone has it (founder: "in the transactions list if the amount is negative, we should say sent and not received"); it read "Received", the receiver's word, after a tap. The button under the card reads "Manage card" (founder: "Instead of manage funds, we should say manage card").
+- 2026-10-13 (0.0.13.003): No chip, no card (founder, testing a phone without NFC: "the whole card module should be unaccessible"). On a device without a chip that makes one-use keys (any browser, the MiniDapp, an older phone), the app used to fall back to the software card of build 103 and say "Ready to pay offline". Now the card stays on the Wallet (law 4) with "Not on this device" and a dash for each currency, its page says once "This device cannot hold a Stables card. It needs a phone whose chip makes one-use keys.", and Add and Confirm are off (law 11). No figure, not even a remembered one, is shown for a card the device cannot hold. Testers of 0.0.12.068 never had a software card balance (it began at .103), so nothing is lost.
+- 2026-10-13 (0.0.13.002): An amount box is emptied once its transaction is done (founder: "make sure the amount input box is emptied after a transaction is completed"). Three forms kept theirs: the card's Get paid and the Savings Receive asked for the same amount again at the next opening, and Exchange and Trade kept the amount after an order or a swap. Get paid and Receive now open empty and empty when a payment arrives; Exchange and Trade empty when the order or swap is confirmed, never before, so a cancelled confirmation keeps what was typed. Pay, Send, Add and Remove, Mint and Burn already emptied theirs.
+- 2026-10-13 (0.0.13.001): Release candidate, and the start of the 0.0.13 line (founder: "let's move to version 13.001 to mark a clear differentiator with this milestone"). The counter restarts at 001 and the Android versionCode is 13001, above every 0.0.12 build, so the update installs over it. The publish pointers name 0.0.13.001 before the build, so the app and the website agree on the latest version; the release notes above ship inside the app.
+
+- 2026-10-13 (.133): The language list says at once that the app is in English for now (founder: "directly when we click the languages icon, make clear that these are currently not available"): a line at its top, "Stables is in English for now. These languages are coming soon.", and the other languages greyed with Soon, not selectable. Hide from Home, shown while an icon is carried, is a centred glass pill with an eye-off mark in the style of the Home icons, lighting in the accent when the icon is over it (founder: "redesign the hide from page message so that it aligns with the style of the home page").
+
+- 2026-10-13 (.132): A page can be taken out of a group (founder: "we are not able to take a page out of groups"). The open group steps aside as soon as the finger leaves it (150 ms, was 350 ms), letting go just outside it counts as taking the page out, and a page taken out never falls back in: dropped on an empty place it lands there, dropped where something already is it goes to the first free place on the screen, shown outlined while carried. On a full Home screen it used to return into the group.
+
+- 2026-10-13 (.131): The leftover empty groups on Home are removed for good (founder: "when I drag a page in a group or move it on the home page all deleted empty groups come back"). Build 130 removed them only from what was shown, so the next move saved them again; the removal is now saved at once.
+
+- 2026-10-13 (.130): Home moves icons as Mininotes does (founder: "please just replicate what we have from Mininotes"). Hold an icon and carry it: over a page or a group, the whole icon is the target and is outlined at once; dropped on a group the page goes into it, dropped on a page the two make a group; over an empty place an outline shows where it will land; the other icons never move (this replaces the make-room behaviour of 2026-10-05). An occupied place sends the icon back. The + is a 56 px round button at the bottom right, as in Mininotes. The empty groups that build 128's + had made unseen (and build 129 showed all at once) are removed once. Opening the agent from Home keeps Home under it, so closing the agent returns to Home, not the Wallet.
+
+- 2026-10-13 (.129): The + on Home works and looks like the one in Mininotes (founder: "the + button looks bad, make it look like on the mininotes app ... and the + doesnt work anyway"): a round floating button at the bottom right; the new group now shows on Home and opens with its name ready (an empty group was hidden before, so nothing seemed to happen). A page carried onto a group goes into it: the whole group tile takes it, where only its narrow middle did and the group slid away first (founder: "is it still not possible to drag and drop in a group, the group moves away"). Closing the agent with a swipe leaves you on the page you were on: the page under the agent no longer turns with the same swipe (founder: "when we close the agent we need to go back where we came from").
+
+- 2026-10-12 (.128): Home gains a + under the screens that creates a group (founder: "a + button at the bottom to create group and be able to name and rename the groups"); the new group opens with its name ready to type, keeps its place while empty, and pages are dragged into it as before (hold a page, drop it on the group); tapping a group's name renames it. Back from a page opened from Home (the Apps tile, an app, any shortcut) returns to Home, not to the Wallet (founder: "when we are on the app widget, going back should bring us on the home page"); the phone's Back now follows the app: it closes the agent panel, an open group or a sheet, goes to the page visited before, and leaves the app only from Home. The agent panel has no Back arrow any more: a swipe to the right slides it out (founder: "get rid of the arrow and make it that a swipe of the agent page moves it out of the screen"); the eye that shows or hides the floating agent is larger and stands on the panel without a box.
+
+- 2026-10-12 (.127): MAX offers only what the transaction can spend now (founder: "when we click Max somewhere ... the transaction will go through, I did so on Pro trying to mint and the transaction said not enough tokens"). MAX fills at once from the balance, then lowers itself to the total of the coins the transaction will actually pick (coins still tied to an earlier transaction are left out), on Mint, Burn, Send, Exchange and Reclaim; Send, Exchange and Reclaim no longer round the balance up. The faucet is suggested only when the whole wallet is empty, the Stables card included: a refusal for too little Winiwa no longer says "Claim from the faucet" to someone who holds money. The language control shows the translate glyph instead of a globe, and the control that shows or hides the agent is an eye, as for hiding balances.
+
+- 2026-10-12 (.126): Savings moves once per send, small amounts included. The app holds the expected balance until the node reaches it, but it judged "reached" within 0.01% of the balance: on 5,750 Winiwa that is 0.575, so any send under about half a Winiwa let go at once and the screen showed the node's passing figures (an Add counted twice in the total for a minute, then Savings 0.02 too low until mined; traced on the Pro). It now lets go only on the same figure.
+
+- 2026-10-12 (.125): After an Add, the total no longer counts the amount twice for a minute (found on the Pro: 8,000.05 while Savings still read the old figure). While the wallet re-checks itself after a send, Savings and the total show the figures the app already holds (its own spend included), greyed, instead of the figures remembered from before; only a wallet not yet checked since the app opened shows remembered figures. Balance holds are now written to the phone log, to trace the short dip in Savings until a send is mined.
+
+- 2026-10-12 (.124): Remove to Savings works on a phone that uses Minima Core. Through Core the node's answer can come without its "response" wrapper, and the Remove read the Savings address only inside it, so it said "No Savings address" (found on the Graphene phone). The card's Add, Remove and fallback now read both shapes, as the rest of the card already did.
+
+- 2026-10-12 (.123): A refused Stables card Add or Remove says why. Every refusal used to read "This device cannot hold a Stables card", whatever the reason (found removing on the Graphene phone, which does hold one).
+
+- 2026-10-12 (.122): An amount typed starting with a dot is read right (founder: "typing .001 should be understood as 0.001, now it omits the ."): the field writes the 0 in front and the caret now moves past it, so the next digits go after the dot; before, ".001" became 1.
+
+- 2026-10-12 (.121): The on-chain chat's messages (one atom of Winiwa to the chat address each) no longer appear as "Sent Winiwa -0.00000001" rows (founder: "Yes hide them"); the ones already listed are removed once, read back from the node a minute after the app opens.
+
+- 2026-10-12 (.120): The old extra rows for Stables card Adds and Removes are found by reading the last two weeks of node transactions once (at most 40, one at a time, a minute after the app opens) and removed when they move card coins; the rows keep no address, so build 119 could not match them.
+
+- 2026-10-12 (.119): The extra "Sent" and "Received" rows that earlier builds drew for a Stables card Add or Remove are removed as the node history is read (build 117 stopped new ones, but the old ones stayed on the Pro).
+
+- 2026-10-12 (.118): One rule for every balance while the app syncs (founder: "we should present all currencies balance the same way while syncing... we need one clear simple logic applied across the whole app"). Until a figure is confirmed, the total, the Stables card and every Savings currency show their last confirmed figure at full size in a greyed tone, or a dash when there was none; no amount reads "Syncing" and none looks confirmed before it is. The line under the total is the one place that says why ("syncing", or "Proof unavailable" with when it was last seen). Before, the total said Syncing, the card showed a dash, Savings Winiwa the word Syncing and xWiniwa a plain figure. The currency lists in Send, Receive and Manage funds use the same dash.
+
+- 2026-10-12 (.117): An Add to the Stables card and a Remove to Savings are each one row. The node history also drew the Add's deposit as "Sent", the Remove's request as a tiny "Sent" and the payout as "Received" (found on the Pro): the stage 2 anchor, vault and request addresses are now known as the card's own, and the extra rows earlier builds drew for them are removed.
+
+- 2026-10-12 (.116): The "To Stables card" and "To Savings" rows now follow their Add and Remove to the end. The phone already knew both Adds were credited and the 0.07 Remove was received, but the activity list drew those rows once and never again, so they kept reading Broadcasted and Savings kept showing "+0.07" (found on the Pro).
+
+- 2026-10-12 (.115): When the app opens, the Stables card logs where each Add and Remove stands, on the page and in the phone's coin store, to find why a paid Remove still reads Broadcasted on the Pro. Nothing visible changes.
+
+- 2026-10-12 (.114): A read of the phone's own node that never answers no longer stops the Stables card. Every card check ran one after another on a single thread, and one read that hung as the node finished starting held it for good, so no Add or Remove row moved again (found on the Pro). Each read now has 30 seconds; one that runs over is left behind and logged with where it was stuck.
+
+- 2026-10-12 (.113): A Remove to Savings on its way is checked on every balance refresh, not only by the 15-second watch, and a check whose answer never came back no longer stops every later one (on the Pro, build 112 checked once at start and never again, so the rows stayed Broadcasted). The extra "Received" row on the Stables card that build 111 drew for a Remove is removed; the Remove keeps its own "To Savings" row.
+
+- 2026-10-12 (.112): The rows of a Stables card Add and Remove reach their end (found on the Pro: both Adds were credited and the 0.07 Remove was paid by the server council, but the rows stayed Broadcasted). The phone now repeats every credited Add and every paid Remove on each check, so one missed answer can no longer leave a row behind, and the check keeps running until nothing is on its way (the first credit used to stop it). The Remove no longer also appears as a payment received on the card.
+
+- 2026-10-12 (.111): An Add or a Remove still on its way when the app opens is followed again at once. After a restart nothing re-armed the 15-second check, so an Add stayed "+X" beside the card until something else refreshed it (found on the Pro).
+
+- 2026-10-12 (.110): An Add to the Stables card is credited. The phone found its deposit but refused to claim it ("amount port differs"): it took the amount from the anchor coin, which since the stage 2 vaults holds only one atom, instead of the amount the anchor records. Found adding 0.05 Winiwa on the Pro.
+
+- 2026-10-12 (.109): Add to the Stables card works on the standalone app (founder: "I tried to put winiwa on the card, it seems it moves the atoms but the amount is not reflected"). The app's own command gate refused the Add (one send with two outputs and the coin key in its state) as an invalid send, so nothing moved; it now accepts that form with the same state rules as a single send. The small 0.00000001 Winiwa sends in the activity were the on-chain chat's pairing messages, not the Add.
+
+- 2026-10-12 (.108): Remove to Savings now goes through the test council running on the Stables server (founder: "set it up on the server so that it can move for real"), new contract generation R2T3. A Remove can be larger than any single Add: one payout spends up to eight vault coins (founder: "please fix that a remove can be larger than any single Add"). Adds go to the R2T3 vault; coins from the previous test vaults still pay and get paid. The first vault's deposits were returned to the Savings that made them, so the card coins resting on them are set aside (founder: "get rid of the earlier card coins on my phones").
+
+- 2026-10-12 (.107): Route 2 Stage 2. Remove on a phone that holds coins now works: the coin's exit line is signed on the phone (the TEE destroys its key, so the money leaves the card at once and can never be paid as well), and the request to move it goes to the chain from Savings. One row, "To Savings", says Waiting for approval, then Received; Savings shows the amount arriving at once ("+X"). The test council (7 keys, 5 needed) approves within minutes; if it stays silent the request pays itself after 20 blocks; a request it rejects never pays. A smaller amount than one coin is first made into one coin on the card. Add now deposits into the new R2T2 vault in one send: a small anchor that stays on the chain for good and the money itself, so a Remove never invalidates other coins from the same Add. Phones accept coins from both the old and the new vault.
+
+- 2026-10-11 (.106): Get paid says what to do: type the amount to ask for, then hold the phones together; left empty, the payer types it (founder: "get paid also needs an equivalent message with the amount to be input"). The two-phones arrow is a drawing centred in its circle, no longer a text character sitting off-centre. The phone notification for a mined block is off unless turned on in Settings, Node (founder: present the app as a regular banking app); when it is on, opening the app after it shows that block's message, once.
+
+- 2026-10-11 (.105): Money on its way shows at once (founder: "the balance of each currency must be updated with the upcoming fund as soon as possible"). An Add to the Stables card is one row, "To Stables card", with its confirmations, and the card shows "+X" beside the currency until the phone credits it (it waits three blocks); it no longer appears as a plain send. A mint or burn of xWiniwa shows "+X" on the currency coming in while the transaction is prepared; the figure still moves only when the node accepts it. The Pay panel before a touch now says the other phone's request brings the amount, and to type one only when it asks for none. The two-phones arrow is larger and centred in its circle.
+
+- 2026-10-11 (.104): One panel on the Stables card screen (founder: "we should present this only in one place, clearly, what is needed as next action and show the user what is needed for his decision, mainly the amount to confirm"). The panel leads with the amount (Pay 0.01 Winiwa, Confirm 0.01 Winiwa, Get paid 0.01 Winiwa, Paid 0.01 Winiwa, Received 0.01 Winiwa) and says the next action under it; the result and its time appear in the same panel. The separate step list under the panel is gone.
+
+- 2026-10-11 (.103): Route 2 fixes after R2-CAMPAIGN-10. A phone on Minima Core no longer rechecks its wallet identity while the phones touch: behind a slow wallet read on the one Core link, that recheck made a payment miss its touch. When a touch only breaks off, the paying phone keeps saying it is waiting for the other phone's confirmation instead of showing a red cross; only a refusal is shown as a failure (founder: "the no confirmation should not present a red X if it is not needed").
+
+- 2026-10-11 (.102): Route 2 fixes after R2-CAMPAIGN-09. A payment now travels in frames of 1 KB instead of one 4 KB frame, which the radio dropped when the phones moved slightly. A phone that has paid a request never pays the same request again: after a payment, with the phones still together, the Wallet read the request a second time and offered to pay it twice. The faucet offer appears only when Savings and the Stables card are both empty (founder: "display the faucet only when the wallet is fully empty, the card included").
+
+- 2026-10-11 (.101): Route 2 touch fix after R2-CAMPAIGN-08 P4. A phone getting paid through Minima Core spent about a second reading its node inside the touch (the coin's deposit and the chain height), so the paying phone gave up and asked for a second touch while the money had already arrived. The vault check the phone already runs now keeps those answers ready, so the touch makes no node read. The vault is read at most every 5 seconds (it was read up to twice a second). Each touch the phone answers as the receiver is now logged, to measure missed detections.
+
+- 2026-10-11 (.098): Route 2 groundwork. Native coin keys held one-use in the phone TEE, attestation checks against Google roots, the receiver checks and a crash-safe coin store. Not yet connected to the everyday Instant flows; existing UI/UX, Winiwa/xWiniwa and legacy balances are preserved.
+
+- 2026-10-10 (.097): Continue native registration through the private valueless marker service and canonical signed-root admission. Product activation remains gated; existing UI/UX, Winiwa/xWiniwa and legacy balances are preserved.
+
+- 2026-10-10 (.096): Continue private issuer pre-post funding eligibility and budget reservations. Existing UI/UX and Winiwa/xWiniwa identities are preserved; product acceptance remains open.
+
+- 2026-10-10 (.095): Continue native canonical registration and root-admission confirmation bindings. Existing UI/UX and value-token identities are preserved. Candidate acceptance remains open.
+
+### 0.0.12.094 (2026-10-10)
+- Native Add construction retains exact selected-wallet inputs, signed exports and pending chain outcomes across interruption. Runtime and product integration validation remain in progress; current UI/UX, tokens and legacy balances are preserved.
+
+### 0.0.12.093 (2026-10-10)
+- Native chain work uses a bounded transaction vocabulary and selected-wallet permission checks. Integration and runtime validation remain in progress; current UI/UX, tokens and legacy balances are preserved.
+
+### 0.0.12.092 (2026-10-10)
+- Native Add verifies the original confirmed deposit even after vault consolidation, retains the selected confirmation target and binds private issuer retries to the exact transaction. Product integration remains in progress; current UI/UX, tokens and legacy balances are preserved.
+
+### 0.0.12.091 (2026-10-10)
+- Native payment policy uses current installed pricing and saved settings before approval, revokes stale confirmations and gates biometric preferences. Explicit cancellation checks native debit evidence without retrying an expired payment. Provider-backed recovery validation is pending; UI/UX, tokens and legacy state remain preserved.
+
+### 0.0.12.090 (2026-10-10)
+- Native preferences retain existing payment-cap consumption, primary units, biometric preferences and selected confirmation levels through restart. Later edits cannot reset imported spend history. Provider validation is in progress; UI/UX, tokens and legacy balances are preserved.
+
+### 0.0.12.089 (2026-10-10)
+- Native payment pricing retains current primary-currency valuations, including historical display units, and uses native monotonic time and calendar-day caps. Provider validation is in progress; UI/UX, tokens and legacy balances are preserved.
+
+### 0.0.12.088 (2026-10-10)
+- Outgoing recovery validation arms each process-death cut only after prior recovery completes, and records the exact cut and PID. Product integration remains pending; current UI/UX, tokens and legacy balances are preserved.
+
+### 0.0.12.087 (2026-10-10)
+- Native outgoing records retain the complete authorised transfer and recover signed delivery or cancellation receipts. Capacity is reserved before value changes. Current UI/UX, tokens and legacy balances are preserved; product and financial acceptance remain pending.
+
+### 0.0.12.086 (2026-10-10)
+- Native chip replies use the Android main looper, so asynchronous results do not depend on view attachment. Closed pages remain suppressed. Current UI/UX, tokens and legacy balances are preserved; product and financial acceptance remain pending.
+
+### 0.0.12.085 (2026-10-10)
+- Native channel validation now uses the packaged-page load boundary and records actual frame origins. An uncertain incoming outcome remains recoverable. Product routing and financial acceptance remain pending; current UI/UX, tokens and legacy balances are preserved.
+
+### 0.0.12.084 (2026-10-09)
+- The native chip uses an origin-checked main-frame channel. Incoming credit records preserve the exact signed acknowledgement across card, witness and history interruption. Product routing and financial acceptance remain pending; current UI/UX, tokens and legacy balances are preserved.
+
+### 0.0.12.083 (2026-10-09)
+- Legacy drain sealing checks balances and pending operations in the same durable transaction that closes legacy financial writes. History and balances remain intact. Native promotion and product wiring remain pending; current UI/UX and currencies are preserved.
+
+### 0.0.12.082 (2026-10-09)
+- Native private enrollment checks the selected wallet controller and both pinned currency vaults before retaining scoped credentials. Current UI/UX, existing tokens and legacy balances remain preserved; product activation and financial acceptance remain pending.
+- The Android simulator dependency archive uses reproducible ordering and timestamps, with its dependency lock declared as a build input.
+
+### 0.0.12.081 (2026-10-09)
+- Native Add continuation verifies exact signed funding receipts and saves receipt intent before card credit. Committed loads can recover without contacting the issuer again. Current UI/UX and existing tokens are preserved; product routing and Android acceptance remain open.
+
+
+### 0.0.12.080 development candidate, 2026-10-09
+
+- Legacy transition inventory checks every stored currency and pending operation, including retired currencies and unreadable storage. This read-only gate preserves balances and current interactions; native activation and the complete financial campaign remain pending. Corrected candidate refresh scripts require a minimum age and use a fresh isolated marker generation.
+
+### 0.0.12.079 development candidate, 2026-10-09
+
+- Native issuer admission checks exact authenticated root receipts before journaling. Controlled lab card registration and real funding integration continue from the confirmed valueless marker. Current UI, existing currencies and legacy balances remain preserved; full product activation and financial evidence are still pending.
+
+
+### 0.0.12.078 development candidate, 2026-10-09
+
+- Actual Internal wallet-binding and bounded native queue preflights pass on Pro. Candidate covenant lifecycle adds exact-state refresh and dual-authority root rotation, with deferred retirement economics excluded. Shared assets are synchronised before the successor local package; everyday chip activation and canonical financial gates remain open.
+
+
+### 0.0.12.077 development candidate, 2026-10-09
+
+- Native chip integration adds durable verified-wallet binding and a shared command queue for offline readiness and node isolation. Root renewal rejects a repeated seed. Current UI and legacy balances remain preserved pending complete product and canonical financial evidence.
+
+### 0.0.12.076 development candidate, 2026-10-09
+
+- Native chip integration continues with authenticated signing-root renewal and durable wallet isolation. Existing UI and legacy balances remain preserved while product and canonical financial gates continue.
+
+### 0.0.12.075 development candidate, 2026-10-08
+
+- Native chip integration adds verified selected-wallet contexts and the full public signing tree for authenticated registration and withdrawal. Existing UI and legacy flows are preserved while complete integration continues.
+
+### 0.0.12.074 development candidate, 2026-10-08
+
+- Native chip preflight adds a separate bounded payment-policy authority, exact cap calculation and prepared authorisation recovery. Fresh bound profiles need no bootstrap PIN. Existing code verifiers and lockout can migrate after actual code entry. Product UI and legacy flows remain preserved while complete integration continues.
+
+### 0.0.12.073 development candidate, 2026-10-08
+
+- Native chip request payments now bind the authenticated request digest into the signed financial transfer and retain one-time request intents through interruption. Existing UI and legacy product flows remain preserved while complete integration continues.
+
+### 0.0.12.072 development candidate, 2026-10-08
+
+- Native chip storage now refuses missing checkpoints and policy journals when their keys already exist, preserving identity and code policy across file loss. Initial metadata is committed before use. Existing UI and legacy product flows remain preserved while complete chip integration continues.
+
+### 0.0.12.071 development candidate, 2026-10-08
+
+- Native chip preflight adds typed signed requests, code/intent-bound authorisation and persistent QR replay witnesses. The portable applet commits its replay roots with financial value; native public witness journals recover lost replies. Current UI and legacy product flows remain preserved pending full Add/payment/Remove integration and transaction evidence.
+
+### 0.0.12.070 development candidate, 2026-10-08
+
+- Native chip preflight now retains exact withdrawal recipients and supports authenticated selection of wallet-owned Savings addresses. Internal/Core ownership reads, the pinned private issuer client and checkpoint fault tests are under validation. Existing screens and legacy payment flows remain active pending the complete integration gates.
+
+### 0.0.12.069 development candidate, 2026-10-08
+
+- Work has started on the local Java Card payment engine for Android. Existing screens and legacy balances remain preserved. This candidate adds the portable withdrawal-domain extension and an encrypted native checkpoint adapter; Add, payment and Remove activation remain subject to the integration evidence gates. It is not a completed chip-engine release. Task evidence: `task_instant_chip_apk_integration/PROGRESS.md`.
+
 ## [0.0.12.068] - 2026-10-07
 
 ### 0.0.12.068 development candidate, 2026-10-07
@@ -4233,7 +4429,21 @@ Everything the `0.0.10` line built is in this release:
 
 ---
 
-### [Unreleased], next daily build
+### [Unreleased]
+
+- 2026-10-11 (.100): Route 2 NFC speed and coins-only card. Payments carry chip certificates only when the receiving phone does not already hold them (about 2.6 KB less per phone), NFC blocks are larger (250 bytes, or up to 4 KB where both phones allow), and the receiver remembers checked deposits for five minutes. On phones that hold coins the old card money is set aside (founder 2026-10-11: test phase, no value), every payment uses coins, and a receive code without an amount accepts any amount. Existing screens are unchanged.
+
+- 2026-10-11 (.099): Route 2 fixes from the first two-phone campaign. A coin payment is decided within the tap's 600 ms (cheaper balance read, the wallet identity read once a minute instead of every call), the payer's row records the receiver's confirmation, and coins that cannot be read refuse the payment instead of paying with old card money. Load matching ignores the 0x prefix form. Existing UI/UX, Winiwa/xWiniwa and legacy balances are preserved.
+
+### 0.0.12.079 development candidate, 2026-10-09
+
+- Native issuer admission checks exact authenticated root receipts before journaling. Controlled lab card registration and real funding integration continue from the confirmed valueless marker. Current UI, existing currencies and legacy balances remain preserved; full product activation and financial evidence are still pending.
+
+
+### 0.0.12.078 development candidate, 2026-10-09
+
+- Actual Internal wallet-binding and bounded native queue preflights pass on Pro. Candidate covenant lifecycle adds exact-state refresh and dual-authority root rotation, with deferred retirement economics excluded. Shared assets are synchronised before the successor local package; everyday chip activation and canonical financial gates remain open.
+, next daily build
 
 - **v0.0.0.1.91:** Fixed recent activity and transaction list detail opening by cleaning prefix hashes in getTxById, and resolved infinite document layout re-open loop by passing skipReopen: true on contact and note input blur.
 
@@ -4579,3 +4789,5 @@ Released showcase build **v00.00.02** (“v2”). See `0_handshake/minidapp_vers
 ### Known
 
 - `latestPublishedVersion` in config tracks last **published** zip on GitHub; bump when shipping a new zip.
+
+

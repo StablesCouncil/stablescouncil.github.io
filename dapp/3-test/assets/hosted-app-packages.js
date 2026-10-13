@@ -29,7 +29,7 @@
             if (!a || !/^[a-z0-9-]{1,40}$/.test(a.id || '') || seen.has(a.id)
                 || typeof a.name !== 'string' || !a.name || typeof a.publisher !== 'string' || !a.publisher
                 || !/^apps\/[A-Za-z0-9_-]+\.png$/.test(a.icon || '') || !urlAllowed(a.web)) return false;
-            const reservation = a.id === 'the-pool' && a.preinstalled === true && a.package
+            const reservation = a.id === 'the-bay' && a.preinstalled === true && a.package
                 && a.package.status === 'awaiting-package' && a.package.url === '' && a.package.sha256 === '';
             if (!reservation && !downloadable(a)) return false;
             seen.add(a.id); return true;

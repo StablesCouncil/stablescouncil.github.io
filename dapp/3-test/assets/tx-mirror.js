@@ -233,6 +233,24 @@
         _covTv81Merged = size;
       }
     } catch (_) { /* ignore */ }
+    // Route 2 (2026-10-11): an Add to the Stables card is a deposit to the R2T1 vault. It is represented ONCE, by the card's
+    // "To Stables card" row (instant-balance.js), never as a plain "Sent" (founder: "the 2500 sent to the card is
+    // presented as a regular sending"). instant-route2.js loads after this file, so it is merged on every call.
+    try {
+      var r2v = window.StablesRoute2 && window.StablesRoute2.VAULT ? String(window.StablesRoute2.VAULT).trim().toLowerCase() : '';
+      if (r2v && !_covSet[r2v]) { _covSet[r2v] = true; _covKinds[r2v] = 'instant'; }
+      // Stage 2 (R2T3, build .108): the Add's anchor and vault, and the Remove's request. The Add is the "To Stables card"
+      // row and the Remove the "To Savings" row; on the Pro (build 116) both also showed as plain Sent and Received rows.
+      // The on-chain chat (founder 2026-10-12: "Yes hide them"): its one-atom messages to the chat address are not
+      // payments, and a banking app does not list them as "Sent Winiwa".
+      var chatAddr = window.StablesChatOnchain && window.StablesChatOnchain.ADDRESS ? String(window.StablesChatOnchain.ADDRESS).trim().toLowerCase() : '';
+      if (chatAddr && !_covSet[chatAddr]) { _covSet[chatAddr] = true; _covKinds[chatAddr] = 'chat'; }
+      var r2t3 = window.StablesRoute2 && window.StablesRoute2.R2T3;
+      if (r2t3) [r2t3.anchor, r2t3.vault, r2t3.request].forEach(function (a) {
+        var k = String(a || '').trim().toLowerCase();
+        if (k && !_covSet[k]) { _covSet[k] = true; _covKinds[k] = 'instant'; }
+      });
+    } catch (_) { /* ignore */ }
     return _covSet;
   }
 
@@ -594,6 +612,47 @@
     };
   }
 
+  function forgetNodeRow(txpowid) {
+    try {
+      var stray = nodeId(txpowid);
+      if (typeof window.stablesGetUserActivityRowById === 'function' && typeof window.stablesForgetActivityRow === 'function'
+        && window.stablesGetUserActivityRowById(stray)) {
+        window.stablesForgetActivityRow(stray);
+        try { console.log('[tx-mirror] row forgotten ' + stray); } catch (_) { /* no console */ }
+      }
+    } catch (_) { /* the row stays until the next pass */ }
+  }
+  /* ONCE per phone (build 119; build 121 adds the on-chain chat's messages): before build 117 the Stables card's stage 2 anchor, vault and request addresses were not
+     known as the card's own, so an Add, a Remove request and its payout were also drawn as plain Sent and Received rows
+     beside "To Stables card" and "To Savings" (law 2; found on the Pro). A row does not keep its addresses, so the node
+     rows of the last two weeks are read back, at most 40, one after another on a calm node, and those that move card
+     coins are forgotten. The pass is marked done only when every read answered. */
+  var CARD_ROWS_SWEPT_KEY = 'stables.txmirror.cardRowsSwept.v2';
+  function forgetCardRowsOnce() {
+    try { if (localStorage.getItem(CARD_ROWS_SWEPT_KEY)) return; } catch (_) { return; }
+    if (typeof window.stablesGetUserActivityRows !== 'function' || typeof window.stablesForgetActivityRow !== 'function') return;
+    var since = Date.now() - 14 * 24 * 60 * 60 * 1000;
+    var rows = (window.stablesGetUserActivityRows() || []).filter(function (r) {
+      return r && r.minimaOnChain && r.explorerTxId && Number(r.ts) >= since && String(r.id || '').indexOf(nodeId(r.explorerTxId)) === 0;
+    }).slice(0, 40);
+    var i = 0, forgotten = 0, unanswered = 0;
+    (function next() {
+      if (i >= rows.length) {
+        if (!unanswered) { try { localStorage.setItem(CARD_ROWS_SWEPT_KEY, String(Date.now())); } catch (_) { /* again next open */ } }
+        try { console.log('[tx-mirror] card rows sweep: ' + rows.length + ' read, ' + forgotten + ' forgotten, ' + unanswered + ' unanswered'); } catch (_) { /* no console */ }
+        return;
+      }
+      var row = rows[i++];
+      runCmd('txpow txpowid:' + row.explorerTxId, function (res) {
+        var r = payload(res), txn = r && r.body && r.body.txn;
+        if (!txn || !Array.isArray(txn.inputs) || !Array.isArray(txn.outputs)) { unanswered++; setTimeout(next, 500); return; }
+        var card = txn.inputs.concat(txn.outputs).some(function (o) { var k = covenantKindOf(o); return k === 'instant' || k === 'chat'; });
+        if (card) { try { window.stablesForgetActivityRow(row.id); forgotten++; } catch (_) { /* next open */ } }
+        setTimeout(next, 500);
+      });
+    })();
+  }
+
   // Insert all rows for one transaction (one per in-scope token) and track its ladder.
   // adoptLocal: merge a matching recent optimistic app row into the node row (title survives,
   // no duplicate). notifyIncoming: fire the live incoming hook (receive-window auto-close) —
@@ -603,7 +662,13 @@
     // A load into Instant payments, or a move back to Savings (build 103): its ONE row is the Instant
     // payments row that made it, which follows the chain itself. A node row here would be a second
     // row for the same operation (law 2), and another wallet's load or withdrawal is not this one's.
-    if (covKind === 'instant') return;
+    // An on-chat message is not a payment: no row, and one an earlier build drew is forgotten (build 121).
+    if (covKind === 'chat') { forgetNodeRow(txpowid); return; }
+    if (covKind === 'instant') {
+      // A row an earlier build drew for it (before the Stables card's stage 2 addresses were known, build 117) is forgotten.
+      forgetNodeRow(txpowid);
+      return;
+    }
     var tracked = [];
     // REAL on-chain time (the txpow header's timemilli), never the import/recovery time. The
     // displayed date, the row's ts, and all twin/adoption matching anchor on chain truth.
@@ -1682,6 +1747,7 @@
         setTimeout(failStaleSettlingRows, 30000);
         setTimeout(failOrphanedVaultRows, 45000);
         setTimeout(repairCovenantReceiveAmounts, 40000);
+        setTimeout(forgetCardRowsOnce, 60000);
         // Settle-mined sweep: 25s after arm, then again each 2 min so a row that mines while
         // the app is open (but whose flow died) still upgrades without a restart. The
         // receive-leg rebuild follows it (it wants statuses already settled to Confirmed).

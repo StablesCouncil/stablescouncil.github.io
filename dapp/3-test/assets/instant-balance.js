@@ -336,7 +336,15 @@
       // Four-state truth: unknown is never painted as zero. "Unavailable" is a refusal, not a figure
       // (its reason is written on the Instant payments page).
       var amt = row.querySelector('.ccy-sec-amt');
-      if (amt) amt.textContent = ready() ? P.formatAmount(atoms) : (state.status === 'unavailable' ? 'Unavailable' : '—');
+      // The one balance rule (index.html stablesPaintBalance): the last proven figure, muted, until this one is proven.
+      if (amt && state.status === 'unavailable') {
+        // No chip, no card (founder 2026-10-13): no figure, not even a remembered one. The reason is on the card itself.
+        amt.classList.remove('stables-bal--unproven');
+        amt.textContent = '—';
+      } else if (amt) {
+        if (typeof W.stablesPaintBalance === 'function') W.stablesPaintBalance(amt, 'card:' + cur.tokenId, ready(), ready() ? P.formatAmount(atoms) : null);
+        else amt.textContent = ready() ? P.formatAmount(atoms) : '—';
+      }
       // Law 19: a load still waiting for its three confirmations is NOT in the figure above, so its
       // amount sits beside it on its own, "+100.00", with no words, until it is credited: the same
       // element the Savings rows use (.ccy-pending-delta), and the row pulses like a settling one.
@@ -411,8 +419,10 @@
     if (!fig) return;
     var t = instantTotal();
     var unavailable = state.status === 'unavailable';
-    fig.textContent = unavailable ? 'Unavailable' : (t ? t.text : '—');
-    fig.classList.toggle('w-total--state', unavailable);
+    fig.classList.remove('w-total--state');
+    if (unavailable) { fig.classList.remove('stables-bal--unproven'); fig.textContent = '—'; }
+    else if (typeof W.stablesPaintBalance === 'function') W.stablesPaintBalance(fig, 'card:total', !!t, t ? t.text : null);
+    else fig.textContent = t ? t.text : '—';
     setText('instantTotalUnit', t && t.unit ? t.unit + ' equivalent' : '');
     setText('instantTotalCaption', unavailable ? UNAVAILABLE : (ready() ? 'Ready to pay offline' : ''));
   }
@@ -420,6 +430,8 @@
   function render() {
     var ok = ready();
     drawList('instantBalanceList', true);
+    var hint = D.querySelector('#walletInstantSection .stables-card-hint');
+    if (hint) hint.textContent = state.status === 'unavailable' ? 'Not on this device' : 'Tap to pay';
     // The Instant payments page (build 105): its total, its form, what it holds of each currency, the
     // retired test credit. A device that cannot hold the account says so once, under the total.
     if (moveOpen()) {
@@ -447,6 +459,9 @@
   }
 
   function refresh() {
+    // Route 2 loads: a vault deposit naming an open coin request is credited here, read from the own node.
+    // Removes on their way are followed here too, not only by the 15-second watch.
+    try { if (W.StablesRoute2 && W.StablesRoute2.canHold()) { W.StablesRoute2.scanLoads(); W.StablesRoute2.scanExits(); } } catch (_) { /* the balance still reads */ }
     return account.state().then(function (s) {
       var before = balancesKey();
       state.status = 'ready';
@@ -454,7 +469,11 @@
       render();
       // The Wallet total counts Instant payments (founder, after build 100), so a changed figure
       // redraws it (index.html updateGlobalUI reads walletHoldings()).
-      if (balancesKey() !== before) redrawTotal();
+      if (balancesKey() !== before) {
+        redrawTotal();
+        // The faucet offer counts the card too (founder 2026-10-11): a card that now holds money hides it.
+        if (typeof W.stablesSyncWalletGetWiniwaHint === 'function') { try { W.stablesSyncWalletGetWiniwaHint(); } catch (_) { /* ignore */ } }
+      }
       return s;
     });
   }
@@ -468,13 +487,14 @@
 
   /* ---------- activity: one row per operation, projected from the durable journal ---------- */
   /**
-   * Where a payment got to (law 13: the status says it, the title never does): "Received" once the
-   * receiver's phone confirmed it (NFC, build 101); before that, what this phone did with it, the
+   * Where a payment got to (law 13: the status says it, the title never does): "Sent" once the
+   * receiver's phone confirmed it, by tap or over the network (founder 2026-10-13: "if the amount is negative, we should
+   * say sent and not received"; the payer's row used to read "Received", the receiver's word); before that, what this phone did with it, the
    * hold-the-phones view ("Waiting for tap") or its QR ("QR shown"; a scanned QR is never confirmed
    * back, so it stays "QR shown" unless a later tap confirms it).
    */
   function outStatus(entry, how) {
-    if (entry && entry.delivered) return entry.delivered.via === 'network' ? 'Sent' : 'Received';
+    if (entry && entry.delivered) return 'Sent';
     // Over the network (D087): "Sending" while this phone builds the envelope; "Broadcasted" the moment it is on the
     // network, because that is when the receiver's phone sees and credits it (founder 2026-10-06, D125: "the graphene
     // received the payment way before the pro got the confirmation"); "Sent" once it is in a block. One that could not go
@@ -524,6 +544,8 @@
   function chainStatus(e) {
     if (e.awaitingApproval) return 'Waiting for approval';
     var load = e.kind === 'load';
+    // A coin exit (Stage 2): on the chain it waits for the council's approval, or for the fallback block.
+    if (e.coinExit && e.status === 'posted') return Number(e.block) > 0 ? 'Waiting for approval' : 'Broadcasted';
     if (load && e.status === 'credited') return 'Added';
     if (!load && e.status === 'received') return 'Received';
     if ((load && e.status === 'failed') || (!load && e.status === 'restored')) return 'Not sent';
@@ -575,6 +597,7 @@
      payment uses (StablesPaymentSecurity.confirmationTargetFor; default 1 block since 0.0.12.025). instant-chain.js
      credits and receives at the same number (create opts.confirmBlocks). */
   function confirmBlocksFor(e) {
+    if (e && e.coinLoad && Number(e.confirmBlocks) > 0) return Number(e.confirmBlocks);   // the phone credits a coin load at 3
     var ps = W.StablesPaymentSecurity;
     var b = NaN;
     try {
@@ -583,7 +606,30 @@
     } catch (_) { b = NaN; }
     return b >= 1 && b <= 30 ? Math.floor(b) : 1;
   }
+  /** A Remove from the card (founder 2026-10-13: "the progress sequence for withdrawals needs to reflect the council
+   *  confirmation awaiting or for now the 20 blocks waiting time"): its own four steps, read from its record. */
+  function progressOfExit(e) {
+    var block = Number(e.block) || 0, done = e.status === 'received';
+    var wait = Number(e.wait) || 20, payBlock = block > 0 ? block + wait + 1 : 0;
+    var left = block > 0 ? Math.max(0, wait + 1 - (Number(e.depth) || 0)) : 0;
+    var steps = [
+      { key: 'built', past: 'Signed on this phone', done: true, sub: 'The card’s chip signed it: the money has left the card.' },
+      { key: 'sent', present: 'Sending the request', past: 'Request on chain', done: done || block > 0,
+        sub: block > 0 ? 'In block ' + block.toLocaleString('en-US') + '.' : 'On the network, on its way into a block.' },
+      { key: 'council', present: 'Waiting for the Council', past: 'Approved', done: done,
+        sub: done ? 'Approved by the Council, or paid after the wait.'
+          : (block <= 0 ? 'Next: the Council checks it, usually within minutes.'
+            : (left > 0 ? 'The Council checks it, usually within minutes. If it stays silent, it pays itself at block ' + payBlock.toLocaleString('en-US') + ': ' + left + (left === 1 ? ' block' : ' blocks') + ' to go.'
+              : 'The wait is over: it can be paid now, with or without the Council.')) },
+      { key: 'paid', present: 'Waiting for the payout', past: 'In Savings', done: done,
+        sub: done ? 'The amount is in your Savings.' : 'Then the amount goes to your Savings.' }
+    ];
+    return { found: true, failed: false, instantChain: e.kind, steps: steps, knownTimes: { built: Number(e.ts) || 0 },
+      confirmed: done, built: true, sent: block > 0 || done, mined: block > 0 || done, onChain: block > 0 || done, confirmations: 0, target: 0,
+      txid: block > 0 && e.txpowid ? String(e.txpowid) : '', pendingTxnId: '', rowId: e.id, startedAt: Number(e.ts) || 0 };
+  }
   function progressOf(e) {
+    if (e && e.coinExit && (e.status === 'posted' || e.status === 'received' || e.status === 'signed')) return progressOfExit(e);
     var CONFIRM_BLOCKS = confirmBlocksFor(e);
     var load = e.kind === 'load';
     var done = load ? e.status === 'credited' : e.status === 'received';
@@ -594,6 +640,8 @@
     // One short line under the step (the tracker breaks a long line anywhere, as it must for a TxPoW id).
     var sub = e.awaitingApproval ? 'Waiting for your approval'
       : (!preparing ? '' : (e.status === 'merging' ? 'Combining coins first' : 'Registering on the chain'));
+    // A coin exit: the council approves within minutes; if it stays silent, the request pays itself at the fallback block.
+    if (e.coinExit && e.status === 'posted' && block > 0) sub = 'Approval in minutes, or paid by block ' + (block + (Number(e.wait) || 20) + 1) + ' at the latest';
     var p = {
       found: true, failed: failed, instantChain: e.kind,
       built: posted || !!e.txnid, sent: posted, mined: posted,
@@ -736,14 +784,7 @@
       entries.forEach(function (entry) {
         remember(entry);
         var have = typeof W.stablesGetUserActivityRowById === 'function' ? W.stablesGetUserActivityRowById(entry.id) : null;
-        if (entry.kind === 'load' || entry.kind === 'offload') {
-          // The row follows its record: re-drawn whenever the status it would show has moved.
-          var row = rowForChain(entry);
-          if (!have || have.offlineStatus !== row.offlineStatus || have.instantSettling !== row.instantSettling
-            || have.explorerTxId !== row.explorerTxId || have.note !== row.note || have.title !== row.title || have.category !== row.category) appendRow(entry);
-          stampSteps(entry);
-          return;
-        }
+        if (entry.kind === 'load' || entry.kind === 'offload') { redrawChainRow(entry, have); return; }
         // A confirmation recorded while the row was away (another session, a lost row) is carried in, and a
         // payment sent over the network follows its envelope (D087).
         var want = entry.kind === 'out' && (entry.delivered || entry.carrier) ? outStatus(entry)
@@ -751,8 +792,33 @@
         var drawn = rowFor(entry);
         if (!have || (want && have.offlineStatus !== want) || have.title !== drawn.title || have.category !== drawn.category) appendRow(entry);
       });
+      // Stables card Adds and Removes live in their own records, not in the journal: their rows follow them here too
+      // (founder's Pro, build 115: the Remove was paid and its record said received, the row still read Broadcasted).
+      chainEntries.forEach(function (entry) {
+        if (!entry.coinLoad && !entry.coinExit) return;
+        redrawChainRow(entry, typeof W.stablesGetUserActivityRowById === 'function' ? W.stablesGetUserActivityRowById(entry.id) : null);
+      });
       forgetRetiredRow();
+      forgetStrayExitRows();
     });
+  }
+  /** The row follows its record: re-drawn whenever the status it would show has moved. */
+  function redrawChainRow(entry, have) {
+    var row = rowForChain(entry);
+    if (!have || have.offlineStatus !== row.offlineStatus || have.instantSettling !== row.instantSettling
+      || have.explorerTxId !== row.explorerTxId || have.note !== row.note || have.title !== row.title || have.category !== row.category) appendRow(entry);
+    stampSteps(entry);
+  }
+  /** A Remove that build 111 also drew as "Received" on the card is forgotten; its "To Savings" row stays. */
+  var strayLogged = false;
+  function forgetStrayExitRows() {
+    if (!W.StablesRoute2 || typeof W.StablesRoute2.strayExitRows !== 'function' || typeof W.stablesGetUserActivityRowById !== 'function'
+      || typeof W.stablesForgetActivityRow !== 'function') return;
+    var ids = W.StablesRoute2.strayExitRows(), gone = [];
+    ids.forEach(function (id) {
+      if (W.stablesGetUserActivityRowById(id)) { try { W.stablesForgetActivityRow(id); gone.push(id); } catch (_) { /* next pass */ } }
+    });
+    if (!strayLogged) { strayLogged = true; try { console.log('[route2] stray rows checked ' + JSON.stringify(ids) + ', forgotten ' + gone.length); } catch (_) { /* no console */ } }
   }
   /** The "Test credit retired" activity row an earlier build wrote (builds 103 to 107) is forgotten (law 31). */
   var retiredForgotten = false;                          // once per session: the removal persists in the list's own store
@@ -981,7 +1047,7 @@
     var names = moveNames(dir);
     var cur = pickerCurrency(MOVE_CCY);
     var s = { dir: dir, names: names, cur: cur, from: null, to: null, fromShown: null, toShown: null, atoms: null, reason: '', ok: false };
-    if (!ready()) { s.reason = state.status === 'unavailable' ? UNAVAILABLE : ''; return s; }
+    if (!ready()) { s.reason = ''; return s; }   // unavailable: said once, under the card total (drawTotal)
     if (!cur) { s.reason = messageOf(P.InstantError('asset')); return s; }
     var inst = balanceOf(cur.tokenId);
     var sav = savingsAtoms(cur.code);
@@ -1140,7 +1206,58 @@
     if (move.busy) return;
     var s = drawMove();
     if (!s.ok) return;
+    // Route 2 (founder 2026-10-11): on a phone that holds coins, Add makes coins and Remove sends coins back to Savings
+    // through an exit (Stage 2, test council).
+    if (W.StablesRoute2 && W.StablesRoute2.canHold()) {
+      if (s.dir === 'add') { startCoinLoad(s.atoms, s.cur); return; }
+      if (typeof W.StablesRoute2.remove === 'function') { startCoinRemove(s.atoms, s.cur); return; }
+      move.reason = 'Moving coins back to Savings needs a newer version of the app. Nothing was moved.';
+      drawMove();
+      return;
+    }
     if (s.dir === 'add') startLoad(s.atoms, s.cur); else startOffload(s.atoms, s.cur);
+  }
+
+  /** Add on a coin phone: a Savings send into the coin vault naming a fresh coin key; the coins show once it confirms. */
+  function startCoinLoad(atoms, cur) {
+    move.busy = true;
+    drawMove();
+    W.StablesRoute2.load(atoms, cur.tokenId, W.__STABLES_INSTANT_NODE__, P).then(function (res) {
+      if (!res || res.status === false) throw P.InstantError('unavailable', (res && res.error) || 'The send was not accepted. Nothing was moved.');
+      move.busy = false;
+      closeMove();
+      if (typeof W.navigate === 'function') W.navigate('wallet');   // law 1
+      if (res.coinLoadEntry) chainChanged(res.coinLoadEntry);       // the row and the card's "+X" at once
+      try { if (typeof W.stablesApplySavingsSpend === 'function') W.stablesApplySavingsSpend(cur.code, Number(P.atomsToDecimal(atoms)), cur.label); } catch (_) { /* node truth follows */ }
+    }).catch(function (e) {
+      log('coin load not sent: ' + (e && (e.code || e.message)));
+      move.busy = false;
+      if (moveOpen()) { move.reason = (e && e.message) || 'Something went wrong. Nothing was moved.'; drawMove(); }
+    });
+  }
+
+  /**
+   * Remove on a coin phone (Stage 2): the coin's exit line is signed on the phone (the money leaves the card at once),
+   * then the request goes to the chain from Savings. The row "To Savings" follows it: waiting for approval, then
+   * Received. If the request could not be sent, the screen says so in place.
+   */
+  function startCoinRemove(atoms, cur) {
+    move.busy = true;
+    drawMove();
+    W.StablesRoute2.remove(atoms, cur.tokenId, moveAddr.remove || null, W.__STABLES_INSTANT_NODE__, P).then(function (res) {
+      move.busy = false;
+      closeMove();
+      if (typeof W.navigate === 'function') W.navigate('wallet');   // law 1
+      if (res && res.coinExitEntry) chainChanged(res.coinExitEntry); // the row and the Savings "+X" at once
+      refresh().catch(function () {});
+    }).catch(function (e) {
+      log('coin remove not sent: ' + (e && (e.code || e.message)));
+      move.busy = false;
+      var why = (e && e.code === 'insufficient') ? 'Your Stables card does not hold this much. Nothing was moved.'
+        : (e && e.code === 'exit-generation') ? 'Only money added to the card with this version can go back to Savings for now. Nothing was moved.'
+        : ((e && e.message) || 'Something went wrong. Nothing was moved.');
+      if (moveOpen()) { move.reason = why; drawMove(); }
+    });
   }
 
   /** Add: the record and its row first, then the Wallet, then the chain (instant-chain.js, build 103). */
@@ -1225,6 +1342,9 @@
     if (!account) return Promise.resolve();
     return account.entries().then(function (all) {
       chainEntries = all.filter(function (e) { return e.kind === 'load' || e.kind === 'offload'; });
+      // Route 2 Adds (founder 2026-10-11): their own records, shown like any Add; the chain module never advances them.
+      try { if (W.StablesRoute2 && typeof W.StablesRoute2.loadEntries === 'function') chainEntries = chainEntries.concat(W.StablesRoute2.loadEntries()); } catch (_) { /* the card still reads */ }
+      try { if (W.StablesRoute2 && typeof W.StablesRoute2.exitEntries === 'function') chainEntries = chainEntries.concat(W.StablesRoute2.exitEntries()); } catch (_) { /* the card still reads */ }
       render();
       redrawTotal();
       return syncActivity();
@@ -1696,7 +1816,7 @@
       appendRow(res.entry);
       // D095: by tap, the Receive sheet says it first ("Received" and the amount), with a vibration, then the Wallet.
       if (via === 'nfc' && sheetShows('recvModal')) {
-        recv.tapBanner = { tone: 'success', icon: '\u2713', title: 'Received', body: '+' + money(BigInt(res.entry.amount), currencyOfRecord(res.entry)) };
+        recv.tapBanner = { tone: 'success', icon: '\u2713', title: 'Received ' + money(BigInt(res.entry.amount), currencyOfRecord(res.entry)), body: 'Checked and credited at ' + stepTime(Date.now()) + '. The payer\u2019s phone has its confirmation.' };
         banner('instantRecvNfc', recv.tapBanner);
         // D127: the receiver's steps, each with its time: received, checked and credited, confirmation sent to the payer.
         var tr = Date.now();
@@ -1842,6 +1962,8 @@
     recv.link = null;                              // D092: a new one-time Bluetooth link for this Receive
     recv.tapSteps = null;                          // D127: a new opening shows no old steps
     recv.tapBanner = null;
+    // Founder 2026-10-13: an amount asked for last time does not wait in the box for the next payment.
+    if (opts && opts.opening) { var asked = el('instantRecvAmt'); if (asked) asked.value = ''; }
     bleRefresh();
     askBle('recv');
     recvError('');
@@ -2841,12 +2963,18 @@
     if (!spec) { box.hidden = true; return; }
     box.hidden = false;
     if (spec.tone) box.setAttribute('data-tone', spec.tone); else box.removeAttribute('data-tone');
+    // The two-phones arrow is drawn larger and centred in its circle (founder 2026-10-11).
+    if (spec.icon === HOLD) box.setAttribute('data-icon', 'hold'); else box.removeAttribute('data-icon');
     setText(id + 'Icon', spec.icon);
+    // The two-phones arrow as a drawing, not a font glyph: a glyph sits off the middle of its circle (founder 2026-10-11:
+    // "the arrow must be centered horizontally in the circle"). The icon is aria-hidden; the title says the action.
+    if (spec.icon === HOLD) { var ic = el(id + 'Icon'); if (ic) ic.innerHTML = HOLD_SVG; }
     setText(id + 'Title', spec.title);
     setText(id + 'Body', spec.body);
     show(id + 'Action', !!spec.settings);
   }
   var HOLD = '\u2194';                              // two-way arrow: the two phones
+  var HOLD_SVG = '<svg viewBox="0 0 48 24" width="56" height="28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h40M12 4l-8 8 8 8M36 4l8 8-8 8"/></svg>';
   function nfcOff(verb) {
     return { tone: 'warning', icon: '!', title: 'NFC is off', settings: true,
       body: 'Turn it on to ' + verb + ' by holding the phones together.' };
@@ -2860,7 +2988,15 @@
     if (usable && sheetShows('recvModal')) {
       if (st === 'off') recvSpec = nfcOff('receive');
       else if (recv.tapSteps && recv.tapBanner) recvSpec = recv.tapBanner;   // D127: the arrival stays said while its steps show
-      else if (recv.code) recvSpec = { icon: HOLD, title: 'Hold the phones together', body: 'The payer\u2019s phone pays by tap.' };
+      else if (recv.code) {
+        // One panel (founder 2026-10-11): the amount asked for leads, the next action follows.
+        var askedAtoms = requestedAtoms(), askedCur = pickerCurrency('instantRecvCcy');
+        recvSpec = askedAtoms != null && askedCur
+          ? { icon: HOLD, title: 'Get paid ' + money(askedAtoms, askedCur), body: 'Hold the phones together. The other phone pays this amount.' }
+          // Written for the reader who does exactly what it says (founder 2026-10-11: "get paid also needs an equivalent
+          // message with the amount to be input"): type the amount to ask for; left empty, the payer types it.
+          : { icon: HOLD, title: 'Get paid', body: 'Type the amount to ask for, then hold the phones together. Left empty, the payer types the amount.' };
+      }
     }
     banner('instantRecvNfc', recvSpec);
     // Send (build 102, D060): NFC off; "Hold the phones together" BEFORE a confirmation (a tap reads
@@ -2872,10 +3008,10 @@
     if (usable && sheetShows('sendModal')) {
       if (st === 'off') paySpec = nfcOff('pay');
       // D127: once the payment went over, the banner says what is happening now: waiting for the other phone's answer.
-      else if (pay.tapSteps && !pay.tapSteps.confirmedAt && !pay.tapSteps.failed && !pay.note) paySpec = HOLD_WAITING;
-      else if (pay.showing && !pay.legacy) paySpec = pay.note || HOLD_SIGNED;
+      else if (pay.tapSteps && !pay.tapSteps.confirmedAt && !pay.tapSteps.failed && !pay.note) paySpec = withAmount(HOLD_WAITING, 'Paying');
+      else if (pay.showing && !pay.legacy) paySpec = pay.note || withAmount(HOLD_SIGNED, 'Pay');
       // D127: a request the first tap read, confirmed since: the second tap is "once more".
-      else if (pay.armed) paySpec = pay.note || (pay.code && pay.source === 'nfc' ? HOLD_ARMED_AGAIN : HOLD_ARMED);
+      else if (pay.armed) paySpec = pay.note || withAmount(pay.code && pay.source === 'nfc' ? HOLD_ARMED_AGAIN : HOLD_ARMED, 'Pay');
       else if (!pay.showing) {
         // D097: the card cannot cover the amount: the panel itself says so, in red (the founder's Pro had 0 Winiwa and
         // only a disabled Confirm to show for it).
@@ -2886,12 +3022,26 @@
       }
     }
     banner('instantPayNfc', paySpec);
-    drawTapSteps('instantPaySteps', usable && sheetShows('sendModal') ? payTapSteps() : null);
-    drawTapSteps('instantRecvSteps', usable && sheetShows('recvModal') ? recv.tapSteps : null);
+    // One panel (founder 2026-10-11: "we should present this only in one place"): the banner above says each step, so the
+    // step list under it is no longer drawn. The steps stay recorded for View progress.
+    drawTapSteps('instantPaySteps', null);
+    drawTapSteps('instantRecvSteps', null);
   }
-  var HOLD_ARMED = { icon: HOLD, title: 'Hold the phones together to pay', body: 'The payment is made when the phones touch.' };
-  var HOLD_ARMED_AGAIN = { icon: HOLD, title: 'Hold the phones together once more', body: 'Confirmed. The payment is made when the phones touch again.' };
-  var HOLD_WAITING = { icon: HOLD, title: 'Keep the phones together', body: 'Waiting for the other phone’s confirmation.' };
+  var HOLD_ARMED = { icon: HOLD, title: 'Hold the phones together to pay', body: 'The payment is made when the phones touch.', next: 'Hold the phones together. The payment is made when they touch.' };
+  var HOLD_ARMED_AGAIN = { icon: HOLD, title: 'Hold the phones together once more', body: 'Confirmed. The payment is made when the phones touch again.', next: 'Confirmed. Hold the phones together once more.' };
+  var HOLD_WAITING = { icon: HOLD, title: 'Keep the phones together', body: 'Waiting for the other phone’s confirmation.', next: 'Keep the phones together: waiting for the other phone’s confirmation.' };
+  /** The amount this payment is for, as the panel says it, or ''. */
+  function payAmountText() {
+    if (pay.showing && pay.showing.amount != null) return money(BigInt(pay.showing.amount), currencyOfRecord(pay.showing));
+    if (pay.armed && pay.armed.atoms != null && pay.armed.cur) return money(pay.armed.atoms, pay.armed.cur);
+    return '';
+  }
+  /* ONE PANEL (founder 2026-10-11, R2-CAMPAIGN-11): "what is needed as next action and show the user what is needed for
+     his decision, mainly the amount to confirm". The amount leads ("Pay 0.01 Winiwa"); the next action is the line under it. */
+  function withAmount(spec, verb) {
+    var amt = payAmountText();
+    return amt ? { tone: spec.tone, icon: spec.icon, title: verb + ' ' + amt, body: spec.next || spec.body } : spec;
+  }
 
   /* EACH STEP OF A TAP, SAID AS IT HAPPENS (founder 2026-10-07, build 0.0.12.066, Machinery D127): "it must be clearly
      presented each step, message sent or received, waiting for confirmation then the confirmation we have". The payer
@@ -2929,7 +3079,7 @@
     });
     list.hidden = false;
   }
-  var HOLD_SIGNED = { icon: HOLD, title: 'Hold the phones together to hand it over', body: 'The payment is signed and waiting on this phone.' };
+  var HOLD_SIGNED = { icon: HOLD, title: 'Hold the phones together to hand it over', body: 'The payment is signed and waiting on this phone.', next: 'Signed on this phone. Hold the phones together to hand it over.' };
   /**
    * Before anything is confirmed. With an amount in the form (typed, or filled by a code) the person is
    * told to confirm first; otherwise what one tap pays at once: a request up to the quick-pay room, or,
@@ -2942,9 +3092,13 @@
     var atoms = null;
     try { atoms = readAmount(); } catch (_) { atoms = null; }
     var cur = pickerCurrency('instantPayCcy');
-    if (typed && cur && atoms != null && quickTap(atoms, cur)) return { icon: HOLD, title: 'Hold near the other phone to pay', body: money(atoms, cur) };
+    if (typed && cur && atoms != null && quickTap(atoms, cur)) return { icon: HOLD, title: 'Pay ' + money(atoms, cur), body: 'Hold near the other phone to pay.' };
+    if (typed && cur && atoms != null) return { icon: HOLD, title: 'Pay ' + money(atoms, cur), body: 'Confirm send, then hold the phones together.' };
+    // Written for a person who reads it and does exactly what it says (founder 2026-10-11): most often the other phone
+    // asks for the amount, so nothing needs typing; typing is only for a phone that asks for none.
     var body = typed ? 'Confirm send, then hold the phones together.'
-      : (room ? 'Type the amount, or tap: a request up to ' + room + ' is paid in one tap.' : 'Type the amount, then hold the phones together.');
+      : (room ? 'The amount the other phone asks for appears here. Up to ' + room + ' is paid at once; above that, you confirm it first.'
+        : 'The amount the other phone asks for appears here for you to confirm. If it asks for none, type the amount first.');
     return { icon: HOLD, title: 'Hold the phones together', body: body };
   }
 
@@ -3028,8 +3182,18 @@
     Promise.resolve(decided).then(answer, function () { answer({ reason: 'error' }); });
   }
 
+  /* A coin request is paid once (R2-CAMPAIGN-09, 2026-10-11): the phones were still together after a payment, the Wallet
+     read the same request again and opened a second payment for it. A request this phone has signed a payment for is
+     answered with nothing, before any screen opens. Kept for the app session; the native coin journal refuses it after. */
+  var paidRequests = {};
+  function alreadyPaid(text) {
+    var c = null;
+    try { c = P.parse(text); } catch (_) { return false; }
+    return !!(c && c.coinRequest && paidRequests[c.coinRequest]);
+  }
   /** What this tap does with the code it read: pay now ({payment, after}) or not ({reason}). */
   function decideTap(text) {
+    if (alreadyPaid(text)) { log('tap: that request is already paid by this phone; nothing to do'); return { reason: 'paid' }; }
     if (!sheetShows('sendModal') && ready() && walletListens() && typeof W.stablesOpenCardScreen === 'function') {
       log('tap: answered from the Wallet; the Pay screen decides it');
       W.stablesOpenCardScreen('pay');                 // option C: then exactly the Pay screen's own decision
@@ -3118,8 +3282,9 @@
     pay.note = {
       icon: HOLD,
       // D127 (founder 2026-10-07): "we should say then hold the phones together once more if confirmation is needed".
-      title: step === 'confirm' ? 'Press Confirm send, then hold the phones together once more' : 'Confirm with your code, then hold the phones together once more',
-      body: money(atoms, cur) + ' is above one touch' + (room ? ' (up to ' + room + ' now)' : '') + '. Set the levels on your Stables card.'
+      // One panel (founder 2026-10-11): the amount to confirm leads; the next action is the line under it.
+      title: 'Confirm ' + money(atoms, cur),
+      body: (step === 'confirm' ? 'Press Confirm send' : 'Press Confirm send and enter your code') + ', then hold the phones together once more.'
     };
     renderNfc();
     return { reason: 'filled' };
@@ -3140,6 +3305,7 @@
     pay.committing = true;
     return account.pay(code, atoms, { paymentId: intent, tokenId: cur.tokenId }).then(function (res) {
       pay.committing = false;
+      if (code && code.coinRequest && res.status === 'paid') paidRequests[code.coinRequest] = Date.now();
       pay.armed = null;
       pay.confirmedFor = null;
       pay.intent = null;
@@ -3245,13 +3411,17 @@
     var p = pay.showing;
     // D127: the answer is the step the payer waits for; it is recorded whatever the screen shows.
     if (!pay.tapSteps || pay.tapSteps.ref !== ev.ref) pay.tapSteps = { ref: ev.ref, sentAt: Date.now() };
-    if (ok) pay.tapSteps.confirmedAt = Date.now();
-    else { pay.tapSteps.failed = true; pay.tapSteps.failedAt = Date.now(); }
+    // A touch that broke off (lost, no answer, the other side not open yet) is not a failure: the payment waits, stored, for
+    // the next touch, so the step stays "Waiting for confirmation" (founder 2026-10-11, R2-CAMPAIGN-10: "the no confirmation
+    // should not present a red X if it is not needed"). Only the other phone refusing it is marked failed.
+    var retry = ev.status === 'lost' || ev.status === 'no-answer' || ev.status === 'not-open' || ev.status === 'not-stables';
+    if (ok) { pay.tapSteps.confirmedAt = Date.now(); pay.tapSteps.failed = false; pay.tapSteps.failedAt = 0; }
+    else if (!retry) { pay.tapSteps.failed = true; pay.tapSteps.failedAt = Date.now(); }
     if (!p || p.ref !== ev.ref || !sheetShows('sendModal')) { syncNfc(); return; }
     if (ok) {
       pay.delivered = true;
       // D095: the terminal's end state, said and felt (a short vibration), then the Wallet with the row "Received".
-      pay.note = { tone: 'success', icon: '\u2713', title: 'Paid', body: money(BigInt(p.amount), currencyOfRecord(p)) + ' \u00b7 received by the other phone' };
+      pay.note = { tone: 'success', icon: '\u2713', title: 'Paid ' + money(BigInt(p.amount), currencyOfRecord(p)), body: 'Received by the other phone at ' + stepTime(Date.now()) + '.' };
       syncNfc();
       buzz([60, 40, 60]);
       // D127: long enough to read the three steps and their times before the Wallet.
@@ -3376,11 +3546,23 @@
       redrawTotal();
       return;
     }
+    // Founder 2026-10-13 (a phone without NFC or a one-use key: "the whole card module should be unaccessible"): the card
+    // lives only in a phone chip that signs each coin once (Route 2). Without one, the card stays on the page and says so
+    // (law 4: never hidden), and every action is off (law 11). The software keys of build 103 are no longer offered.
+    if (!(W.StablesRoute2 && typeof W.StablesRoute2.canHold === 'function' && W.StablesRoute2.canHold())) {
+      state.status = 'unavailable';
+      log('unavailable: no one-use chip key on this device');
+      render();
+      redrawTotal();
+      return;
+    }
     try {
       // Build 103: the FRESH account (scheme 0x05) in its own store. The test-credit account in
       // stables-instant-v1 is only ever read (readRetired), never written, and counts nowhere.
       var backend = P.createIndexedDbBackend({ dbName: P.DB_NAME });
       account = P.createAccount({ backend: backend, keyStore: P.createWebCryptoKeyStore(backend), legacyTokenId: tokenOfCode(LEGACY_CODE) });
+      // Route 2 (instant-route2.js): coins held by one-use TEE keys, on a phone that can hold them; otherwise unchanged.
+      if (W.StablesRoute2 && typeof W.StablesRoute2.wrap === "function") account = W.StablesRoute2.wrap(account, P, { onChange: function () { refresh().catch(function () { /* next refresh */ }); reloadChain().catch(function () { /* next pass */ }); } });
       var cfg = (W.STABLES_CONFIG || {}).INSTANT_CHAIN;
       if (CC && cfg && W.__STABLES_INSTANT_NODE__) {
         chain = CC.create({ config: cfg, account: account, node: W.__STABLES_INSTANT_NODE__, protocol: P, onChange: chainChanged, log: log, confirmBlocks: confirmBlocksFor });
@@ -3406,6 +3588,15 @@
     });
   }
 
+  /* Does the Stables card hold anything? (founder 2026-10-11: "display the faucet only when the wallet is fully empty, the
+     card included"). true or false once read; null while it is still loading, which the faucet offer counts as holding,
+     so a funded card never flashes the offer. A card that cannot be read on this phone holds nothing here. */
+  W.stablesInstantCardHoldsAny = function () {
+    if (state.status === 'unavailable') return false;
+    if (state.status !== 'ready' || !state.balances) return null;
+    for (var k in state.balances) if (Object.prototype.hasOwnProperty.call(state.balances, k) && BigInt(state.balances[k] || 0) > BigInt(0)) return true;
+    return false;
+  };
   W.stablesInstantTakeCarrier = takeCarrier;
   W.stablesInstantOpenActions = openActions;
   W.stablesInstantSetWalletTap = setWalletTap;
@@ -3469,9 +3660,9 @@
      */
     moveBalanceText: function (code) {
       var cur = currencyForCode(code);
-      if (!ready() || !cur) return '-';
+      if (!ready() || !cur) return '—';
       var atoms = move.dir === 'remove' ? balanceOf(cur.tokenId) : savingsFigure(savingsAtoms(cur.code));
-      return atoms == null ? '-' : P.formatAmount(atoms);
+      return atoms == null ? '—' : P.formatAmount(atoms);
     },
     moveBalanceNumber: function (code) {
       var cur = currencyForCode(code);
@@ -3487,7 +3678,7 @@
     /** One currency's Instant balance as a picker's row figure ("-" while unknown, four-state truth). */
     balanceText: function (code) {
       var cur = currencyForCode(code);
-      return ready() && cur ? P.formatAmount(balanceOf(cur.tokenId)) : '-';
+      return ready() && cur ? P.formatAmount(balanceOf(cur.tokenId)) : '—';
     },
     /**
      * What the Wallet total counts (founder 2026-09-28, after build 100: "the top total includes the

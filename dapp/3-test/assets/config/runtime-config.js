@@ -49,7 +49,7 @@ window.STABLES_CONFIG = {
     releaseAssets: Object.freeze(['WINIMA', 'Winiwa', 'xWiniwa'])
   }),
   /** Shipped build (keep in sync with dapp.conf "version" when you release). */
-  APP_BUILD_VERSION: '0.0.12.0',
+  APP_BUILD_VERSION: '0.0.13.0',
   /**
    * Dev build iteration for the current version line. Bump on EVERY change during testing so
    * each build is uniquely identifiable in the top-bar pill (e.g. v0.0.0.2.01, .02, …) and the
@@ -59,9 +59,9 @@ window.STABLES_CONFIG = {
    * (vote-vault, per-launch auction); stablecoins born later via pledge→vote→auction→pool. App
    * rebuilt to genesis-6 per V6_APP_WIRING_PLAN.md (slice 1: config + pool reader).
    */
-  APP_BUILD_ITERATION: 68,
+  APP_BUILD_ITERATION: 7,
   /** Date this build was published to GitHub (ISO YYYY-MM-DD). */
-  APP_BUILD_DATE: '2026-10-07',
+  APP_BUILD_DATE: '2026-10-13',
   /**
    * TX radar (dev instrument, test channel only): timestamps send FIRED, node event arrival,
    * and new relevant history rows to measure early incoming notification. true = on-screen
@@ -323,7 +323,7 @@ window.STABLES_CONFIG = {
    * Use the same segment count as APP_BUILD_VERSION so semver-like compare is meaningful.
    */
   APP_UPDATE_POLICY: {
-    latestPublishedVersion: '0.0.12.068',
+    latestPublishedVersion: '0.0.13.007',
     whenUpdateNeeded: {
       criticality: 'low',
       whatChanged:
@@ -338,12 +338,12 @@ window.STABLES_CONFIG = {
    */
   ANDROID_APK_UPDATE: {
     /** SHA-256 and signer fingerprint are filled from the exact signed artifact before publication. */
-    latestVersion: '0.0.12.068',
-    versionCode: 12068,
+    latestVersion: '0.0.13.007',
+    versionCode: 13007,
     expectedPackageName: 'org.stablescouncil.stables',
     downloadUrl:
-      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.12.068/Stables_v0.0.12.068.apk',
-    sha256: '5fdeba126f17918ecb9336cadd3ae6f7b55c8a0a8f82c51585c57b57c795e02e',
+      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.13.007/Stables_v0.0.13.007.apk',
+    sha256: '4175ad8789adfb78ade0677604d66b687612b4e6d135feb48315d6fbbf7486d4',
     signerSha256: 'dabb1b2a79b134b6008e6401735d649c140b51f2c4a83eb001b2ffdad5ce5dd4',
     releasesPageUrl: 'https://github.com/StablesCouncil/stables-app/releases',
     /** Dedicated immutable-shape metadata used by hardened standalone builds. */
@@ -381,7 +381,7 @@ window.STABLES_CONFIG = {
   // was showing a phantom "next claim in…" with no recent claim.
   FAUCET_WINIWA_LAST_CLAIM_STORAGE_KEY: 'stables_test_faucet_winiwa_last_claim_tv81',
   /** Public test MiniDapp package download (target URL; not published until Council approves the test zip). */
-  MDS_ZIP_URL: 'https://stablescouncil.org/dapp/latest-version/Stables_v0.0.12.068.mds.zip',
+  MDS_ZIP_URL: 'https://stablescouncil.org/dapp/latest-version/Stables_v0.0.13.007.mds.zip',
   /**
    * Feedback page → Demo roadmap block (More → Feedback). Bump on every publish so reviewers
    * see the current build label, review focus, and next modules. Keep aligned with CHANGELOG.
@@ -542,3 +542,5 @@ window.STABLES_CONFIG = {
     'stables_faucet_winiwa_last_claim_ts_v1 (Winiwa faucet cooldown)'
   ]
 };
+
+

@@ -5850,6 +5850,14 @@
       Promise.resolve(tv81PlaceLimitFromTicket(_tv81OrderSide === 'buy' ? 'BID' : 'ASK', price, size)).then(done, done);
     }
   };
+  /** Founder 2026-10-13: "make sure the amount input box is emptied after a transaction is completed". Called when the
+   *  person confirms an order or a swap, never before: a cancelled confirmation keeps what was typed. */
+  function tv81ClearTradeAmounts() {
+    ['exFrom', 'exTo', 'tv81TicketSize'].forEach(function (id) {
+      try { const f = document.getElementById(id); if (f) f.value = ''; } catch (_) { /* not on this page */ }
+    });
+  }
+
   async function tv81ExecuteMarketTicket(side, size) {
     try {
       const reg0 = await tv81AppRegistry();
@@ -5876,7 +5884,7 @@
         const sendText = (side === 'buy' ? dplan.totalQuote + ' Winiwa' : dplan.totalBase + ' xWiniwa');
         const receiveText = (side === 'buy' ? dplan.totalBase + ' xWiniwa' : dplan.totalQuote + ' Winiwa');
         const nOrders = dplan.legs.length;
-        const run = function () {
+        const run = function () { tv81ClearTradeAmounts();
           tv81DirectExecuteSweep(side, String(size)).then(function () { tv81RefreshOrderBookPanel(); }).catch(function (e) {
             const msg = String((e && e.message) || e);
             try { console.error('[tv81 direct-market]', msg); } catch (_) { /* ignore */ }
@@ -5913,7 +5921,7 @@
           : (fbook.bestBidAtoms ? BigInt(fbook.bestBidAtoms) - tick : fallback);
         if (px <= 0n) px = tick;
         const fplan = await tv81FbaBuildOrder(side === 'buy' ? 'BID' : 'ASK', tv81FbaFmt(Number(px) / 1e8), String(size));
-        const run = function () { tv81FbaPlaceOrderOnChain(fplan).then(function () { tv81RefreshOrderBookPanel(); }).catch(function (e) { try { console.error('[tv81 fba-market]', (e && e.message) || e); } catch (_) {} try { showToast(String((e && e.message) || e), { tone: 'amber', durationMs: 9000 }); } catch (_) {} }); };
+        const run = function () { tv81ClearTradeAmounts(); tv81FbaPlaceOrderOnChain(fplan).then(function () { tv81RefreshOrderBookPanel(); }).catch(function (e) { try { console.error('[tv81 fba-market]', (e && e.message) || e); } catch (_) {} try { showToast(String((e && e.message) || e), { tone: 'amber', durationMs: 9000 }); } catch (_) {} }); };
         if (typeof window.openMintBurnConfirm === 'function') {
           window.openMintBurnConfirm({
             op: 'tv81-market', eyebrowText: '', titleText: 'Order confirmation',
@@ -5945,7 +5953,7 @@
       const toLabel = side === 'buy' ? 'xWiniwa' : 'Winiwa';
       const sendText = side === 'buy' ? quote + ' Winiwa' : base + ' xWiniwa';
       const receiveText = side === 'buy' ? base + ' xWiniwa' : quote + ' Winiwa';
-      const run = function () {
+      const run = function () { tv81ClearTradeAmounts();
         tv81ExecuteMarketSweep(preview).catch(function (e) {
           try { console.error('[tv81 market-sweep]', (e && e.message) || e); } catch (_) { /* ignore */ }
           try { showToast(String((e && e.message) || e), { tone: 'amber', durationMs: 9000 }); } catch (_) { /* ignore */ }
@@ -5975,7 +5983,7 @@
       if (tv81DirectCfg(reg0)) {
         const dplan = await tv81DirectBuildOrder(side, priceDisplay, sizeDisplay);
         const escrowLabel = dplan.escrow.display + ' ' + (side === 'ASK' ? 'xWiniwa' : 'Winiwa');
-        const run = function () { tv81DirectPlaceOrder(dplan).then(function () { tv81RefreshOrderBookPanel(); }).catch(function (e) { try { console.error('[tv81 direct-place]', (e && e.message) || e); } catch (_) { /* ignore */ } try { showToast(String((e && e.message) || e), { tone: 'amber', durationMs: 8000 }); } catch (_) { /* ignore */ } }); };
+        const run = function () { tv81ClearTradeAmounts(); tv81DirectPlaceOrder(dplan).then(function () { tv81RefreshOrderBookPanel(); }).catch(function (e) { try { console.error('[tv81 direct-place]', (e && e.message) || e); } catch (_) { /* ignore */ } try { showToast(String((e && e.message) || e), { tone: 'amber', durationMs: 8000 }); } catch (_) { /* ignore */ } }); };
         if (typeof window.openMintBurnConfirm === 'function') {
           window.openMintBurnConfirm({
             op: 'tv81-order', eyebrowText: '', titleText: 'Order confirmation',
@@ -5991,7 +5999,7 @@
       if (tv81FbaCfg(reg0)) {
         const fplan = await tv81FbaBuildOrder(side, priceDisplay, sizeDisplay);
         const escrowLabel = fplan.escrow.display + ' ' + (side === 'ASK' ? 'xWiniwa' : 'Winiwa');
-        const run = function () { tv81FbaPlaceOrderOnChain(fplan).then(function () { tv81RefreshOrderBookPanel(); }).catch(function (e) { try { console.error('[tv81 fba-place]', (e && e.message) || e); } catch (_) {} try { showToast(String((e && e.message) || e), { tone: 'amber', durationMs: 8000 }); } catch (_) {} }); };
+        const run = function () { tv81ClearTradeAmounts(); tv81FbaPlaceOrderOnChain(fplan).then(function () { tv81RefreshOrderBookPanel(); }).catch(function (e) { try { console.error('[tv81 fba-place]', (e && e.message) || e); } catch (_) {} try { showToast(String((e && e.message) || e), { tone: 'amber', durationMs: 8000 }); } catch (_) {} }); };
         if (typeof window.openMintBurnConfirm === 'function') {
           window.openMintBurnConfirm({
             op: 'tv81-order', eyebrowText: '', titleText: 'Order confirmation',
@@ -6007,7 +6015,7 @@
       const plan = await tv81QuoteOrder(side, priceDisplay, sizeDisplay);
       const quantized = tv81FmtPrice(plan.disclosure.quantizedPriceAtoms);
       const escrowLabel = plan.escrow.display + ' ' + (side === 'ASK' ? 'xWiniwa' : 'Winiwa');
-      const run = function () { tv81PlaceOrderOnChain(plan).then(function () { tv81RefreshOrderBookPanel(); }).catch(function (e) { try { showToast(String((e && e.message) || e), { tone: 'amber', durationMs: 8000 }); } catch (_) { /* ignore */ } }); };
+      const run = function () { tv81ClearTradeAmounts(); tv81PlaceOrderOnChain(plan).then(function () { tv81RefreshOrderBookPanel(); }).catch(function (e) { try { showToast(String((e && e.message) || e), { tone: 'amber', durationMs: 8000 }); } catch (_) { /* ignore */ } }); };
       if (typeof window.openMintBurnConfirm === 'function') {
         window.openMintBurnConfirm({
           op: 'tv81-order',
@@ -6884,6 +6892,7 @@
       if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
     } catch (_) { /* ignore */ }
     try { if (typeof window.stablesFlashBalanceUpdate === 'function') window.stablesFlashBalanceUpdate(['Winiwa', 'xWiniwa']); } catch (_) { /* ignore */ }
+    tv81ClearTradeAmounts();
     try { if (typeof navigate === 'function') navigate('wallet'); } catch (_) { /* ignore */ }
     try {
       const posted = await window.__STABLES_TEST_XWINIWA_COVENANT__(op, amt);
@@ -8229,6 +8238,24 @@
     return picked;
   }
 
+  /* The total the next transaction can spend now: the same coins gatherSendableUserCoins picks from (sendable, not tied to
+     a transaction in flight, not protocol infrastructure). MAX buttons use it (founder 2026-10-12). Winiwa and xWiniwa. */
+  window.stablesSpendableNow = async function (ccy) {
+    const c = String(ccy || '');
+    const tokenId = (c === 'Winiwa' || c === 'WINIMA' || c === 'WINIWA') ? winiwaTokenId : (c === 'xWiniwa' ? xwiniwaTokenId : '');
+    if (!tokenId) return NaN;
+    const coins = await findCovenantCoinsUrgent(['coins', 'relevant:true', 'sendable:true', 'tokenid:' + tokenId]);
+    return coins.filter(function (x) {
+      return coinIsUnspent(x) && !userCoinInFlight(x) && !isTestInfraCoinAddress(x.address) && !isTestInfraCoinAddress(x.miniaddress);
+    }).reduce(function (s, x) { return s + (Number(String(x.tokenamount || 0).replace(/,/g, '')) || 0); }, 0);
+  };
+  /* The faucet is suggested only when the whole wallet is empty, the Stables card included (founder 2026-10-12). */
+  function stablesFaucetTip(prefix) {
+    try { if (typeof window.stablesWalletHasAnyStablesBalance === 'function' && window.stablesWalletHasAnyStablesBalance()) return ''; } catch (_) { return ''; }
+    return prefix;
+  }
+  window.stablesFaucetTip = stablesFaucetTip;
+
   async function gatherSendableUserCoins(tokenId, target) {
     const coins = await findCovenantCoinsUrgent(['coins', 'relevant:true', 'sendable:true', 'tokenid:' + tokenId]);
     const usable = coins
@@ -8282,7 +8309,7 @@
         .filter(function (c) { return coinIsUnspent(c) && !isTestInfraCoinAddress(c.address) && !isTestInfraCoinAddress(c.miniaddress); })
         .reduce(function (s, c) { return s + stablesAtomsOf(c.tokenamount); }, 0);
       if (!(totalAnyDepth >= stablesAtomsOf(target))) {
-        throw new Error('Not enough ' + tokenLabel + ' in your wallet for ' + target + '. Claim from the faucet or lower the amount.');
+        throw new Error('Not enough ' + tokenLabel + ' in your wallet for ' + target + '.' + (stablesFaucetTip('x') ? ' Claim from the faucet or lower the amount.' : ' Lower the amount.'));
       }
       if (Date.now() > deadline) {
         throw new Error('Your ' + tokenLabel + ' from a recent transaction is still settling. Try again in a minute.');
@@ -9809,6 +9836,7 @@
     if (!ccy || !Number.isFinite(Number(value))) return;
     window.__STABLES_OPTIMISTIC_BAL__ = window.__STABLES_OPTIMISTIC_BAL__ || {};
     window.__STABLES_OPTIMISTIC_BAL__[ccy] = { value: Number(value), dir: dir === 'out' ? 'out' : 'in', ts: Date.now() };
+    try { console.log('[STABLES-BAL] ' + ccy + ' hold set ' + (dir === 'out' ? 'out' : 'in') + ' held=' + Number(value)); } catch (_) { /* ignore */ }
     // Immediately reflect in the displayed balance detail so an outgoing DEBIT shows at once, not
     // only after the node registers the spend. Previously a mint's +credit appeared instantly (via
     // the settling overlay) while the −debit lagged (node sendable unchanged until the coin is
@@ -9852,9 +9880,17 @@
       const L = window.__BAL_RELEASES__ = window.__BAL_RELEASES__ || [];
       L.push({ t: Date.now(), ccy: ccy, why: why, node: Number(nodeVal), held: held == null ? null : Number(held) });
       if (L.length > 200) L.shift();
+      // On a phone the release WebView cannot be inspected: the log is the only trace (build 125).
+      console.log('[STABLES-BAL] ' + ccy + ' ' + why + ' node=' + Number(nodeVal) + ' held=' + (held == null ? '-' : Number(held)));
     } catch (_) { /* ignore */ }
   }
 
+  /* A held balance matches the node only when they are the same figure. The tolerance was relative (balance x 1e-4):
+     on 5,750 Winiwa that is 0.575, so an Add of 0.01 or 0.05 "converged" the moment it was made and the screen showed
+     the node's raw figures, first the old balance (the Add counted twice in the total) then the balance without the
+     unconfirmed change (a dip of 0.02) (Pro, build 125 trace: hold set 5749.9602, "converged" at node 5749.9702).
+     Amounts carry 8 decimals; 1e-6 absorbs only float rounding. */
+  var STABLES_BAL_TOL = 1e-6;
   function stablesReconcileOptimistic(ccy, nodeVal) {
     try {
       const m = window.__STABLES_OPTIMISTIC_BAL__ = window.__STABLES_OPTIMISTIC_BAL__ || {};
@@ -9959,7 +9995,7 @@
                 if (a.dir === 'out' || Number(a.amt) < 0) recentOut = true;
               });
             } catch (_) { /* ignore */ }
-            const lagTol = Math.max(1e-6, Math.abs(e.value) * 1e-4);
+            const lagTol = STABLES_BAL_TOL;
             const deficit = e.value - Number(nodeVal);
             if ((deficit > lagTol && recentIn) || (deficit < -lagTol && recentOut)) {
               // the just-settled leg has not reached the node's figure yet — keep holding
@@ -9985,7 +10021,7 @@
       // collapses "sendable" to the remaining coins (change unconfirmed) and a credit lags low; in
       // both cases we keep showing the expected balance until the node settles on it, so the balance
       // never flashes "only the remaining UTXO". Release on a small relative match.
-      const tol = Math.max(1e-6, Math.abs(e.value) * 1e-4);
+      const tol = STABLES_BAL_TOL;
       if (Math.abs(Number(nodeVal) - e.value) <= tol) { balEvt(ccy, 'converged', nodeVal, e.value); delete m[ccy]; return nodeVal; }
       return e.value;
     } catch (_) { return nodeVal; }
@@ -11024,7 +11060,7 @@
       } catch (_) { directSendable = 0; }
       if (directSendable > winiwaBefore) winiwaBefore = directSendable;
       if (winiwaCost > winiwaBefore + tol) {
-        return window.stablesFieldError('issueWiniwaAmt', 'Not enough Winiwa. Claim from the faucet or wait for your balance to refresh.');
+        return window.stablesFieldError('issueWiniwaAmt', 'Not enough Winiwa available to spend right now.' + (stablesFaucetTip('x') ? ' Claim from the faucet, or wait for your balance to refresh.' : ' Wait for your balance to refresh, or lower the amount.'));
       }
     }
 
@@ -12049,7 +12085,7 @@
       } catch (_) { directSendable = 0; }
       if (directSendable > winiwaBefore) winiwaBefore = directSendable;
       if (mintAmt > winiwaBefore + tol) {
-        return window.stablesFieldError('xwmAmt', 'Not enough Winiwa. Claim from the faucet or wait for your balance to refresh.');
+        return window.stablesFieldError('xwmAmt', 'Not enough Winiwa available to spend right now.' + (stablesFaucetTip('x') ? ' Claim from the faucet, or wait for your balance to refresh.' : ' Wait for your balance to refresh, or lower the amount.'));
       }
     }
 
@@ -12154,7 +12190,11 @@
           directionLabel: 'Incoming',
           minimaOnChain: true,
           localOrigin: true,
-          balanceAlreadyApplied: true,
+          // Upcoming funds show at once (founder 2026-10-11: "the balance of each currency must be updated with the
+          // upcoming fund as soon as possible, here the minting of xwiniwa should be reflected"): while the covenant
+          // transaction is prepared, the xWiniwa row carries "+X" beside its figure (the settling overlay). The figure
+          // itself still moves only when the node accepts it (build 0.0.12.039); a failed mint drops the "+X".
+          balanceAlreadyApplied: false,
           block: 0,
           ts: xwMintFlowTs,
           flowId: xwMintFlowId,
@@ -12180,6 +12220,8 @@
        which a live read put xWiniwa back while the early Winiwa credit stayed. Until the post the row and the progress
        pop-up say what is happening; the figures stay what the chain says. */
     const applyMintMove = function () {
+      // The figure now carries the mint: the "+X" overlay ends here (it would otherwise count it twice).
+      try { if (typeof window.stablesUpsertUserActivityRows === 'function') window.stablesUpsertUserActivityRows([{ id: mintReceiveRowId, balanceAlreadyApplied: true }]); } catch (_) { /* ignore */ }
       if (typeof WALLET_WINIWA !== 'undefined') WALLET_WINIWA = expectWiniwaAfter;
       if (typeof WALLET_XWM !== 'undefined') WALLET_XWM = baseXwm + mintAmt;
       try { stablesSetOptimisticBalance('Winiwa', expectWiniwaAfter, 'out'); stablesSetOptimisticBalance('xWiniwa', baseXwm + mintAmt, 'in'); } catch (_) { /* ignore */ }
@@ -12438,7 +12480,8 @@
           directionLabel: 'Incoming',
           minimaOnChain: true,
           localOrigin: true,
-          balanceAlreadyApplied: true,
+          // The Winiwa coming back shows at once as "+X" (founder 2026-10-11, as for a mint); the figure waits for the node.
+          balanceAlreadyApplied: false,
           block: 0,
           ts: xwBurnFlowTs,
           flowId: xwBurnFlowId,
@@ -12463,6 +12506,7 @@
        which a live read put xWiniwa back while the early Winiwa credit stayed. Until the post the row and the progress
        pop-up say what is happening; the figures stay what the chain says. */
     const applyBurnMove = function () {
+      try { if (typeof window.stablesUpsertUserActivityRows === 'function') window.stablesUpsertUserActivityRows([{ id: burnReceiveRowId, balanceAlreadyApplied: true }]); } catch (_) { /* ignore */ }
       if (typeof WALLET_XWM !== 'undefined') WALLET_XWM = Math.max(0, baseXwm - burnAmt);
       if (typeof WALLET_WINIWA !== 'undefined') WALLET_WINIWA = baseWiniwa + payoutWiniwa;
       try { stablesSetOptimisticBalance('xWiniwa', Math.max(0, baseXwm - burnAmt), 'out'); stablesSetOptimisticBalance('Winiwa', baseWiniwa + payoutWiniwa, 'in'); } catch (_) { /* ignore */ }

@@ -160,6 +160,15 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
    weight a number does, so the state word drops to a readable support size. The
    scope prefix and !important are required to beat the rule above, which is where
    the hero's real size is set. */
+/* The one balance rule (index.html stablesPaintBalance, founder 2026-10-12): every figure not proven yet, the total, the
+   Stables card and Savings alike, is the last proven one at full size in the muted tone, or a dash. */
+[data-machinery-scope="wallet"] .stables-bal--unproven,
+[data-machinery-scope="wallet"] .w-total.stables-bal--unproven {
+  background: none !important;
+  color: var(--mx-ink-muted, rgba(255, 255, 255, .62)) !important;
+  -webkit-text-fill-color: var(--mx-ink-muted, rgba(255, 255, 255, .62)) !important;
+}
+
 [data-machinery-scope="wallet"] .w-total.w-total--state {
   font-size: 20px !important;
   font-weight: 700 !important;
@@ -929,6 +938,19 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
   border-width: 2px;
   animation: stablesTapPulse 1.6s ease-in-out infinite;
 }
+/* The two-phones arrow, centred in its circle and larger (founder 2026-10-11: "put the 2 head arrow in the center and
+   bigger"). Flex centring, not the font's baseline, puts the glyph in the middle. */
+#sendModal[data-payment-account="instant"] #instantPayNfc[data-icon="hold"] .mx-status-banner__icon,
+#recvModal[data-payment-account="instant"] #instantRecvNfc[data-icon="hold"] .mx-status-banner__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+  line-height: 1;
+  padding: 0;
+}
+#instantPayNfc[data-icon="hold"] .mx-status-banner__icon svg,
+#instantRecvNfc[data-icon="hold"] .mx-status-banner__icon svg { display: block; flex: none; }
 #sendModal[data-payment-account="instant"] #instantPayNfc .mx-status-banner__body strong,
 #recvModal[data-payment-account="instant"] #instantRecvNfc .mx-status-banner__body strong { font-size: 21px; line-height: 1.25; }
 #sendModal[data-payment-account="instant"] #instantPayNfc .mx-status-banner__body small,

@@ -94,7 +94,7 @@ var _thirdPartyRun = Object.create(null);
         if (!a || !P.installed(a.id)) return false;
         const title = document.getElementById('hostedAppTitle'), state = document.getElementById('hostedAppState');
         title.textContent = a.name;
-        state.textContent = a.id === 'the-pool' ? 'The Pool is coming to Stables, with trading on your Stables wallet.'
+        state.textContent = a.id === 'the-bay' ? 'The Bay is coming to Stables: The Pool and the other Minima Bay apps, on your Stables wallet.'
             : a.name + ' is installed. Its hosted page is being prepared.';
         W.navigate('hosted-app'); return true;
     }

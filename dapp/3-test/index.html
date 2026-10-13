@@ -679,9 +679,10 @@
             -webkit-text-fill-color: transparent;
         }
 
+        /* Founder 2026-10-13: "our logo should be a bit bigger on the Wallet page" (34 px before). */
         .brand img {
-            width: 34px;
-            height: 34px;
+            width: 42px;
+            height: 42px;
             border-radius: 8px;
             object-fit: contain
         }
@@ -1596,6 +1597,23 @@
         }
         .home-screen::-webkit-scrollbar { display: none; }
         .home-dots { flex: 0 0 auto; display: flex; justify-content: center; gap: 8px; padding: 6px 0 2px; }
+        /* + creates a group (founder 2026-10-12). Founder 2026-10-13: "make it look like on the Mininotes app": a floating
+           round button over the screens, bottom right, a soft light fill and a shadow, just above the bottom bar. */
+        #pageCarousel .modal { position: relative; }
+        #pageCarousel .home-add-group {
+            position: absolute; right: 18px; bottom: calc(var(--home-footer-h, 72px) + 16px); z-index: 5;
+            width: 56px !important; height: 56px !important; min-width: 56px !important; min-height: 56px !important;
+            padding: 0 !important; border-radius: 50% !important; border: none !important;
+            background: var(--home-fab-bg, #a9d3e6) !important; color: var(--home-fab-ink, #0f2638) !important;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, .35), 0 1px 3px rgba(0, 0, 0, .25) !important;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #pageCarousel .home-add-group svg { width: 28px; height: 28px; }
+        #pageCarousel .home-add-group:active { transform: scale(.96); }
+        body:not(.home-open) #pageCarousel .home-add-group { display: none; }
+        #homeFolder .home-folder__empty { margin: 0; padding: 12px 16px 4px; text-align: center; font-size: 14px; }
+        /* The agent's eye stands on the panel itself, no box (founder 2026-10-12); 24 px, a bit smaller than 30 (founder 2026-10-13). */
+        #agentFabToggleBtn.agent-dlg-eye { padding: 6px !important; border-color: transparent !important; background: transparent !important; box-shadow: none !important; }
         .home-dots[hidden] { display: none; }
         .home-dots__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--m); opacity: .45; transition: opacity .2s ease, transform .2s ease; }
         .home-dots__dot.is-current { background: var(--t); opacity: 1; transform: scale(1.15); }
@@ -1674,6 +1692,11 @@
         #pageCarousel .ditem.home-tile .dic.home-folder-dic img { width: 15px; height: 15px; }
         /* Arranging: the lifted icon's own place stays open; the icon it would join grows. */
         #pageCarousel .ditem.home-tile.is-dragging { visibility: hidden; }
+        /* Mininotes: an empty destination shows an accent outline and a light fill where the face would be. */
+        #pageCarousel .ditem.home-tile.is-dragging.is-dest { visibility: visible; }
+        #pageCarousel .ditem.home-tile.is-dragging.is-dest > * { visibility: hidden; }
+        #pageCarousel .ditem.home-tile.is-dragging.is-dest .dic { visibility: visible; background: color-mix(in srgb, var(--c, #7fc8e3) 14%, transparent) !important; outline: 3px solid var(--c, #7fc8e3); outline-offset: -3px; }
+        #pageCarousel .ditem.home-tile.is-dragging.is-dest .dic > * { visibility: hidden; }
         #pageCarousel .ditem.home-tile.is-join .dic { transform: scale(1.22); outline: 2px solid var(--c); outline-offset: 4px; }
         #pageCarousel .ditem.home-tile.home-ghost {
             position: fixed;
@@ -3719,6 +3742,20 @@
         .tx-conf--pending { color: var(--am); }
         .tx-conf--confirming { color: var(--c); }
         .tx-conf--done { color: var(--m); }
+        /* Founder 2026-10-13: a finished transaction carries a green check after its status word. */
+        /* Transaction details (founder 2026-10-13): the transaction shown directly, then one main action, the useful ones in a
+           two-column grid, and housekeeping as quiet text buttons at the foot. */
+        .tx-detail-chain { margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--mx-glass-line, rgba(255,255,255,.08)); border-radius: 12px; }
+        .tx-detail-chain > div { margin-bottom: 0 !important; padding: 0 !important; }
+        .tx-detail-chain a, .tx-detail-chain > div > div { margin-left: 0 !important; padding-left: 0 !important; }
+        .tx-detail-actions { display: flex; flex-direction: column; gap: 10px; margin: 4px 0 8px; }
+        .tx-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .tx-detail-grid > .mx-action:only-child { grid-column: 1 / -1; }
+        .tx-detail-house { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 18px; margin-top: 6px; }
+        .tx-detail-quiet { background: transparent !important; border: 0 !important; box-shadow: none !important; min-height: 36px; padding: 6px 4px !important; font-size: 14px; font-weight: 600; color: var(--m) !important; }
+        .tx-detail-quiet--danger { color: var(--rd) !important; }
+        .tx-detail-raw { align-self: center; font-size: 12px; opacity: .8; }
+        .tx-done-mark { display: inline-grid; place-items: center; width: 13px; height: 13px; margin-left: 5px; border-radius: 50%; background: var(--gr); color: var(--bg, #0f1b26); font-size: 9px; font-weight: 900; line-height: 1; vertical-align: -1px; }
         .tx-conf--failed { color: var(--r, #f87171); }
         /* Status-ladder treatments: settling rows get a quiet amber edge; a row flashes
            once when it first appears or its ladder status advances (no popups). */
@@ -3846,6 +3883,13 @@
            honest figure to show. A word does not want the 46px weight a number does, and the
            gradient fill makes a sentence hard to read, so it drops to the support tone at a size
            that still reads as the hero's answer. */
+        /* The one balance rule (stablesPaintBalance): a figure not proven yet is the last proven one, in the muted tone. */
+        .stables-bal--unproven {
+            background: none !important;
+            color: var(--mu, rgba(255, 255, 255, .62)) !important;
+            -webkit-text-fill-color: var(--mu, rgba(255, 255, 255, .62)) !important;
+        }
+
         .w-total--state {
             font-size: 20px;
             font-weight: 700;
@@ -4959,6 +5003,12 @@
             background: var(--surface-accent-soft);
             outline: none;
         }
+        .app-lang-menu { min-width: 220px; }
+        .app-lang-menu-note { margin: 0; padding: 6px 14px 8px; max-width: 240px; font-size: 13px; line-height: 1.4; color: var(--mu); }
+        .app-lang-menu-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .app-lang-menu .app-lang-menu-item:disabled { cursor: default; opacity: .45; }
+        .app-lang-menu-item:disabled:hover { background: transparent; }
+        .app-lang-menu-soon { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--mu); }
 
         .dsect {
             padding: 10px 8px
@@ -8481,19 +8531,19 @@
     </style>
     <!-- App UI System layer: must load render-blocking AFTER the legacy styles above so
          documented component geometry wins in the cascade without a flash of unstyled UI. -->
-    <link rel="stylesheet" href="assets/app-ui-system.css?v=tv81-1268">
+    <link rel="stylesheet" href="assets/app-ui-system.css?v=tv81-1307">
     <!-- Machinery product adapter: reusable mx-* definitions, loaded after the legacy layer. -->
-    <link rel="stylesheet" href="assets/machinery-app.css?v=tv81-1268">
-    <link rel="stylesheet" href="assets/machinery-ui.css?v=tv81-1268">
-    <link rel="stylesheet" href="assets/machinery-shell.css?v=tv81-1268">
+    <link rel="stylesheet" href="assets/machinery-app.css?v=tv81-1307">
+    <link rel="stylesheet" href="assets/machinery-ui.css?v=tv81-1307">
+    <link rel="stylesheet" href="assets/machinery-shell.css?v=tv81-1307">
     <!-- The wallet legacy adapter loads before the final shared identity so it cannot override R001. -->
-    <link rel="stylesheet" href="assets/machinery-wallet.css?v=tv81-1268">
-    <link rel="stylesheet" href="assets/machinery-language.css?v=tv81-1268">
-    <link rel="stylesheet" href="assets/north-star-adoption.css?v=tv81-1268">
-<link rel="stylesheet" href="assets/page-patterns.css?v=tv81-1268">
+    <link rel="stylesheet" href="assets/machinery-wallet.css?v=tv81-1307">
+    <link rel="stylesheet" href="assets/machinery-language.css?v=tv81-1307">
+    <link rel="stylesheet" href="assets/north-star-adoption.css?v=tv81-1307">
+<link rel="stylesheet" href="assets/page-patterns.css?v=tv81-1307">
     <!-- D029 desktop composition. Gated on the web surface AND 1024px, so the MiniDapp and the
          APK keep the shipped mobile composition at every width. -->
-    <link rel="stylesheet" href="assets/desktop-web.css?v=tv81-1268">
+    <link rel="stylesheet" href="assets/desktop-web.css?v=tv81-1307">
     <script>
         /* Surface flag for the D029 desktop layer. The preview bootstrap above resolves the local
            preview channel; on the real web it returns early, and the web surface is the default.
@@ -8745,7 +8795,7 @@
                  the card". The card's own tools row (the same act-row and button the card screens carried, D111). -->
             <div class="card-tools act-row" id="walletCardTools" role="group" aria-label="Stables card tools">
                 <button type="button" data-role="choice" class="act-btn mx-action" onclick="stablesOpenCardManage('', 'add')">
-                    <span class="act-icon ui-glyph-lg" aria-hidden="true">+</span><span class="act-lbl">Manage funds</span></button>
+                    <span class="act-icon ui-glyph-lg" aria-hidden="true">+</span><span class="act-lbl">Manage card</span></button>
             </div>
             </div>
             <!-- Savings (law 22, founder 2026-09-28): "the rest should be labelled as saving". The
@@ -10616,12 +10666,12 @@
         <div class="page" id="page-hosted-app" data-machinery-lit data-mx-composition="task-hub">
             <header class="app-page-header">
                 <div class="dic" aria-hidden="true">&#x1F9E9;</div>
-                <div class="app-page-header__text"><div class="app-page-header__title" id="hostedAppTitle">The Pool</div></div>
+                <div class="app-page-header__text"><div class="app-page-header__title" id="hostedAppTitle">The Bay</div></div>
             </header>
             <section class="app-section" data-section-label="Hosted app preparation">
             <!-- D120 (UI reference law 13): a page opens with its own content; the "Apps" button only went back,
                  which the swipe and the Home screen already do. -->
-            <p class="xs mu" id="hostedAppState">The Pool is coming to Stables, with trading on your Stables wallet.</p>
+            <p class="xs mu" id="hostedAppState">The Bay is coming to Stables: The Pool and the other Minima Bay apps, on your Stables wallet.</p>
             </section>
         </div>
 
@@ -11851,6 +11901,11 @@
                             <span class="ui-tone-muted">Show a message when my phone mines a block</span>
                             <input class="ui-shrink-0 ui-switch" type="checkbox" role="switch" id="foundBlockPopupToggle" checked onchange="stablesSetFoundBlockPopup(this.checked)">
                         </label>
+                        <!-- Founder 2026-10-11: a bank does not announce mined blocks on the phone; off unless turned on. Phone app only. -->
+                        <label class="fbet ui-items-center ui-row-top-divided ui-mb-3" for="foundBlockNotifyToggle" data-found-block-notify-row hidden>
+                            <span class="ui-tone-muted">Also notify me on the phone when Stables is closed</span>
+                            <input class="ui-shrink-0 ui-switch" type="checkbox" role="switch" id="foundBlockNotifyToggle" onchange="stablesSetFoundBlockNotify(this.checked)">
+                        </label>
                         <div class="stables-contribution-chart ui-mb-3" data-contribution-chart="txpow" hidden>
                             <div class="fbet xs mu ui-mb-1">
                                 <span class="ui-support-strong">TxPoW per day</span>
@@ -12514,7 +12569,7 @@
                      menu head rather than only from a row further down. Registered icon action, and
                      it opens the same guided tour as the Help row. -->
                 <button data-size="compact" data-role="icon" type="button" class="btn btn-secondary btn-icon mx-action ui-shrink-0" id="drawerAgentBtn"
-                    onclick="openAgentGuidedTour();closeMoreNow()" aria-label="StablesAgent" title="StablesAgent">
+                    onclick="openAgentGuidedTour();stablesCloseMenuKeepHome()" aria-label="StablesAgent" title="StablesAgent">
                     <img class="asset-avatar-small" src="agent.png" alt="" width="24" height="24">
                 </button>
                 <div class="app-lang-switcher">
@@ -12525,25 +12580,19 @@
                     <button data-size="compact" data-role="icon" type="button" class="app-lang-globe-btn mx-action" id="drawerLangGlobeBtn"
                         onclick="toggleAppLangMenu(event, 'drawer')" aria-label="Language" aria-haspopup="true"
                         aria-expanded="false" aria-controls="appLangMenuDrawer">
-                        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2"
-                            fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="2" y1="12" x2="22" y2="12"></line>
-                            <path
-                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
-                            </path>
-                        </svg>
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" stroke="none" aria-hidden="true"><!-- Translate (founder 2026-10-12: the language control shows the translate glyph, not a globe) --><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"></path></svg>
                     </button>
                     <div id="appLangMenuDrawer" class="app-lang-menu" role="menu">
+                        <p class="xs mu app-lang-menu-note">Stables is in English for now. These languages are coming soon.</p>
                         <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('en')">English</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('zh')">中文</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('fr')">Français</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('es')">Español</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('de')">Deutsch</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('ja')">日本語</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('ko')">한국어</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('pt')">Português</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('ru')">Русский</button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">中文<span class="app-lang-menu-soon">Soon</span></button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">Français<span class="app-lang-menu-soon">Soon</span></button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">Español<span class="app-lang-menu-soon">Soon</span></button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">Deutsch<span class="app-lang-menu-soon">Soon</span></button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">日本語<span class="app-lang-menu-soon">Soon</span></button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">한국어<span class="app-lang-menu-soon">Soon</span></button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">Português<span class="app-lang-menu-soon">Soon</span></button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">Русский<span class="app-lang-menu-soon">Soon</span></button>
                     </div>
                 </div>
             </div>
@@ -12731,7 +12780,7 @@
             <div class="ddiv"></div>
             <div class="dsect">
                 <div class="dsect-t">Help</div>
-                <div class="ditem" data-menu-destination="stables-agent" onclick="openAgentGuidedTour();closeMoreNow()">
+                <div class="ditem" data-menu-destination="stables-agent" onclick="openAgentGuidedTour();stablesCloseMenuKeepHome()">
                     <div class="dic">
                         <img class="asset-control-icon ui-shrink-0" src="agent.png" alt="StablesAgent">
                     </div>
@@ -13675,10 +13724,11 @@
     <div class="mback centered" id="pageCarousel" onclick="if(event.target===this)stablesCarouselBackdropTap()">
         <div class="modal" data-modal-shape="screen" data-machinery-lit aria-label="Home">
             <div class="home-head" id="homeHead"></div>
-            <div class="home-hide-zone mx-cmp-app-shell__hide-zone" id="homeHideZone" hidden><button type="button" class="btn btn-secondary mx-action" data-role="secondary" data-layout="full" id="homeHideAction" onclick="stablesHomeHideCarried()">Hide from Home</button></div>
+            <div class="home-hide-zone mx-cmp-app-shell__hide-zone" id="homeHideZone" hidden><button type="button" class="btn btn-secondary mx-action home-hide-pill" data-role="secondary" id="homeHideAction" onclick="stablesHomeHideCarried()"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg><span>Hide from Home</span></button></div>
             <div class="home-groups" id="pageCarouselStrip" onscroll="stablesHomeReadScreen()"></div>
             <div class="home-dots" id="homeDots" aria-hidden="true" hidden></div>
             <div id="homePositionStatus" class="app-visually-hidden" aria-live="polite" role="status"></div>
+            <button type="button" class="btn btn-icon btn-secondary mx-action home-add-group" data-size="compact" data-role="secondary" id="homeAddGroup" onclick="stablesHomeAddGroup()" aria-label="Create a group" title="Create a group"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="4" x2="12" y2="20"></line><line x1="4" y1="12" x2="20" y2="12"></line></svg></button>
             <div class="mx-cmp-app-shell__footer" id="homeFooter"></div>
             <div class="home-folder" id="homeFolder" hidden onclick="if(event.target===this)stablesHomeCloseFolder()"></div>
         </div>
@@ -13707,25 +13757,19 @@
                     <button data-size="compact" data-role="icon" type="button" class="app-lang-globe-btn mx-action" id="welcomeLangGlobeBtn"
                         onclick="toggleAppLangMenu(event, 'welcome')" aria-label="Language" aria-haspopup="true"
                         aria-expanded="false" aria-controls="appLangMenuWelcome">
-                        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2"
-                            fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="2" y1="12" x2="22" y2="12"></line>
-                            <path
-                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
-                            </path>
-                        </svg>
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" stroke="none" aria-hidden="true"><!-- Translate (founder 2026-10-12: the language control shows the translate glyph, not a globe) --><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"></path></svg>
                     </button>
                     <div id="appLangMenuWelcome" class="app-lang-menu" role="menu">
+                        <p class="xs mu app-lang-menu-note">Stables is in English for now. These languages are coming soon.</p>
                         <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('en')">English</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('zh')">中文</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('fr')">Français</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('es')">Español</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('de')">Deutsch</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('ja')">日本語</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('ko')">한국어</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('pt')">Português</button>
-                        <button type="button" class="app-lang-menu-item" role="menuitem" onclick="setAppLanguage('ru')">Русский</button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">中文<span class="app-lang-menu-soon">Soon</span></button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">Français<span class="app-lang-menu-soon">Soon</span></button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">Español<span class="app-lang-menu-soon">Soon</span></button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">Deutsch<span class="app-lang-menu-soon">Soon</span></button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">日本語<span class="app-lang-menu-soon">Soon</span></button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">한국어<span class="app-lang-menu-soon">Soon</span></button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">Português<span class="app-lang-menu-soon">Soon</span></button>
+                        <button type="button" class="app-lang-menu-item" role="menuitem" disabled aria-disabled="true">Русский<span class="app-lang-menu-soon">Soon</span></button>
                     </div>
                 </div>
                 <select data-mx-dropdown id="welcomeLang" class="app-visually-hidden" onchange="updateWelcomeLanguage()" tabindex="-1"
@@ -14262,9 +14306,8 @@
         <div class="drawer agent-drawer-panel agent-dlg-shell" data-machinery-lit>
             <div class="dhead ui-shrink-0 ui-items-center agent-dlg-head">
                 <div class="ui-min-w-0 ui-inline-row">
-                    <!-- Page review 2026-10 (D121): UI reference law 34, every sheet's way out is its Back. The panel had
-                         none; a person had to find the 30 px strip beside it. -->
-                    <button data-size="compact" data-role="quiet" class="btn btn-icon btn-secondary ui-shrink-0 mx-action agent-dlg-back" type="button" id="agentBackBtn" onclick="closeAgentNow()" aria-label="Back">&#x2190;</button>
+                    <!-- Founder 2026-10-12 (supersedes the D121 Back arrow): the panel closes by a swipe to the right, by the
+                         phone's Back, or by a tap beside it. No arrow, no X. -->
                     <img class="asset-avatar-small ui-shrink-0" src="agent.png" alt="StablesAgent">
                     <div class="ui-min-w-0">
                         <div class="agent-dlg-name">StablesAgent</div>
@@ -14280,7 +14323,7 @@
                      updateAgentLanguage() and syncAgentLanguageSelect() are already null-guarded,
                      so the agent simply follows the stored app language. -->
                 <div class="ui-inline-row">
-                    <button data-size="compact" data-role="secondary" class="btn btn-icon btn-secondary ui-shrink-0 mx-action" type="button" id="agentFabToggleBtn" onclick="toggleAgentFabFromDialog()" aria-label="Show floating agent button" title="Show floating agent button">&#x25CE;</button>
+                    <button data-size="compact" data-role="quiet" class="btn btn-icon btn-secondary ui-shrink-0 mx-action agent-dlg-eye" type="button" id="agentFabToggleBtn" onclick="toggleAgentFabFromDialog()" aria-label="Hide floating agent button" title="Hide floating agent button"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
                 </div>
             </div>
             <div class="ui-tone-warning ui-shrink-0 ui-text-center agent-dlg-warn">
@@ -14331,14 +14374,14 @@
                 </svg></span><span class="nlabel">Home</span></button>
     </nav>
 
-    <script src="assets/config/runtime-config.js?v=tv81-1268"></script>
-    <script src="assets/sand-maintenance.js?v=tv81-1268"></script>
-    <script src="assets/testv008-registry.js?v=tv81-1268"></script>
+    <script src="assets/config/runtime-config.js?v=tv81-1307"></script>
+    <script src="assets/sand-maintenance.js?v=tv81-1307"></script>
+    <script src="assets/testv008-registry.js?v=tv81-1307"></script>
     <!-- The budget must exist before anything that reads the node or repaints the wallet. -->
-    <script src="assets/node-read-budget.js?v=tv81-1268"></script>
-    <script src="assets/retail-payment.js?v=tv81-1268"></script>
+    <script src="assets/node-read-budget.js?v=tv81-1307"></script>
+    <script src="assets/retail-payment.js?v=tv81-1307"></script>
     <!-- Exact arithmetic and the app's wording for notes; every error path calls stablesHumanNodeError. -->
-    <script src="assets/notes-manager.js?v=tv81-1268"></script>
+    <script src="assets/notes-manager.js?v=tv81-1307"></script>
     <script>
         (function () {
             var s = String((window.STABLES_CONFIG || {}).APP_STAGE || 'test').trim().toLowerCase();
@@ -14837,11 +14880,11 @@
             setTimeout(function () { window.stablesReadiness.arm(); }, 1200);
         }
     </script>
-    <script src="assets/test-channel-bootstrap.js?v=tv81-1268"></script>
+    <script src="assets/test-channel-bootstrap.js?v=tv81-1307"></script>
     <!-- Minima MiniDapp hub does not inject a global MDS; ship mds.js in the package so hub URLs connect without Connect node. -->
     <script src="assets/lib/mds.js"></script>
-    <script src="assets/hosted-app-packages.js?v=tv81-1268"></script>
-    <script src="assets/hosted-apps-ui.js?v=tv81-1268"></script>
+    <script src="assets/hosted-app-packages.js?v=tv81-1307"></script>
+    <script src="assets/hosted-apps-ui.js?v=tv81-1307"></script>
     <script src="assets/qrcode.js"></script>
     <script src="assets/jsQR.min.js"></script>
     <script>
@@ -17001,6 +17044,36 @@
             _visitGoingBack = target !== '@home';
         }
         window.stablesLastVisitedPage = function () { return stablesLastVisit(stablesCurrentPageId()); };
+        /* The phone's Back (gesture or button), asked by the app before it does anything itself (founder 2026-10-12).
+           Returns true when the app handled it; false lets the phone do its own (leave the app). In order: the agent
+           panel closes; an open group or the screens overview closes; on Home, Back leaves the app; on a page, Back goes
+           to the page visited before it (Home when it was opened from Home), else to Home. */
+        window.stablesHandleBack = function () {
+            try {
+                const ag = document.getElementById('agentDrawer');
+                if (ag && ag.classList.contains('open')) { closeAgentNow(); return true; }
+                if (document.getElementById('homeOverview')) { stablesHomeCloseOverview(); return true; }
+                if (document.body.classList.contains('home-open')) {
+                    if (_homeOpenFolder || _homeAppsOpen) { stablesHomeCloseFolder(); return true; }
+                    return false;
+                }
+                const sheet = Array.prototype.slice.call(document.querySelectorAll('.mback.open')).filter(function (m) { return m.id !== 'pageCarousel'; }).pop();
+                if (sheet) {
+                    const back = sheet.querySelector('.mx-screen-back');
+                    if (back) back.click(); else if (sheet.id && typeof closeModal === 'function') closeModal(sheet.id); else sheet.classList.remove('open');
+                    return true;
+                }
+                const cur = stablesCurrentPageId();
+                const prev = stablesLastVisit(cur);
+                if (prev) {
+                    stablesGoBackVisit(prev);
+                    if (prev === '@home') stablesOpenHome(); else navigate(prev);
+                    return true;
+                }
+                if (cur !== 'wallet') { stablesOpenHome(); return true; }
+                return false;
+            } catch (_) { return false; }
+        };
         function stablesRouteRetired(id) { return STABLES_RETIRED_ROUTES.has(String(id || '')); }
         window.stablesRouteRetired = stablesRouteRetired;
         function stablesHomeIsShown(id) { return !stablesRouteRetired(id) && stablesHomeVisibility()[id] !== false; }
@@ -17130,7 +17203,7 @@
                 if (it.screen) { out.push(it); return; }
                 if (it.app || it.widget) { if (stablesHomeIsShown(stablesHomeKeyOf(it))) out.push(it); return; }
                 const visible = it.items.filter(stablesHomeIsShown);
-                if (merchantOn || it.folder !== mg.id) { if (visible.length) out.push(Object.assign({}, it, { items: visible })); return; }
+                if (merchantOn || it.folder !== mg.id) { if (visible.length || it.made) out.push(Object.assign({}, it, { items: visible })); return; }
                 visible.forEach(function (id) { if (mg.pages.indexOf(id) < 0) out.push({ app: id, inAway: it.folder }); });
             });
             return stablesHomePositionItems(out);
@@ -17210,6 +17283,20 @@
             let saved = null;
             try { saved = _homeLayoutSession || JSON.parse(localStorage.getItem(STABLES_HOME_KEY) || 'null'); } catch (_) { saved = null; }
             if (!saved || !Array.isArray(saved.items)) return stablesHomePositionItems(delivered);
+            /* Build 128's + made a group at each tap but never showed it; build 129 showed them all at once as empty groups
+               (founder 2026-10-13: "moving groups or page creates new empty groups"). Those are removed once. */
+            // Written back at once (founder 2026-10-13, build 130: "all deleted empty groups come back": the first version
+            // only filtered what was read, so the next move saved them again from storage).
+            try {
+                if (!localStorage.getItem('stables_home_empty_made_cleared_v2')) {
+                    const kept = saved.items.filter(function (it) { return !(it && it.made && Array.isArray(it.items) && !it.items.length); });
+                    if (kept.length !== saved.items.length) {
+                        saved = Object.assign({}, saved, { items: kept });
+                        localStorage.setItem(STABLES_HOME_KEY, JSON.stringify(saved));
+                    }
+                    localStorage.setItem('stables_home_empty_made_cleared_v2', '1');
+                }
+            } catch (_) { /* kept as they are */ }
             const known = new Set(), placed = new Set(), groupOf = Object.create(null);
             delivered.forEach(function (it) {
                 if (it.app || it.widget) { known.add(stablesHomeKeyOf(it)); groupOf[stablesHomeKeyOf(it)] = ''; }
@@ -17225,7 +17312,9 @@
                 if (it && typeof it.screen === 'string') { if (/^s[a-z0-9]{1,24}$/.test(it.screen) && !breaks[it.screen]) { breaks[it.screen] = 1; items.push({ screen: it.screen }); } return; }
                 if (!it || typeof it.folder !== 'string' || !/^[A-Za-z0-9-]{1,40}$/.test(it.folder) || !Array.isArray(it.items) || folders[it.folder]) return;
                 const f = { folder: it.folder, slot: it.slot, title: stablesHomeRenamedTitle(it.folder, String(it.title == null ? '' : it.title).slice(0, 24)), items: it.items.filter(function (id) { return id !== 'apps' && keep(id); }) };
-                if (f.items.length) { folders[f.folder] = f; items.push(f); }
+                // A group the person made with + stays while it is empty (founder 2026-10-12); others go when emptied.
+                if (it.made) f.made = true;
+                if (f.items.length || f.made) { folders[f.folder] = f; items.push(f); }
             });
             /* Build 116 (founder 2026-10-01): an arrangement kept from build 115 still has Merchants and On/Off ramp in
                the Merchants group, where 115 delivered them. Left there by the person, they move to their new delivered
@@ -17324,7 +17413,8 @@
             const f = _homeOpenFolder ? items.filter(function (it) { return it.folder === _homeOpenFolder; })[0] : null;
             if (!f) { _homeOpenFolder = ''; host.hidden = true; host.classList.remove('is-open'); host.innerHTML = ''; return; }
             host.innerHTML = '<button type="button" class="ui-text-action home-folder__title" id="homeFolderTitle" onclick="stablesHomeRenameFolder()" aria-label="Rename this group">' + stablesHomeEscape(f.title || 'Group') + '</button>'
-                + '<div class="home-folder__panel"><div class="page-grid" data-home-grid="' + stablesHomeEscape(f.folder) + '">' + f.items.map(function (id) { return stablesHomeTileHtml(id, cur); }).join('') + '</div></div>';
+                + '<div class="home-folder__panel"><div class="page-grid" data-home-grid="' + stablesHomeEscape(f.folder) + '">' + f.items.map(function (id) { return stablesHomeTileHtml(id, cur); }).join('') + '</div>'
+                + (f.items.length ? '' : '<p class="xs mu home-folder__empty">Hold a page on Home and drop it on this group.</p>') + '</div>';
             host.hidden = false;
         }
         /* THE SCREENS ON THE DESKTOP. `_homeScreen` is the screen in view. The strip scrolls sideways and snaps; the dots
@@ -17408,6 +17498,20 @@
             setTimeout(function () { if (!_homeOpenFolder && !_homeAppsOpen) { host.hidden = true; host.innerHTML = ''; host.classList.remove('home-folder--apps'); } }, 230);
         }
         // A tap on the group's name turns it into a field; leaving the field (or Enter) keeps the new name.
+        /* + on Home (founder 2026-10-12: "a + button at the bottom to create group and be able to name and rename the
+           groups"). A new, empty group on the screen in view; it opens at once with its name ready to type. */
+        function stablesHomeAddGroup() {
+            const items = stablesHomeItems(), screens = stablesHomeScreens(items);
+            const view = stablesHomeViewScreens(stablesHomeShownItems())[_homeScreen];
+            let sc = view ? screens.filter(function (x) { return x.id === view.id; })[0] : null;
+            if (!sc) sc = screens[screens.length - 1];
+            const fid = 'f' + Date.now().toString(36);
+            sc.items.push({ folder: fid, title: 'New group', items: [], made: true });
+            stablesHomeSave(stablesHomePositionItems(stablesHomeFlatten(screens), fid));
+            stablesRenderHome();
+            stablesHomeOpenFolder(fid, true);
+            setTimeout(stablesHomeRenameFolder, 60);
+        }
         function stablesHomeRenameFolder() {
             const btn = document.getElementById('homeFolderTitle'), fid = _homeOpenFolder;
             if (!btn || !fid) return;
@@ -17539,7 +17643,30 @@
                     carry = next; at = nx;
                 }
             };
+            // Where the carried icon will land: its own (hidden) place moves there and shows as an outline (Mininotes:
+            // "Empty destinations have an accent outline and a light fill"); at its own cell it stays hidden.
+            // Every cell the carried icon would cover is free of the others (the Apps tile covers four).
+            const freeAt = function (grid, slot) {
+                const taken = new Set();
+                tilesOf(grid).forEach(function (t) {
+                    if (t === hd.tile) return;
+                    const sl = Number(t.getAttribute('data-home-slot'));
+                    (t.hasAttribute('data-home-widget') ? [sl, sl + 1, sl + 4, sl + 5] : [sl]).forEach(function (c) { taken.add(c); });
+                });
+                const need = hd.kind === 'widget' ? [slot, slot + 1, slot + 4, slot + 5] : [slot];
+                return need.every(function (c) { return !taken.has(c); });
+            };
+            const firstFree = function (grid) { for (let c = 0; c < 256; c++) if (freeAt(grid, c)) return c; return 0; };
+            const destAt = function (grid, slot, show) {
+                if (!hd) return;
+                if (hd.fromGroup && slot === hd.sourceSlot) show = true;
+                if (hd.orig) { hd.orig.forEach(function (sl, t) { stablesHomeApplySlot(t, sl); }); hd.orig = null; }
+                hd.plan = null;
+                hd.slot = slot; stablesHomeApplySlot(hd.tile, slot);
+                hd.tile.classList.toggle('is-dest', !!show);
+            };
             const tidy = function (h) {
+                if (h.tile) h.tile.classList.remove('is-dest');
                 clearTimeout(h.timer);
                 if (h.leave) clearTimeout(h.leave);
                 if (h.joinTimer) clearTimeout(h.joinTimer);
@@ -17626,7 +17753,12 @@
                 if (!home) return;
                 hd.ctx = 'home';
                 home.appendChild(hd.tile);
-                hd.slot = stablesHomeSlotAt(home, hd.x, hd.y, hd.kind) || 0; stablesHomeApplySlot(hd.tile, hd.slot);
+                /* Out of a group it never falls back in (founder 2026-10-13: "we are not able to take a page out of
+                   groups"): its place to go back to is the first free place on this screen, shown outlined. */
+                hd.fromGroup = true;
+                hd.sourceSlot = firstFree(home);
+                const under = stablesHomeSlotAt(home, hd.x, hd.y, hd.kind);
+                destAt(home, under !== null && freeAt(home, under) ? under : hd.sourceSlot, true);
                 stablesHomeCloseFolder();
             };
             /* CARRIED TO THE SIDE, TO THE NEXT SCREEN (D075). An icon rested at the left or right edge of the desktop goes
@@ -17664,7 +17796,7 @@
                     const panel = document.querySelector('#homeFolder .home-folder__panel');
                     const r = panel ? panel.getBoundingClientRect() : null;
                     if (!r || x < r.left || x > r.right || y < r.top || y > r.bottom) {
-                        if (!hd.leave) hd.leave = setTimeout(leaveGroup, 350);
+                        if (!hd.leave) hd.leave = setTimeout(leaveGroup, 150);   // Mininotes: the card steps aside as the finger leaves it
                         return true;
                     }
                     if (hd.leave) { clearTimeout(hd.leave); hd.leave = null; }
@@ -17683,26 +17815,31 @@
                 if (tile && tile !== hd.tile && tile.parentElement === grid) {
                     const r = tile.getBoundingClientRect();
                     // A tile (the Apps tile) is carried like an icon but never joins and is never joined: it is not a page.
-                    const middle = hd.kind === 'app' && hd.ctx === 'home' && !tile.hasAttribute('data-home-widget') && Math.abs(x - (r.left + r.width / 2)) < r.width * 0.22;
-                    if (middle) {
-                        if (hd.joinTile !== tile) {
+                    /* AS IN MININOTES (founder 2026-10-13: "please just replicate what we have from Mininotes"; supersedes
+                       the 2026-10-05 make-room behaviour). The whole icon under the finger is the target: a page carried
+                       onto a page makes a group, onto a group goes into it, at once, with the target outlined. Nothing
+                       else moves; carried onto anything else, the icon goes back to its own place. */
+                    const joinable = hd.kind === 'app' && hd.ctx === 'home' && !tile.hasAttribute('data-home-widget');
+                    if (joinable) {
+                        if (hd.joinArmed !== tile) {
                             clearJoin();
-                            hd.joinTile = tile;
-                            hd.joinTimer = setTimeout(function () {
-                                if (!hd || hd.joinTile !== tile) return;
-                                hd.joinTimer = null; hd.joinArmed = tile; tile.classList.add('is-join');
-                                try { if (navigator.vibrate) navigator.vibrate(8); } catch (_) { /* ignore */ }
-                            }, 280);
+                            hd.joinTile = tile; hd.joinArmed = tile; tile.classList.add('is-join');
+                            destAt(grid, hd.sourceSlot, false);
+                            try { if (navigator.vibrate) navigator.vibrate(8); } catch (_) { /* ignore */ }
                         }
                         return true;
                     }
                     clearJoin();
-                    if (hd.ctx === 'home') { const slot = stablesHomeSlotAt(grid, x, y, hd.kind); if (slot !== null && slot !== hd.slot) pushAside(grid, slot); }
+                    if (hd.ctx === 'home') destAt(grid, hd.sourceSlot, false);
                     else place(grid, x > r.left + r.width / 2 ? tile.nextElementSibling : tile);
                 } else if (!tile) {
                     clearJoin();
                     const others = tilesOf(grid).filter(function (t) { return t !== hd.tile; }), last = others[others.length - 1];
-                    if (hd.ctx === 'home') { const slot = stablesHomeSlotAt(grid, x, y, hd.kind); if (slot !== null && slot !== hd.slot) pushAside(grid, slot); }
+                    if (hd.ctx === 'home') {
+                        let slot = stablesHomeSlotAt(grid, x, y, hd.kind);
+                        if (slot !== null && !freeAt(grid, slot)) slot = null;     // an occupied place: the icon goes back
+                        destAt(grid, slot === null ? hd.sourceSlot : slot, slot !== null && slot !== hd.sourceSlot);
+                    }
                     else if (last) { const lr = last.getBoundingClientRect(); if (y > lr.bottom || (y > lr.top && x > lr.right)) place(grid, null); }
                 }
                 return true;
@@ -17710,6 +17847,8 @@
             const drop = function () {
                 if (!hd) return;
                 if (!hd.active) { cancel(); return; }
+                // Let go just outside the open group, before it stepped aside: it counts as taken out.
+                if (hd.leave) { clearTimeout(hd.leave); leaveGroup(); }
                 const h = hd; hd = null;
                 if (h.hideArmed) {
                     tidy(h);
@@ -17761,7 +17900,7 @@
                     }
                 }
                 // 3. a group with nothing left in it is gone
-                const out = items.filter(function (it) { return it.app || it.widget || it.screen || it.items.length; });
+                const out = items.filter(function (it) { return it.app || it.widget || it.screen || it.items.length || it.made; });
                 const moved = !!moving && JSON.stringify(out) !== JSON.stringify(stablesHomeItems());
                 if (moved) stablesHomeSave(out);
                 _carouselQuietUntil = Date.now() + 450;      // the lift's release is not a tap on what is under it
@@ -18358,6 +18497,11 @@
                 if (!e.touches || e.touches.length !== 1) { window.__STABLES_TEST_LAST_SWIPE__ = { fingers: e.touches ? e.touches.length : 0 }; clear(); return; }
                 // Zoomed in, a sideways drag moves around the enlarged page; it never turns the page.
                 if (stablesPageZoomed()) { window.__STABLES_TEST_LAST_SWIPE__ = { zoomed: true }; clear(); return; }
+                // The agent panel over the page has its own swipe (it slides out): the page under it never turns as well,
+                // or closing the agent also went back a page (founder 2026-10-13: "when we close the agent we need to go
+                // back where we came from").
+                const ag = document.getElementById('agentDrawer');
+                if (ag && ag.classList.contains('open')) { window.__STABLES_TEST_LAST_SWIPE__ = { agentOpen: true }; clear(); return; }
                 const t = e.touches[0];
                 begin(t.clientX, t.clientY, e.target, t.identifier);
             }, { passive: true });
@@ -18432,7 +18576,11 @@
             if (p === 'exchange') setTimeout(function () { try { stablesExchangeFundedFrom(); } catch (_) { /* as it was */ } }, 0);
             if (stablesRouteRetired(p)) p = 'apps';      // D089: Trade is the Pool app now
             // D090: where this move came from (Home, or the page on screen).
-            stablesNoteVisit(_visitFromHome ? '@home' : stablesCurrentPageId(), p);
+            // Founder 2026-10-12: "when we are on the app widget, going back should bring us on the home page". A page
+            // opened while Home is on screen (the Apps tile, an app slot, any shortcut) has Home behind it, not the page
+            // under the Home overlay.
+            const fromHomeNow = _visitFromHome || document.body.classList.contains('home-open');
+            stablesNoteVisit(fromHomeNow ? '@home' : stablesCurrentPageId(), p);
             _visitFromHome = false;
             if (typeof window.stablesReleaseAllowsRoute === 'function'
                 && !window.stablesReleaseAllowsRoute(p)) {
@@ -18652,6 +18800,9 @@
         let lastAgentCtx = null;
         let lastAgentSuggestKey = '';
         function getAgentContext() {
+            // Home opens over the page it was called from (founder 2026-10-13: "the agent displays about wallet even when on
+            // home"): while Home shows, the agent is about Home.
+            try { if (document.body.classList.contains('home-open')) return 'home'; } catch (_) { /* no body yet */ }
             return (curPage || 'wallet');
         }
         /** Opt-in only: set STABLES_AGENT_OPEN_EXTERNAL_WHEN_MDS true in runtime-config if iframe embed is blocked on the host. Default stays in-app drawer (no new tab). */
@@ -18799,6 +18950,7 @@
             let title = '';
             try {
                 if (id === 'wallet') title = 'Wallet';
+                else if (id === 'home') title = 'Home';
                 else {
                     const t = document.querySelector('#page-' + CSS.escape(id) + ' .app-page-header__title');
                     title = t ? String(t.textContent || '').trim() : '';
@@ -19356,10 +19508,7 @@
                 {
                     type: 'choices',
                     text: {
-                        en: "Welcome to the **Stables testing phase app** ({{APP_VERSION}}). Your wallet and your node live on this device. What you can do today: claim **Winiwa** from the on-chain faucet, **mint** it into **xWiniwa** one for one, **burn** xWiniwa back to Winiwa, and send or receive both. Winiwa and xWiniwa are test tokens with **no value**.\n\nWhere would you like to start?",
-                        fr: "Bienvenue dans l'**application Stables en phase de test** ({{APP_VERSION}}). Votre portefeuille et votre noeud vivent sur cet appareil. Ce que vous pouvez faire aujourd'hui : reclamer du **Winiwa** au robinet on-chain, le **frapper** en **xWiniwa** au taux de un pour un, **bruler** le xWiniwa pour retrouver du Winiwa, et envoyer ou recevoir les deux. Winiwa et xWiniwa sont des jetons de test **sans valeur**.\n\nPar ou souhaitez-vous commencer ?",
-                        es: "Bienvenido a la **aplicacion Stables en fase de prueba** ({{APP_VERSION}}). Su billetera y su nodo viven en este dispositivo. Lo que puede hacer hoy: reclamar **Winiwa** del grifo on-chain, **acunarlo** en **xWiniwa** uno a uno, **quemar** xWiniwa para recuperar Winiwa, y enviar o recibir ambos. Winiwa y xWiniwa son fichas de prueba **sin valor**.\n\nPor donde le gustaria empezar?",
-                        zh: "欢迎使用 **Stables 测试阶段应用**（{{APP_VERSION}}）。您的钱包和节点都在本设备上。现在可以：从链上水龙头领取 **Winiwa**，按一比一**铸造**成 **xWiniwa**，再将 xWiniwa **销毁**换回 Winiwa，并发送或接收两者。Winiwa 和 xWiniwa 是**没有价值**的测试代币。\n\n您想从哪里开始？"
+                        en: "Welcome to **Stables** ({{APP_VERSION}}), in its testing phase. Your wallet and its keys stay on this phone. What you can do today: claim **Winiwa** from the faucet, put money on your **Stables card** and pay another phone by holding them together, take it back to **Savings**, and swap Winiwa and **xWiniwa**. These are test tokens with **no value**.\n\nWhere would you like to start?"
                     },
                     choices: [
                         { label: { en: "⚡ What works right now", fr: "⚡ Ce qui marche déjà", es: "⚡ Lo que ya funciona", zh: "⚡ 现在能用的功能" }, nextFlow: 'functionalities' },
@@ -19372,19 +19521,13 @@
                 {
                     type: 'message',
                     text: {
-                        en: "First, the connection. Stables does **not** run its own node. It pairs with the **Minima Core** app already on your phone, and you must **enable Stables inside Core** before anything can read the chain. If Core is closed, disabled or busy, this app says so rather than showing you a stale number.",
-                        fr: "D'abord, la connexion. Stables n'exécute **pas** son propre nœud. Il s'appaire avec l'application **Minima Core** déjà présente sur votre téléphone, et vous devez **autoriser Stables dans Core** avant toute lecture de la chaîne. Si Core est fermé, désactivé ou occupé, cette application le dit au lieu d'afficher un chiffre périmé.",
-                        es: "Primero, la conexión. Stables **no** ejecuta su propio nodo. Se empareja con la aplicación **Minima Core** que ya tiene en su teléfono, y debe **habilitar Stables dentro de Core** antes de poder leer la cadena. Si Core está cerrado, deshabilitado u ocupado, esta aplicación lo dice en lugar de mostrar una cifra obsoleta.",
-                        zh: "首先是连接。Stables **不会**运行自己的节点。它与您手机上已有的 **Minima Core** 应用配对，您必须**在 Core 中启用 Stables**，之后才能读取链上数据。如果 Core 已关闭、被停用或繁忙，本应用会如实说明，而不会显示过时的数字。"
+                        en: "First, the connection. Stables reaches the Minima network in one of two ways: its **built-in node**, which runs inside the app, or the **Minima Core** app if you have it and choose it. You choose on first open, and can change it in **Settings and updates, Your node**. When the node is not ready, the app says so rather than showing you an old number."
                     }
                 },
                 {
                     type: 'message',
                     text: {
-                        en: "Then the money path. Open the **Faucet** to claim **Winiwa** on-chain. Open **Mint** to turn Winiwa into **xWiniwa**, one for one, or switch the direction to **Burn** and get your Winiwa back. Every one of these is a real transaction on Minima mainnet, signed by your Core wallet, and you can watch it confirm.",
-                        fr: "Ensuite, le parcours de l'argent. Ouvrez le **Robinet** pour réclamer du **Winiwa** on-chain. Ouvrez **Frapper** pour transformer du Winiwa en **xWiniwa**, un pour un, ou basculez la direction sur **Brûler** pour récupérer votre Winiwa. Chacune de ces opérations est une vraie transaction sur le réseau principal Minima, signée par votre portefeuille Core, et vous pouvez la voir se confirmer.",
-                        es: "Después, el camino del dinero. Abra el **Grifo** para reclamar **Winiwa** on-chain. Abra **Acuñar** para convertir Winiwa en **xWiniwa**, uno a uno, o cambie la dirección a **Quemar** y recupere su Winiwa. Cada una de estas es una transacción real en la red principal de Minima, firmada por su billetera Core, y puede verla confirmarse.",
-                        zh: "接下来是资金流程。打开**水龙头**在链上领取 **Winiwa**。打开**铸造**将 Winiwa 按一比一换成 **xWiniwa**，或将方向切换为**销毁**以取回 Winiwa。每一项都是 Minima 主网上的真实交易，由您的 Core 钱包签名，您可以看着它确认完成。"
+                        en: "Then the money. Claim **Winiwa** from the **Faucet**. Under the Stables card, **Manage card** moves money from **Savings** to the card and back. With money on the card, hold two phones together to pay: no network needed. Every move between Savings and the card is a real transaction on Minima mainnet, and you can watch it confirm."
                     }
                 },
                 {
@@ -19399,10 +19542,7 @@
                 {
                     type: 'handoff',
                     text: {
-                        en: "Try it from the **Faucet**, then **Mint**. Trading, the Exchange, stablecoins such as USDw, and the merchant and investing tools are **not part of this test** and are switched off in this build.",
-                        fr: "Essayez depuis le **Robinet**, puis **Frapper**. Le trading, l'Échange, les stablecoins comme l'USDw, ainsi que les outils marchands et d'investissement **ne font pas partie de ce test** et sont désactivés dans cette version.",
-                        es: "Pruébelo desde el **Grifo**, luego **Acuñar**. El trading, el Intercambio, las monedas estables como USDw, y las herramientas de comercio e inversión **no forman parte de esta prueba** y están desactivadas en esta versión.",
-                        zh: "从**水龙头**开始试用，然后是**铸造**。交易、兑换、USDw 等稳定币，以及商家和投资工具**不属于本次测试**，在此版本中已关闭。"
+                        en: "Try it from the **Faucet**, then put some on your **Stables card**. Trading, stablecoins such as USDw, and the merchant and investing tools are **not part of this test** yet."
                     }
                 }
             ],
@@ -19426,10 +19566,7 @@
                 {
                     type: 'message',
                     text: {
-                        en: "**Your Wallet** is the heart of the app. In this test it holds two assets: **Winiwa** and **xWiniwa**. Send and receive them using Minima addresses (Mx...), or scan a QR code. The wallet itself lives in Minima Core, so your keys never enter Stables.",
-                        fr: "**Votre portefeuille** est le cœur de l'application. Dans ce test, il contient deux actifs : le **Winiwa** et le **xWiniwa**. Envoyez-les et recevez-les avec des adresses Minima (Mx...) ou scannez un QR code. Le portefeuille lui-même réside dans Minima Core : vos clés n'entrent jamais dans Stables.",
-                        es: "**Su Billetera** es el corazón de la aplicación. En esta prueba contiene dos activos: **Winiwa** y **xWiniwa**. Envíelos y recíbalos usando direcciones Minima (Mx...) o escanee un código QR. La billetera reside en Minima Core, así que sus claves nunca entran en Stables.",
-                        zh: "**您的钱包**是应用的核心。本次测试中它持有两种资产：**Winiwa** 和 **xWiniwa**。使用 Minima 地址（Mx...）收发，或扫描二维码。钱包本身存放在 Minima Core 中，因此您的密钥永远不会进入 Stables。"
+                        en: "**Your Wallet** shows your **Stables card**, money on this phone that you pay with by touch, and your **Savings**, on chain. Send and receive with Minima addresses (Mx...) or a QR code. Your keys stay on this phone: in the built-in node, or in Minima Core if you chose it."
                     }
                 },
                 {
@@ -19464,37 +19601,25 @@
                 {
                     type: 'message',
                     text: {
-                        en: "Stables runs on **Minima**  -  a blockchain where every participant runs a full node on their own device. There is no mining pool and no corporate validator. In this build the node is the **Minima Core** app beside Stables; the two talk over Android app-to-app messaging, and Stables holds no network permission of its own.",
-                        fr: "Stables fonctionne sur **Minima**  -  une blockchain où chaque participant exécute un nœud complet sur son propre appareil. Ni pool de minage, ni validateur d'entreprise. Dans cette version, le nœud est l'application **Minima Core** installée à côté de Stables ; les deux communiquent par messagerie Android entre applications, et Stables ne détient aucune permission réseau propre.",
-                        es: "Stables funciona sobre **Minima**  -  una blockchain donde cada participante ejecuta un nodo completo en su propio dispositivo. No hay pool de minería ni validador corporativo. En esta versión el nodo es la aplicación **Minima Core** junto a Stables; ambas se comunican mediante mensajería Android entre aplicaciones, y Stables no tiene ningún permiso de red propio.",
-                        zh: "Stables 运行在 **Minima** 之上 -  - 这是一条每个参与者都在自己设备上运行完整节点的区块链。没有矿池，也没有企业验证者。在此版本中，节点是与 Stables 并存的 **Minima Core** 应用；两者通过 Android 应用间消息通信，且 Stables 自身不持有任何网络权限。"
+                        en: "Stables runs on **Minima**, a blockchain where every participant runs a full node on their own device. There is no mining pool and no corporate validator. Your phone's node is the one built into Stables, or the **Minima Core** app if you chose it."
                     }
                 },
                 {
                     type: 'message',
                     text: {
-                        en: "Mint and burn are enforced by an **on-chain covenant**, not by this app. The vault holds an xWiniwa reserve and a Winiwa pool, and the contract only permits a swap at par, one Winiwa for one xWiniwa, in either direction. Your Core wallet signs; the chain decides. If the app cannot prove the vault's own coins, it refuses to offer the action at all.",
-                        fr: "La frappe et la combustion sont imposées par un **contrat on-chain**, pas par cette application. Le coffre détient une réserve de xWiniwa et un pool de Winiwa, et le contrat n'autorise l'échange qu'au pair, un Winiwa pour un xWiniwa, dans les deux sens. Votre portefeuille Core signe ; la chaîne décide. Si l'application ne peut pas prouver les pièces du coffre, elle refuse purement et simplement de proposer l'action.",
-                        es: "Acuñar y quemar los impone un **convenio on-chain**, no esta aplicación. La bóveda guarda una reserva de xWiniwa y un fondo de Winiwa, y el contrato solo permite el intercambio a la par, un Winiwa por un xWiniwa, en ambas direcciones. Su billetera Core firma; la cadena decide. Si la aplicación no puede probar las monedas de la bóveda, se niega a ofrecer la acción.",
-                        zh: "铸造和销毁由**链上契约**强制执行，而非由本应用决定。金库持有 xWiniwa 储备和 Winiwa 资金池，合约只允许按一比一平价双向兑换。您的 Core 钱包签名；由链来裁决。如果应用无法证明金库自身的币，它会直接拒绝提供该操作。"
+                        en: "Swapping Winiwa and xWiniwa is enforced by an **on-chain covenant**, not by this app. The vault holds an xWiniwa reserve and a Winiwa pool, and the contract only permits a swap at par, one Winiwa for one xWiniwa, in either direction. Your wallet signs; the chain decides. If the app cannot prove the vault's own coins, it does not offer the swap at all."
                     }
                 },
                 {
                     type: 'message',
                     text: {
-                        en: "The wider design  -  pooled collateral, fiat-pegged stablecoins as senior liabilities, xWiniwa as the equity layer, and a coverage ratio as the health number  -  is written up in the Council's papers. **None of that is deployed in this test.** What ships here is the faucet, the par vault, and honest wallet truth.",
-                        fr: "La conception plus large  -  garantie mutualisée, stablecoins indexés sur le fiat comme passifs seniors, xWiniwa comme couche de capitaux propres, et un ratio de couverture comme indicateur de santé  -  est décrite dans les documents du Conseil. **Rien de tout cela n'est déployé dans ce test.** Ce qui est livré ici, c'est le robinet, le coffre au pair, et une vérité honnête sur le portefeuille.",
-                        es: "El diseño más amplio  -  colateral común, monedas estables ancladas al fiat como pasivos senior, xWiniwa como capa de equidad, y un ratio de cobertura como indicador de salud  -  está descrito en los documentos del Consejo. **Nada de eso está desplegado en esta prueba.** Lo que se entrega aquí es el grifo, la bóveda a la par, y una verdad honesta sobre la billetera.",
-                        zh: "更完整的设计 -  - 共用抵押品、以法币挂钩的稳定币作为优先负债、xWiniwa 作为权益层、以覆盖率作为健康指标 -  - 记载在理事会的文件中。**这些在本次测试中均未部署。**此处交付的是水龙头、平价金库，以及诚实的钱包真相。"
+                        en: "The wider design, with pooled collateral, fiat-pegged stablecoins as senior liabilities, xWiniwa as the equity layer and a coverage ratio as the health number, is written up in the Council's papers. **None of that is deployed in this test.** What ships here is the faucet, the par vault, the Stables card and honest wallet truth."
                     }
                 },
                 {
                     type: 'handoff',
                     text: {
-                        en: "Ask me about the covenant, the proof states, or the Core pairing, and I will go as deep as you like.",
-                        fr: "Interrogez-moi sur le contrat, les états de preuve ou l'appairage avec Core, et j'irai aussi loin que vous le souhaitez.",
-                        es: "Pregúnteme sobre el convenio, los estados de prueba o el emparejamiento con Core, y profundizaré tanto como quiera.",
-                        zh: "可以问我关于契约、证明状态或 Core 配对的问题，您想深入到什么程度都可以。"
+                        en: "Ask me about the Stables card, the covenant or the proof states, and I will go as deep as you like."
                     }
                 }
             ],
@@ -21167,6 +21292,49 @@
             if (_awActiveMode === 'personalization-tour' && window.innerWidth >= 760) return;
             closeAgentNow();
         }
+        /* The agent panel closes by a swipe to the right (founder 2026-10-12: "make it that a swipe of the agent page moves
+           it out of the screen"), the way it came in. Same feel as the sheets: the axis locks after 10 px, the panel
+           follows the finger, and a far or fast release closes it; otherwise it springs back. Fields and the chat frame
+           keep their own touches. */
+        (function agentSwipeToClose() {
+            let st = null;
+            const panel = function () { return document.querySelector('#agentDrawer .agent-drawer-panel'); };
+            const open = function () { const d = document.getElementById('agentDrawer'); return !!(d && d.classList.contains('open')); };
+            document.addEventListener('touchstart', function (e) {
+                st = null;
+                const p = panel();
+                if (!open() || !p || e.touches.length !== 1 || !p.contains(e.target)) return;
+                if (e.target.closest('input, textarea, select, [contenteditable="true"], [data-no-swipe]')) return;
+                st = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now(), dx: 0, axis: '' };
+            }, { passive: true });
+            document.addEventListener('touchmove', function (e) {
+                if (!st) return;
+                const dx = e.touches[0].clientX - st.x, dy = e.touches[0].clientY - st.y;
+                if (!st.axis) {
+                    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+                    st.axis = Math.abs(dx) > Math.abs(dy) * 1.3 && dx > 0 ? 'x' : 'y';
+                    if (st.axis === 'y') { st = null; return; }
+                }
+                st.dx = Math.max(0, dx);
+                const p = panel(); if (!p) return;
+                p.style.transition = 'none';
+                p.style.transform = 'translateX(' + st.dx + 'px)';
+                if (e.cancelable) e.preventDefault();
+            }, { passive: false });
+            const end = function () {
+                if (!st || st.axis !== 'x') { st = null; return; }
+                const p = panel(), w = p ? p.getBoundingClientRect().width : 360, dt = Math.max(1, Date.now() - st.t);
+                const go = st.dx >= Math.max(70, w * 0.22) || (st.dx / dt > 0.45 && st.dx > 40);
+                st = null;
+                if (!p) return;
+                const ms = (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) ? 0 : 220;
+                p.style.transition = 'transform ' + ms + 'ms cubic-bezier(.2,.8,.2,1)';
+                p.style.transform = go ? 'translateX(' + Math.ceil(w) + 'px)' : '';
+                setTimeout(function () { if (go) closeAgentNow(); p.style.transition = ''; p.style.transform = ''; }, ms + 20);
+            };
+            document.addEventListener('touchend', end, { passive: true });
+            document.addEventListener('touchcancel', end, { passive: true });
+        })();
         function closeAgentNow() {
             const d = document.getElementById('agentDrawer');
             if (!d) return;
@@ -22285,6 +22453,14 @@
             if (moreTabOpen) moreTabOpen.classList.add('active');
         }
         function closeMore(e) { if (e && e.target !== document.getElementById('drawer')) return; closeMoreNow(); }
+        /* Opening the agent from Home keeps Home under it (founder 2026-10-13: "opening the agent from the home page
+           brings the wallet page underneath"): only the menus close; elsewhere it is closeMoreNow as before. */
+        function stablesCloseMenuKeepHome() {
+            if (!document.body.classList.contains('home-open')) { closeMoreNow(); return; }
+            closeAppLangMenus();
+            const d = document.getElementById('drawer');
+            if (d) { d.classList.remove('vis'); d.classList.remove('open'); }
+        }
         function closeMoreNow() {
             closeAppLangMenus();
             // The menu's head lives on the Home screen on a phone: what closes the menu closes Home too.
@@ -22371,7 +22547,8 @@
             if (!btn) return;
             var removed = false;
             try { removed = localStorage.getItem(AGENT_FAB_REMOVED_KEY) === 'true'; } catch (_) { /* ignore */ }
-            btn.innerHTML = removed ? '&#x25CE;' : '&#x2296;';
+            // An eye, as for hiding balances (founder 2026-10-12): open while the agent shows, crossed out while hidden.
+            btn.innerHTML = removed ? '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>' : '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
             var lbl = removed ? 'Show floating agent button' : 'Hide floating agent button';
             btn.title = lbl; btn.setAttribute('aria-label', lbl);
         }
@@ -23818,6 +23995,8 @@
             if (id === 'recvModal') {
                 populateCurrencySelect('reqCcy', { withBalances: true });
                 applyWalletModalCurrency('reqCcy', defaultCcy);
+                // Founder 2026-10-13: an amount asked for last time does not wait in the box for the next payment.
+                { const _reqAmt0 = document.getElementById('reqAmt'); if (_reqAmt0) _reqAmt0.value = ''; }
                 if (pendingModalDraft) {
                     const from = document.getElementById('reqFromInput');
                     const amt = document.getElementById('reqAmt');
@@ -27048,6 +27227,25 @@
             document.getElementById('xwmAmt').value = String(Math.max(0, Math.floor(avail * 1e8) / 1e8));
             try { window.stablesFormatFinancialAmountInput(document.getElementById('xwmAmt')); } catch (_) { /* ignore */ }
             calcXwm();
+            stablesRefineMaxToSpendable('xwmAmt', 'Winiwa', 8, calcXwm);
+        }
+        /* MAX offers only what the transaction can spend now (founder 2026-10-12: "MAX on mint, the transaction said not
+           enough tokens"). The figure above can include coins still tied to an earlier transaction, which the transaction
+           itself never picks, so MAX is lowered to the total of the coins it will pick, as soon as the node answers. */
+        function stablesRefineMaxToSpendable(inputId, ccy, dp, after) {
+            if (typeof window.stablesSpendableNow !== 'function') return;
+            const el = document.getElementById(inputId);
+            if (!el) return;
+            const offered = el.value;
+            window.stablesSpendableNow(ccy).then(function (total) {
+                if (!Number.isFinite(total) || el.value !== offered) return;   // the person typed meanwhile
+                const shown = Number(String(offered).replace(/,/g, '')) || 0;
+                if (!(total + 1e-9 < shown)) return;
+                const f = Math.pow(10, dp);
+                el.value = String(Math.max(0, Math.floor(total * f + 1e-9) / f));
+                try { window.stablesFormatFinancialAmountInput(el); } catch (_) { /* ignore */ }
+                if (typeof after === 'function') { try { after(); } catch (_) { /* ignore */ } }
+            }).catch(function () { /* the figure stays; the transaction says what it can spend */ });
         }
 
         // ISSUE Wables calc
@@ -27187,6 +27385,7 @@
             document.getElementById('xwmBurnAmt').value = String(Math.max(0, Math.floor(avail * 1e8) / 1e8));
             try { window.stablesFormatFinancialAmountInput(document.getElementById('xwmBurnAmt')); } catch (_) { /* ignore */ }
             calcXwmBurn();
+            stablesRefineMaxToSpendable('xwmBurnAmt', 'xWiniwa', 8, calcXwmBurn);
         }
 
         // MDS: only one MDS.init (each init adds another PollListener interval in mds.js)
@@ -28650,9 +28849,31 @@
             if (box) box.checked = !!on;
         }
         window.stablesSetFoundBlockPopup = stablesSetFoundBlockPopup;
+        /* The phone notification for a mined block (founder 2026-10-11: "we want to present the app as a regular banking app
+           and abstract the crypto part of it"): off unless the person turns it on; kept by the phone app, shown only there. */
+        function stablesSetFoundBlockNotify(on) {
+            try { if (window.StablesNative && typeof window.StablesNative.setFoundBlockNotify === 'function') window.StablesNative.setFoundBlockNotify(!!on); } catch (_) { /* ignore */ }
+            const box = document.getElementById('foundBlockNotifyToggle');
+            if (box) box.checked = !!on;
+        }
+        window.stablesSetFoundBlockNotify = stablesSetFoundBlockNotify;
+        document.addEventListener('DOMContentLoaded', function () {
+            try {
+                const n = window.StablesNative;
+                if (!n || typeof n.foundBlockNotify !== 'function') return;
+                const row = document.querySelector('[data-found-block-notify-row]');
+                if (row) row.hidden = false;
+                const box = document.getElementById('foundBlockNotifyToggle');
+                if (box) box.checked = !!n.foundBlockNotify();
+            } catch (_) { /* the row stays hidden */ }
+        });
         window.stablesFoundBlockPopupOn = stablesFoundBlockPopupOn;
-        function stablesCelebrateFoundBlock(n) {
-            if (!stablesFoundBlockPopupOn()) return;
+        function stablesCelebrateFoundBlock(n, force) {
+            // force: the person tapped the phone notification to see this block, so it shows whatever the switch says.
+            if (!force && !stablesFoundBlockPopupOn()) return;
+            // One pop-up per block: the in-app event and the phone notification may both announce it.
+            if (n && window.__stablesCelebratedBlock === n) return;
+            if (n) window.__stablesCelebratedBlock = n;
             stablesConfettiBurst();
             try { if (navigator.vibrate) navigator.vibrate([80, 60, 80, 60, 160]); } catch (_) { /* ignore */ }
             const blockText = n ? 'block ' + n.toLocaleString('en-US') : 'a block';
@@ -28660,7 +28881,7 @@
                settings we can see how many blocks you found, there should be a trigger, keep showing me these"). The
                pop-up says where the count is and carries "Keep showing me these"; off, the confetti and the pop-up stop
                (the Node section keeps counting, and its own switch turns them back on). */
-            if (!stablesFoundBlockPopupOn()) return;
+            if (!force && !stablesFoundBlockPopupOn()) return;
             if (typeof window.stablesConfirm === 'function') {
                 window.stablesConfirm({
                     popup: true,
@@ -28674,6 +28895,13 @@
             }
         }
         window.stablesCelebrateFoundBlock = stablesCelebrateFoundBlock;
+        /* Founder 2026-10-13: "When we get the phone notification that we mined a block, clicking it should bring the block
+           mining card with the confetti". The app asks once it is open; "wait" until the page can show a pop-up. */
+        window.stablesShowNotifiedBlock = function (n) {
+            if (document.readyState !== 'complete' || typeof window.stablesConfirm !== 'function') return 'wait';
+            stablesCelebrateFoundBlock(Number(n) || 0, true);
+            return 'shown';
+        };
         window.stablesOnNativeNodeEvent = function (event, txpowId) {
             try {
                 const ev = String(event || '');
@@ -30981,6 +31209,54 @@
             } catch (_) { return ''; }
         }
 
+        /**
+         * ONE BALANCE RULE (founder 2026-10-12: "we should present all currencies balance the same way while syncing...
+         * we need one clear simple logic applied across the whole app"). Every balance figure, the total, the Stables
+         * card and Savings alike:
+         *   - proven: the figure, in its normal tone, and it is remembered;
+         *   - not proven yet (syncing, proof unavailable, the card still reading): the last proven figure at full size
+         *     (ready at once, founder 2026-10-04) in the muted tone, or "—" when none was ever proven. Never a word
+         *     in an amount slot, never an unproven figure in the normal tone (law 5);
+         *   - why it is not proven is said in ONE place, the line under the total.
+         * key names the figure (savings:WINIMA, card:<tokenId>, card:total); text is the formatted figure when proven.
+         */
+        var STABLES_LAST_FIGURES_KEY = 'stables_last_figures_v1';
+        function stablesLastFigures() {
+            try { var v = JSON.parse(localStorage.getItem(STABLES_LAST_FIGURES_KEY) || '{}'); return v && typeof v === 'object' ? v : {}; }
+            catch (_) { return {}; }
+        }
+        window.stablesPaintBalance = function (el, key, proven, text, current) {
+            if (!el) return;
+            /* current: the wallet was proven earlier in this session, so the figure in hand is real (it already holds
+               the app's own spend) though being re-proven: shown muted, never remembered. Showing the remembered one
+               instead counted an Add twice in the total for a minute (Pro, build 121). */
+            if (!proven && current && text != null && text !== '') {
+                el.textContent = String(text);
+                el.classList.add('stables-bal--unproven');
+                return;
+            }
+            var figs = stablesLastFigures();
+            if (proven && text != null && text !== '') {
+                el.textContent = String(text);
+                el.classList.remove('stables-bal--unproven');
+                if (!figs[key] || figs[key].t !== String(text)) {
+                    figs[key] = { t: String(text), at: Date.now() };
+                    try { localStorage.setItem(STABLES_LAST_FIGURES_KEY, JSON.stringify(figs)); } catch (_) { /* a convenience */ }
+                }
+                return;
+            }
+            var f = figs[key];
+            var usable = f && f.t != null && Date.now() - Number(f.at || 0) <= STABLES_LAST_KNOWN_MAX_AGE_MS;
+            el.textContent = usable ? String(f.t) : '—';
+            el.classList.add('stables-bal--unproven');
+        };
+
+        /** True once the wallet proof has been Ready in this session: its figures are real while it re-proves. */
+        function stablesWalletProvenThisSession() {
+            var rec = window.__STABLES_WALLET_PROOF_STATE__ || {};
+            return Number(rec.lastReadyAt || 0) > 0 && !!window.__STABLES_LIVE_BAL_SYNCED_ONCE;
+        }
+
         function stablesProofDisplayLabel(state) {
             if (state === 'ready') return 'Ready';
             if (state === 'stale') return 'Syncing…';
@@ -31099,9 +31375,9 @@
                         /* Ready at once (founder 2026-10-04, build 0.0.12.036): while the chain re-confirms after the app
                            opens, the row shows its last known amount, not "Syncing…"; only an unprovable balance says so. */
                         const known = Number.isFinite(Number(displayBal));
-                        amtEl.textContent = proofState === 'ready' || (known && proofState !== 'proof-unavailable')
-                            ? fmtVaultAmt(displayBal, decMin, decMax)
-                            : stablesProofDisplayLabel(proofState);
+                        window.stablesPaintBalance(amtEl, 'savings:' + code, proofState === 'ready' && known,
+                            known ? fmtVaultAmt(displayBal, decMin, decMax) : null,
+                            proofState !== 'proof-unavailable' && stablesWalletProvenThisSession());
                     }
                     if (proofBound) row.dataset.proofState = proofState;
                     /* The glow follows the delta: a claim credited by the optimistic hold is still
@@ -31133,8 +31409,9 @@
         function vaultBalanceToMaxInputString(ccy, bal) {
             const b = Math.max(0, vaultNumericBalance(bal));
             const c = String(ccy || '');
-            if (c === 'Winiwa' || c === 'WINIMA' || c === 'MINIMA') return String(Math.round(b * 1e6) / 1e6);
-            if (c === 'xWiniwa') return String(Math.round(b * 1e8) / 1e8);
+            // Floored, never rounded: Math.round could offer more than the balance and the send was refused (founder 2026-10-12).
+            if (c === 'Winiwa' || c === 'WINIMA' || c === 'MINIMA') return String(Math.floor(b * 1e6 + 1e-9) / 1e6);
+            if (c === 'xWiniwa') return String(Math.floor(b * 1e8 + 1e-9) / 1e8);
             const t = Math.floor(b * 1e8 + 1e-10) / 1e8;
             return String(t);
         }
@@ -31798,6 +32075,7 @@
             const ccy = String(fromEl.value || '').trim();
             inp.value = vaultBalanceToMaxInputString(ccy, getVaultBalance(ccy));
             if (typeof calcRate === 'function') calcRate();
+            stablesRefineMaxToSpendable('exFrom', ccy, ccy === 'xWiniwa' ? 8 : 6, typeof calcRate === 'function' ? calcRate : null);
         }
 
         function setReclaimMax() {
@@ -31806,6 +32084,7 @@
             if (!inp) return;
             inp.value = vaultBalanceToMaxInputString(ccy, getVaultBalance(ccy));
             if (typeof calcReclaim === 'function') calcReclaim();
+            stablesRefineMaxToSpendable('reclaimAmt', ccy, ccy === 'xWiniwa' ? 8 : 6, typeof calcReclaim === 'function' ? calcReclaim : null);
         }
 
         function setSendAmtMax() {
@@ -31816,6 +32095,7 @@
             inp.value = vaultBalanceToMaxInputString(ccy, getVaultBalance(ccy));
             try { window.stablesFormatFinancialAmountInput(inp); } catch (_) { /* ignore */ }
             if (typeof updateSendFavEq === 'function') updateSendFavEq();
+            stablesRefineMaxToSpendable('sendAmtInput', ccy, ccy === 'xWiniwa' ? 8 : 6, typeof updateSendFavEq === 'function' ? updateSendFavEq : null);
         }
 
         function setRecvReqAmtMax() {
@@ -33402,6 +33682,8 @@
             stablesPaymentTone('received');
             stopReceivePaymentWatch(false);
             try { closeModal('recvModal'); } catch (_) { /* presentation only */ }
+            // The payment is in: the amount that was asked for is done with (founder 2026-10-13).
+            ['reqAmt', 'instantRecvAmt'].forEach(function (id) { try { const f = document.getElementById(id); if (f) f.value = ''; } catch (_) { /* absent */ } });
             try { navigate('wallet'); } catch (_) { /* already on wallet */ }
             try { if (typeof renderWalletRecentActivity === 'function') renderWalletRecentActivity(); } catch (_) {}
             try { if (typeof updateGlobalUI === 'function') updateGlobalUI(); } catch (_) {}
@@ -35107,8 +35389,13 @@
             calcSlider();
         }
 
-        // Wallet onboarding nudge: show "Get Winiwa from the faucet…" only while Stables tokens are empty.
+        // Wallet onboarding nudge: show "Get Winiwa from the faucet…" only while Stables tokens are empty,
+        // the Stables card included (founder 2026-10-11: "only when the wallet is fully empty, the card included").
         function stablesWalletHasAnyStablesBalance() {
+            try {
+                // true: the card holds money; null: the card is still loading, so emptiness is not known yet.
+                if (typeof window.stablesInstantCardHoldsAny === 'function' && window.stablesInstantCardHoldsAny() !== false) return true;
+            } catch (_) { /* the Savings check below still answers */ }
             const read = function (ccy) {
                 try {
                     if (typeof getTestTokenBalanceDetailForCcy === 'function') {
@@ -35348,9 +35635,9 @@
             if (priBal) {
                 const primaryProofBound = BASE_CCY === 'WINIMA' || BASE_CCY === 'Winiwa' || BASE_CCY === 'xWiniwa';
                 const primaryProofState = primaryProofBound ? stablesWalletProofDisplayState() : 'ready';
-                priBal.textContent = primaryProofState === 'ready'
-                    ? fmtPriAmt(baseAmt)
-                    : stablesProofDisplayLabel(primaryProofState);
+                window.stablesPaintBalance(priBal, 'savings:' + BASE_CCY, primaryProofState === 'ready',
+                    Number.isFinite(Number(baseAmt)) ? fmtPriAmt(baseAmt) : null,
+                    primaryProofState !== 'proof-unavailable' && stablesWalletProvenThisSession());
             }
             if (typeof stablesSyncPrimaryCcyPendingDelta === 'function') stablesSyncPrimaryCcyPendingDelta();
 
@@ -35470,26 +35757,27 @@
                        the small state style, with when it was last seen, is kept for a wallet whose proof is unavailable
                        (the node cannot confirm it). The node keeps syncing while the app is closed, so an age alone is
                        not a reason to doubt the figure; the seven-day limit of stablesLastKnownBalance still applies. */
-                    const rememberedFresh = remembered && walletProofState !== 'proof-unavailable';
-                    if (remembered && !rememberedFresh) {
-                        wTotal.textContent = fmtPriAmt(remembered.total);
-                        wTotal.classList.add('w-total--state');
-                        if (wCcy) wCcy.textContent = stateWord + ' · last seen ' + stablesLastSeenLabel(remembered.at);
-                    } else if (remembered) {
-                        wTotal.textContent = fmtPriAmt(remembered.total);
-                        wTotal.classList.remove('w-total--state');
-                        if (wCcy) wCcy.textContent = mainCcyLabel + ' equivalent · updating';
-                    } else {
-                        wTotal.textContent = stateWord;
-                        wTotal.classList.add('w-total--state');
-                    }
+                    /* The one balance rule (stablesPaintBalance, founder 2026-10-12): the last proven figure at full size
+                       in the muted tone, or "—"; this line is the one place that says why. */
+                    wTotal.classList.remove('w-total--state');
+                    wTotal.classList.add('stables-bal--unproven');
+                    // Proven earlier in this session: the sum of the figures shown below, muted (the rows and the total
+                    // always agree). Not yet proven since opening: the remembered total, or a dash.
+                    const current = walletProofState !== 'proof-unavailable' && stablesWalletProvenThisSession() && Number.isFinite(totalBase)
+                        && !(unpricedPositiveHoldings && !(totalBase > 0));
+                    wTotal.textContent = current ? fmtPriAmt(totalBase) : (remembered ? fmtPriAmt(remembered.total) : '—');
+                    if (wCcy) wCcy.textContent = walletProofState === 'proof-unavailable'
+                        ? stateWord + (remembered ? ' · last seen ' + stablesLastSeenLabel(remembered.at) : '')
+                        : mainCcyLabel + ' equivalent · syncing';
                 } else if (unpricedPositiveHoldings && !(totalBase > 0)) {
                     wTotal.textContent = '—';
-                    wTotal.classList.remove('w-total--state');
+                    wTotal.classList.remove('w-total--state', 'stables-bal--unproven');
                 } else if (Number.isFinite(totalBase)) {
                     // Proven. Remember it, so the next cold open has something honest to show.
                     if (!instantLoading) stablesRememberBalance(totalBase, mainCcyLabel);
                     wTotal.classList.remove('w-total--state');
+                    // Proven, but the Stables card is still reading: the total does not hold it yet, so it stays muted.
+                    wTotal.classList.toggle('stables-bal--unproven', !!instantLoading);
                     // The unit is named once, on the line below (mainCcyLabel + ' equivalent').
                     // Repeating it beside the figure says the same thing twice and steals the size
                     // the figure is meant to have (founder 2026-07-25, matching the North Star
@@ -39653,19 +39941,20 @@
         })();
     </script>
     <script src="assets/theme.js"></script>
-    <script src="assets/payment-security.js?v=tv81-1268"></script>
-    <script src="assets/routes/activity-contacts.js?v=tv81-1268"></script>
-    <script src="assets/instant-protocol.js?v=tv81-1268"></script>
-    <script src="assets/instant-chain.js?v=tv81-1268"></script>
-    <script src="assets/instant-balance.js?v=tv81-1268"></script>
-    <script src="assets/savings-ble.js?v=tv81-1268"></script>
+    <script src="assets/payment-security.js?v=tv81-1307"></script>
+    <script src="assets/routes/activity-contacts.js?v=tv81-1307"></script>
+    <script src="assets/instant-protocol.js?v=tv81-1307"></script>
+    <script src="assets/instant-chain.js?v=tv81-1307"></script>
+    <script src="assets/instant-route2.js?v=tv81-1307"></script>
+    <script src="assets/instant-balance.js?v=tv81-1307"></script>
+    <script src="assets/savings-ble.js?v=tv81-1307"></script>
     <script src="assets/routes/trust-retro.js"></script>
-    <script src="assets/mx-dropdown.js?v=tv81-1268"></script>
-    <script src="assets/desktop-web.js?v=tv81-1268"></script>
-    <script src="assets/vendor/stables-sealedbox.js?v=tv81-1268"></script>
-    <script src="assets/chat-onchain.js?v=tv81-1268"></script>
+    <script src="assets/mx-dropdown.js?v=tv81-1307"></script>
+    <script src="assets/desktop-web.js?v=tv81-1307"></script>
+    <script src="assets/vendor/stables-sealedbox.js?v=tv81-1307"></script>
+    <script src="assets/chat-onchain.js?v=tv81-1307"></script>
     <script src="assets/routes/feedback.js"></script>
-    <script src="assets/tx-mirror.js?v=tv81-1268"></script>
+    <script src="assets/tx-mirror.js?v=tv81-1307"></script>
     <script src="assets/tx-radar.js"></script>
 
     <script>
@@ -39862,6 +40151,9 @@
             var shown = String(el.value == null ? '' : el.value);
             var start = typeof el.selectionStart === 'number' ? logicalOffset(shown, el.selectionStart) : amountCharacters(shown).length;
             var end = typeof el.selectionEnd === 'number' ? logicalOffset(shown, el.selectionEnd) : start;
+            /* A leading "." gains a "0" (".001" reads 0.001). The caret moves past that 0 too: left before
+               it, the next digits went in front of the dot and ".001" became 1 (founder 2026-10-12). */
+            if (shown.replace(/[^0-9.]/g, '').charAt(0) === '.') { start++; end++; }
             var display = groupAmount(shown);
             el.value = display;
             if (typeof el.setSelectionRange === 'function') {

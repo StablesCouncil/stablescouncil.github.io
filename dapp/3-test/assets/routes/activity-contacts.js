@@ -878,6 +878,13 @@
 
   // Compact "x/target" confirmation line shown under the amount on each on-chain tx.
   // Capped at the row's own target (so a deep tx reads e.g. 3/3, muted); 0/target while pending.
+  /* Founder 2026-10-13: "we should have a marker when the transaction is completed, so that it would be visually easier
+     than reading the text". A finished transaction (confirmed, final, received, added, sent, in Savings) carries a small
+     green check after its word; one still on its way, or one that failed, carries none. */
+  const TX_DONE_WORDS = /^(confirmed|final|received|added|sent|in savings)\b/i;
+  function txDoneMark(text) {
+    return TX_DONE_WORDS.test(String(text || '').trim()) ? '<span class="tx-done-mark" aria-label="Completed">✓</span>' : '';
+  }
   function txConfirmLine(x) {
     /* A transaction Minima has QUEUED for the person's approval is not in the mempool and is not
        failed: it has not been signed yet. Neither of the words below is true of it. "receiving" is
@@ -893,7 +900,7 @@
     // An offline Instant balance row has no blocks. Its status says where it got to (law 13):
     // "QR shown" (payer), "final" (receiver, final at the scan) or "test only" (unbacked credit).
     if (isInstantActivityRow(x)) {
-      return '<div class="tx-conf-amt tx-conf--done">' + escUi(x.offlineStatus || '') + '</div>';
+      return '<div class="tx-conf-amt tx-conf--done">' + escUi(x.offlineStatus || '') + txDoneMark(x.offlineStatus) + '</div>';
     }
     const c = txConfirmationsShown(x);
     if (c === null) return '';
@@ -913,7 +920,7 @@
     const label = (state === 'done')
       ? 'confirmed'
       : ((x.dir === 'in' ? 'received ' : 'sent ') + shown + '/' + t);
-    return '<div class="tx-conf-amt tx-conf--' + state + '">' + label + '</div>';
+    return '<div class="tx-conf-amt tx-conf--' + state + '">' + label + (state === 'done' ? txDoneMark(label) : '') + '</div>';
   }
   window.stablesTxConfirmations = txConfirmations;
 
@@ -5500,11 +5507,37 @@
     const _policyLine = tx.minimaOnChain
       ? `<div class="xs mu" style="margin-bottom:8px;padding:0 2px">Completion target: ${_rowTarget} block${_rowTarget > 1 ? 's' : ''}${tx.confirmPolicyLabel ? ' · ' + escUi(tx.confirmPolicyLabel) + ' level' : ''}</div>`
       : '';
+    /* Founder 2026-10-13: "could we restructure the transaction details, there is no logic in how we display the buttons,
+       they look bad and the advanced details is maybe not justified, we could present the transaction link directly".
+       Three tiers: the one main action (its progress), the actions that act on this transaction, then housekeeping. */
+    const _txUseful = [
+      (_ownMove || _offlinePayment) ? '' : '<button type="button" class="btn btn-secondary mx-action" data-role="secondary" onclick="repeatTransactionFromDetail()">Repeat</button>',
+      (_offlinePayment && tx.dir === 'out' && tx.instantRef && tx.offlineStatus !== 'Received' && tx.offlineStatus !== 'Sent') ? '<button type="button" class="btn btn-secondary mx-action" data-role="secondary" onclick="stablesReshowInstantFromDetail()">Show payment again</button>' : '',
+      (_ownMove || _offlinePayment) ? '' : '<button type="button" class="btn btn-secondary mx-action" data-role="secondary" onclick="saveTxCounterpartyToContacts()">Add contact</button>',
+      canRateMerchant ? '<button type="button" class="btn btn-secondary mx-action" data-role="secondary" onclick="openTxMerchantRating()">Rate merchant</button>' : ''
+    ].filter(Boolean);
+    const _txHousekeeping = [
+      _ownMove ? '' : `<button type="button" class="btn mx-action tx-detail-quiet" data-role="quiet" onclick="toggleSuspiciousTx()">${suspicious ? 'Unflag suspicious' : 'Flag suspicious'}</button>`,
+      hiddenTx.has(tx.id)
+        ? '<button type="button" class="btn mx-action tx-detail-quiet" data-role="quiet" onclick="unhideTransactionFromHistory()">Show in lists</button>'
+        : '<button type="button" class="btn mx-action tx-detail-quiet" data-role="quiet" onclick="hideTransactionFromHistory()">Hide</button>',
+      '<button type="button" class="btn mx-action tx-detail-quiet tx-detail-quiet--danger" data-role="quiet" onclick="deleteTransactionFromHistory()">Delete</button>'
+    ].filter(Boolean);
+    const _txRawLink = tx.rawTxpow
+      ? `<button type="button" class="btn mx-action tx-detail-quiet tx-detail-raw" data-role="quiet" onclick="navigator.clipboard.writeText(decodeURIComponent('${encodeURIComponent(JSON.stringify(tx.rawTxpow, null, 2))}')); if(window.showToast) window.showToast('Raw transaction copied');">Copy raw transaction</button>`
+      : '';
+    const _txActionsHtml = `<div class="tx-detail-actions">
+        ${_showProgressBtn ? '<button type="button" class="btn btn-primary mx-action" data-role="primary" data-layout="full" onclick="reopenTxProgressFromDetail()">View progress</button>' : ''}
+        ${_txUseful.length ? '<div class="tx-detail-grid">' + _txUseful.join('') + '</div>' : ''}
+        <div class="tx-detail-house">${_txHousekeeping.join('')}</div>
+        ${_txRawLink}
+      </div>`;
     const body = `<div  style="margin-bottom:8px;display:flex;align-items:center;gap:8px"><span style="width:8px;height:8px;border-radius:50%;background:${statusColor};display:inline-block"></span><span class="xs mu">${statusText}</span></div>
       ${_policyLine}
       <div  style="margin-bottom:16px;padding:0 4px">
         <div class="fbet"><div><div  style="font-size:16px;font-weight:900;color:var(--t)">${tx.title}</div><div class="xs mu"  style="margin-top:2px">${tx.date}</div></div><div  style="text-align:right"><div class="tx-amt ${txAmtDisp.cls} bal-amount">${txAmtDisp.sign}${txAmtValue} ${normalizeActivityCcyLabel(tx.ccy)}</div>${_offlinePayment ? '<div class="xs mu">No fee</div>' : `<div class="xs mu">Fee ${feeDisp} ${normalizeActivityCcyLabel(tx.ccy)}</div>`}</div></div>
       </div>
+      <div class="tx-detail-chain">${tradeIdBlock}</div>
       ${_ownMove || _offlinePayment ? '' : `<div  style="margin-bottom:16px;padding:0 4px">
         <div class="xs mu"  style="margin-bottom:6px;font-weight:700;color:var(--t)">${txAddressLabel}</div>
         <div  style="display:flex;gap:8px">
@@ -5518,33 +5551,7 @@
         <textarea class="finput" id="txDetailNoteInput" rows="2" placeholder="Add a note for this transaction..." style="resize:vertical;margin-bottom:8px" oninput="scheduleTransactionNoteSave()" onblur="saveTransactionNote({silent:true, skipReopen:true})">${txNote}</textarea>
       </div>
 
-      <div class="flex gap8"  style="margin-bottom:16px;flex-wrap:wrap;justify-content:center">
-        ${_showProgressBtn ? '<button class="btn" onclick="reopenTxProgressFromDetail()">View progress</button>' : ''}
-        ${_ownMove || _offlinePayment ? '' : '<button class="btn" onclick="repeatTransactionFromDetail()">Repeat</button>'}
-        ${_offlinePayment && tx.dir === 'out' && tx.instantRef && tx.offlineStatus !== 'Received' ? '<button class="btn" onclick="stablesReshowInstantFromDetail()">Show payment again</button>' : ''}
-        ${canRateMerchant ? '<button class="btn btn-w btn-g" onclick="openTxMerchantRating()">Rate merchant</button>' : ''}
-        ${_ownMove || _offlinePayment ? '' : '<button class="btn" onclick="saveTxCounterpartyToContacts()">Add to contacts</button>'}
-        ${_ownMove ? '' : `<button class="btn" onclick="toggleSuspiciousTx()">${suspicious ? 'Unflag suspicious' : 'Flag suspicious'}</button>`}
-        ${hiddenTx.has(tx.id)
-          ? `<button class="btn" onclick="unhideTransactionFromHistory()">Show</button>`
-          : `<button class="btn" onclick="hideTransactionFromHistory()">Hide</button>`}
-        <button class="btn" onclick="deleteTransactionFromHistory()">Delete</button>
-      </div>
-
-      <details>
-        <summary style="cursor:pointer;font-size:13px;font-weight:800;color:var(--m);margin-bottom:8px">Advanced Details</summary>
-        <div  style="display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:10px">
-          ${tradeIdBlock}
-        </div>
-
-        ${tx.rawTxpow ? `
-        <div  style="border-top:1px solid rgba(103,232,249,.1);padding-top:12px;margin-top:4px;margin-bottom:12px">
-          <div class="xs mu"  style="margin-bottom:8px;text-align:center;font-weight:700">Developer Tools</div>
-          <div class="flex gap8"  style="justify-content:center">
-            <button class="btn btn-w" onclick="navigator.clipboard.writeText(decodeURIComponent('${encodeURIComponent(JSON.stringify(tx.rawTxpow, null, 2))}')); if(window.showToast) window.showToast('Raw TX JSON copied to clipboard!');">Copy Raw TX Data</button>
-          </div>
-        </div>` : ''}
-      </details>`;
+      ${_txActionsHtml}`;
     document.getElementById('agentActionTitle').textContent = 'Transaction details';
     const titleRight = document.getElementById('agentActionTitleRight');
     if (titleRight) titleRight.innerHTML = transactionDetailsAgentButtonHtml();

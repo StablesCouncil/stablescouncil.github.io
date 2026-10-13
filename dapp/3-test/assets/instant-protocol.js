@@ -152,7 +152,7 @@
     'bad-signature': 'This payment failed its signature check. It was not credited.',
     'duplicate': 'This payment was already received.',
     'no-key': 'Your Stables card has no signing key yet.',
-    'unavailable': 'This device cannot hold a Stables card.',
+    'unavailable': 'This device cannot hold a Stables card. It needs a phone whose chip makes one-use keys.',
     'request-altered': 'This payment request has been changed since it was made. Do not pay it. Nothing was moved.',
     'request-expired': 'This payment request has expired. Ask for a new one. Nothing was moved.',
     'request-paid': 'You already paid this payment request. Nothing was moved.',
@@ -466,6 +466,10 @@
       }
       out.payeeId = rid;
       out.payeeKey = rkey;
+      // Route 2 (instant-route2.js): a coin request for the same payment, paid from TEE-held coins when both phones can.
+      out.coinRequest = /^[A-Za-z0-9_-]{150,200}$/.test(String(fields['coin request'] || '')) ? String(fields['coin request']) : null;
+      // The certificate chains the receiver already holds (up to four 32-byte ids): a payer leaves them out.
+      out.coinChains = /^[A-Za-z0-9_-]{43,171}$/.test(String(fields['coin chains'] || '')) ? String(fields['coin chains']) : null;
       out.address = null;
       if (fields.address != null && fields.address !== '') {
         if (!/^0x[0-9a-fA-F]{64}$/.test(String(fields.address))) throw InstantError('malformed');
@@ -608,6 +612,51 @@
   var STORES = ['meta', 'outgoing', 'seen', 'journal'];
   var KEY_PATHS = { meta: 'k', requests: 'nonce', outgoing: 'ref', seen: 'key', journal: 'id' };
 
+  /** D2 inventory only. A clear snapshot is never permission to activate or move funds. */
+  function auditLegacyRecords(snapshot, legacyTokenId) {
+    var blockers = [], balances = {}, legacy = tokenHex(legacyTokenId);
+    function block(kind, id) { blockers.push({ kind: kind, id: String(id || '') }); }
+    function amount(token, value) {
+      var id = tokenHex(token), text = String(value);
+      if (!id || !/^(0|[1-9][0-9]*)$/.test(text)) { block('invalid-balance', token); return; }
+      var atoms = BigInt(text);
+      if (atoms > MAX_ATOMS) { block('invalid-balance', token); return; }
+      balances[id] = (BigInt(balances[id] || '0') + atoms).toString();
+      if (BigInt(balances[id]) > MAX_ATOMS) block('invalid-balance', token);
+    }
+    if (!snapshot || !Array.isArray(snapshot.outgoing) || !Array.isArray(snapshot.journal))
+      return { available: false, clear: false, balances: {}, blockers: [{ kind: 'unreadable-storage', id: '' }] };
+    var account = snapshot.account;
+    if (account != null && (typeof account !== 'object' || Array.isArray(account))) block('invalid-account', 'account');
+    if (account && !Object.prototype.hasOwnProperty.call(account, 'balances')
+        && !Object.prototype.hasOwnProperty.call(account, 'balance')) block('invalid-account-schema', 'account');
+    if (!account && (snapshot.outgoing.length || snapshot.journal.length)) block('missing-account', 'account');
+    if (account) {
+      if (account.balances != null && (typeof account.balances !== 'object' || Array.isArray(account.balances)))
+        block('invalid-balances', 'account');
+      else Object.keys(account.balances || {}).forEach(function (token) { amount(token, account.balances[token]); });
+      if (account.balance != null) amount(legacy, account.balance);
+    }
+    Object.keys(balances).forEach(function (token) { if (balances[token] !== '0') block('balance', token); });
+    snapshot.outgoing.forEach(function (out) {
+      // A committed outgoing envelope stays in flight until an actual delivery acknowledgement.
+      if (!out || !out.delivered || ['credited', 'duplicate', 'on-chain'].indexOf(out.delivered.result) < 0)
+        block('outgoing', out && out.ref);
+    });
+    snapshot.journal.forEach(function (entry) {
+      if (!entry || ['load', 'offload', 'in', 'out'].indexOf(entry.kind) < 0) { block('unknown-operation', entry && entry.id); return; }
+      if (entry.kind === 'load' && entry.status !== 'credited'
+          && !(entry.status === 'failed' && !entry.everPosted && !entry.postedAt && !entry.txnid && !entry.coinid))
+        block('load', entry.id);
+      if (entry.kind === 'offload' && !(entry.status === 'received' && entry.settled === true && Number(entry.block) > 0)
+          && !(entry.status === 'restored' && !entry.everPosted)) block('offload', entry.id);
+      if (entry.kind === 'out' && !snapshot.outgoing.some(function (out) { return out && out.ref === entry.ref; }))
+        block('missing-outgoing', entry.id);
+    });
+    if (snapshot.requests && snapshot.requests.length) block('retired-requests', 'requests');
+    return { available: true, clear: blockers.length === 0, balances: balances, blockers: blockers };
+  }
+
   function createIndexedDbBackend(env) {
     var idb = (env && env.indexedDB) || G.indexedDB;
     var name = (env && env.dbName) || DB_NAME;
@@ -644,9 +693,10 @@
         var db = await open();
         var t;
         try {
-          t = mode === 'readwrite' ? db.transaction(STORES, 'readwrite', { durability: 'strict' }) : db.transaction(STORES, 'readonly');
+          var stores = STORES.concat(db.objectStoreNames.contains('requests') ? ['requests'] : []);
+          t = mode === 'readwrite' ? db.transaction(stores, 'readwrite', { durability: 'strict' }) : db.transaction(stores, 'readonly');
         } catch (_) {
-          t = db.transaction(STORES, mode === 'readwrite' ? 'readwrite' : 'readonly');
+          t = db.transaction(stores, mode === 'readwrite' ? 'readwrite' : 'readonly');
         }
         var done = new Promise(function (resolve, reject) {
           t.oncomplete = function () { resolve(); };
@@ -655,7 +705,10 @@
         });
         var tx = {
           get: function (store, key) { return wrap(t.objectStore(store).get(key)).then(function (v) { return v === undefined ? null : v; }); },
-          getAll: function (store) { return wrap(t.objectStore(store).getAll()); },
+          getAll: function (store) {
+            if (store === 'requests' && !db.objectStoreNames.contains(store)) return Promise.resolve([]);
+            return wrap(t.objectStore(store).getAll());
+          },
           put: function (store, value) { t.objectStore(store).put(value); }
         };
         var result;
@@ -675,7 +728,7 @@
   /** In-memory backend with the same all-or-nothing transaction semantics (Node unit tests). */
   function createMemoryBackend() {
     var data = {};
-    STORES.forEach(function (s) { data[s] = new Map(); });
+    STORES.concat(['requests']).forEach(function (s) { data[s] = new Map(); });
     var queue = Promise.resolve();
     function copy(v) { return v && typeof v === 'object' ? JSON.parse(JSON.stringify(v)) : v; }
     function copyKeep(v) {
@@ -750,6 +803,59 @@
     }
     function balanceIn(acct, token) { return balancesOf(acct)[token] || BigInt(0); }
 
+    async function drainSnapshot(tx) {
+      return auditLegacyRecords({ account: await tx.get('meta', 'account'),
+        outgoing: await tx.getAll('outgoing'), journal: await tx.getAll('journal'),
+        requests: await tx.getAll('requests') }, legacyToken);
+    }
+
+    /** One read transaction over every currency and operation, including currencies no longer offered. */
+    async function legacyDrain() {
+      try {
+        return await backend.run('readonly', drainSnapshot);
+      } catch (_) { return auditLegacyRecords(null, legacyToken); }
+    }
+
+    /** All legacy financial mutations share the seal's transaction scope, across tabs/connections. */
+    function writeLegacy(fn) {
+      return backend.run('readwrite', async function (tx) {
+        if (await tx.get('meta', 'chip-transition')) throw InstantError('legacy-sealed');
+        return fn(tx);
+      });
+    }
+
+    /** A durable write fence, never native registration/activation authority. No balances are moved. */
+    async function sealLegacy(binding) {
+      var fields = ['mode', 'wallet', 'card', 'generation', 'legacyId'];
+      if (!binding || typeof binding !== 'object' || Array.isArray(binding)
+          || Object.keys(binding).length !== fields.length || !fields.every(function (k) { return Object.prototype.hasOwnProperty.call(binding, k); })
+          || ['internal', 'core'].indexOf(binding.mode) < 0) throw InstantError('malformed');
+      var target = { mode: binding.mode };
+      fields.slice(1).forEach(function (k) {
+        if (typeof binding[k] !== 'string' || !/^(?:0x)?[0-9a-fA-F]{64}$/.test(binding[k])) throw InstantError('malformed');
+        target[k] = binding[k].toLowerCase().replace(/^0x/, '');
+      });
+      var me = await ensure();
+      if (target.legacyId !== me.id) throw InstantError('legacy-binding');
+      return backend.run('readwrite', async function (tx) {
+        var existing = await tx.get('meta', 'chip-transition');
+        if (existing) {
+          if (existing.version !== 1 || !fields.every(function (k) { return existing[k] === target[k]; })) throw InstantError('legacy-binding');
+        }
+        var account = await tx.get('meta', 'account');
+        if (!account || account.id !== target.legacyId) throw InstantError('legacy-binding');
+        var audit = await drainSnapshot(tx);
+        if (!audit.available || !audit.clear) { var err = InstantError('legacy-pending'); err.audit = audit; throw err; }
+        if (existing) return existing;
+        var record = { k: 'chip-transition', version: 1, sealedAt: now() };
+        fields.forEach(function (k) { record[k] = target[k]; });
+        tx.put('meta', record);
+        return record;
+      });
+    }
+
+    function legacySeal() { return backend.run('readonly', function (tx) { return tx.get('meta', 'chip-transition'); }); }
+
     async function readIdentity() {
       if (identity) return identity;
       var key = await keys.publicKey();
@@ -764,12 +870,16 @@
       if (!subtle) throw InstantError('unavailable');
       var me = await readIdentity();
       if (!me) {
+        if (await legacySeal()) throw InstantError('legacy-sealed');
         await keys.create();
         me = await readIdentity();
       }
       await backend.run('readwrite', async function (tx) {
         var acct = await tx.get('meta', 'account');
-        if (!acct) tx.put('meta', blankAccount(me.id));
+        if (!acct) {
+          if (await tx.get('meta', 'chip-transition')) throw InstantError('legacy-sealed');
+          tx.put('meta', blankAccount(me.id));
+        }
       });
       return me;
     }
@@ -844,7 +954,7 @@
       var amount = positiveAtoms(rec.amount);
       var cur = requireCurrency(rec.tokenId);
       await ensure();
-      return backend.run('readwrite', async function (tx) {
+      return writeLegacy(async function (tx) {
         var existing = await tx.get('journal', loadEntryId(lid));
         if (existing) return existing;
         var entry = journalEntry('load', amount, { id: loadEntryId(lid), lid: lid, tokenId: cur.tokenId, status: 'building' });
@@ -856,7 +966,7 @@
     /** Where a load got to. It never credits, and a credited load is not changed any more. */
     async function updateLoad(lid, patch) {
       var id = loadEntryId(hexId(lid, 16) || '');
-      return backend.run('readwrite', async function (tx) {
+      return writeLegacy(async function (tx) {
         var entry = await tx.get('journal', id);
         if (!entry || entry.kind !== 'load') throw InstantError('unknown');
         if (entry.status === 'credited') return entry;
@@ -886,7 +996,7 @@
       var lid = hexId(c.lid, 16);
       await ensure();
       var seenKey = 'load:' + coinid;
-      return backend.run('readwrite', async function (tx) {
+      return writeLegacy(async function (tx) {
         var entry = lid ? await tx.get('journal', loadEntryId(lid)) : null;
         if (!entry) {
           var all = await tx.getAll('journal');
@@ -928,7 +1038,7 @@
       var amount = positiveAtoms(o.amount);
       var cur = requireCurrency(o.tokenId);
       await ensure();
-      return backend.run('readwrite', async function (tx) {
+      return writeLegacy(async function (tx) {
         var existing = await tx.get('journal', offloadEntryId(wid));
         if (existing) {
           if (existing.amount !== amount.toString() || existing.tokenId !== cur.tokenId) throw InstantError('busy');
@@ -967,7 +1077,7 @@
 
     async function updateOffload(wid, patch) {
       var id = offloadEntryId(hexId(wid, 16) || '');
-      return backend.run('readwrite', async function (tx) {
+      return writeLegacy(async function (tx) {
         var entry = await tx.get('journal', id);
         if (!entry || entry.kind !== 'offload') throw InstantError('unknown');
         if (entry.status === 'restored') return entry;
@@ -986,7 +1096,7 @@
      */
     async function restoreOffload(wid, note) {
       var id = offloadEntryId(hexId(wid, 16) || '');
-      return backend.run('readwrite', async function (tx) {
+      return writeLegacy(async function (tx) {
         var entry = await tx.get('journal', id);
         if (!entry || entry.kind !== 'offload') throw InstantError('unknown');
         if (entry.status === 'restored') return { status: 'existing', entry: entry };
@@ -1026,7 +1136,7 @@
     }
     /** Merge into it: top-level fields replace, registrations merge per currency (null removes one). */
     async function setChainInfo(patch) {
-      return backend.run('readwrite', async function (tx) {
+      return writeLegacy(async function (tx) {
         var rec = (await tx.get('meta', 'chain')) || { k: 'chain', withdrawKey: '', payout: '', registrations: {} };
         Object.keys(patch || {}).forEach(function (k) {
           if (k === 'registrations') {
@@ -1054,6 +1164,7 @@
      */
     async function receiverCode(extra) {
       var me = await ensure();
+      if (await legacySeal()) throw InstantError('legacy-sealed');
       var token = tokenHex(extra && extra.tokenId) || (CURRENCIES[0] && CURRENCIES[0].tokenId);
       var cur = requireCurrency(token);
       var amount = null;
@@ -1136,6 +1247,7 @@
      */
     async function pay(codeText, amountAtoms, payOpts) {
       if (!subtle) throw InstantError('unavailable');
+      if (await legacySeal()) throw InstantError('legacy-sealed');
       var amount;
       try { amount = BigInt(amountAtoms); } catch (_) { throw InstantError('amount-invalid'); }
       if (amount <= BigInt(0) || amount > MAX_ATOMS) throw InstantError('amount-invalid');
@@ -1170,7 +1282,7 @@
           payerKey: me.key, counter: counter, signature: signature,
           requestId: rq ? rq.id : null, referenceB64: rq ? rq.referenceB64 : null });
         var expectCounter = snap.acct.counter;
-        var result = await backend.run('readwrite', async function (tx) {
+        var result = await writeLegacy(async function (tx) {
           var acct = await tx.get('meta', 'account');
           var existing = await tx.get('outgoing', ref);
           if (existing) {
@@ -1226,7 +1338,7 @@
       if (!payerId) throw InstantError('bad-signature');
       if (payerId === me.id) throw InstantError('self');
       var seenKey = payerId + ':' + p.counter;
-      return backend.run('readwrite', async function (tx) {
+      return writeLegacy(async function (tx) {
         if (await tx.get('seen', seenKey)) throw InstantError('duplicate');
         var acct = await tx.get('meta', 'account');
         var next = balanceIn(acct, token) + p.amount;
@@ -1264,7 +1376,7 @@
     async function markDelivered(ref, info) {
       var key = String(ref || '');
       if (!key) return null;
-      return backend.run('readwrite', async function (tx) {
+      return writeLegacy(async function (tx) {
         var out = await tx.get('outgoing', key);
         if (!out) return null;
         var entry = await tx.get('journal', ROW + 'OUT-' + out.counter);
@@ -1286,7 +1398,7 @@
     async function setCarrier(ref, patch) {
       var key = String(ref || '');
       if (!key) return null;
-      return backend.run('readwrite', async function (tx) {
+      return writeLegacy(async function (tx) {
         var out = await tx.get('outgoing', key);
         if (!out) return null;
         var entry = await tx.get('journal', ROW + 'OUT-' + out.counter);
@@ -1329,7 +1441,8 @@
       });
     }
 
-    return { ensure: ensure, state: state, receiverCode: receiverCode, attachChain: attachChain, updateChain: updateChain,
+    return { ensure: ensure, state: state, legacyDrain: legacyDrain, sealLegacy: sealLegacy, legacySeal: legacySeal,
+      receiverCode: receiverCode, attachChain: attachChain, updateChain: updateChain,
       checkReceiver: checkReceiver, payeeInfo: payeeInfo, pay: pay, receive: receive, journal: journal, outgoing: outgoing,
       markDelivered: markDelivered, setCarrier: setCarrier,
       recordLoad: recordLoad, updateLoad: updateLoad, creditLoad: creditLoad, openLoads: openLoads,
@@ -1378,9 +1491,49 @@
     });
   }
 
+  /** Strict D2 read of the retired store. Failure/blocked/invalid schema never means an empty wallet. */
+  function auditRetired(env, legacyTokenId) {
+    var idb = (env && env.indexedDB) || G.indexedDB, name = (env && env.dbName) || RETIRED_DB_NAME;
+    return new Promise(function (resolve) {
+      var req, absent = false, db, finished = false;
+      function finish(value) { if (finished) return; finished = true; if (db) db.close(); resolve(value); }
+      function unavailable() { finish(auditLegacyRecords(null, legacyTokenId)); }
+      if (!idb || typeof idb.open !== 'function') { unavailable(); return; }
+      try { req = idb.open(name); } catch (_) { unavailable(); return; }
+      req.onupgradeneeded = function (ev) {
+        // Abort creation: no legacy database is created by this audit.
+        if (ev && ev.oldVersion === 0) { absent = true; try { req.transaction.abort(); } catch (_) { absent = false; unavailable(); } }
+      };
+      req.onblocked = unavailable;
+      req.onerror = function () {
+        if (absent && req.error && req.error.name === 'AbortError')
+          finish(auditLegacyRecords({ account: null, outgoing: [], journal: [] }, legacyTokenId));
+        else unavailable();
+      };
+      req.onsuccess = function () {
+        db = req.result;
+        if (finished) { db.close(); return; }
+        if (!['meta', 'outgoing', 'journal'].every(function (store) { return db.objectStoreNames.contains(store); })) { unavailable(); return; }
+        var stores = ['meta', 'outgoing', 'journal'];
+        if (db.objectStoreNames.contains('requests')) stores.push('requests');
+        var tx, snapshot = { account: null, outgoing: [], journal: [], requests: [] };
+        try {
+          tx = db.transaction(stores, 'readonly');
+          var account = tx.objectStore('meta').get('account'); account.onsuccess = function () { snapshot.account = account.result || null; };
+          stores.slice(1).forEach(function (store) {
+            var request = tx.objectStore(store).getAll(); request.onsuccess = function () { snapshot[store] = request.result; };
+          });
+          tx.oncomplete = function () { finish(auditLegacyRecords(snapshot, legacyTokenId)); };
+          tx.onerror = unavailable; tx.onabort = unavailable;
+        } catch (_) { unavailable(); }
+      };
+    });
+  }
+
   return {
     VERSION: VERSION, LEGACY_VERSIONS: LEGACY_VERSIONS, DECIMALS: DECIMALS, MESSAGE_BYTES: MESSAGE_BYTES,
     ROW_PREFIX: ROW, DB_NAME: DB_NAME, RETIRED_DB_NAME: RETIRED_DB_NAME, readRetired: readRetired,
+    auditRetired: auditRetired, auditLegacyRecords: auditLegacyRecords,
     MESSAGES: MESSAGES, InstantError: InstantError,
     toHex: toHex, fromHex: fromHex, newPaymentId: newPaymentId, tokenHex: tokenHex,
     parseAmount: parseAmount, atomsToDecimal: atomsToDecimal, formatAmount: formatAmount,

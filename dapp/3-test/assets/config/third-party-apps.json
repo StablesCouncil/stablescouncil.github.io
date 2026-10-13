@@ -2,23 +2,22 @@
   "v": 2,
   "apps": [
     {
-      "id": "the-pool",
-      "name": "The Pool",
+      "id": "the-bay",
+      "name": "The Bay",
       "publisher": "Minima Bay",
-      "summary": "The on-chain order book: trade Winiwa, xWiniwa and the test tokens.",
-      "icon": "apps/the-pool.png",
-      "web": "https://github.com/minima-bay/the-minima-pool",
+      "summary": "One node and one wallet for every Minima Bay app: The Pool, an on-chain order book, and The Bridge playground. Test assets only, worth nothing.",
+      "icon": "apps/the-bay.png",
+      "web": "https://github.com/minima-bay",
       "android": {
         "package": "io.github.minimabay.thebay",
         "launch": {
           "action": "io.github.minimabay.thebay.OPEN",
           "extras": {
-            "app": "pool",
             "from": "stables"
           }
         },
-        "versionCode": 12008,
-        "versionName": "0.0.12.008",
+        "versionCode": 12021,
+        "versionName": "0.0.12.021",
         "apkUrl": "TODO (Bay): https://github.com/<bay-org>/<bay-repo>/releases/download/v<version>/TheBay_v<version>.apk",
         "apkSha256": "TODO (Bay): 64 hex",
         "signerSha256": "7934a2bc9c5ad8396650ce51cda26755a99c0c8b987743342cb0186ef9e5d0a1",
@@ -28,7 +27,7 @@
       "package": {
         "url": "",
         "sha256": "",
-        "entry": "index.html?host=stables&app=pool",
+        "entry": "index.html?host=stables",
         "version": "",
         "status": "awaiting-package"
       }
