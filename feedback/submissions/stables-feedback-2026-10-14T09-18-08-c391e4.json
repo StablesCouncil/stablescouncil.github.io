@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "submitted_at": "2026-10-14T09:18:07.233Z",
+  "source": {
+    "app_build": "0.0.13.007",
+    "client": "stables-minidapp"
+  },
+  "topic_domain": "app",
+  "topic_sub": "other",
+  "app_context": {
+    "page_id": "android:settings-updates",
+    "section_hint": "Chinese version",
+    "element_hint": "Chinese version"
+  },
+  "kind": "improvement",
+  "title": "Chinese version",
+  "body": "I am FSS@FuuSiSi, a Minima Ambassador focused on China, actively testing, providing feedback, and promoting applications within the Minima ecosystem, aiming to support Stables.\n\nStables is an excellent software with rich features, and its financial capabilities built on Minima are particularly significant. I have been following and promoting it since your first release.\n\nI strongly recommend launching the Chinese version of Stables as soon as possible.\n\nWhy? To facilitate the promotion of Stables in China, it's important to note that although China has a large population, most people cannot access social media platforms like X, Telegram, and Discord. Accessing these foreign websites requires a VPN, which is prohibited for ordinary users by the government. Additionally, Chinese social platforms do not allow posting or discussing content related to cryptocurrencies. Given these barriers, if Stables does not offer a Chinese interface, regular Chinese users will be unlikely to use the app.\n\nI hope you can take this issue seriously.",
+  "optional_minima_address": "MxG080ZM4F55GJS4Y3VEJEBAGHRBUZ5RUJESAG2HZVDM00UPNZTG5QTD7DHAQQJ",
+  "public_contact": "FSS@FuuSiSi",
+  "consent_public_ledger": true,
+  "flags": {
+    "low_priority_freeform": false
+  }
+}
