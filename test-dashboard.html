@@ -47,6 +47,14 @@
   .hero .big { font-size: clamp(38px, 6vw, 52px); font-weight: 880; letter-spacing: -.03em; line-height: 1; margin-top: 8px; font-variant-numeric: tabular-nums; }
   .hero .sub { font-size: 13px; color: var(--dim); margin-top: 8px; font-variant-numeric: tabular-nums; }
   .hero.vault .big { color: var(--winiwa); } .hero.xw .big { color: var(--owners); } .hero.faucet .big { color: var(--savers); }
+  .hero.cardmoney .big { color: var(--amber); } .hero.cardvault .big { color: var(--winiwa); }
+  /* one line per token: amounts of different tokens are never added together */
+  .hero .big.tok { font-size: clamp(28px, 4.4vw, 40px); display: flex; flex-direction: column; gap: 6px; }
+  .tokrow { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .tokrow .tn { font-size: 15px; font-weight: 800; letter-spacing: 0; color: var(--muted); }
+  .hero .sub .tl { display: block; }
+  .card-ids { margin-top: 12px; }
+  .note a { color: var(--winiwa); text-decoration: none; font-weight: 700; }
   .hero .track { height: 6px; border-radius: 999px; background: rgba(255,255,255,.07); overflow: hidden; margin-top: 12px; }
   .hero .fill { height: 100%; border-radius: 999px; transition: width .6s cubic-bezier(.22,.61,.36,1); }
 
@@ -89,6 +97,22 @@
   .tip { position: absolute; top: 6px; left: 0; z-index: 2; pointer-events: none; display: none; padding: 7px 10px; border: 1px solid var(--hair); border-radius: 10px; background: rgba(7,10,18,.96); box-shadow: var(--shadow); font-size: 12px; line-height: 1.45; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
   .tip .d { display: block; color: var(--muted); font-size: 11px; }
   .tip.show { display: block; }
+  /* "?" beside every figure: what it is and why it matters, one card open at a time */
+  /* The site's shared button rule (.d028-page button: 48px tall, its own border and colours, with
+     !important) sizes every button for touch. The "?" stays small to see; its invisible ::after keeps
+     the 48px touch target that rule exists for. */
+  .d028-page .wrap button.help { position: relative; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
+    width: 17px; height: 17px; min-width: 0; min-height: 0; margin: 0 0 0 6px; padding: 0; vertical-align: 1px; box-shadow: none !important;
+    border: 1px solid rgba(255,255,255,.2) !important; border-radius: 50% !important; background: rgba(255,255,255,.05) !important; color: var(--muted) !important;
+    font-family: inherit; font-size: 10.5px; font-weight: 800; line-height: 1; letter-spacing: 0; text-transform: none; cursor: pointer; flex: none; }
+  .d028-page .wrap button.help::after { content: ""; position: absolute; left: 50%; top: 50%; width: 48px; height: 48px; transform: translate(-50%, -50%); }
+  .d028-page .wrap button.help:hover, .d028-page .wrap button.help[aria-expanded="true"] { color: var(--ink) !important; border-color: rgba(87,214,239,.5) !important; background: rgba(87,214,239,.12) !important; }
+  .d028-page .wrap button.help:focus-visible { outline: 2px solid var(--winiwa); outline-offset: 2px; }
+  .helppop { position: fixed; z-index: 50; display: none; max-width: min(300px, calc(100vw - 32px)); padding: 10px 12px; border: 1px solid var(--hair); border-radius: 12px;
+    background: rgba(7,10,18,.97); box-shadow: var(--shadow); font-size: 12.5px; line-height: 1.5; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--ink); }
+  .helppop.show { display: block; }
+  .helppop b { display: block; margin-bottom: 3px; font-weight: 800; }
+  .helppop .why { display: block; margin-top: 6px; color: var(--muted); }
 
   /* on chain: identity in full, figures beneath */
   .onchain { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -276,6 +300,90 @@
     </div>
   </div>
 
+  <!-- the Stables card: money added to phones, paid by touch off chain, taken back to Savings -->
+  <div class="section-t" id="card">Stables card</div>
+  <div class="heroes">
+    <div class="card hero cardmoney">
+      <div class="lbl">Money on cards</div>
+      <div class="big tok" id="cardOn">N/A</div>
+      <div class="sub" id="cardOnSub">added, minus Removes paid back to Savings, per token</div>
+    </div>
+    <div class="card hero cardvault">
+      <div class="lbl">In the card vault</div>
+      <div class="big tok" id="cardVault">N/A</div>
+      <div class="sub" id="cardVaultSub">held by the vault contract now, per token</div>
+    </div>
+  </div>
+  <div class="grid" id="cardStats">
+    <div class="stat"><div class="k">Adds</div><div class="v" id="cAdds">N/A</div><div class="u">deposits from Savings to a card</div></div>
+    <div class="stat"><div class="k">Removes</div><div class="v" id="cRemoves">N/A</div><div class="u" id="cRemovesSub">exit requests</div></div>
+    <div class="stat"><div class="k">Refunds</div><div class="v" id="cRefunds">N/A</div><div class="u" id="cRefundsSub">payments the receiver refused, paid back to the payer</div></div>
+    <div class="stat"><div class="k">Payouts</div><div class="v" id="cPayouts">N/A</div><div class="u" id="cPayoutsSub">Removes and refunds paid to Savings</div></div>
+    <div class="stat"><div class="k">Council seals</div><div class="v" id="cSeals">N/A</div><div class="u" id="cSealsSub">approvals signed 5 of 7</div></div>
+    <div class="stat"><div class="k">Rejections</div><div class="v" id="cRejects">N/A</div><div class="u" id="cRejectsSub">requests refused, nothing paid</div></div>
+    <div class="stat"><div class="k">Fallback payouts</div><div class="v" id="cFallback">N/A</div><div class="u">paid with no Council, after the wait</div></div>
+    <div class="stat"><div class="k">Longest off-chain run</div><div class="v" id="cLongest">N/A</div><div class="u" id="cLongestSub">hand-overs in one exit package</div></div>
+    <div class="stat"><div class="k">Addresses</div><div class="v" id="cAddrs">N/A</div><div class="u">Savings addresses involved</div></div>
+    <div class="stat"><div class="k">Devices</div><div class="v" id="cDevices">N/A</div><div class="u" id="cDevicesSub">phones seen in exit packages</div></div>
+    <div class="stat"><div class="k">Package carriers</div><div class="v" id="cCarriers">N/A</div><div class="u" id="cCarriersSub">package parts posted on chain</div></div>
+  </div>
+  <!-- the card test over time -->
+  <div class="charts">
+    <div class="card">
+      <div class="chart-head"><span class="t">Money on cards, Winiwa</span><span class="r" id="chMoneyR">N/A</span></div>
+      <div class="chart">
+        <div class="yaxis" aria-hidden="true"><span id="chMoneyY4"></span><span id="chMoneyY3"></span><span id="chMoneyY2"></span><span id="chMoneyY1"></span><span id="chMoneyY0">0</span></div>
+        <div class="plot"><svg class="spark" id="chMoney" viewBox="0 0 300 180" preserveAspectRatio="none" role="img" aria-label="Money on cards after each Add, payout and return"></svg><div class="tip" id="chMoneyTip"></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chart-head"><span class="t">Card transactions per day</span><span class="r" id="chDayR">N/A</span></div>
+      <div class="chart">
+        <div class="yaxis" aria-hidden="true"><span id="chDayY4"></span><span id="chDayY3"></span><span id="chDayY2"></span><span id="chDayY1"></span><span id="chDayY0">0</span></div>
+        <div class="plot"><svg class="spark" id="chDay" viewBox="0 0 300 180" preserveAspectRatio="none" role="img" aria-label="Adds, Removes and refunds per day"></svg><div class="tip" id="chDayTip"></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chart-head"><span class="t">Package size, bytes</span><span class="r" id="chPkgR">N/A</span></div>
+      <div class="chart">
+        <div class="yaxis" aria-hidden="true"><span id="chPkgY4"></span><span id="chPkgY3"></span><span id="chPkgY2"></span><span id="chPkgY1"></span><span id="chPkgY0">0</span></div>
+        <div class="plot"><svg class="spark" id="chPkg" viewBox="0 0 300 180" preserveAspectRatio="none" role="img" aria-label="Size of each Remove and refund package against the limit"></svg><div class="tip" id="chPkgTip"></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chart-head"><span class="t">Minutes from request to payout</span><span class="r" id="chSetR">N/A</span></div>
+      <div class="chart">
+        <div class="yaxis" aria-hidden="true"><span id="chSetY4"></span><span id="chSetY3"></span><span id="chSetY2"></span><span id="chSetY1"></span><span id="chSetY0">0</span></div>
+        <div class="plot"><svg class="spark" id="chSet" viewBox="0 0 300 180" preserveAspectRatio="none" role="img" aria-label="Minutes from each request to its payout"></svg><div class="tip" id="chSetTip"></div></div>
+      </div>
+    </div>
+  </div>
+  <!-- requests that can never be paid (inline package too large for a payout to fit a block) -->
+  <div class="card card-ids" id="cTooLargeBox" hidden>
+    <div class="oc-head"><span class="oc-name">Never payable</span><span class="oc-role">package too large for its payout to fit a block</span></div>
+    <div class="feed" id="cTooLarge"></div>
+  </div>
+  <div class="onchain card-ids">
+    <div class="card oc">
+      <div class="oc-head"><span class="oc-name">Card vault</span><span class="oc-role" id="cGen">covenant, generation R2T3</span></div>
+      <a class="oc-id" id="cVaultId" href="#" target="_blank" rel="noopener noreferrer"></a>
+    </div>
+    <div class="card oc">
+      <div class="oc-head"><span class="oc-name">Exit requests</span><span class="oc-role">Removes and refunds wait here for the Council</span></div>
+      <a class="oc-id" id="cRequestId" href="#" target="_blank" rel="noopener noreferrer"></a>
+    </div>
+    <div class="card oc">
+      <div class="oc-head"><span class="oc-name">Package carriers</span><span class="oc-role">holds each request's package, never spent</span></div>
+      <a class="oc-id" id="cPackageId" href="#" target="_blank" rel="noopener noreferrer"></a>
+    </div>
+  </div>
+  <div class="feed-head"><div class="section-t">Recent card activity</div><span class="chart-head"><span class="r" id="cRecentCount"></span></span></div>
+  <div class="card">
+    <div class="feed" id="cRecent"><div class="empty">Not yet read.</div></div>
+  </div>
+  <p class="note" id="cardNote">Every Minima transaction that touched a card contract, read from the chain and counted the way the public card evidence counts them.</p>
+  <p class="note"><a id="cardEvidence" href="https://github.com/StablesCouncil/stables-card-evidence" target="_blank" rel="noopener noreferrer">Read the public card evidence and check it yourself</a></p>
+
   <!-- activity -->
   <div class="feed-head"><div class="section-t" id="feedTitle">Activity</div><span class="chart-head"><span class="r" id="feedCount"></span></span></div>
   <div class="card">
@@ -293,6 +401,14 @@
   var ENDPOINT = "https://agent.stablescouncil.org/test-dashboard";
   var FIXTURE = "assets/data/test-channel-monitor.fixture.json";
   var LOCAL_PREVIEW = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname);
+  /* ?api=http://localhost:8091 points the page at a local collector (local_test_dashboard_preview.js)
+     instead of the fixture or the public one. Only a localhost collector is accepted, so the public
+     page can never be made to show someone else's figures. */
+  (function () {
+    var m = /[?&]api=([^&]+)/.exec(window.location.search);
+    var api = m ? decodeURIComponent(m[1]).replace(/\/+$/, "") : "";
+    if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(api)) { ENDPOINT = api + "/test-dashboard"; LOCAL_PREVIEW = false; }
+  })();
   var $ = function (id) { return document.getElementById(id); };
   var nf = function (n, d) { return Number(n).toLocaleString("en-US", { maximumFractionDigits: d == null ? 0 : d }); };
   function money(usd) { var a = Math.abs(Number(usd) || 0); return "$" + (a >= 100 ? nf(a) : a.toFixed(2)); }
@@ -353,7 +469,11 @@
     var dt = new Date(iso); if (isNaN(dt.getTime())) return String(iso).slice(0, 10);
     return dt.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
   }
-  function hover(svgId, tipId, getScale, dates, detail) {
+  function timeLabel(iso) {
+    var dt = new Date(iso); if (isNaN(dt.getTime())) return String(iso || "");
+    return dt.toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "UTC" }) + " UTC";
+  }
+  function hover(svgId, tipId, getScale, dates, detail, fmt) {
     var svg = $(svgId), tip = $(tipId); if (!svg || !tip) return;
     var markerId = svgId + "Marker";
     var clear = function () {
@@ -369,7 +489,7 @@
       if (!m) { m = document.createElementNS("http://www.w3.org/2000/svg", "g"); m.setAttribute("id", markerId); svg.appendChild(m); }
       m.innerHTML = '<line x1="' + px + '" x2="' + px + '" y1="0" y2="' + s.H + '" stroke="rgba(255,255,255,.28)" stroke-width="1" vector-effect="non-scaling-stroke"/>' +
         '<circle cx="' + px + '" cy="' + py + '" r="3.4" fill="' + s.color + '" stroke="#070a12" stroke-width="1.5" vector-effect="non-scaling-stroke"/>';
-      tip.innerHTML = '<span class="d">' + dayLabel(typeof dates === "function" ? dates(i) : dates[i]) + '</span>' + detail(i, s.vals[i]);
+      tip.innerHTML = '<span class="d">' + (fmt || dayLabel)(typeof dates === "function" ? dates(i) : dates[i]) + '</span>' + detail(i, s.vals[i]);
       tip.className = "tip show";
       // keep the card inside the plot: to the right of the marker, or to its left near the edge
       var pxPx = (i * s.dx / s.W) * box.width;
@@ -389,6 +509,52 @@
     var h = HIST[i] || {}; var mints = Number(h.mints) || 0, burns = Number(h.burns) || 0;
     return nf(mints) + (mints === 1 ? " mint" : " mints") + " · " + nf(burns) + (burns === 1 ? " burn" : " burns");
   });
+
+  /* The card test over time (collector field card.history). */
+  var CH = { money: [], per_day: [], packages: [], settle: [] };
+  var at = function (list) { return function (i) { return (CH[list][i] || {}).t; }; };
+  hover("chMoney", "chMoneyTip", function () { return SCALES.money; }, at("money"), function (i) {
+    var m = CH.money[i] || {};
+    return (m.what || "") + ", " + amount8(m.amount) + " " + (m.token || "") + "<br>On cards: " + amount8(m.winiwa) + " Winiwa, " + amount8(m.xwiniwa) + " xWiniwa";
+  }, timeLabel);
+  hover("chDay", "chDayTip", function () { return SCALES.day; }, at("per_day"), function (i) {
+    var d = CH.per_day[i] || {};
+    return plural(d.adds || 0, "Add", "Adds") + " · " + plural(d.removes || 0, "Remove", "Removes") + " · " + plural(d.refunds || 0, "refund", "refunds") +
+      "<br>" + plural(d.payouts || 0, "payout", "payouts") + " · " + plural(d.rejections || 0, "rejection", "rejections");
+  });
+  hover("chPkg", "chPkgTip", function () { return SCALES.pkg; }, at("packages"), function (i, v) {
+    var p = CH.packages[i] || {};
+    return (p.kind === "refund" ? "Refund" : "Remove") + " of " + amount8(p.amount) + " " + (p.token || "") + "<br>" + nf(v) + " bytes, " +
+      plural(p.hops || 0, "hand-over", "hand-overs") + ", " + plural(p.devices || 0, "phone", "phones") + (p.too_large ? "<br>over the limit, never payable" : p.carriers ? "<br>posted in carriers" : "");
+  }, timeLabel);
+  hover("chSet", "chSetTip", function () { return SCALES.set; }, at("settle"), function (i, v) {
+    var p = CH.settle[i] || {};
+    return (p.kind === "refund" ? "Refund" : "Remove") + " of " + amount8(p.amount) + " " + (p.token || "") + "<br>" + nf(v, 1) + " minutes, " + plural(p.blocks || 0, "block", "blocks") +
+      ", " + (p.sealed ? "Council seal" : "fallback");
+  }, timeLabel);
+  /* A horizontal reference line on a drawn chart (the package limit), when it is inside the scale. */
+  function refLine(svgId, s, v, color) {
+    var svg = $(svgId); if (!svg || !s || !s.y || v > s.yMax) return;
+    var gy = s.y(v).toFixed(1);
+    svg.insertAdjacentHTML("beforeend", '<line x1="0" x2="' + s.W + '" y1="' + gy + '" y2="' + gy + '" stroke="' + color + '" stroke-width="1.2" stroke-dasharray="5 4" vector-effect="non-scaling-stroke"/>');
+  }
+  function renderCardCharts(h) {
+    h = h || {};
+    CH = { money: h.money || [], per_day: h.per_day || [], packages: h.packages || [], settle: h.settle || [] };
+    var ax = function (p) { return [p + "Y0", p + "Y1", p + "Y2", p + "Y3", p + "Y4"]; };
+    SCALES.money = spark("chMoney", CH.money.map(function (m) { return Number(m.winiwa); }), "#57d6ef", ax("chMoney"));
+    var last = CH.money[CH.money.length - 1];
+    $("chMoneyR").textContent = last ? "now " + amount8(last.winiwa) + ", " + plural(CH.money.length, "step", "steps") : "N/A";
+    SCALES.day = spark("chDay", CH.per_day.map(function (d) { return (d.adds || 0) + (d.removes || 0) + (d.refunds || 0); }), "#34d399", ax("chDay"));
+    $("chDayR").textContent = SCALES.day && SCALES.day.lo != null ? nf(SCALES.day.lo) + "–" + nf(SCALES.day.hi) + " a day, last " + CH.per_day.length + " days" : "N/A";
+    SCALES.pkg = spark("chPkg", CH.packages.map(function (p) { return Number(p.bytes); }), "#f5b544", ax("chPkg"));
+    var lim = Number(h.inline_max) || 25500;
+    refLine("chPkg", SCALES.pkg, lim, "#f26d6d");
+    $("chPkgR").textContent = CH.packages.length ? plural(CH.packages.length, "package", "packages") + ", limit " + nf(lim) + " (red)" : "N/A";
+    SCALES.set = spark("chSet", CH.settle.map(function (p) { return Number(p.minutes); }), "#a78bfa", ax("chSet"));
+    var mins = CH.settle.map(function (p) { return Number(p.minutes); }).sort(function (a, b) { return a - b; });
+    $("chSetR").textContent = mins.length ? "median " + nf(mins[Math.floor(mins.length / 2)], 1) + " min, " + plural(mins.length, "payout", "payouts") : "N/A";
+  }
 
   var ACT = {
     faucet:        { ic: "faucet", cls: "faucet", label: "Faucet claim", pos: true },
@@ -468,6 +634,8 @@
     $("ocVaultMints").textContent = B0.mint_xwiniwa != null ? nf(B0.mint_xwiniwa) : "N/A";
     $("ocVaultBurns").textContent = B0.burn_xwiniwa != null ? nf(B0.burn_xwiniwa) : "N/A";
 
+    renderCard(d.card, base);
+
     // activity by type
     var B = d.breakdown || {};
     var bk = ["faucet", "mint_xwiniwa", "burn_xwiniwa"];
@@ -496,6 +664,122 @@
     // expanded list back to the latest twelve)
     LAST = d;
     if (!showingAll) renderFeed(Array.isArray(d.activity) ? d.activity : [], d.activity_total != null ? Number(d.activity_total) : (d.tx_total != null ? Number(d.tx_total) : null), "recent");
+  }
+
+  /* The Stables card section (collector field `card`). A collector that does not serve it yet leaves
+     every figure at N/A and says so in the note, rather than showing zeros. */
+  var CARD_IDS = {
+    cVaultId: "0xD7B367D654F20186DA21BE1B82BA1B4DF4FE0103CBDF12A50C7E4A7DC88F22B0",
+    cRequestId: "0xB13ADD36D874B2E0640AEB1F06B9AC1B5B37EC784AAD318A1463CC13DF2ED3F7",
+    cPackageId: "0xABA005476D2B3CD7F251B9783E64C124C9670BB358695F04D91B2057BB64CB49"
+  };
+  var CARD_FIGS = ["cardOn", "cardVault", "cAdds", "cRemoves", "cRefunds", "cPayouts", "cSeals", "cRejects", "cFallback", "cLongest", "cAddrs", "cDevices", "cCarriers"];
+  function amount8(v) { var n = Number(v); return isFinite(n) ? nf(n, 8) : "N/A"; }
+  function plural(n, one, many) { return nf(n) + " " + (Number(n) === 1 ? one : many); }
+  function idLink(base, id) {
+    return '<a class="txlink" href="' + base + encodeURIComponent(id) + '" target="_blank" rel="noopener noreferrer" title="' + id + '">' + id + "</a>";
+  }
+  /* One line per card transaction, in the activity list's own style. */
+  var CARD_ROW = {
+    "add":                           { ic: "faucet", sym: "↓", ttl: "Add to a card", pos: true },
+    "remove request":                { ic: "burn", sym: "↑", ttl: "Remove requested", pos: false },
+    "remove paid":                   { ic: "burn", sym: "↑", ttl: "Remove paid to Savings", pos: false },
+    "refund request":                { ic: "burn", sym: "↺", ttl: "Refund requested", pos: false },
+    "refund paid":                   { ic: "burn", sym: "↺", ttl: "Refund paid to Savings", pos: false },
+    "request, package not seen yet": { ic: "mint", sym: "◇", ttl: "Request, package not read yet", pos: false },
+    "request too large":             { ic: "burn", sym: "×", ttl: "Request too large, never payable", pos: false },
+    "rejected, too large":           { ic: "burn", sym: "×", ttl: "Rejected by the Council, too large", pos: false },
+    "council rejection":             { ic: "burn", sym: "×", ttl: "Rejected by the Council", pos: false },
+    "council seal":                  { ic: "mint", sym: "◇", ttl: "Council seal", pos: true },
+    "lab contract test":             { ic: "mint", sym: "◇", ttl: "Lab contract test", pos: false }
+  };
+  function renderCardRecent(c, base) {
+    var list = Array.isArray(c.recent) ? c.recent : [];
+    $("cRecentCount").textContent = list.length ? "latest " + nf(list.length) + " of " + nf(c.transactions || list.length) : "";
+    if (!list.length) { $("cRecent").innerHTML = '<div class="empty">No card transactions yet.</div>'; return; }
+    $("cRecent").innerHTML = list.map(function (a) {
+      var m = CARD_ROW[a.label] || { ic: "mint", sym: "◇", ttl: String(a.label || a.kind || "Card transaction").replace(/^./, function (ch) { return ch.toUpperCase(); }), pos: true };
+      var amt = a.amount != null && Number(a.amount) > 0 ? (m.pos ? "+" : "−") + amount8(a.amount) + (a.token ? " " + a.token : "") : "";
+      var extra = (a.hops != null ? " · " + plural(a.hops, "hand-over", "hand-overs") : "") + (a.carriers ? " · package in " + plural(a.carriers, "carrier", "carriers") : "") +
+        (a.coin ? " · refunded coin " + idLink(base, a.coin) : "");
+      return '<div class="row"><div class="ic ' + m.ic + '">' + m.sym + '</div>' +
+        '<div class="body"><div class="ttl">' + m.ttl + '</div><div class="meta">' + (a.t ? ago(a.t) : "") + (a.block ? " · block " + nf(a.block) : "") + extra +
+        (a.txpowid ? " · " + idLink(base, a.txpowid) : "") + '</div></div>' +
+        '<div class="amt ' + (m.pos ? "pos" : "neg") + '">' + amt + '</div></div>';
+    }).join("");
+  }
+  function renderCard(c, base) {
+    var oc = (c && c.onchain) || {};
+    var ids = { cVaultId: oc.vault || CARD_IDS.cVaultId, cRequestId: oc.request || CARD_IDS.cRequestId, cPackageId: oc.package || CARD_IDS.cPackageId };
+    Object.keys(ids).forEach(function (id) { var el = $(id); el.textContent = ids[id]; el.href = base + encodeURIComponent(ids[id]); el.title = ids[id]; });
+    if (!c) {
+      // Unknown is never shown as zero.
+      CARD_FIGS.forEach(function (id) { $(id).textContent = "not yet read"; });
+      $("cardNote").textContent = "Card figures are not served by the collector yet.";
+      return;
+    }
+    var k = c.counts || {};
+    var set = function (id, v) { var el = $(id); if (el) el.textContent = v; };
+    /* Every amount per token, labelled by name, never summed across tokens (the R2T3 vault holds
+       Winiwa and xWiniwa). */
+    var toks = Array.isArray(c.tokens) ? c.tokens : [];
+    var esc = function (v) { return String(v).replace(/[&<>"]/g, function (ch) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]; }); };
+    var rows = function (field) { return toks.length ? toks.map(function (t) { return '<span class="tokrow"><span>' + amount8(t[field]) + '</span><span class="tn">' + esc(t.name) + '</span></span>'; }).join("") : "N/A"; };
+    $("cardOn").innerHTML = rows("on_cards");
+    $("cardVault").innerHTML = rows("vault");
+    $("cardOnSub").innerHTML = toks.map(function (t) {
+      return '<span class="tl">' + esc(t.name) + ": " + amount8(t.added) + " added, " + amount8(t.paid_out) + " paid back by Removes" +
+        (Number(t.refunded) > 0 ? ", " + amount8(t.refunded) + " refunded" : "") +
+        (Number(t.returned_by_hand) > 0 ? ", " + amount8(t.returned_by_hand) + " returned by hand" : "") + "</span>";
+    }).join("") + '<span class="tl">Generation ' + esc(c.generation || "R2T3") + "</span>";
+    $("cardVaultSub").innerHTML = toks.map(function (t) {
+      // On cards and the vault are counted separately; they must agree. Any difference is named, never hidden.
+      var gap = Number(t.on_cards) - Number(t.vault);
+      return '<span class="tl">' + esc(t.name) + ": " + plural(t.vault_coins || 0, "coin", "coins") +
+        (gap === 0 ? ", the same as on cards" : gap > 0 ? ", " + amount8(gap) + " less than on cards" : ", " + amount8(-gap) + " more than on cards") + "</span>";
+    }).join("");
+    set("cAdds", k.adds != null ? nf(k.adds) : "N/A");
+    set("cRemoves", k.removes != null ? nf(k.removes) : "N/A");
+    set("cRemovesSub", k.removes != null ? nf(k.removes_from_phones) + " from phones, " + nf(k.removes_lab_tests) + " lab contract tests" +
+      (k.removes_paid != null ? ", " + nf(k.removes_paid) + " paid" : "") +
+      (k.requests_waiting_package ? ", " + plural(k.requests_waiting_package, "request", "requests") + " whose package is not read yet" : "") : "exit requests");
+    set("cRefunds", k.refunds != null ? nf(k.refunds) : "not yet read");
+    var rt = Array.isArray(c.refund_tokens) ? c.refund_tokens : [];
+    set("cRefundsSub", k.refunds != null ? (k.refunds ? nf(k.refunds_paid || 0) + " paid back to the payer" + (rt.length ? ", " + rt.map(function (t) { return amount8(t.amount) + " " + t.name; }).join(", ") + " asked for" : "") : "payments the receiver refused, paid back to the payer") : "payments the receiver refused, paid back to the payer");
+    set("cSeals", k.council_seals != null ? nf(k.council_seals) : "N/A");
+    set("cSealsSub", k.council_seals_genesis ? "approvals signed 5 of 7, and " + plural(k.council_seals_genesis, "genesis seal", "genesis seals") : "approvals signed 5 of 7");
+    set("cPayouts", k.payouts != null ? nf(k.payouts) : "N/A");
+    set("cPayoutsSub", k.payouts != null ? (k.removes_paid != null ? plural(k.removes_paid, "Remove", "Removes") + " and " + plural(k.refunds_paid || 0, "refund", "refunds") + "; " : "") + nf(k.payouts_sealed) + " approved by a seal, " + nf(k.payouts_fallback) + " by the fallback" : "Removes and refunds paid to Savings");
+    set("cFallback", k.payouts_fallback != null ? nf(k.payouts_fallback) : "N/A");
+    set("cRejects", k.rejections != null ? nf(k.rejections) : "N/A");
+    set("cRejectsSub", "requests refused, nothing paid" + (k.rejections_too_large ? ", " + nf(k.rejections_too_large) + " of them too large" : ""));
+    set("cCarriers", k.package_carriers != null ? nf(k.package_carriers) : "not yet read");
+    set("cCarriersSub", k.package_carriers != null ? "package parts posted on chain, for " + plural(k.packages_in_carriers || 0, "request", "requests") : "package parts posted on chain");
+    // Requests that can never be paid: listed on their own, never counted as paid.
+    var tl = Array.isArray(c.too_large) ? c.too_large : [];
+    $("cTooLargeBox").hidden = !tl.length;
+    $("cTooLarge").innerHTML = tl.map(function (t) {
+      return '<div class="row"><div class="ic burn">×</div><div class="body"><div class="ttl">' + (t.kind === "refund" ? "Refund request" : "Remove request") + ", " + nf(t.bytes) + " bytes, over the " + nf(t.limit) + "-byte limit" +
+        '</div><div class="meta">' + (t.status === "rejected" ? "rejected by the Council" : "never payable, not yet rejected on chain") + " · block " + nf(t.block) + " · request coin " + idLink(base, t.request_coin) + '</div></div>' +
+        '<div class="amt neg">' + amount8(t.amount) + (t.token ? " " + esc(t.token) : "") + '</div></div>';
+    }).join("");
+    renderCardRecent(c, base);
+    renderCardCharts(c.history);
+    var L = c.longest_sequence;
+    set("cLongest", L ? nf(L.hops) : "N/A");
+    set("cLongestSub", L ? plural(L.hops, "hand-over", "hand-overs") + " in one exit package of " + amount8(L.amount) + (L.token ? " " + L.token : "") + ", " + plural(L.devices, "phone", "phones") + ", block " + nf(L.block) : "hand-overs in one exit package");
+    set("cAddrs", c.addresses != null ? nf(c.addresses) : "N/A");
+    set("cDevices", c.devices != null ? nf(c.devices) : "N/A");
+    set("cDevicesSub", "phones seen in exit packages" + (c.keys != null ? ", " + plural(c.keys, "chip key", "chip keys") : ""));
+    var gen = "covenant, generation " + (c.generation || "R2T3");
+    set("cGen", gen);
+    var note = plural(c.transactions || 0, "card transaction", "card transactions") + " since block " + (c.first_block ? nf(c.first_block) : "N/A") +
+      ", all test generations (R2T1 to R2T3)" + (k.other ? ", " + plural(k.other, "of them a lab or migration move", "of them lab or migration moves") : "") + ", counted the way the ";
+    if (c.evidence_repo) $("cardEvidence").href = c.evidence_repo;
+    $("cardNote").textContent = note + "public card evidence counts them. " +
+      "Figures current to block " + (c.current_to != null ? nf(c.current_to) : "N/A") +
+      (c.archive_block != null ? "; the Minima archive, which finds the card blocks, is at block " + nf(c.archive_block) + " (it trails the tip by design, later blocks are read from the node)" : "") +
+      ". Payments between phones are off chain: they show here when the money leaves a card." + (c.complete === false ? " Still catching up." : "");
   }
 
   var LAST = null, showingAll = false, allRows = null;
@@ -562,6 +846,90 @@
         el.textContent = "Test Channel data is not reachable right now (" + message + "). Retrying in the background…";
         var lt = $("liveTag"); lt.className = "live stale"; $("liveText").textContent = "offline";
   }
+  /* A "?" beside every figure (founder 2026-10-16): what it is, then why it matters. Keyed by the id
+     of the figure; the button goes into that figure's own label. */
+  var HELP = {
+    blockH: ["The latest Minima block this monitor has read.", "If it stops moving, the figures below are out of date."],
+    priceH: ["Winiwa is a test asset with no market price.", "Shown so nobody takes a test balance for real money."],
+    winDist: ["All the Winiwa the faucet contract has given out since the test began, 1,000 a claim.", "Each claim is a tester joining, so it measures how far the test has reached."],
+    xwCirc: ["xWiniwa held by testers. The vault issues each one against one Winiwa locked in it.", "It shows how much the vault is used, and that every xWiniwa can be turned back into Winiwa."],
+    txTot: ["Every faucet claim, xWiniwa mint and xWiniwa burn since the start.", "A simple measure of how much the test is being exercised."],
+    hWin: ["Addresses that hold Winiwa now.", "Shows how widely the test asset has spread."],
+    hXw: ["Addresses that hold xWiniwa now.", "Shows how many testers have used the vault."],
+    bn_faucet: ["Claims made from the faucet contract.", "Each one is a tester or a device taking part."],
+    bn_mint_xwiniwa: ["Times Winiwa was locked in the vault in exchange for xWiniwa.", "Tests the issuing side of the vault contract."],
+    bn_burn_xwiniwa: ["Times xWiniwa was handed back to the vault for its Winiwa.", "Tests redemption, the promise that makes xWiniwa worth holding."],
+    crSpark: ["Faucet claims each day.", "Shows when testing is active and whether new testers keep arriving."],
+    supSpark: ["Vault mints and burns each day.", "Shows how often the vault contract is used."],
+    ocWinSupply: ["Every Winiwa that exists, fixed when the token was created.", "All the other Winiwa figures are parts of this total."],
+    ocWinOut: ["Winiwa the faucet has given out so far.", "Tells you how much of the supply is in testers' hands."],
+    ocWinPool: ["Winiwa the faucet contract can still give out.", "When it runs low, new testers can no longer claim."],
+    ocWinHolders: ["Addresses that hold Winiwa now.", "Shows how widely the test asset has spread."],
+    ocXwSupply: ["Every xWiniwa that exists, created once. The part not issued stays in the vault.", "Issuing can never go beyond this amount."],
+    ocXwCirc: ["xWiniwa outside the vault, held by testers.", "Each one is backed by one Winiwa locked in the vault."],
+    ocXwReserve: ["xWiniwa still held by the vault, ready to issue against new Winiwa.", "Shows how much more the vault can issue."],
+    ocXwHolders: ["Addresses that hold xWiniwa now.", "Shows how many testers have used the vault."],
+    ocFaucetSeed: ["Winiwa the faucet contract started with.", "The starting point for what it has handed out and what is left."],
+    ocFaucetClaims: ["Claims made from the faucet, 1,000 Winiwa each.", "Each one is a tester or a device taking part."],
+    ocFaucetOut: ["Winiwa the faucet has paid out.", "Equal to the claims times 1,000, which anyone can check on chain."],
+    ocFaucetLeft: ["Winiwa still in the faucet contract.", "When it runs out, nobody new can claim."],
+    ocVaultPool: ["Winiwa locked in the vault contract.", "It must equal the xWiniwa issued. That equality is what backs xWiniwa."],
+    ocVaultIssued: ["xWiniwa the vault has issued against deposited Winiwa.", "Always one for one with the Winiwa deposited."],
+    ocVaultMints: ["Times Winiwa was deposited for xWiniwa.", "Tests the issuing side of the vault contract."],
+    ocVaultBurns: ["Times xWiniwa was returned for its Winiwa.", "Tests that redemption always works."],
+    cardOn: ["Money put on Stables cards and not yet taken back: Adds, minus Removes and refunds paid, minus anything returned by hand.", "This money moves from phone to phone by touch, off chain. It is counted without looking at the vault, so it can be checked against the vault."],
+    cardVault: ["Coins the card vault contract holds now, read from the chain.", "It must equal the money on cards: every card balance is backed by coins anyone can check."],
+    cAdds: ["Deposits from a Savings account onto a card.", "Each one locks coins in the card vault, so card money is backed from the start."],
+    cRemoves: ["Requests to take card money back to Savings. Each one carries the card's proof of where the money came from.", "The way out of the card. It must always work."],
+    cRefunds: ["Payments the receiver's phone refused, signed by the receiver and paid back to the payer's Savings.", "Shows that a failed payment never strands the money."],
+    cPayouts: ["Removes and refunds the vault actually paid to Savings.", "Proof that card money comes back on chain."],
+    cSeals: ["Council approvals, each signed by 5 of its 7 keys after checking the package.", "The Council checks every Remove before it is paid, so no money is paid twice."],
+    cRejects: ["Requests the Council refused. Nothing was paid.", "Shows the checks stop requests that are invalid or cannot be paid."],
+    cFallback: ["Payouts made without the Council, once the 20-block wait is over.", "Proves money cannot be held hostage if the Council is absent."],
+    cLongest: ["The most hand-overs carried in one exit package.", "Shows how far money travels by touch before it returns on chain."],
+    cAddrs: ["Savings addresses that took part in card transactions.", "How many accounts have used the card."],
+    cDevices: ["Different phones seen in exit packages.", "How many devices have paid by card."],
+    cCarriers: ["Parts of large packages posted on chain separately, so their payout still fits in a block.", "Shows that the large-package path is in use and works."],
+    chMoney: ["Money on cards after each Add, payout or return.", "Shows how much money the test has put on cards over time."],
+    chDay: ["Adds, Removes and refunds each day.", "Shows when the card is being tested and how hard."],
+    chPkg: ["The size of each Remove or refund package. It grows with every hand-over; refreshing coins keeps it small. Red marks the limit.", "Above the limit a payout cannot fit in a block, so the package is posted in carriers."],
+    chSet: ["Minutes from a request appearing on chain to its payout.", "How long a person waits to get card money back to Savings."]
+  };
+  var helpPop = document.createElement("div");
+  helpPop.className = "helppop"; helpPop.id = "helpPop"; helpPop.setAttribute("role", "dialog");
+  document.body.appendChild(helpPop);
+  var helpOpen = null;
+  function helpClose() { if (helpOpen) helpOpen.setAttribute("aria-expanded", "false"); helpOpen = null; helpPop.className = "helppop"; }
+  function helpLabel(id) {
+    var el = $(id); if (!el) return null;
+    if (el.closest(".status")) return el.parentNode;
+    var box = el.closest(".stat, .hero, .brow, .oc-stat") || el.closest(".card");
+    return box && box.querySelector(".k, .lbl, .bl, .chart-head .t");
+  }
+  Object.keys(HELP).forEach(function (id) {
+    var lab = helpLabel(id); if (!lab || lab.querySelector(".help")) return;
+    var name = (lab.closest(".status") ? lab.firstChild.textContent : lab.textContent).trim();
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "help"; b.textContent = "?";
+    b.setAttribute("aria-label", "What is " + name + "?"); b.setAttribute("aria-expanded", "false"); b.setAttribute("aria-controls", "helpPop");
+    b.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (helpOpen === b) { helpClose(); return; }
+      helpClose();
+      helpPop.innerHTML = "<b></b><span></span><span class=\"why\"></span>";
+      helpPop.children[0].textContent = name; helpPop.children[1].textContent = HELP[id][0]; helpPop.children[2].textContent = HELP[id][1];
+      helpPop.className = "helppop show"; helpOpen = b; b.setAttribute("aria-expanded", "true");
+      var r = b.getBoundingClientRect(), w = helpPop.offsetWidth, h = helpPop.offsetHeight;
+      var left = Math.max(16, Math.min(window.innerWidth - w - 16, r.left - 12));
+      var top = r.bottom + 8 + h > window.innerHeight - 8 ? r.top - h - 8 : r.bottom + 8;
+      helpPop.style.left = left + "px"; helpPop.style.top = Math.max(8, top) + "px";
+    });
+    lab.appendChild(b);
+  });
+  document.addEventListener("click", function (e) { if (helpOpen && !helpPop.contains(e.target)) helpClose(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && helpOpen) { var b = helpOpen; helpClose(); b.focus(); } });
+  window.addEventListener("scroll", helpClose, { passive: true });
+
   load();
   setInterval(load, 30000);
 })();
