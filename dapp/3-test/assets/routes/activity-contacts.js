@@ -4212,9 +4212,11 @@
       value: fmtAmt(v),
     };
   }
-  function activityIconClass(x) {
-    if (x && x.dir === 'self') return 'self-ic';
-    return (x && x.dir === 'in') ? 'in-ic' : 'out-ic';
+  /* DAT-001 direction mark, the transaction row's leading mark: in, out or self (a move between this wallet's own
+     accounts). The one helper lives in index.html (window.stablesTxDirMarkHtml, defined before the
+     boot renders); every row renderer here draws its leading mark through it, never `x.icon`. */
+  function stablesTxDirMarkHtml(dir) {
+    return window.stablesTxDirMarkHtml(dir);
   }
   function activityMatchesDir(x) {
     if (activityFilter === 'all' || activityFilter === 'hidden') return true;
@@ -4985,9 +4987,13 @@
     const titleRight = document.getElementById('agentActionTitleRight');
     if (titleRight) titleRight.innerHTML = transactionDetailsAgentButtonHtml();
     const fallbackTxHash = normalizeTxHash(tx.explorerTxId) || nodeTxpowHashFromActivityId(tx.id);
-    const fallbackTxRef = fallbackTxHash
+    // The link only once the transaction is in a block (founder 2026-10-14): before that the explorer has nothing to show.
+    const fallbackTxInBlock = Number(tx.block || 0) > 0 || Number(tx.confirmations || 0) > 0;
+    const fallbackTxRef = (fallbackTxHash && fallbackTxInBlock)
       ? '<a href="' + escUi(txExplorerUrl(tx)) + '" target="_blank" rel="noopener noreferrer" title="' + escUi(fallbackTxHash) + '" class="btn" style="width:auto;padding:0;border:none;background:none;font-size:12px;font-weight:900;color:var(--c);text-decoration:underline;text-align:left">View transaction</a>'
-      : '<div style="font-size:12px;font-weight:800;color:var(--m)">Transaction details are syncing.</div>';
+      : (fallbackTxHash
+        ? '<div style="font-size:12px;font-weight:800;color:var(--m)">Link once it is in a block.</div>'
+        : '<div style="font-size:12px;font-weight:800;color:var(--m)">Transaction details are syncing.</div>');
     contentEl.innerHTML = '<div style="margin-bottom:12px;font-size:16px;font-weight:900;color:var(--t)">'
       + escUi(tx.title || 'Transaction')
       + '</div><div class="xs mu" style="margin-bottom:10px">'
@@ -5197,7 +5203,7 @@
       const note = getTxNote(x);
       const amtDisp = activityAmtSignedDisplay(x);
       const ccyDisplay = normalizeActivityCcyLabel(x.ccy);
-      row.innerHTML = `<div class="tx-ic ${activityIconClass(x)}">${x.icon}</div><div class="tx-info"><div class="tx-t">${x.title}</div><div class="tx-d">${activityRowDetail(x)}</div></div><div class="tx-amt-wrap"><div class="tx-amt ${amtDisp.cls} bal-amount">${amtDisp.sign}${amtDisp.value} ${ccyDisplay}</div>${stablesLegSpendLineHtml(x)}${txConfirmLine(x)}</div>`;
+      row.innerHTML = `${stablesTxDirMarkHtml(x.dir)}<div class="tx-info"><div class="tx-t">${x.title}</div><div class="tx-d">${activityRowDetail(x)}</div></div><div class="tx-amt-wrap"><div class="tx-amt ${amtDisp.cls} bal-amount">${amtDisp.sign}${amtDisp.value} ${ccyDisplay}</div>${stablesLegSpendLineHtml(x)}${txConfirmLine(x)}</div>`;
       applyTxRowLadderState(row, x, 'activityList');
       makeTransactionRowClickable(row, x.id);
       list.appendChild(row);
@@ -5292,7 +5298,7 @@
         ? '<div class="tx-conf-amt tx-conf--confirming">' + faucetDisplay.conf + '</div>'
         : txConfirmLine(x);
       const ccyDisplay = normalizeActivityCcyLabel(x.ccy);
-      row.innerHTML = `<div class="tx-ic ${activityIconClass(x)}">${x.icon}</div><div class="tx-info"><div class="tx-t">${txTitle}</div><div class="tx-d">${txDetail}</div></div><div class="tx-amt-wrap"><div class="tx-amt ${amtDisp.cls} bal-amount">${amtDisp.sign}${amtDisp.value} ${ccyDisplay}</div>${stablesLegSpendLineHtml(x)}${txConf}</div>`;
+      row.innerHTML = `${stablesTxDirMarkHtml(x.dir)}<div class="tx-info"><div class="tx-t">${txTitle}</div><div class="tx-d">${txDetail}</div></div><div class="tx-amt-wrap"><div class="tx-amt ${amtDisp.cls} bal-amount">${amtDisp.sign}${amtDisp.value} ${ccyDisplay}</div>${stablesLegSpendLineHtml(x)}${txConf}</div>`;
       applyTxRowLadderState(row, x, listId);
       makeTransactionRowClickable(row, x.id);
       return row;
@@ -5329,7 +5335,7 @@
       row.style.cursor = 'pointer';
       const exFrom = Number(x.fromAmt || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       const exTo = Number(x.toAmt || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      row.innerHTML = `<div class="tx-ic" >⇄</div><div class="tx-info"><div class="tx-t">${x.fromCcy} → ${x.toCcy}</div><div class="tx-d">${x.date}${x.status === 'Pending' ? ' · Pending' : ''}</div></div><div class="tx-amt bal-amount"  style="color:var(--c)">${exFrom} → ${exTo}</div>`;
+      row.innerHTML = `${stablesTxDirMarkHtml('self')}<div class="tx-info"><div class="tx-t">${x.fromCcy} → ${x.toCcy}</div><div class="tx-d">${x.date}${x.status === 'Pending' ? ' · Pending' : ''}</div></div><div class="tx-amt bal-amount"  style="color:var(--c)">${exFrom} → ${exTo}</div>`;
       row.addEventListener('click', () => window.openExchangeDetail(x.id));
       list.appendChild(row);
     });

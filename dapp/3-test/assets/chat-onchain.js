@@ -287,7 +287,7 @@
     var peerPk = fromHex(peerPubHex);
     var body = { v: 1, t: payload.type || 'text', m: payload.message || '', i: payload.image || '', f: id.publicHex, mx: id.mx || '', ts: Date.now() };
     var blobHex = toHex(SB.seal(utf8(JSON.stringify(body)), peerPk));
-    if (blobHex.length > MAX_BLOB_HEX_CHARS) return { ok: false, error: 'Message too large for one on-chain coin — shrink the image.' };
+    if (blobHex.length > MAX_BLOB_HEX_CHARS) return { ok: false, error: 'Message too large for one on-chain coin. Shrink the image.' };
     var winiwa = ((window.STABLES_CONFIG || {}).TEST_TOKEN_REGISTRY || {}).winiwa_token_id || '';
     var state = JSON.stringify({ 90: myNodeKey, 99: blobHex });
     var r = await nodeCmd('send address:' + CHAT_ADDRESS + ' amount:' + DUST + ' tokenid:' + winiwa + " state:" + state);
@@ -581,7 +581,7 @@
 
       chatsEl.innerHTML = withTime.length ? withTime.map(function (row) {
         var c = row.c, last = row.last;
-        var preview = c.fromBook ? 'In your contacts — ask for their address to chat'
+        var preview = c.fromBook ? 'In your contacts. Ask for their address to chat'
           : (last ? ((last.dir === 'out' ? 'You: ' : '') + (last.type === 'image' ? '📷 Photo' : last.message))
                   : 'No messages yet');
         var when = fmtTime(last && last.ts);

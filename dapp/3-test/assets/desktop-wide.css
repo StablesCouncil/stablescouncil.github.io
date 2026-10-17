@@ -1,0 +1,253 @@
+/*
+ * THE WIDE WINDOW (founder direction 2026-10-15, build after 0.0.13.019).
+ *
+ * Step one (0.0.13.019) retired the desktop shell: a wide window showed the phone app, centred at
+ * 580 px. Step two, this file: "the way now the desktop app looks is good, but we have to not limit
+ * ourself and use the full width of the screen". So a wide window keeps the phone's design language
+ * (same components, Home with its icons, the Wallet with its eye, the one bottom button, the agent
+ * button, the top bar) and spends the width on content, never on a stretched phone column.
+ *
+ * GATING. Every rule needs BOTH the web surface (html[data-stables-surface="webapp"], set by the
+ * surface script in index.html; never 'apk' or 'dapp') AND a window at least 1024 px wide. The APK
+ * and the MiniDapp are untouched at every width, and the web below 1024 px is the phone layout.
+ * desktop-web.css (the retired shell) stays gated on html.dw-active, which is not mounted.
+ *
+ * MEASURES (one set, each with one job):
+ *   --dw2-frame  1440 px  the content frame. The top bar, the bottom bar and the backdrop span the
+ *                          window; their content and every page align to this frame, with gutters of
+ *                          clamp(32px, 4vw, 64px). 1440 keeps a two-column Wallet readable at 1920
+ *                          (two columns of about 600 and 820 px) instead of two lines a metre apart.
+ *   --dw2-list    960 px  lists and single-column pages (Activity and the other focus pages): a row's
+ *                          label and its amount stay within one eye movement.
+ *   --dw2-read    720 px  reading prose (legal), the registered P4 maximum.
+ *   --dw2-task    560 px  money tasks and forms (Exchange, Mint, Invoice ...): what a person fills in
+ *                          never widens with the window (P7), and stays centred (founder 2026-09-01:
+ *                          "keep the elements centered ... one under the other when they don't
+ *                          require a full width display").
+ *
+ * PAGES (treatments are the data-dw stamps written by desktop-web.js):
+ *   Wallet (home)   balance across the frame; then two columns: the Stables card and Savings on the
+ *                   left (5 parts), Recent activity on the right (7 parts). Reading order unchanged.
+ *   Home            the icon grid fills the frame with as many 128 px+ columns as fit, same 60 px
+ *                   icons, the Apps widget still 2 by 2; every phone gesture works with a mouse.
+ *   focus           one column at the list measure.
+ *   form (settings) Settings and updates, Security, My profile and Wallet management lay their
+ *                   sections in a two-column grid across the frame (independent cards).
+ *   form (tasks)    Faucet, Invoice, Feedback, Ambassador, My shop: the task measure, centred.
+ *   task            Exchange and Mint: the task measure, centred, supporting truth below.
+ *   document        Legal: the reading measure.
+ *   Sheets and pop-ups keep their phone width (580 px), centred over the full-width backdrop.
+ *
+ * LAWS KEPT: a layout rule never decides whether something is on screen (every display rule on a
+ * .page is guarded with .active); register geometry (control heights, radii, icon sizes) is the
+ * element registry's own; nothing moves in the DOM, so reading order, hooks and focus order are the
+ * phone's.
+ */
+
+@media (min-width: 1024px) {
+
+  html[data-stables-surface="webapp"] {
+    --dw2-frame: 1440px;
+    --dw2-gutter: clamp(32px, 4vw, 64px);
+    --dw2-list: 960px;
+    --dw2-read: 720px;
+    --dw2-task: 560px;
+    --dw2-col-gap: 48px;
+  }
+
+  /* ---------------------------------------------------------------- chrome */
+
+  /* The top bar spans the window; its brand and trailing controls sit on the frame's edges. The
+     percentage resolves against the viewport (the bar is fixed or absolute), the same width the
+     scroll area's frame is centred in, so the bar's brand and the page's first column line up. */
+  html[data-stables-surface="webapp"] .topbar {
+    left: 0;
+    right: 0;
+    max-width: none;
+    padding-inline: max(var(--dw2-gutter), calc((100% - var(--dw2-frame)) / 2));
+  }
+
+  /* The bottom bar spans the window; its one destination stays centred, as on the phone. */
+  html[data-stables-surface="webapp"] .bnav {
+    left: 0;
+    right: 0;
+    max-width: none;
+  }
+
+  /* The agent's layer covers the window, so a dragged button can be put anywhere on it. */
+  html[data-stables-surface="webapp"] .fab-container {
+    left: 0;
+    right: 0;
+    max-width: none;
+  }
+
+  /* The lit backdrop and the scroll area are no longer a 580 px column. */
+  html[data-stables-surface="webapp"] body:has(.page.active[data-machinery-lit])::before {
+    max-width: none;
+  }
+  html[data-stables-surface="webapp"] .scroll-area {
+    max-width: none;
+  }
+  html[data-stables-surface="webapp"] .scroll-area > .stables-node-banner {
+    width: min(var(--dw2-frame), calc(100% - 2 * var(--dw2-gutter)));
+    max-width: none;
+    margin-inline: auto;
+  }
+
+  /* -------------------------------------------------------- the page frame */
+
+  /* Every page sits in the frame. !important restates the lit language's `width: min(580px, 100%)`
+     and its 16 px `padding-inline !important`; the frame's gutters replace them. No display here. */
+  html[data-stables-surface="webapp"] .page,
+  html[data-stables-surface="webapp"] .page[data-machinery-lit] {
+    width: min(var(--dw2-frame), calc(100% - 2 * var(--dw2-gutter)));
+    max-width: none;
+    margin-inline: auto;
+    padding-inline: 0 !important;
+  }
+
+  /* A page's direct children are bounded to its treatment's measure and centred in the frame.
+     Fixed-position children (a page-scoped .mback dialog) are exempt: bounding a fixed backdrop
+     would tear it off the viewport. !important outranks the lit `.app-section { max-width: none
+     !important }`. */
+  html[data-stables-surface="webapp"] .page[data-dw="focus"] > *:not(.mback),
+  html[data-stables-surface="webapp"] .page[data-dw="workstation"] > *:not(.mback),
+  html[data-stables-surface="webapp"] .page:not([data-dw]) > *:not(.mback) {
+    width: 100%;
+    max-width: var(--dw2-list) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  html[data-stables-surface="webapp"] .page[data-dw="task"] > *:not(.mback),
+  html[data-stables-surface="webapp"] .page[data-dw="form"] > *:not(.mback) {
+    width: 100%;
+    max-width: var(--dw2-task) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  html[data-stables-surface="webapp"] .page[data-dw="document"] > *:not(.mback) {
+    width: 100%;
+    max-width: var(--dw2-read) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  /* (width: 100% above: a page that is a flex column would otherwise shrink a centred child to its
+     content, which put the Exchange title in the middle of the window.) */
+  /* A native control is inline-level, so auto side margins resolve to zero: make the page's direct
+     controls blocks so they join the centred column. Their registered geometry is unchanged. */
+  html[data-stables-surface="webapp"] .page[data-dw] > :is(input, select, textarea) {
+    display: block;
+  }
+  /* Supporting truth under a task (Recent exchanges) shares the task column. */
+  html[data-stables-surface="webapp"] .page[data-dw="task"] [data-mx-regions] > *:not(.mback) {
+    width: 100%;
+    max-width: var(--dw2-task) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+  html[data-stables-surface="webapp"] .page[data-dw="task"] > [data-mx-regions],
+  html[data-stables-surface="webapp"] .page[data-dw="task"] > *:has([data-mx-regions]) {
+    max-width: none !important;
+  }
+
+  /* --------------------------------------------- settings: a grid of sections */
+
+  /* These pages are lists of independent settings sections, each a titled card. Across the frame
+     they form two columns, read left to right then down, which is the phone's order. The header
+     and anything that is not a section span both columns. A section's hairline separated it from
+     the next one in a single column; in a grid the gap does that, so it is dropped here. */
+  html[data-stables-surface="webapp"] :is(#page-settings-updates, #page-settings-security, #page-settings-profile, #page-wallet-management).page.active {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--dw2-col-gap);
+    align-items: start;
+  }
+  html[data-stables-surface="webapp"] :is(#page-settings-updates, #page-settings-security, #page-settings-profile, #page-wallet-management).page > *:not(.mback) {
+    grid-column: 1 / -1;
+    min-width: 0;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  html[data-stables-surface="webapp"] :is(#page-settings-updates, #page-settings-security, #page-settings-profile, #page-wallet-management).page > .app-section {
+    grid-column: auto;
+    border-bottom: 0 !important;
+    /* Grid items do not collapse margins: the first section's extra 20 px top margin would drop it
+       below its neighbour. Each section keeps the phone's 24 px below it and nothing above. */
+    margin-top: 0 !important;
+    margin-bottom: 24px !important;
+  }
+
+  /* ------------------------------------------------------------------ Wallet */
+
+  /* The balance (and the seed reminder, when shown) runs across the frame. Below it, two columns:
+     the Stables card then Savings on the left, Recent activity on the right. The left column is
+     5 parts so the card keeps the proportions it has on a phone; the activity list gets the 7. The
+     third row takes any extra height, so a long activity list never opens a gap between the card
+     and Savings. Source order is the reading order: balance, card, Savings, activity. */
+  html[data-stables-surface="webapp"] #page-wallet.page.active {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: var(--dw2-col-gap);
+    align-items: start;
+  }
+  html[data-stables-surface="webapp"] #page-wallet.page > *:not(.mback) {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+  html[data-stables-surface="webapp"] #page-wallet.page > #walletInstantSection {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  html[data-stables-surface="webapp"] #page-wallet.page > #walletCurrenciesSection {
+    grid-column: 1;
+    grid-row: 4;
+  }
+  html[data-stables-surface="webapp"] #page-wallet.page > .app-section:has(#walletRecentList) {
+    grid-column: 2;
+    grid-row: 3 / span 2;
+  }
+  /* The activity title row is 48 px tall because it carries See all; the two left titles get the
+     same row height so the three column titles share one baseline. */
+  html[data-stables-surface="webapp"] #page-wallet.page > :is(#walletInstantSection, #walletCurrenciesSection) > .stitle-row {
+    min-height: 48px;
+    align-items: flex-end;
+  }
+
+  /* -------------------------------------------------------------------- Home */
+
+  /* Home is a full-screen sheet; on a wide window it covers the window, not a 580 px column. */
+  html[data-stables-surface="webapp"] #pageCarousel > .ui-modal-frame,
+  html[data-stables-surface="webapp"] #pageCarousel .modal[data-modal-shape="screen"] {
+    max-width: none !important;
+  }
+  html[data-stables-surface="webapp"] #pageCarousel .home-head {
+    padding-inline: max(var(--dw2-gutter), calc((100% - var(--dw2-frame)) / 2));
+  }
+  html[data-stables-surface="webapp"] #pageCarousel .home-screen {
+    padding-inline: max(var(--dw2-gutter), calc((100% - var(--dw2-frame)) / 2));
+  }
+  /* The + stays on the frame's right edge, above the bottom bar. */
+  html[data-stables-surface="webapp"] #pageCarousel .home-add-group {
+    right: max(var(--dw2-gutter), calc((100% - var(--dw2-frame)) / 2));
+  }
+
+  /* MORE COLUMNS, SAME ICONS, SAME GESTURES. On a phone the grid has four columns and every tile carries its
+     saved place inline (stablesHomeApplySlot). A slot is a place in reading order, and index.html asks
+     stablesHomeCols() for the column count in every slot computation; on a wide web window desktop-web.js
+     answers with the columns that fit the frame (128 px minimum, so the 60 px icon and its name keep the
+     phone's room) and publishes the count as --dw2-home-cols. The inline places, the drop target under the
+     pointer, Hide from Home, groups and Alt+arrows all use that one count, so the saved arrangement reads row
+     by row and a mouse arranges Home exactly as a finger does. The Apps widget stays 2 by 2. The overview's
+     screen cards draw the same columns. */
+  html[data-stables-surface="webapp"] #pageCarousel .page-grid[data-home-grid="home"],
+  html[data-stables-surface="webapp"] #pageCarousel .home-screen-card__face {
+    grid-template-columns: repeat(var(--dw2-home-cols, 4), minmax(0, 1fr));
+  }
+  /* A carried icon shows it is held. */
+  html[data-stables-surface="webapp"]:has(#pageCarouselStrip.is-arranging) #pageCarousel,
+  html[data-stables-surface="webapp"]:has(#pageCarouselStrip.is-arranging) #pageCarousel * {
+    cursor: grabbing !important;
+  }
+}

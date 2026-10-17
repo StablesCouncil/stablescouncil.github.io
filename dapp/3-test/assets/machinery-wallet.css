@@ -136,7 +136,38 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
 #recvModal[data-sheet-mode="card"] > .ui-modal-frame > .modal > .ui-segmented[data-payment-direction] { display: flex !important; }
 #sendModal[data-sheet-mode="card"] [data-payment-direction] .ui-segment.active,
 #recvModal[data-sheet-mode="card"] [data-payment-direction] .ui-segment.active { border-color: transparent !important; background: var(--am) !important; color: var(--mx-on-accent) !important; }
+/* Founder 2026-10-15: "the Pay and Get paid should have distinct color to make it clear what side we are". Get paid wears
+   green (money coming in), Pay keeps the card's amber: the strip, the panel's border and its circle follow. */
+#recvModal[data-payment-account="instant"][data-sheet-mode="card"] { --mx-accent: var(--gr); --c: var(--gr); }
+#recvModal[data-sheet-mode="card"] [data-payment-direction] .ui-segment.active { background: var(--gr) !important; }
 #walletInstantSection .stables-card { cursor: pointer; }
+/* Paying from the Wallet page (founder 2026-10-15): the card itself says where the payment stands, in its corner line. */
+#walletInstantSection .stables-card { position: relative; }
+#walletInstantSection .stables-card[data-tap-state="paying"],
+#walletInstantSection .stables-card[data-tap-state="again"] { box-shadow: 0 0 0 3px var(--am); }
+#walletInstantSection .stables-card[data-tap-state="paid"] { box-shadow: 0 0 0 3px var(--gr); }
+#walletInstantSection .stables-card[data-tap-state="failed"] { box-shadow: 0 0 0 3px var(--rd, #f87171); }
+/* The face over the card: the payment's moment, large, on the card the person is looking at. */
+.card-tap-face { position: absolute; inset: 0; z-index: 3; border-radius: inherit; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 16px; text-align: center; background: rgba(10, 22, 40, .96); }
+.card-tap-face[hidden] { display: none !important; }
+.card-tap-face__icon { width: 64px; height: 64px; border-radius: 50%; border: 3px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 800; line-height: 1; }
+.card-tap-face__icon svg { display: block; flex: none; width: 40px; height: 20px; }
+.card-tap-face__title { font-size: 22px; font-weight: 800; color: var(--t, #fff); }
+.card-tap-face__sub { font-size: 14px; color: var(--mx-ink-soft, #c9d3e0); }
+.stables-card[data-tap-state="paying"] .card-tap-face__icon,
+.stables-card[data-tap-state="again"] .card-tap-face__icon { color: var(--am); animation: stablesTapPulse 1.6s ease-in-out infinite; }
+.stables-card[data-tap-state="paid"] .card-tap-face__icon { color: var(--gr); }
+.stables-card[data-tap-state="failed"] .card-tap-face__icon { color: var(--rd, #f87171); }
+/* The tap lock (founder 2026-10-15): a clear layer over the whole screen while a card sheet waits for the touch; the one
+   control is the slider at the bottom. */
+.tap-guard { position: fixed; inset: 0; z-index: 9000; background: transparent; touch-action: none; }
+.tap-guard[hidden] { display: none !important; }
+.tap-guard__bar { position: absolute; left: 0; right: 0; bottom: 0; padding: 28px 16px calc(20px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: center; gap: 10px; background: linear-gradient(to top, rgba(8, 18, 34, .97) 70%, rgba(8, 18, 34, 0)); }
+.tap-guard__why { font-size: 14px; font-weight: 700; color: var(--t, #fff); }
+.tap-guard__track { position: relative; width: 100%; max-width: 400px; height: 64px; border-radius: 32px; background: rgba(251, 191, 36, .16); border: 2px solid var(--am); box-shadow: 0 0 18px rgba(251, 191, 36, .35); display: flex; align-items: center; justify-content: center; touch-action: none; }
+.tap-guard__label { font-size: 17px; font-weight: 800; color: var(--am); padding-left: 40px; pointer-events: none; }
+.tap-guard__knob { position: absolute; left: 4px; top: 4px; width: 52px; height: 52px; border-radius: 26px; background: var(--am); color: #111; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; transition: transform .2s ease; touch-action: none; }
+.tap-guard__knob.is-dragging { transition: none; }
 
 /* Build 0.0.12.050: the eye moved to the top bar, so the hero starts at the top of its card; the balance section loses its
    20 px head too. Everything on the Wallet sits higher (founder: "bring everything up"). */
@@ -1083,6 +1114,17 @@ body:has(#page-wallet.active) .topbar { border-bottom: 0 !important; }
 .card-levels__note { margin: 10px 0 0; line-height: 1.4; }
 #instantMoveModal[data-payment-account="instant"] .card-levels__in:focus { border-color: var(--am); }
 .paysec-card-levels { margin: 16px 0; }
+/* Card receiving limits and fingerprint (0.0.13.020, founder: "all texts and boxes are properly aligned"): one row per
+   setting, words left, boxes of one width right, a short heading per group. */
+[data-card-receive] { display: flex; flex-direction: column; align-items: stretch; }
+.card-recv { display: flex; flex-direction: column; gap: 6px; padding-top: 12px; }
+.card-recv__group { font-size: 13px; font-weight: 800; color: var(--t); margin-top: 8px; }
+.card-recv__group:first-child { margin-top: 0; }
+.card-recv__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; }
+.card-recv__label { flex: 1 1 auto; min-width: 0; font-size: 14px; color: var(--t); }
+.card-recv .card-recv__in { flex: 0 0 120px; width: 120px; margin: 0 !important; text-align: right; padding: 10px 12px; }
+/* Card upkeep (0.0.13.036): a choice drawn by the app (the shared segmented control), full width under its heading. */
+.card-recv .card-recv__upkeep { width: 100%; }
 
 /* Build 0.0.12.058: Show on Home (My profile), a grouped list of rows instead of a run of checkboxes. */
 #stablesHomeVisibility { display: block; margin-bottom: 18px; }

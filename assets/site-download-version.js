@@ -20,7 +20,7 @@
 //   [data-test-channel-download]  a real link to the current test package
 //   [data-test-channel-version]   the current test label and its truth statement
 (function () {
-  var PUBLISHED_DEMO_VERSION = '0.0.13.007';
+  var PUBLISHED_DEMO_VERSION = '0.0.14.002';
   var TEST_CHANNEL_VERSION = PUBLISHED_DEMO_VERSION;
   /* The coordinated test release is three surfaces: one Android app, the MiniDapp and the web app.
      This one version drives the Android download

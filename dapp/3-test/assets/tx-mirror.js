@@ -250,6 +250,10 @@
         var k = String(a || '').trim().toLowerCase();
         if (k && !_covSet[k]) { _covSet[k] = true; _covKinds[k] = 'instant'; }
       });
+      // Package carriers (0.0.13.037): the card's housekeeping, no row unless Settings, Advanced, Technical transactions.
+      var pkg = window.StablesRoute2 && window.StablesRoute2.PACKAGE_ADDRESS ? String(window.StablesRoute2.PACKAGE_ADDRESS).trim().toLowerCase() : '';
+      var tech = !!(window.StablesRoute2 && typeof window.StablesRoute2.showTechnical === 'function' && window.StablesRoute2.showTechnical());
+      if (pkg && !tech && !_covSet[pkg]) { _covSet[pkg] = true; _covKinds[pkg] = 'instant'; }
     } catch (_) { /* ignore */ }
     return _covSet;
   }
@@ -1171,7 +1175,7 @@
         var fail = function () {
           try {
             if (typeof window.stablesUpsertUserActivityRows === 'function') {
-              window.stablesUpsertUserActivityRows([{ id: r.id, status: 'Failed', pendingIncoming: false, note: 'Did not settle — the funds were not spent. Safe to try again.' }]);
+              window.stablesUpsertUserActivityRows([{ id: r.id, status: 'Failed', pendingIncoming: false, note: 'Did not settle. The funds were not spent. Safe to try again.' }]);
               if (typeof window.renderActivity === 'function') window.renderActivity();
               if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity();
             }

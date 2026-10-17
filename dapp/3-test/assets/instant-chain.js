@@ -285,7 +285,19 @@
     if (!inputs.length || change < BigInt(0)) throw ChainError('savings-short');
     var outputs = [out(to, BigInt(1), dust, true)];
     if (change > BigInt(0)) outputs.push(out(hx(p.payout), change, dust, false));
-    return { kind: 'carrier', inputs: inputs, outputs: outputs, state: { 0: CARRIER_MAGIC, 1: utf8Hex(p.text) }, sign: 'auto', carrierIndex: 0 };
+    var state = { 0: CARRIER_MAGIC, 1: utf8Hex(p.text) };
+    // Stables card answers (failed payments, 2026-10-16) carry their signed bytes in ports 2 on, 4,000 bytes each.
+    Object.keys(p.ports || {}).forEach(function (k) { if (Number(k) >= 2 && Number(k) <= 9) state[Number(k)] = String(p.ports[k]); });
+    return { kind: 'carrier', inputs: inputs, outputs: outputs, state: state, sign: 'auto', carrierIndex: 0 };
+  }
+  /** A carrier's extra ports (2 to 9) as {port: hex}, or {}. */
+  function carrierPorts(txpow) {
+    var txn = txpow && txpow.body && txpow.body.txn ? txpow.body.txn : (txpow && txpow.state ? txpow : null);
+    var out = {};
+    ((txn && txn.state) || []).forEach(function (e) {
+      if (e && Number(e.port) >= 2 && Number(e.port) <= 9) out[Number(e.port)] = String(e.data == null ? '' : e.data).replace(/^\[|\]$/g, '');
+    });
+    return out;
   }
   /** The payment text a transaction carries, or '' (a txpow from `history`, or its txn). */
   function carrierText(txpow) {
@@ -1057,7 +1069,7 @@
           dustToken = hx(cfg.DUST_TOKEN || t);
           coins = await node.gather(dustToken, ONE, 'Winiwa', 0, 2);
         }
-        var plan = carrierPlan({ coins: coins, dustToken: dustToken, to: req.to, payout: payout, text: req.text });
+        var plan = carrierPlan({ coins: coins, dustToken: dustToken, to: req.to, payout: payout, text: req.text, ports: req.ports });
         var built = await build(TXN.carrier, plan);
         await post(TXN.carrier);
         try { node.noteInFlight(coins); } catch (_) { /* a convenience */ }
@@ -1122,7 +1134,7 @@
     DROP_MS: DROP_MS, TXN: TXN, MESSAGES: MESSAGES, ChainError: ChainError,
     toAtoms: toAtoms, dec: dec, stateDec: stateDec, hx: hx, stateMap: stateMap,
     loadPlan: loadPlan, registrationPlan: registrationPlan, withdrawPlan: withdrawPlan, mergePlan: mergePlan,
-    CARRIER_MAGIC: CARRIER_MAGIC, carrierPlan: carrierPlan, carrierText: carrierText, utf8Hex: utf8Hex, hexUtf8: hexUtf8,
+    CARRIER_MAGIC: CARRIER_MAGIC, carrierPlan: carrierPlan, carrierText: carrierText, carrierPorts: carrierPorts, utf8Hex: utf8Hex, hexUtf8: hexUtf8,
     planCommands: planCommands, pickVaultCoins: pickVaultCoins, tidyPick: tidyPick, create: create,
     MAX_MERGE_ROUNDS: MAX_MERGE_ROUNDS, SWEEP_ABOVE: SWEEP_ABOVE, TIDY_ABOVE: TIDY_ABOVE
   };

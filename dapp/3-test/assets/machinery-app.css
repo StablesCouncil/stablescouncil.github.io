@@ -118,6 +118,18 @@
   margin-top: 0;
 }
 
+/* Founder 2026-10-14: "On the activity page, bring everything up, there is a big gap there at the top of the page".
+   The list followed the title after the header's bottom space, the section's top padding, the Filters row and the space
+   under it (about 110 px for one text action). The section loses its top padding, the Filters row sits in the header's
+   bottom space and keeps its 48 px tap target, and the list starts right under it. */
+[data-machinery-scope="app"] #page-activity .activity-index-section {
+  padding-top: 0 !important;
+  margin-top: -16px !important;
+}
+[data-machinery-scope="app"] #page-activity.page .app-section.activity-index-section > .stitle-row.activity-toolbar {
+  margin-bottom: 0 !important;
+}
+
 [data-machinery-scope="app"] #page-activity .activity-filter-bar.mx-cmp-filter-bar {
   display: grid;
   gap: var(--ui-space-4);
@@ -487,6 +499,10 @@ body:has(.page.active[data-ground="external-apps"]) #stablesNodeBanner { backgro
 /* Hide from Home, in the Home screen's glass (founder 2026-10-13): a centred pill like the icons' faces, not a full-width
    button; it lights in the accent when a carried icon is over it. */
 #pageCarousel .home-hide-zone { display: flex; justify-content: center; }
-#pageCarousel .home-hide-zone .mx-action.home-hide-pill { width: auto !important; min-height: 48px !important; padding: 0 22px !important; gap: 10px; display: inline-flex; align-items: center; border-radius: 999px !important; background: var(--mx-glass) !important; border: 1px solid var(--mx-glass-line) !important; box-shadow: 0 6px 16px rgba(0, 0, 0, .22) !important; color: var(--t) !important; font-weight: 600; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); transition: transform .16s ease, background-color .16s ease; }
-#pageCarousel .home-hide-zone.is-target .mx-action.home-hide-pill { transform: scale(1.06); outline: 2px solid var(--c); outline-offset: 3px; background: linear-gradient(var(--surface-accent-soft),var(--surface-accent-soft)),var(--mx-glass) !important; }
+#pageCarousel .home-hide-zone .mx-action.home-hide-pill, .agent-hide-zone .mx-action.home-hide-pill { width: auto !important; min-height: 48px !important; padding: 0 22px !important; gap: 10px; display: inline-flex; align-items: center; border-radius: 999px !important; background: var(--mx-glass) !important; border: 1px solid var(--mx-glass-line) !important; box-shadow: 0 6px 16px rgba(0, 0, 0, .22) !important; color: var(--t) !important; font-weight: 600; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); transition: transform .16s ease, background-color .16s ease; }
+#pageCarousel .home-hide-zone.is-target .mx-action.home-hide-pill, .agent-hide-zone.is-target .mx-action.home-hide-pill { transform: scale(1.06); outline: 2px solid var(--c); outline-offset: 3px; background: linear-gradient(var(--surface-accent-soft),var(--surface-accent-soft)),var(--mx-glass) !important; }
 #pageCarousel .home-ghost.is-hide-target { opacity: .35; }
+/* The agent's drag-to-hide target (founder 2026-10-13): the same pill, fixed at the top of the screen, under the button. */
+.agent-hide-zone { position: fixed; top: calc(var(--safe-top) + 10px); inset-inline: 12px; display: flex; justify-content: center; z-index: 749; pointer-events: none; }
+.agent-hide-zone[hidden] { display: none; }
+.agent-fab.is-hide-target { opacity: .45; }

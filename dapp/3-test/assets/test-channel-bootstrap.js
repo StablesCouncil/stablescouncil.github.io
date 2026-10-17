@@ -5340,7 +5340,7 @@
     });
   }
 
-  // Price on Y, time on X, both labelled (founder 2026-07-26). Time comes from block height at the
+  // Price on Y, time on X (founder 2026-07-26); both named in the title, not ticked (founder 2026-10-13). Time comes from block height at the
   // chain's ~50s cadence, so a burst of trades is drawn close together and a quiet hour is drawn wide,
   // which sample-index spacing could not express. Only geometry is inline (allowed for SVG); every
   // colour comes from the theme.
@@ -5367,7 +5367,7 @@
       });
       svg.__tv81Ro.observe(svg);
     }
-    if (pts.length < 2) { svg.innerHTML = ''; if (empty) empty.style.display = 'flex'; return; }
+    if (pts.length < 2) { svg.__stablesChart = null; svg.innerHTML = ''; if (empty) empty.style.display = 'flex'; return; }
     if (empty) empty.style.display = 'none';
 
     const prices = pts.map(function (d) { return d.p; });
@@ -5394,69 +5394,23 @@
       const perBlock = new Map();
       pts.forEach(function (d) { if (d.b >= bLo) perBlock.set(d.b, d); });
       pts = Array.from(perBlock.values()).sort(function (a, b) { return a.b - b.b; });
-      if (pts.length < 2) { svg.innerHTML = ''; if (empty) empty.style.display = 'flex'; return; }
+      if (pts.length < 2) { svg.__stablesChart = null; svg.innerHTML = ''; if (empty) empty.style.display = 'flex'; return; }
     }
 
-    // FULL WIDTH (founder 2026-07-26). A fixed 320-wide viewBox with "meet" letterboxed the chart in
-    // a wider container. Sizing the viewBox to the element's real pixel width makes one SVG unit one
-    // pixel: the drawing fills the width and the axis text keeps its intended size undistorted
-    // (which "none" would have stretched).
-    // BOTH axes must be measured: a viewBox 150 tall inside a 142px-tall box letterboxes sideways
-    // again under "meet", which is the same defect in the other direction.
-    const box = svg.getBoundingClientRect();
-    const W = Math.max(280, Math.round(box.width || svg.clientWidth || 320));
-    // Take the height as measured, with no floor. A floor was worse than the problem: the chart panel
-    // has a collapsed state 56px tall, so a 142-unit box drawn into it was scaled to fit by "meet"
-    // and letterboxed back to a third of the width. The drawing fills whatever box it is given.
-    const H = Math.round(box.height || svg.clientHeight || 0);
-    if (W < 50 || H < 24) return;                    // not laid out yet; the observer redraws
-    const padL = 44, padR = 8, padT = 8, padB = 20;
-    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
-    const x = function (d, i) {
-      const t = timeReal
-        ? Math.max(0, Math.min(1, (d.b - bLo) / (bHi - bLo)))
-        : i / (pts.length - 1);
-      return padL + (W - padL - padR) * t;
-    };
-    const y = function (v) { return padT + (H - padT - padB) * (1 - (v - yLo) / (yHi - yLo)); };
-
-    const line = pts.map(function (d, i) { return (i ? 'L' : 'M') + x(d, i).toFixed(1) + ' ' + y(d.p).toFixed(1); }).join(' ');
-    const area = line + ' L' + x(pts[pts.length - 1], pts.length - 1).toFixed(1) + ' ' + (H - padB)
-      + ' L' + x(pts[0], 0).toFixed(1) + ' ' + (H - padB) + ' Z';
-
-    // Y axis: three price gridlines, labelled in the theme's muted ink.
-    let axes = '';
-    for (let g = 0; g <= 2; g++) {
-      const v = yLo + (yHi - yLo) * (g / 2);
-      const gy = y(v);
-      axes += '<line x1="' + padL + '" y1="' + gy.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + gy.toFixed(1)
-        + '" stroke="currentColor" stroke-opacity="0.12" stroke-width="1"/>'
-        + '<text x="' + (padL - 6) + '" y="' + (gy + 3).toFixed(1) + '" text-anchor="end" font-size="9"'
-        + ' fill="currentColor" fill-opacity="0.6">' + tv81FmtPx(Math.round(v).toString()) + '</text>';
-    }
-    // X axis: oldest to newest, in elapsed time rather than block numbers.
-    // Fixed tick labels for a fixed window: 24h, 12h, now. These never move, whatever the data does.
-    axes += '<line x1="' + padL + '" y1="' + (H - padB) + '" x2="' + (W - padR) + '" y2="' + (H - padB)
-      + '" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/>';
-    if (timeReal) {
-      const ticks = [{ t: 0, s: '24h' }, { t: 0.5, s: '12h' }, { t: 1, s: 'now' }];
-      ticks.forEach(function (tk) {
-        const tx = padL + (W - padL - padR) * tk.t;
-        const anchor = tk.t === 0 ? 'start' : (tk.t === 1 ? 'end' : 'middle');
-        axes += '<text x="' + tx.toFixed(1) + '" y="' + (H - 6) + '" text-anchor="' + anchor
-          + '" font-size="9" fill="currentColor" fill-opacity="0.6">' + tk.s + '</text>';
-      });
-    }
-
-    svg.innerHTML = '<defs><linearGradient id="tv81cg" x1="0" y1="0" x2="0" y2="1">'
-      + '<stop offset="0" stop-color="var(--c,#67e8f9)" stop-opacity="0.28"/><stop offset="1" stop-color="var(--c,#67e8f9)" stop-opacity="0"/></linearGradient></defs>'
-      + axes
-      + '<path d="' + area + '" fill="url(#tv81cg)"/>'
-      + '<path d="' + line + '" fill="none" stroke="var(--c,#67e8f9)" stroke-width="1.6"/>';
-    // The axis now carries the price range, so the strip below states the window instead of repeating it.
-    // The axis carries the window now, so the strip below is redundant and stays empty.
-    tv81SetText('tv81ChartLo', '');
-    tv81SetText('tv81ChartHi', '');
+    // FULL WIDTH, NO AXIS TEXT (founder 2026-10-13, VIS-002): the chart is the panel's full width and draws no
+    // tick labels beside it; the title names both axes ("Price in Winiwa, last 24 hours"; the pair is named in the market bar above). The window is
+    // still a FIXED 24 hours ending at the newest block (founder 2026-07-26), so the line moves and the frame does
+    // not. The one chart helper sizes the drawing to the element's own pixels (one unit = one pixel, no letterbox)
+    // and redraws on resize. The latest price and the range stay readable as the chart's text equivalent.
+    if (typeof window.stablesChartLine !== 'function') return;   // the shell's helper is not parsed yet; the observer redraws
+    const n = pts.length;
+    const points = pts.map(function (d, i) {
+      return { x: timeReal ? (d.b - bLo) / (bHi - bLo) : (n <= 1 ? 0 : i / (n - 1)), y: d.p };
+    });
+    window.stablesChartLine(svg, [{ points: points, tone: 'accent', area: true }], { yMin: yLo, yMax: yHi });
+    svg.setAttribute('aria-label', 'xWiniwa price in Winiwa, last 24 hours: latest '
+      + tv81FmtPx(Math.round(pts[n - 1].p).toString()) + ', low ' + tv81FmtPx(Math.round(lo).toString())
+      + ', high ' + tv81FmtPx(Math.round(hi).toString()));
   }
 
   window.tv81ToggleBookDepth = function () {
@@ -8316,7 +8270,7 @@
       }
       try {
         if (typeof window.stablesUpdateOpenTxProgressModal === 'function') {
-          window.stablesUpdateOpenTxProgressModal({ built: false, phaseSub: 'Your ' + tokenLabel + ' is still settling — waiting for it to become spendable' });
+          window.stablesUpdateOpenTxProgressModal({ built: false, phaseSub: 'Your ' + tokenLabel + ' is still settling. Waiting for it to become spendable.' });
         }
       } catch (_) { /* ignore */ }
       await new Promise(function (r) { setTimeout(r, 10000); });
@@ -8970,7 +8924,7 @@
       if (verdict === 'pending') return last; // undecided at deadline — the mirror ladder keeps watching honestly
       if (attempt < MAX_ATTEMPTS) {
         try { console.log('[' + label + '] orphaned by a competing state-coin spend — rebuilding (attempt ' + (attempt + 1) + '/' + MAX_ATTEMPTS + ')'); } catch (_) {}
-        try { showToast('A competing transaction took the protocol slot — rebuilding yours automatically…', { tone: 'amber', durationMs: 4000 }); } catch (_) { /* ignore */ }
+        try { showToast('A competing transaction took the protocol slot. Rebuilding yours automatically…', { tone: 'amber', durationMs: 4000 }); } catch (_) { /* ignore */ }
         await new Promise(function (r) { setTimeout(r, 5000); }); // let the competitor settle before re-reading coins
       } else {
         last.orphaned = true; // callers/mirror can mark the rows honestly
@@ -10961,7 +10915,7 @@
         } else if (data.error === 'issuer_not_ready' || (data.message && String(data.message).indexOf('Test07') >= 0)) {
           msg = data.message || 'Issuer node offline or has no Winiwa. Start Test07 (issuer) on RPC 9006, then restart test-faucet-server.mjs.';
         } else if (String(data.error || '').indexOf('No Coins of tokenid') >= 0) {
-          msg = 'Wrong node on issuer RPC (no Winiwa). Start Test07 issuer — not your tester wallet on port 9005.';
+          msg = 'Wrong node on issuer RPC (no Winiwa). Start Test07 issuer, not your tester wallet on port 9005.';
         } else {
           msg = data.message || data.error || 'Faucet claim failed';
         }
@@ -10991,7 +10945,7 @@
         ? 'Issuer API unreachable from your node. Run test-faucet-server.mjs where RPC listens, or set TEST_FAUCET_API_URL to a reachable host.'
         : 'Faucet unreachable. Start test-faucet-server.mjs on the issuer machine.';
       if (typeof showToast === 'function') {
-        showToast((err && err.message) ? (err.message + ' — ' + hint) : hint, { tone: 'amber', durationMs: 7000 });
+        showToast((err && err.message) ? (err.message + '. ' + hint) : hint, { tone: 'amber', durationMs: 7000 });
       }
       throw err;
     }

@@ -74,8 +74,12 @@
                 var legacy = params.get('previewapp');
                 if (legacy === '1') p = 'apk';
                 else if (legacy === '0') p = 'webapp';
-                if (p === 'apk' || p === 'webapp' || p === 'dapp') { localStorage.setItem(KEY, p); }
+                /* Founder 2026-10-15: "we can get rid of the MDS version here in dev and call the APK the android one since it
+                   now incorporates both standalone and core node connection". Two previews: Android and Desktop. A saved
+                   MiniDapp choice falls back to Desktop; a real MiniDapp launch (its uid) is detected above, not here. */
+                if (p === 'apk' || p === 'webapp') { localStorage.setItem(KEY, p); }
                 var channel = localStorage.getItem(KEY) || 'webapp';
+                if (channel !== 'apk' && channel !== 'webapp') { channel = 'webapp'; try { localStorage.setItem(KEY, channel); } catch (_) { /* memory only */ } }
                 window.__STABLES_PREVIEW_CHANNEL = channel;
                 if (channel === 'apk') { window.__STABLES_ANDROID_APP = true; }
                 if (channel === 'dapp') { window.__STABLES_PREVIEW_DAPP = true; }
@@ -104,9 +108,8 @@
                         }
                     };
                     var meta = {
-                        apk: { label: 'APK', color: '#67e8f9' },
-                        webapp: { label: 'Desktop', color: '#94a3b8' },
-                        dapp: { label: 'MiniDapp', color: '#a78bfa' }
+                        apk: { label: 'Android', color: '#67e8f9' },
+                        webapp: { label: 'Desktop', color: '#94a3b8' }
                     };
                     var bar = document.createElement('div');
                     bar.setAttribute('data-stables-preview-badge', '1');
@@ -138,7 +141,7 @@
                     };
                     syncPreviewVersion();
                     window.addEventListener('load', syncPreviewVersion, { once: true });
-                    ['apk', 'webapp', 'dapp'].forEach(function (c) {
+                    ['apk', 'webapp'].forEach(function (c) {
                         var b = document.createElement('button');
                         b.type = 'button';
                         b.textContent = meta[c].label;
@@ -1613,7 +1616,7 @@
         body:not(.home-open) #pageCarousel .home-add-group { display: none; }
         #homeFolder .home-folder__empty { margin: 0; padding: 12px 16px 4px; text-align: center; font-size: 14px; }
         /* The agent's eye stands on the panel itself, no box (founder 2026-10-12); 24 px, a bit smaller than 30 (founder 2026-10-13). */
-        #agentFabToggleBtn.agent-dlg-eye { padding: 6px !important; border-color: transparent !important; background: transparent !important; box-shadow: none !important; }
+        .agent-dlg-show { gap: 8px; align-items: center; cursor: pointer; }
         .home-dots[hidden] { display: none; }
         .home-dots__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--m); opacity: .45; transition: opacity .2s ease, transform .2s ease; }
         .home-dots__dot.is-current { background: var(--t); opacity: 1; transform: scale(1.15); }
@@ -8531,19 +8534,21 @@
     </style>
     <!-- App UI System layer: must load render-blocking AFTER the legacy styles above so
          documented component geometry wins in the cascade without a flash of unstyled UI. -->
-    <link rel="stylesheet" href="assets/app-ui-system.css?v=tv81-1307">
+    <link rel="stylesheet" href="assets/app-ui-system.css?v=tv81-1402">
     <!-- Machinery product adapter: reusable mx-* definitions, loaded after the legacy layer. -->
-    <link rel="stylesheet" href="assets/machinery-app.css?v=tv81-1307">
-    <link rel="stylesheet" href="assets/machinery-ui.css?v=tv81-1307">
-    <link rel="stylesheet" href="assets/machinery-shell.css?v=tv81-1307">
+    <link rel="stylesheet" href="assets/machinery-app.css?v=tv81-1402">
+    <link rel="stylesheet" href="assets/machinery-ui.css?v=tv81-1402">
+    <link rel="stylesheet" href="assets/machinery-shell.css?v=tv81-1402">
     <!-- The wallet legacy adapter loads before the final shared identity so it cannot override R001. -->
-    <link rel="stylesheet" href="assets/machinery-wallet.css?v=tv81-1307">
-    <link rel="stylesheet" href="assets/machinery-language.css?v=tv81-1307">
-    <link rel="stylesheet" href="assets/north-star-adoption.css?v=tv81-1307">
-<link rel="stylesheet" href="assets/page-patterns.css?v=tv81-1307">
+    <link rel="stylesheet" href="assets/machinery-wallet.css?v=tv81-1402">
+    <link rel="stylesheet" href="assets/machinery-language.css?v=tv81-1402">
+    <link rel="stylesheet" href="assets/north-star-adoption.css?v=tv81-1402">
+<link rel="stylesheet" href="assets/page-patterns.css?v=tv81-1402">
     <!-- D029 desktop composition. Gated on the web surface AND 1024px, so the MiniDapp and the
          APK keep the shipped mobile composition at every width. -->
-    <link rel="stylesheet" href="assets/desktop-web.css?v=tv81-1307">
+    <link rel="stylesheet" href="assets/desktop-web.css?v=tv81-1402">
+    <!-- The wide window (founder 2026-10-15): the phone design across the full width. Web surface AND 1024px only. -->
+    <link rel="stylesheet" href="assets/desktop-wide.css?v=tv81-1402">
     <script>
         /* Surface flag for the D029 desktop layer. The preview bootstrap above resolves the local
            preview channel; on the real web it returns early, and the web surface is the default.
@@ -8658,6 +8663,9 @@
             <img src="agent.png" alt="StablesAgent" class="asset-avatar-small" width="32" height="32">
         </button>
     </div>
+    <!-- Founder 2026-10-13: while the agent button is dragged, an X target at the top of the screen; dropping the button
+         on it hides the agent. The Home "Hide from Home" pill's look and behaviour (it lights up under the button). -->
+    <div class="agent-hide-zone" id="agentHideZone" hidden><span class="btn btn-secondary mx-action home-hide-pill" data-role="secondary" id="agentHideTarget" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg><span>Hide the agent</span></span></div>
 
     <!-- SCROLL AREA -->
     <div class="scroll-area">
@@ -8690,7 +8698,7 @@
                     <div class="wallet-seed-reminder__icon" aria-hidden="true">🔑</div>
                     <div class="wallet-seed-reminder__body">
                         <div class="wallet-seed-reminder__title">Back up your Vault key</div>
-                        <div class="xs mu wallet-seed-reminder__text">Save your 24-word Vault key now. <strong class="ui-tone-warning">Uninstalling the app erases your wallet</strong> — the key is the only way to recover your funds.</div>
+                        <div class="xs mu wallet-seed-reminder__text">Save your 24-word Vault key now. <strong class="ui-tone-warning">Uninstalling the app erases your wallet</strong>. The key is the only way to recover your funds.</div>
                     </div>
                     <button data-size="compact" data-role="primary" type="button" class="btn btn-primary mx-action" onclick="navigate('settings-security')">Back up</button>
                 </div>
@@ -8726,7 +8734,7 @@
                     <button data-size="compact" data-layout="full" data-role="secondary" type="button"
                         class="btn btn-w btn-secondary mx-action" id="walletResyncNeededBtn"
                         onclick="stablesResyncWithNetwork()">Resync with the network</button>
-                    <div class="xs mu ui-mt-2" id="walletResyncNeededNote">A few minutes. Keep the phone charging.</div>
+                    <div class="xs mu ui-mt-2" id="walletResyncNeededNote">A few minutes.</div>
                 </div>
                 <div class="w-hero">
                     <div class="w-total bal-amount">—</div>
@@ -9218,8 +9226,11 @@
                                 <div class="ps-val ui-tone-success" id="cfMonthYield">0.00%</div>
                             </div>
                         </div>
+                        <!-- VIS-002 (founder 2026-10-13): full width, no axis labels beside the chart; the title
+                             names what is measured and its step. The date on the right is the day the slider
+                             has picked, not an axis. -->
                         <div class="fbet xs mu ui-mb-2">
-                            <span>Day by day</span>
+                            <span class="ui-chart__title ui-support-strong ui-mb-0">Fees, fund assets and yield per day</span>
                             <span id="cfDayLabel"> - </span>
                         </div>
                         <div class="fbet xs mu ui-mb-2 ui-gap-3 ui-wrap">
@@ -9229,7 +9240,7 @@
                         </div>
                         <div class="ui-mb-2 ui-chart-frame" id="cfChartWrap">
                             <div id="cfMonthChart" style="display:flex;align-items:flex-end;justify-content:space-between;height:100%;gap:3px;position:relative;z-index:1"></div>
-                            <svg class="ui-w-full" id="cfNavLineOverlay" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;left:0;top:0;height:100%;pointer-events:none;z-index:2;overflow:visible"></svg>
+                            <svg class="ui-chart-svg" id="cfNavLineOverlay" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" style="pointer-events:none;z-index:2"></svg>
                         </div>
                         <input type="range" min="0" max="29" step="1" value="29" class="sim-slider ui-w-full" id="cfDaySlider" aria-label="Coverage fund history day" oninput="scrubCoverageFundDay(this.value)">
                         <div class="xs mu ui-mt-2 ui-col ui-gap-1">
@@ -9238,7 +9249,7 @@
                         </div>
                     </div>
                     <div class="ui-mb-3 ui-pad-y-3">
-                        <div class="xs mu ui-mb-2 ui-support-strong">Historical performance</div>
+                        <div class="ui-chart__title xs mu ui-mb-2 ui-support-strong">Fees, fund assets and yield per week</div>
                         <div class="fbet xs mu ui-mb-2 ui-gap-3 ui-wrap">
                             <span><span class="ui-legend-dot"></span>Fees</span>
                             <span><span class="ui-legend-line"></span>Fund assets</span>
@@ -9246,7 +9257,7 @@
                         </div>
                         <div class="ui-mb-1 ui-chart-frame" id="cfHistChartWrap">
                             <div id="cfHistChart" style="display:flex;align-items:flex-end;justify-content:space-between;height:100%;gap:1px;position:relative;z-index:1"></div>
-                            <svg class="ui-w-full" id="cfHistNavOverlay" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;left:0;top:0;height:100%;pointer-events:none;z-index:2;overflow:visible"></svg>
+                            <svg class="ui-chart-svg" id="cfHistNavOverlay" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true" style="pointer-events:none;z-index:2"></svg>
                         </div>
                         <div class="xs mu ui-tone-muted ui-mt-2" id="cfHistFoot"> - </div>
                     </div>
@@ -9610,7 +9621,7 @@
                             <section class="tv81-chart-panel mx-chart mx-section-surface" data-treatment="open" data-density="dense" id="tv81ChartPanel" aria-labelledby="tv81ChartTitle">
                                 <div class="tv81-panel-head ui-pointer" onclick="if(window.tv81ToggleChart)tv81ToggleChart()">
                                     <div>
-                                        <div class="tv81-panel-title mx-type" data-role="section-title" id="tv81ChartTitle">Price</div>
+                                        <div class="tv81-panel-title mx-type" data-role="section-title" id="tv81ChartTitle">Price in Winiwa, last 24 hours</div>
                                     </div>
                                 </div>
                                 <div class="tv81-chart-canvas">
@@ -11024,12 +11035,10 @@
 
                 <!-- REAL coverage-ratio history: observed live readings (one sample / 30 min,
                      persisted on this device) — never illustrative data. -->
-                <div class="ui-mt-4" id="treasuryCrHistBlock" style="padding-top:12px;border-top:1px solid rgba(255,255,255,.06);display:none">
-                    <div class="fbet xs mu ui-mb-2">
-                        <span style="font-weight:800;text-transform:uppercase;letter-spacing:.06em">Coverage ratio history</span>
-                        <span id="treasuryCrHistRange"></span>
-                    </div>
-                    <div id="treasuryCrSpark" style="height:48px"></div>
+                <!-- VIS-002 (founder 2026-10-13): full width, no axis labels beside it; the title names both axes. -->
+                <div class="ui-mt-4 ui-chart" id="treasuryCrHistBlock" style="padding-top:12px;border-top:1px solid rgba(255,255,255,.06);display:none">
+                    <span class="ui-chart__title xs mu ui-support-strong" id="treasuryCrHistTitle">Coverage ratio in percent over time</span>
+                    <div class="ui-chart-frame ui-chart-frame--short" id="treasuryCrSpark"><svg class="ui-chart-svg" id="treasuryCrSparkSvg" role="img" aria-label="Coverage ratio in percent over time"></svg></div>
                 </div>
 
                 <!-- Simulate: move the Winiwa price; the split (and coverage) shift live. The
@@ -11182,6 +11191,22 @@
                         <button type="button" role="switch" class="toggle on stables-sounds-toggle" id="stablesSoundsToggle" aria-checked="true"
                             aria-label="Payment sounds" onclick="stablesSetSoundsOn(this.getAttribute('aria-checked') !== 'true')"></button>
                     </div>
+                </div>
+            </div>
+
+            <!-- Founder 2026-10-13: the agent is shown or hidden with a switch, here and in the agent panel. -->
+            <div class="app-section app-section--caption-bottom app-section--caption-bottom--mt20" id="settingsAgentSection">
+                <div class="stitle-row">
+                    <div class="stitle">StablesAgent</div>
+                </div>
+                <div class="card app-section-card app-section-card--standard">
+                    <label class="set-row" for="settingsAgentShowSwitch" style="cursor:pointer">
+                        <div>
+                            <div class="set-label">Show the agent button</div>
+                            <div class="set-sub">Off: open the agent from the menu.</div>
+                        </div>
+                        <input class="ui-shrink-0 ui-switch" type="checkbox" role="switch" id="settingsAgentShowSwitch" aria-label="Show the agent button" checked onchange="stablesSetAgentFabShown(this.checked)">
+                    </label>
                 </div>
             </div>
 
@@ -11734,14 +11759,16 @@
             <section id="stablesNodeModeSection" class="app-section app-section--caption-bottom app-section--caption-bottom--mt20" aria-labelledby="stablesNodeModeTitle" hidden>
                 <div class="stitle-row"><h2 class="stitle" id="stablesNodeModeTitle">Your node</h2></div>
                 <div class="card app-section-card app-section-card--standard">
-                    <div class="set-row ui-no-border-bottom">
-                        <div class="ui-min-w-0 ui-flex-1 ui-pr-3">
-                            <div class="set-label" id="stablesNodeModeLabel">Built into Stables</div>
-                            <div class="set-sub mx-status" id="stablesNodeModeSub" role="status" aria-live="polite">Stables connects to the Minima network itself</div>
+                    <!-- Founder 2026-10-14: "Use minima core button doesnt look nice stuck on the right squeezed by the text":
+                         the words on their own line, the button full width under them. -->
+                    <div class="ui-no-border-bottom">
+                        <div class="set-label" id="stablesNodeModeLabel">Built into Stables</div>
+                        <div class="set-sub mx-status" id="stablesNodeModeSub" role="status" aria-live="polite">Stables connects to the Minima network itself</div>
+                        <div class="ui-text-center ui-mt-3">
+                            <button id="stablesNodeModeBtn" data-size="compact" data-layout="full" data-role="secondary" type="button"
+                                class="btn btn-w btn-secondary mx-action"
+                                onclick="stablesAskNodeModeSwitch()">Use Minima Core</button>
                         </div>
-                        <button id="stablesNodeModeBtn" data-size="compact" data-role="secondary" type="button"
-                            class="btn btn-secondary ui-shrink-0 mx-action"
-                            onclick="stablesAskNodeModeSwitch()">Use Minima Core</button>
                     </div>
                 </div>
             </section>
@@ -11842,7 +11869,17 @@
                 <div class="stitle-row">
                     <div class="stitle">Node</div>
                 </div>
-                <div class="card app-section-card app-section-card--standard">
+                <!-- Founder 2026-10-14: one app, the same Node area in both modes. With Minima Core the node is Core's:
+                     its background running, mining and resync are set in the Minima Core app. -->
+                <div class="card app-section-card app-section-card--standard" id="stablesNodeCoreCard" hidden>
+                    <div class="set-row ui-no-border-bottom">
+                        <div class="ui-min-w-0 ui-flex-1">
+                            <div class="set-label">Run by Minima Core</div>
+                            <div class="set-sub">Running in the background, mining and resync are set in the Minima Core app.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card app-section-card app-section-card--standard" id="stablesNodeBuiltInCard">
                     <label class="ui-items-center" style="display:flex;gap:12px;cursor:pointer">
                         <span class="ui-flex-1 ui-min-w-0">
                             <span class="ui-tone-text ui-block ui-label-strong">Keep my bank running in the background</span>
@@ -11878,24 +11915,29 @@
                         </select>
                     </div>
                     <!-- What this phone did for Minima (founder 2026-09-03: TxPoW, not unit; "present the
-                         elements one by one", and a daily chart). Four label/value rows, then two 14-day
-                         bar strips (TxPoW per day, time online per day), one hue, today emphasised, each
-                         bar its own tooltip; the rows are the table view. Filled from the service by
-                         stablesRefreshNetworkContributionStats; hidden where no embedded node reports it;
-                         the chart appears once there is more than one day to show. -->
-                    <!-- Each chart sits under the measure it charts, and carries its own axes
-                         (founder 2026-09-04: "put the graphs under their respective measure and
-                         clearly show what the x and y axis level are"). Before, both strips sat in
-                         one block below every row with a single shared date line, so neither said
-                         what it was counting nor how high the bars went: two unlabelled rectangles.
-                         The y axis is the strip's own maximum at the top and 0 at the baseline, in
-                         the same unit as the rows above it; the x axis is the first day and Today. -->
+                         elements one by one", and a daily chart). Label/value rows (the table view),
+                         each measure followed by its own 14-day bar chart (founder 2026-09-04: "put the
+                         graphs under their respective measure"): TxPoW per day, Blocks mined per day
+                         (founder 2026-10-13), Time online per day. One hue, today emphasised, each bar
+                         its own tooltip. Filled from the service by stablesRefreshNetworkContributionStats;
+                         hidden where no embedded node reports it; a chart appears once there is more than
+                         one day to show. VIS-002 (founder 2026-10-13): each chart is the card's full width
+                         with NO axis labels beside it; its title names both axes ("<measure> per day,
+                         last N days"). -->
                     <div id="stablesContributionStats" class="ui-mt-2" role="status" aria-live="polite" hidden>
                         <div class="ui-detail-row"><span class="ui-tone-muted">TxPoW contributed today</span><span class="ui-text-right ui-mono-value" data-contribution-stat="txpowToday">0</span></div>
                         <div class="ui-detail-row"><span class="ui-tone-muted">TxPoW in total</span><span class="ui-text-right ui-mono-value" data-contribution-stat="txpowTotal">0</span></div>
+                        <div class="ui-chart stables-contribution-chart ui-mt-2 ui-mb-3" data-contribution-chart="txpow" hidden>
+                            <span class="ui-chart__title xs mu ui-support-strong" data-contribution-stat="txpowChartTitle">TxPoW per day</span>
+                            <div class="ui-chart-frame"><div class="ui-bar-strip" id="stablesContributionBarsTxpow" role="img" aria-label="TxPoW contributed per day"></div></div>
+                        </div>
                         <!-- D091 (founder 2026-10-04): the blocks this phone found for Minima. -->
                         <div class="ui-detail-row"><span class="ui-tone-muted">Blocks mined</span><span class="ui-text-right ui-mono-value" data-contribution-stat="blocksFound">0</span></div>
                         <div class="ui-detail-row"><span class="ui-tone-muted">Last block mined</span><span class="ui-text-right ui-mono-value" data-contribution-stat="lastBlockFound">None yet</span></div>
+                        <div class="ui-chart stables-contribution-chart ui-mt-2 ui-mb-3" data-contribution-chart="blocks" hidden>
+                            <span class="ui-chart__title xs mu ui-support-strong" data-contribution-stat="blocksChartTitle">Blocks mined per day</span>
+                            <div class="ui-chart-frame"><div class="ui-bar-strip" id="stablesContributionBarsBlocks" role="img" aria-label="Blocks mined per day"></div></div>
+                        </div>
                         <!-- Build 0.0.12.039: the found-block pop-up's own switch, also offered on the pop-up itself. -->
                         <label class="fbet ui-items-center ui-row-top-divided ui-mb-3" for="foundBlockPopupToggle">
                             <span class="ui-tone-muted">Show a message when my phone mines a block</span>
@@ -11906,34 +11948,10 @@
                             <span class="ui-tone-muted">Also notify me on the phone when Stables is closed</span>
                             <input class="ui-shrink-0 ui-switch" type="checkbox" role="switch" id="foundBlockNotifyToggle" onchange="stablesSetFoundBlockNotify(this.checked)">
                         </label>
-                        <div class="stables-contribution-chart ui-mb-3" data-contribution-chart="txpow" hidden>
-                            <div class="fbet xs mu ui-mb-1">
-                                <span class="ui-support-strong">TxPoW per day</span>
-                                <span data-contribution-stat="chartTitle">Last 14 days</span>
-                            </div>
-                            <div class="ui-chart-plot">
-                                <div class="ui-chart-yaxis xs mu" aria-hidden="true">
-                                    <span data-contribution-stat="txpowMax">0</span>
-                                    <span>0</span>
-                                </div>
-                                <div class="ui-chart-frame"><div class="ui-bar-strip" id="stablesContributionBarsTxpow" role="img" aria-label="TxPoW contributed per day"></div></div>
-                            </div>
-                            <div class="fbet xs mu ui-chart-xaxis"><span data-contribution-stat="firstDay"></span><span data-contribution-stat="lastDay"></span></div>
-                        </div>
                         <div class="ui-detail-row"><span class="ui-tone-muted">Online today</span><span class="ui-text-right ui-mono-value" data-contribution-stat="onlineToday">0 s</span></div>
-                        <div class="stables-contribution-chart ui-mb-3" data-contribution-chart="online" hidden>
-                            <div class="fbet xs mu ui-mb-1">
-                                <span class="ui-support-strong">Online per day</span>
-                                <span data-contribution-stat="chartTitleOnline">Last 14 days</span>
-                            </div>
-                            <div class="ui-chart-plot">
-                                <div class="ui-chart-yaxis xs mu" aria-hidden="true">
-                                    <span data-contribution-stat="onlineMax">0</span>
-                                    <span>0</span>
-                                </div>
-                                <div class="ui-chart-frame"><div class="ui-bar-strip" id="stablesContributionBarsOnline" role="img" aria-label="Time online per day"></div></div>
-                            </div>
-                            <div class="fbet xs mu ui-chart-xaxis"><span data-contribution-stat="firstDayOnline"></span><span data-contribution-stat="lastDayOnline"></span></div>
+                        <div class="ui-chart stables-contribution-chart ui-mt-2 ui-mb-3" data-contribution-chart="online" hidden>
+                            <span class="ui-chart__title xs mu ui-support-strong" data-contribution-stat="onlineChartTitle">Time online per day</span>
+                            <div class="ui-chart-frame"><div class="ui-bar-strip" id="stablesContributionBarsOnline" role="img" aria-label="Time online per day"></div></div>
                         </div>
                         <div class="ui-detail-row ui-no-border-bottom"><span class="ui-tone-muted">Hash rate</span><span class="ui-text-right ui-mono-value" data-contribution-stat="hashRate"></span></div>
                     </div>
@@ -12015,6 +12033,15 @@
                     <div class="stitle">Advanced</div>
                 </div>
                 <div class="card app-section-card app-section-card--standard mx-section-surface" data-treatment="open">
+                    <!-- Founder 2026-10-16: the card's one-atom housekeeping transactions (a Remove's or refund's request, package
+                         carriers) are shown only in an advanced mode. Off by default (instant-balance.js TECHNICAL_TAGS). -->
+                    <div class="ui-list ui-mb-3">
+                        <label class="ui-list-row" for="stablesTechnicalToggle">
+                            <span class="ui-list-row__main"><span class="ui-list-row__name">Technical transactions</span><span class="ui-list-row__sub">The card's one-atom housekeeping in Activity</span></span>
+                            <input type="checkbox" class="ui-switch" id="stablesTechnicalToggle" role="switch" aria-label="Technical transactions"
+                                onchange="if(window.stablesSetShowTechnical) stablesSetShowTechnical(this.checked);">
+                        </label>
+                    </div>
                     <div id="stablesTerminalIntro">
                         <div class="ui-mb-2 ui-tone-danger xs ui-emph-800">Node terminal</div>
                         <p class="sec-body ui-flow-3">Run commands directly on your node. For experienced users only: a wrong command can move funds, expose your Vault key, or damage local node data.</p>
@@ -12080,7 +12107,7 @@
                 </div>
                 <div class="card app-section-card paysec-card">
                     <p class="sec-body paysec-intro">Quick pay sends at once under my limit. Above it I confirm, and above the code amount I enter my payment code.</p>
-                    <p class="xs mu paysec-unit-line">Amounts are in <strong id="paySecFavCcyLabel" data-paysec-primary-name>MINIMA</strong>, my Wallet's primary currency.</p>
+                    <p class="xs mu paysec-unit-line">Amounts are in <strong id="paySecFavCcyLabel" data-paysec-primary-name>Winiwa</strong>, my Wallet's primary currency.</p>
                     <p class="xs paysec-daily" id="paySecDailySpent">Quick pay today: 0.00 / 200</p>
                     <label class="paysec-toggle settings-switch-row" for="paySecQuickEnabled">
                         <span class="ui-flex-1 ui-min-w-0 ui-tone-text ui-label-strong">Quick pay</span>
@@ -12091,21 +12118,21 @@
                             <label for="paySecQuickLimit">Quick pay limit</label>
                             <div class="paysec-input-wrap">
                                 <input class="finput" data-financial-amount type="text" id="paySecQuickLimit" inputmode="decimal" autocomplete="off">
-                                <span class="paysec-input-unit" data-paysec-primary-unit>MINIMA</span>
+                                <span class="paysec-input-unit" data-paysec-primary-unit>Winiwa</span>
                             </div>
                         </div>
                         <div class="paysec-field">
                             <label for="paySecSignificant">Payment code above</label>
                             <div class="paysec-input-wrap">
                                 <input class="finput" data-financial-amount type="text" id="paySecSignificant" inputmode="decimal" autocomplete="off">
-                                <span class="paysec-input-unit" data-paysec-primary-unit>MINIMA</span>
+                                <span class="paysec-input-unit" data-paysec-primary-unit>Winiwa</span>
                             </div>
                         </div>
                         <div class="paysec-field">
                             <label for="paySecDailyCap">Quick pay limit per day</label>
                             <div class="paysec-input-wrap">
                                 <input class="finput" data-financial-amount type="text" id="paySecDailyCap" inputmode="decimal" autocomplete="off">
-                                <span class="paysec-input-unit" data-paysec-primary-unit>MINIMA</span>
+                                <span class="paysec-input-unit" data-paysec-primary-unit>Winiwa</span>
                             </div>
                         </div>
                     </div>
@@ -12166,7 +12193,7 @@
                     <div class="stitle">Confirmation policy</div>
                 </div>
                 <div class="card app-section-card paysec-card">
-                    <p class="xs paysec-section-note">When a payment counts as complete. Thresholds are in <strong data-paysec-primary-name>MINIMA</strong>; a block is about 30 seconds.</p>
+                    <p class="xs paysec-section-note">When a payment counts as complete. Thresholds are in <strong data-paysec-primary-name>Winiwa</strong>; a block is about 30 seconds.</p>
                     <label class="paysec-toggle settings-switch-row" for="paySecConfirmEnabled">
                         <span class="ui-flex-1 ui-min-w-0 ui-tone-text ui-label-strong">Wait longer for larger amounts</span>
                         <input class="ui-shrink-0 ui-switch" type="checkbox" role="switch" id="paySecConfirmEnabled" checked>
@@ -12214,9 +12241,9 @@
                         <textarea class="ui-tone-text ui-w-full ui-mono-field" id="stablesRecoverPhrase" aria-label="Vault key for recovery" rows="3" placeholder="Enter your 24-word Vault key, words separated by spaces"></textarea>
                         <div style="margin:12px 0 4px;font-weight:700;font-size:13px">Recovery depth</div>
                         <select data-mx-dropdown id="stablesRecoverDepth" class="fsel" aria-label="Recovery depth" onchange="stablesRecoverDepthChange()">
-                            <option value="standard">Standard — money only, fast (recent banks)</option>
-                            <option value="deep">Deep — money only (older or heavily used banks)</option>
-                            <option value="fullhistory">Full history — money and past transactions, slower</option>
+                            <option value="standard">Standard: money only, fast (recent banks)</option>
+                            <option value="deep">Deep: money only (older or heavily used banks)</option>
+                            <option value="fullhistory">Full history: money and past transactions, slower</option>
                             <option value="advanced">Advanced (set keys and key-uses)</option>
                         </select>
                         <div class="ui-mt-3" id="stablesRecoverAdvanced" style="display:none;gap:8px">
@@ -12846,7 +12873,7 @@
                 <div class="ditem" data-menu-destination="core-connection" data-requires-node-connection="1" onclick="openStablesNodeConnectModal();closeMoreNow()">
                     <div class="dic" aria-hidden="true">&#x1F517;</div>
                     <div class="dinfo">
-                        <div class="dname">Core connection</div>
+                        <div class="dname">Node connection</div>
                         <div class="ddesc">Pairing, node status and reconnect</div>
                     </div><span class="ui-tone-muted">&rsaquo;</span>
                 </div>
@@ -13447,7 +13474,7 @@
                     </label>
                 </fieldset>
                 <div id="stablesCoreConnectionHelp" hidden>
-                    <p class="xs mu ui-tone-muted node-connect-intro">This Stables app has no node of its own. It asks the Minima Core already on this phone, and Core keeps your wallet, your node and your permissions.</p>
+                    <p class="xs mu ui-tone-muted node-connect-intro">Stables is set to use Minima Core on this phone, so Core keeps this wallet, its node and its permissions. To use the built-in node instead, go to Settings and updates, Your node.</p>
                     <p class="xs mu ui-tone-muted node-connect-intro">You do not install Stables into Core. Opening this app registers it with Core by itself; what is left is to say yes to it, twice, inside Core.</p>
                     <ol class="node-connect-list">
                         <li><strong>Open Minima Core and find Stables</strong><small class="node-connect-step-label">In Core, go to Apps. Stables appears there once this app has been opened at least once. If it is missing, open this app again and go back.</small></li>
@@ -13649,6 +13676,10 @@
                 <div class="card-levels-section" id="instantCardLevels" role="group" aria-labelledby="instantCardLevelsTitle">
                     <div class="ui-label-strong ui-mb-2" id="instantCardLevelsTitle">One touch and security</div>
                     <div class="card-levels" data-card-levels></div>
+                    <!-- Card hardening (founder 2026-10-15, CARD_HARDENING_PLAN.md items 4 and 6): what the card takes per payment
+                         and per paying phone a day, and the amount from which the fingerprint is asked; with the age of the
+                         phone's security list (item 3). Drawn by payment-security.js renderCardReceive. -->
+                    <div class="ui-row-top-divided" id="instantCardReceive" data-card-receive></div>
                     <!-- Build 0.0.12.053 (founder 2026-10-05, option C: "the Wallet page itself answering a tap, by default it should
                          be on and there should be an icon there indicating it"). -->
                     <div class="ui-items-center ui-row-top-divided" id="instantWalletTapRow">
@@ -14230,7 +14261,7 @@
                 
                 <!-- Options / Range config -->
                 <div class="fbet ui-mt-6 ui-mb-3" style="border-top:1px solid rgba(255,255,255,0.05);padding-top:16px">
-                    <div class="ui-tone-muted" style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.05em">Performance graph</div>
+                    <span class="ui-chart__title xs mu ui-support-strong ui-mb-0">Portfolio value in USD by Winiwa price change</span>
                     <button data-size="compact" data-role="secondary" class="btn btn-secondary btn-icon ui-tone-muted mx-action" onclick="toggleSimRangeEditor()" title="Change the range" aria-label="Change the range">
                         <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13.586 3.586a2 2 0 1 1 2.828 2.828L7 15.828 3 17l1.172-4L13.586 3.586z"/></svg>
                     </button>
@@ -14252,14 +14283,17 @@
                     </div>
                 </div>
 
-                <!-- PnL Graph Container -->
-                <div class="ui-mb-6 ui-w-full" style="position:relative;height:160px;border-radius:8px;overflow:hidden;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.03)">
-                    <svg id="simPnlGraph" width="100%" height="100%" preserveAspectRatio="none" style="display:block;"></svg>
-                </div>
-                <!-- Legend -->
-                <div class="fbet xs mu ui-mb-6" style="margin-top:-16px;padding:0 8px">
-                    <div><span style="display:inline-block;width:10px;height:2px;background:var(--m);vertical-align:middle;margin-right:4px;"></span>Current</div>
-                    <div><span style="display:inline-block;width:10px;height:2px;background:var(--pu);vertical-align:middle;margin-right:4px;"></span>Simulated</div>
+                <!-- PnL graph. VIS-002 (founder 2026-10-13): the card's full width, no axis labels beside it; the
+                     title (in the row above, beside its range control) names both axes. Two series, so the
+                     legend sits between the title and the plot. -->
+                <div class="ui-chart ui-mb-6">
+                    <div class="fbet xs mu ui-mb-2 ui-gap-3 ui-wrap">
+                        <span><span class="ui-legend-line ui-legend-line--muted"></span>Current</span>
+                        <span><span class="ui-legend-line ui-legend-line--purple"></span>Simulated</span>
+                    </div>
+                    <div class="ui-chart-frame ui-chart-frame--tall">
+                        <svg class="ui-chart-svg" id="simPnlGraph" role="img" aria-label="Portfolio value in USD by Winiwa price change"></svg>
+                    </div>
                 </div>
                 <!-- Slider -->
                 <div class="xs mu ui-tone-muted ui-mb-2 ui-mt-6 ui-support-strong">Winiwa price change</div>
@@ -14322,9 +14356,12 @@
                      the agent panel: it carries a Back arrow, UI reference law 34, still no X.)
                      updateAgentLanguage() and syncAgentLanguageSelect() are already null-guarded,
                      so the agent simply follows the stored app language. -->
-                <div class="ui-inline-row">
-                    <button data-size="compact" data-role="quiet" class="btn btn-icon btn-secondary ui-shrink-0 mx-action agent-dlg-eye" type="button" id="agentFabToggleBtn" onclick="toggleAgentFabFromDialog()" aria-label="Hide floating agent button" title="Hide floating agent button"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button>
-                </div>
+                <!-- Founder 2026-10-13: showing or hiding the agent is a switch (here and in Settings); the eye is kept
+                     only for discreet mode (hiding balances). -->
+                <label class="ui-inline-row agent-dlg-show" for="agentFabShowSwitch">
+                    <span class="xs mu">Agent button</span>
+                    <input class="ui-shrink-0 ui-switch" type="checkbox" role="switch" id="agentFabShowSwitch" aria-label="Show the agent button" checked onchange="stablesSetAgentFabShown(this.checked)">
+                </label>
             </div>
             <div class="ui-tone-warning ui-shrink-0 ui-text-center agent-dlg-warn">
                 Do not share private or sensitive information.
@@ -14374,14 +14411,14 @@
                 </svg></span><span class="nlabel">Home</span></button>
     </nav>
 
-    <script src="assets/config/runtime-config.js?v=tv81-1307"></script>
-    <script src="assets/sand-maintenance.js?v=tv81-1307"></script>
-    <script src="assets/testv008-registry.js?v=tv81-1307"></script>
+    <script src="assets/config/runtime-config.js?v=tv81-1402"></script>
+    <script src="assets/sand-maintenance.js?v=tv81-1402"></script>
+    <script src="assets/testv008-registry.js?v=tv81-1402"></script>
     <!-- The budget must exist before anything that reads the node or repaints the wallet. -->
-    <script src="assets/node-read-budget.js?v=tv81-1307"></script>
-    <script src="assets/retail-payment.js?v=tv81-1307"></script>
+    <script src="assets/node-read-budget.js?v=tv81-1402"></script>
+    <script src="assets/retail-payment.js?v=tv81-1402"></script>
     <!-- Exact arithmetic and the app's wording for notes; every error path calls stablesHumanNodeError. -->
-    <script src="assets/notes-manager.js?v=tv81-1307"></script>
+    <script src="assets/notes-manager.js?v=tv81-1402"></script>
     <script>
         (function () {
             var s = String((window.STABLES_CONFIG || {}).APP_STAGE || 'test').trim().toLowerCase();
@@ -14880,11 +14917,11 @@
             setTimeout(function () { window.stablesReadiness.arm(); }, 1200);
         }
     </script>
-    <script src="assets/test-channel-bootstrap.js?v=tv81-1307"></script>
+    <script src="assets/test-channel-bootstrap.js?v=tv81-1402"></script>
     <!-- Minima MiniDapp hub does not inject a global MDS; ship mds.js in the package so hub URLs connect without Connect node. -->
     <script src="assets/lib/mds.js"></script>
-    <script src="assets/hosted-app-packages.js?v=tv81-1307"></script>
-    <script src="assets/hosted-apps-ui.js?v=tv81-1307"></script>
+    <script src="assets/hosted-app-packages.js?v=tv81-1402"></script>
+    <script src="assets/hosted-apps-ui.js?v=tv81-1402"></script>
     <script src="assets/qrcode.js"></script>
     <script src="assets/jsQR.min.js"></script>
     <script>
@@ -17050,6 +17087,8 @@
            to the page visited before it (Home when it was opened from Home), else to Home. */
         window.stablesHandleBack = function () {
             try {
+                // The tap lock (founder 2026-10-15): while the phones are held together, Back does nothing; slide to unlock.
+                if (typeof window.stablesTapGuardLocked === 'function' && window.stablesTapGuardLocked()) return true;
                 const ag = document.getElementById('agentDrawer');
                 if (ag && ag.classList.contains('open')) { closeAgentNow(); return true; }
                 if (document.getElementById('homeOverview')) { stablesHomeCloseOverview(); return true; }
@@ -17151,10 +17190,14 @@
         }
         window.stablesHomeVisToggle = stablesHomeVisToggle;
         function stablesHomeFootprint(it) { return it.widget === 'apps' ? 2 : 1; }
+        /* The number of columns of the Home grid: four on a phone. A wide web window (founder 2026-10-15, "use the full
+           width") replaces this with the columns that fit (desktop-web.js). A slot is a place in reading order, so the same
+           saved arrangement reads row by row at either width; every slot computation asks this function. */
+        function stablesHomeCols() { return 4; }
         function stablesHomeCells(it, slot) {
-            const size = stablesHomeFootprint(it), cells = [];
-            if (!Number.isInteger(slot) || slot < 0 || slot >= 256 || slot % 4 + size > 4 || slot + (size - 1) * 4 + size > 256) return cells;
-            for (let row = 0; row < size; row++) for (let col = 0; col < size; col++) cells.push(slot + row * 4 + col);
+            const size = stablesHomeFootprint(it), cells = [], C = stablesHomeCols();
+            if (!Number.isInteger(slot) || slot < 0 || slot >= 256 || slot % C + size > C || slot + (size - 1) * C + size > 256) return cells;
+            for (let row = 0; row < size; row++) for (let col = 0; col < size; col++) cells.push(slot + row * C + col);
             return cells;
         }
         function stablesHomePositionItems(items, priority, preferred) {
@@ -17184,15 +17227,17 @@
         function stablesHomeApplySlot(tile, slot) {
             const size = tile.hasAttribute('data-home-widget') ? 2 : 1;
             tile.setAttribute('data-home-slot', String(slot));
-            tile.style.gridColumn = (slot % 4 + 1) + ' / span ' + size;
-            tile.style.gridRow = (Math.floor(slot / 4) + 1) + ' / span ' + size;
+            const C = stablesHomeCols();
+            tile.style.gridColumn = (slot % C + 1) + ' / span ' + size;
+            tile.style.gridRow = (Math.floor(slot / C) + 1) + ' / span ' + size;
         }
         function stablesHomeSlotAt(grid, x, y, kind) {
             const r = grid.getBoundingClientRect(), cs = getComputedStyle(grid), gap = parseFloat(cs.columnGap) || 0;
             if (x < r.left || x > r.right || y < r.top) return null;
-            const col = Math.min(kind === 'widget' ? 2 : 3, Math.floor((x - r.left) / ((r.width + gap) / 4)));
-            const row = Math.max(0, Math.min(kind === 'widget' ? 62 : 63, Math.floor((y - r.top) / ((parseFloat(cs.gridAutoRows) || 120) + (parseFloat(cs.rowGap) || 0)))));
-            return row * 4 + col;
+            const C = stablesHomeCols(), rows = Math.floor(256 / C);
+            const col = Math.min(kind === 'widget' ? C - 2 : C - 1, Math.floor((x - r.left) / ((r.width + gap) / C)));
+            const row = Math.max(0, Math.min(kind === 'widget' ? rows - 2 : rows - 1, Math.floor((y - r.top) / ((parseFloat(cs.gridAutoRows) || 120) + (parseFloat(cs.rowGap) || 0)))));
+            return row * C + col;
         }
         function stablesHomeShownItems() {
             const items = stablesHomeItems();
@@ -17629,7 +17674,7 @@
                 if (hd.kind === 'widget') return;
                 const occ = {}, blocked = new Set();
                 hd.orig.forEach(function (sl, t) {
-                    if (t.hasAttribute('data-home-widget')) [sl, sl + 1, sl + 4, sl + 5].forEach(function (c) { blocked.add(c); });
+                    if (t.hasAttribute('data-home-widget')) [sl, sl + 1, sl + stablesHomeCols(), sl + stablesHomeCols() + 1].forEach(function (c) { blocked.add(c); });
                     else occ[sl] = t;
                 });
                 let carry = occ[slot], at = slot;
@@ -17651,9 +17696,9 @@
                 tilesOf(grid).forEach(function (t) {
                     if (t === hd.tile) return;
                     const sl = Number(t.getAttribute('data-home-slot'));
-                    (t.hasAttribute('data-home-widget') ? [sl, sl + 1, sl + 4, sl + 5] : [sl]).forEach(function (c) { taken.add(c); });
+                    (t.hasAttribute('data-home-widget') ? [sl, sl + 1, sl + stablesHomeCols(), sl + stablesHomeCols() + 1] : [sl]).forEach(function (c) { taken.add(c); });
                 });
-                const need = hd.kind === 'widget' ? [slot, slot + 1, slot + 4, slot + 5] : [slot];
+                const need = hd.kind === 'widget' ? [slot, slot + 1, slot + stablesHomeCols(), slot + stablesHomeCols() + 1] : [slot];
                 return need.every(function (c) { return !taken.has(c); });
             };
             const firstFree = function (grid) { for (let c = 0; c < 256; c++) if (freeAt(grid, c)) return c; return 0; };
@@ -17988,8 +18033,8 @@
             if (!tile) return; event.preventDefault();
             const key = tile.getAttribute('data-home-item'), items = stablesHomeItems(), moving = items.find(function (it) { return stablesHomeKeyOf(it) === key; });
             if (!moving) return;
-            const delta = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -4, ArrowDown: 4 }[event.key], old = moving.slot, next = old + delta;
-            if (!stablesHomeCells(moving, next).length || ((event.key === 'ArrowLeft' || event.key === 'ArrowRight') && Math.floor(old / 4) !== Math.floor(next / 4))) return;
+            const C = stablesHomeCols(), delta = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -C, ArrowDown: C }[event.key], old = moving.slot, next = old + delta;
+            if (!stablesHomeCells(moving, next).length || ((event.key === 'ArrowLeft' || event.key === 'ArrowRight') && Math.floor(old / C) !== Math.floor(next / C))) return;
             moving.slot = next; stablesHomePositionItems(items, key, old); stablesHomeSave(items); stablesRenderHome();
             const focused = document.querySelector('#pageCarousel .page-grid[data-home-grid="home"] > [data-home-item="' + key + '"]'); if (focused) focused.focus();
             document.getElementById('homePositionStatus').textContent = 'Home position ' + (next + 1) + '.';
@@ -18000,7 +18045,7 @@
            follows); + adds a screen; an empty screen offers Remove; a tap on a card goes to that screen; a tap
            beside the cards closes the overview. */
         function stablesHomeOverviewMini(it) {
-            const size = stablesHomeFootprint(it), pos = ' style="grid-column:' + (it.slot % 4 + 1) + ' / span ' + size + ';grid-row:' + (Math.floor(it.slot / 4) + 1) + ' / span ' + size + '"';
+            const size = stablesHomeFootprint(it), C = stablesHomeCols(), pos = ' style="grid-column:' + (it.slot % C + 1) + ' / span ' + size + ';grid-row:' + (Math.floor(it.slot / C) + 1) + ' / span ' + size + '"';
             if (it.widget) return '<span class="home-ov-mini home-ov-mini--apps"' + pos + '></span>';
             if (it.folder) return '<span class="home-ov-mini home-ov-mini--folder"' + pos + '>' + (it.items[0] ? stablesPageMeta(it.items[0]).icon : '') + '</span>';
             return '<span class="home-ov-mini"' + pos + '>' + stablesPageMeta(it.app).icon + '</span>';
@@ -18012,7 +18057,7 @@
             ov.innerHTML = '<div class="home-overview__grid" role="list" aria-label="Screens">' + screens.map(function (sc, i) {
                 return '<div class="home-screen-card' + (i === _homeScreen ? ' is-current' : '') + '" role="listitem" tabindex="0" data-home-screen-card="' + i + '" aria-label="Screen ' + (i + 1) + '"'
                     + ' onclick="stablesHomeOverviewGo(' + i + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();stablesHomeOverviewGo(' + i + ')}">'
-                    + '<div class="home-screen-card__face" style="--home-preview-rows:' + Math.max(6, ...sc.items.map(function (it) { return Math.floor(it.slot / 4) + stablesHomeFootprint(it); })) + '" aria-hidden="true">' + sc.items.slice(0, 20).map(stablesHomeOverviewMini).join('') + '</div>'
+                    + '<div class="home-screen-card__face" style="--home-preview-rows:' + Math.max(6, ...sc.items.map(function (it) { return Math.floor(it.slot / stablesHomeCols()) + stablesHomeFootprint(it); })) + '" aria-hidden="true">' + sc.items.slice(0, 20).map(stablesHomeOverviewMini).join('') + '</div>'
                     + (!sc.items.length && screens.length > 1 ? '<button type="button" class="btn btn-link-action mx-action home-screen-card__remove" data-role="quiet" onclick="event.stopPropagation();stablesHomeRemoveScreen(' + i + ')">Remove</button>' : '')
                     + '</div>';
             }).join('') + '<button type="button" class="home-screen-card home-screen-card--add" aria-label="Add a screen" onclick="stablesHomeAddScreen()"><span aria-hidden="true">+</span></button></div>';
@@ -18853,10 +18898,10 @@
         function stablesAgentReportUnreachable() {
             const lang = (typeof getStoredAgentLanguage === 'function') ? getStoredAgentLanguage() : 'en';
             const text = {
-                en: "I could not open StablesAgent. This app has no network access of its own, so questions are answered in your browser at agent.stablescouncil.org. The guide above works offline.",
-                fr: "Je n'ai pas pu ouvrir StablesAgent. Cette application n'a pas d'accès réseau propre : les questions sont traitées dans votre navigateur sur agent.stablescouncil.org. Le guide ci-dessus fonctionne hors ligne.",
-                es: "No pude abrir StablesAgent. Esta aplicación no tiene acceso propio a la red: las preguntas se responden en su navegador en agent.stablescouncil.org. La guía de arriba funciona sin conexión.",
-                zh: "无法打开 StablesAgent。本应用自身没有网络访问权限，问题将在您的浏览器中通过 agent.stablescouncil.org 解答。上方的指南可离线使用。"
+                en: "I could not open StablesAgent. Questions are answered in your browser at agent.stablescouncil.org. The guide above works offline.",
+                fr: "Je n'ai pas pu ouvrir StablesAgent. Les questions sont traitées dans votre navigateur sur agent.stablescouncil.org. Le guide ci-dessus fonctionne hors ligne.",
+                es: "No pude abrir StablesAgent. Las preguntas se responden en su navegador en agent.stablescouncil.org. La guía de arriba funciona sin conexión.",
+                zh: "无法打开 StablesAgent。问题将在您的浏览器中通过 agent.stablescouncil.org 解答。上方的指南可离线使用。"
             };
             try { hideLiveAgentFrame(); } catch (_) { /* ignore */ }
             try {
@@ -19479,10 +19524,10 @@
     zh: "所选资产的快捷操作面板。兑换通过协议流动性池进行。购买路径引导至出入金功能以找到当地商家；出售方式相同但方向相反。可用性取决于您所在地区的商家。"
   },
   "faucet claim confirmation": {
-    en: "This confirmation window summarises the on-chain Winiwa faucet claim before your node signs it.\n\n- **You receive**: 1,000 Winiwa — the test-token amount sent from the faucet covenant to your wallet.\n- **Signing fee**: 0.0001 MINIMA — this is the native network cost to build and sign the transaction on your own node. It is burned by the Minima network, not kept by Stables.\n- **Recipient**: your connected wallet's receive address.\n- **Faucet pool**: the on-chain covenant address holding the test Winiwa reserve.\n- **Next claim**: the cooldown (1 hour) starts after this claim is submitted.\n\nTap **Pour** to sign and post the transaction. Winiwa is an on-chain test token with no official value.",
-    fr: "Cette fenêtre de confirmation résume la demande de faucet Winiwa on-chain avant que votre nœud ne la signe.\n\n- **Vous recevez** : 1 000 Winiwa — montant du jeton de test envoyé du covenant faucet à votre portefeuille.\n- **Frais de signature** : 0,0001 MINIMA — coût réseau natif pour construire et signer la transaction sur votre propre nœud. Il est brûlé par le réseau Minima, non conservé par Stables.\n- **Destinataire** : l'adresse de réception de votre portefeuille connecté.\n- **Pool du faucet** : l'adresse du covenant on-chain qui détient la réserve de test Winiwa.\n- **Prochaine demande** : le délai (1 heure) commence après l'envoi de cette demande.\n\nAppuyez sur **Verser** pour signer et publier la transaction. Winiwa est un jeton de test on-chain sans valeur officielle.",
-    es: "Esta ventana de confirmación resume el reclamo del grifo Winiwa on-chain antes de que su nodo lo firme.\n\n- **Usted recibe**: 1.000 Winiwa — monto del token de prueba enviado desde el convenio del grifo a su billetera.\n- **Tarifa de firma**: 0,0001 MINIMA — costo de red nativo para construir y firmar la transacción en su propio nodo. Es quemado por la red Minima, no retenido por Stables.\n- **Destinatario**: la dirección de recepción de su billetera conectada.\n- **Pool del grifo**: la dirección del convenio on-chain que contiene la reserva de prueba Winiwa.\n- **Próximo reclamo**: el enfriamiento (1 hora) comienza después de enviar este reclamo.\n\nToque **Verter** para firmar y publicar la transacción. Winiwa es un token de prueba on-chain sin valor oficial.",
-    zh: "此确认窗口会在您的节点签名前汇总链上Winiwa水龙头申领信息。\n\n- **您将收到**：1,000 Winiwa — 从水龙头合约发送到您钱包的测试代币金额。\n- **签名费**：0.0001 MINIMA — 在您自己的节点上构建和签名交易的本地网络成本。它由Minima网络销毁，而非Stables收取。\n- **接收方**：您已连接钱包的收款地址。\n- **水龙头池**：持有测试Winiwa储备的链上合约地址。\n- **下次申领**：冷却期（1小时）在本次申领提交后开始。\n\n点击**倒入**以签名并发布交易。Winiwa是没有官方价值的链上测试代币。"
+    en: "This confirmation window summarises the on-chain Winiwa faucet claim before your node signs it.\n\n- **You receive**: 1,000 Winiwa, the test-token amount sent from the faucet covenant to your wallet.\n- **Signing fee**: 0.0001 MINIMA, the native network cost to build and sign the transaction on your own node. It is burned by the Minima network, not kept by Stables.\n- **Recipient**: your connected wallet's receive address.\n- **Faucet pool**: the on-chain covenant address holding the test Winiwa reserve.\n- **Next claim**: the cooldown (1 hour) starts after this claim is submitted.\n\nTap **Pour** to sign and post the transaction. Winiwa is an on-chain test token with no official value.",
+    fr: "Cette fenêtre de confirmation résume la demande de faucet Winiwa on-chain avant que votre nœud ne la signe.\n\n- **Vous recevez** : 1 000 Winiwa, montant du jeton de test envoyé du covenant faucet à votre portefeuille.\n- **Frais de signature** : 0,0001 MINIMA, coût réseau natif pour construire et signer la transaction sur votre propre nœud. Il est brûlé par le réseau Minima, non conservé par Stables.\n- **Destinataire** : l'adresse de réception de votre portefeuille connecté.\n- **Pool du faucet** : l'adresse du covenant on-chain qui détient la réserve de test Winiwa.\n- **Prochaine demande** : le délai (1 heure) commence après l'envoi de cette demande.\n\nAppuyez sur **Verser** pour signer et publier la transaction. Winiwa est un jeton de test on-chain sans valeur officielle.",
+    es: "Esta ventana de confirmación resume el reclamo del grifo Winiwa on-chain antes de que su nodo lo firme.\n\n- **Usted recibe**: 1.000 Winiwa, monto del token de prueba enviado desde el convenio del grifo a su billetera.\n- **Tarifa de firma**: 0,0001 MINIMA, costo de red nativo para construir y firmar la transacción en su propio nodo. Es quemado por la red Minima, no retenido por Stables.\n- **Destinatario**: la dirección de recepción de su billetera conectada.\n- **Pool del grifo**: la dirección del convenio on-chain que contiene la reserva de prueba Winiwa.\n- **Próximo reclamo**: el enfriamiento (1 hora) comienza después de enviar este reclamo.\n\nToque **Verter** para firmar y publicar la transacción. Winiwa es un token de prueba on-chain sin valor oficial.",
+    zh: "此确认窗口会在您的节点签名前汇总链上Winiwa水龙头申领信息。\n\n- **您将收到**：1,000 Winiwa，从水龙头合约发送到您钱包的测试代币金额。\n- **签名费**：0.0001 MINIMA，在您自己的节点上构建和签名交易的本地网络成本。它由Minima网络销毁，而非Stables收取。\n- **接收方**：您已连接钱包的收款地址。\n- **水龙头池**：持有测试Winiwa储备的链上合约地址。\n- **下次申领**：冷却期（1小时）在本次申领提交后开始。\n\n点击**倒入**以签名并发布交易。Winiwa是没有官方价值的链上测试代币。"
   },
   "mint burn confirmation": {
     en: "This confirmation window summarises an on-chain USDw mint or burn before your node signs it.\n\n- **You send / You receive**: the token amounts you are swapping through the test covenant. Mint locks Winiwa and receives USDw; burn sends USDw and reclaims Winiwa at the live market rate shown.\n- **Signing fee**: 0.0001 MINIMA - the native network cost to build and sign the covenant transaction on your own node. It is burned by the Minima network, not kept by Stables.\n- **Counterparty**: the on-chain covenant address that holds the test reserve and enforces the swap.\n- **Network**: Minima mainnet test channel (Test12 node) - live mainnet chain, test tokens only.\n\nTap **Confirm** to sign and post the transaction. USDw and Winiwa are on-chain test tokens with no official value.",
@@ -20009,10 +20054,10 @@
                 const url = buildAgentUrl(promptCtx, buildAgentPromptForQuestion(finalText, lang), null, lang);
                 if (stablesOpenExternalLink(url)) {
                     const opened = {
-                        en: "Opening StablesAgent in your browser. This app has no network access of its own, so questions are answered there.",
-                        fr: "Ouverture de StablesAgent dans votre navigateur. Cette application n'a pas d'accès réseau propre : les questions y sont traitées.",
-                        es: "Abriendo StablesAgent en su navegador. Esta aplicación no tiene acceso propio a la red, así que las preguntas se responden allí.",
-                        zh: "正在您的浏览器中打开 StablesAgent。本应用自身没有网络访问权限，问题将在那里解答。"
+                        en: "Opening StablesAgent in your browser.",
+                        fr: "Ouverture de StablesAgent dans votre navigateur.",
+                        es: "Abriendo StablesAgent en su navegador.",
+                        zh: "正在您的浏览器中打开 StablesAgent。"
                     };
                     const l = (typeof getStoredAgentLanguage === 'function') ? getStoredAgentLanguage() : 'en';
                     _awAppendBubble(opened[l] || opened.en, true);
@@ -20886,7 +20931,7 @@
             en: [
                 {
                     q: 'Where do I set the payment code?',
-                    a: 'Open **More → Security**, then scroll to **Payment protection** and tap **Set payment code**.\n\nIf you skip that, your **first protected send** also opens inline setup in the payment code modal.\n\nAfter a code exists, the button reads **Change payment code**. You must enter the current code before choosing a new one.\n\nThis is separate from your recovery phrase. **In this test release the wallet and its seed live in the Minima Core app, not in Stables**, so Stables never holds or asks for it. Never use a recovery phrase as the payment code, and never give one to anyone.'
+                    a: 'Open **More → Security**, then scroll to **Payment protection** and tap **Set payment code**.\n\nIf you skip that, your **first protected send** also opens inline setup in the payment code modal.\n\nAfter a code exists, the button reads **Change payment code**. You must enter the current code before choosing a new one.\n\nThis is separate from your recovery phrase. Never use a recovery phrase as the payment code, and never give one to anyone.'
                 },
                 {
                     q: 'Is the code stored securely on my phone?',
@@ -20904,7 +20949,7 @@
             fr: [
                 {
                     q: 'Où définir le code de paiement ?',
-                    a: 'Ouvrez **Plus → Sécurité**, puis **Protection des paiements** et touchez **Définir le code de paiement**.\n\nSinon, le **premier envoi protégé** ouvre aussi la configuration dans le modal.\n\nEnsuite, utilisez **Changer le code de paiement**. Ce code est distinct de votre phrase de récupération. **Dans cette version de test, le portefeuille et sa graine résident dans l\'application Minima Core, pas dans Stables** : Stables ne la détient ni ne la demande jamais.'
+                    a: 'Ouvrez **Plus → Sécurité**, puis **Protection des paiements** et touchez **Définir le code de paiement**.\n\nSinon, le **premier envoi protégé** ouvre aussi la configuration dans le modal.\n\nEnsuite, utilisez **Changer le code de paiement**. Ce code est distinct de votre phrase de récupération. N\'utilisez jamais une phrase de récupération comme code de paiement, et ne la donnez jamais à personne.'
                 },
                 {
                     q: 'Le code est-il stocké en sécurité sur mon téléphone ?',
@@ -20922,7 +20967,7 @@
             es: [
                 {
                     q: '¿Dónde configuro el código de pago?',
-                    a: 'Abra **Más → Seguridad**, luego **Protección de pagos** y toque **Configurar código de pago**.\n\nSi lo omite, el **primer envío protegido** también abre la configuración en el modal.\n\nDespués use **Cambiar código de pago**. Es distinto de su frase de recuperación. **En esta versión de prueba, la billetera y su semilla residen en la aplicación Minima Core, no en Stables**: Stables nunca la tiene ni la pide.'
+                    a: 'Abra **Más → Seguridad**, luego **Protección de pagos** y toque **Configurar código de pago**.\n\nSi lo omite, el **primer envío protegido** también abre la configuración en el modal.\n\nDespués use **Cambiar código de pago**. Es distinto de su frase de recuperación. Nunca use una frase de recuperación como código de pago y nunca se la dé a nadie.'
                 },
                 {
                     q: '¿El código se guarda de forma segura en mi teléfono?',
@@ -20940,7 +20985,7 @@
             zh: [
                 {
                     q: '在哪里设置支付码？',
-                    a: '打开 **更多 → 安全**，找到 **支付保护**，点击 **设置支付码**。\n\n若跳过，**首次受保护发送**也会在弹窗中内联设置。\n\n之后按钮显示 **更改支付码**。这与恢复助记词不同。**在本测试版本中，钱包及其种子存放在 Minima Core 应用中，而不在 Stables 内**，Stables 从不持有也从不索取。'
+                    a: '打开 **更多 → 安全**，找到 **支付保护**，点击 **设置支付码**。\n\n若跳过，**首次受保护发送**也会在弹窗中内联设置。\n\n之后按钮显示 **更改支付码**。这与恢复助记词不同。切勿将恢复助记词用作支付码，也切勿告诉任何人。'
                 },
                 {
                     q: '支付码在手机上安全存储吗？',
@@ -22217,7 +22262,7 @@
                 div.style.cursor = 'pointer';
                 div.addEventListener('mouseenter', () => setHoverInfo(idx, bucketMinima));
                 div.addEventListener('mousemove', () => setHoverInfo(idx, bucketMinima));
-                div.title = `Bin ${idx + 1} · ${bucketMinima.toLocaleString('en-US')} MINIMA`;
+                div.title = `Bin ${idx + 1} · ${bucketMinima.toLocaleString('en-US')} Winiwa`;
                 container.appendChild(div);
             });
             container.addEventListener('mouseleave', () => {
@@ -22226,7 +22271,7 @@
             const lbl = document.getElementById('lpLiveDepthLabel');
             if (lbl) lbl.textContent = 'Liquidity bins';
             const totalEl = document.getElementById('lpLiveTotalMinima');
-            if (totalEl) totalEl.textContent = `${totalMinima.toLocaleString('en-US')} MINIMA`;
+            if (totalEl) totalEl.textContent = `${totalMinima.toLocaleString('en-US')} Winiwa`;
         }
 
         function populateLpBaseCurrencies() {
@@ -22540,26 +22585,23 @@
             updateAgentFabToggleBtn();
         }
 
-        // The show/hide control for the floating agent icon now lives inside the StablesAgent dialog
-        // header (not the More menu). It reflects the current state and toggles it.
+        /* Founder 2026-10-13: showing or hiding the agent button is a switch, in the agent panel and in Settings (the eye
+           belongs to discreet mode only). Both switches show the one stored state. */
         function updateAgentFabToggleBtn() {
-            var btn = document.getElementById('agentFabToggleBtn');
-            if (!btn) return;
             var removed = false;
             try { removed = localStorage.getItem(AGENT_FAB_REMOVED_KEY) === 'true'; } catch (_) { /* ignore */ }
-            // An eye, as for hiding balances (founder 2026-10-12): open while the agent shows, crossed out while hidden.
-            btn.innerHTML = removed ? '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>' : '<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
-            var lbl = removed ? 'Show floating agent button' : 'Hide floating agent button';
-            btn.title = lbl; btn.setAttribute('aria-label', lbl);
+            ['agentFabShowSwitch', 'settingsAgentShowSwitch'].forEach(function (id) {
+                var sw = document.getElementById(id);
+                if (sw) sw.checked = !removed;
+            });
         }
 
-        function toggleAgentFabFromDialog() {
-            var removed = false;
-            try { removed = localStorage.getItem(AGENT_FAB_REMOVED_KEY) === 'true'; } catch (_) { /* ignore */ }
-            if (removed) restoreAgentFab(); else removeAgentFab({ fromDialog: true });
+        function stablesSetAgentFabShown(show) {
+            if (show) restoreAgentFab(); else removeAgentFab({ fromDialog: true });
             updateAgentFabToggleBtn();
+            try { stablesSeatAgentFab(); } catch (_) { /* ignore */ }
         }
-        window.toggleAgentFabFromDialog = toggleAgentFabFromDialog;
+        window.stablesSetAgentFabShown = stablesSetAgentFabShown;
         
         function initAgentFabDrag() {
             const fab = document.getElementById('agentFabMain');
@@ -22570,6 +22612,7 @@
             // Restore hidden state + saved position.
             if (localStorage.getItem(AGENT_FAB_REMOVED_KEY) === 'true') fab.style.display = 'none';
             updateRestoreAgentFabMenuVisibility();
+            updateAgentFabToggleBtn();
             applyAgentFabSavedPosition();
 
             // Free-drag repositioning via Pointer Events (works for touch + mouse). A short move
@@ -22621,8 +22664,28 @@
                     var nt = Math.max(4, Math.min(window.innerHeight - h - 4, originTop + dy));
                     fab.style.left = nl + 'px';
                     fab.style.top = nt + 'px';
+                    agentHideArmed = agentHitHide(nl + w / 2, nt + h / 2);
                 }
             });
+
+            /* The X target at the top (founder 2026-10-13), as Home's "Hide from Home": shown while the button is
+               dragged, lit while the button's centre is over it; dropping there hides the agent. */
+            var agentHideArmed = false;
+            function agentHitHide(x, y) {
+                var zone = document.getElementById('agentHideZone'), target = document.getElementById('agentHideTarget');
+                if (!zone || !target) return false;
+                zone.hidden = false;
+                var r = target.getBoundingClientRect();
+                var pad = 8, on = x >= r.left - pad && x <= r.right + pad && y >= r.top - pad && y <= r.bottom + pad;
+                zone.classList.toggle('is-target', on);
+                fab.classList.toggle('is-hide-target', on);
+                return on;
+            }
+            function agentHideZoneOff() {
+                var zone = document.getElementById('agentHideZone');
+                if (zone) { zone.hidden = true; zone.classList.remove('is-target'); }
+                fab.classList.remove('is-hide-target');
+            }
 
             function endAgentFabDrag(e) {
                 if (pid === null || (e && e.pointerId !== pid)) return;
@@ -22630,7 +22693,18 @@
                 pid = null;
                 if (dragging) {
                     fab.classList.remove('dragging');
-                    saveAgentFabPosition(parseFloat(fab.style.left) || 0, parseFloat(fab.style.top) || 0);
+                    var hide = agentHideArmed;
+                    agentHideArmed = false;
+                    agentHideZoneOff();
+                    if (hide) {
+                        // Hidden where it was before the drag: shown again, it comes back to that place, not the top.
+                        fab.style.position = ''; fab.style.left = ''; fab.style.top = ''; fab.style.right = ''; fab.style.bottom = '';
+                        applyAgentFabSavedPosition();
+                        stablesSetAgentFabShown(false);
+                        try { stablesSeatAgentFab(); } catch (_) { /* ignore */ }
+                    } else {
+                        saveAgentFabPosition(parseFloat(fab.style.left) || 0, parseFloat(fab.style.top) || 0);
+                    }
                 } else if (!moved) {
                     // A clean tap (no drag) opens the agent.
                     try { openAgent(); } catch (_) { /* ignore */ }
@@ -22674,7 +22748,12 @@
             const fab = document.getElementById('agentFabMain');
             if (!fab) return;
             const agentOpen = !!document.querySelector('#agentDrawer.open');
-            const sheetHead = agentOpen ? null : stablesAgentSheetHead();
+            /* Founder 2026-10-15: "the agent icon is always visible on the card and doesnt respond to the toggle position".
+               The seated-in-sheet rule shows the button with !important; switched off, it is never seated in a sheet. */
+            let switchedOff = false;
+            try { switchedOff = localStorage.getItem(AGENT_FAB_REMOVED_KEY) === 'true'; } catch (_) { switchedOff = false; }
+            const sheetHead = agentOpen || switchedOff ? null : stablesAgentSheetHead();
+            if (switchedOff && fab.classList.contains('agent-fab--in-sheet')) { stablesUnseatAgentFab(fab); return; }
             if (sheetHead) {
                 if (fab.parentElement !== sheetHead) sheetHead.appendChild(fab);
                 fab.classList.add('agent-fab--seated', 'agent-fab--in-sheet');
@@ -24436,7 +24515,10 @@
             var coreHere = false;
             try { if (n) { mode = String(n.getNodeMode() || ''); coreHere = !!(n.isCoreInstalled && n.isCoreInstalled()); } } catch (_) { n = null; }
             var core = mode === 'core';
-            sec.hidden = !n || !(core || (mode === 'internal' && coreHere));
+            /* Founder 2026-10-14: "a unified app where we can decide to connect to the internal node or through the
+               external Minima Core". The choice is always on Settings in the Android app (law 4), also on a phone
+               without Minima Core, where the line says Core must be installed first. */
+            sec.hidden = !n || !(core || mode === 'internal');
             if (sec.hidden) return;
             var label = document.getElementById('stablesNodeModeLabel');
             var sub = document.getElementById('stablesNodeModeSub');
@@ -24444,7 +24526,9 @@
             if (label) label.textContent = core ? 'Minima Core on this phone' : 'Built into Stables';
             if (sub) {
                 sub.removeAttribute('data-state');
-                sub.textContent = core ? 'Stables uses your Minima Core wallet' : 'Stables connects to the Minima network itself';
+                sub.textContent = core ? 'Stables uses your Minima Core wallet'
+                    : (coreHere ? 'Stables connects to the Minima network itself'
+                        : 'Stables connects to the Minima network itself. To use Minima Core instead, install it first.');
             }
             if (btn) {
                 btn.disabled = false;
@@ -24459,6 +24543,9 @@
             var current = '';
             try { current = String(n.getNodeMode() || ''); } catch (_) { return; }
             var target = current === 'core' ? 'internal' : 'core';
+            var coreHere = true;
+            try { coreHere = !(n.isCoreInstalled && !n.isCoreInstalled()); } catch (_) { coreHere = true; }
+            if (target === 'core' && !coreHere) { window.stablesNodeModeSwitchFailed('core-missing'); return; }
             var ask = target === 'core'
                 ? { title: 'Use Minima Core?', confirmText: 'Use Minima Core',
                     message: 'Stables restarts and uses your Minima Core wallet. Your funds stay in this app’s wallet; switch back any time to use them.' }
@@ -24483,7 +24570,7 @@
             if (!sub) return;
             sub.setAttribute('data-state', 'error');
             sub.textContent = reason === 'core-missing'
-                ? 'Minima Core is not on this phone'
+                ? 'Minima Core is not on this phone. Install Minima Core, then choose it here.'
                 : (reason === 'node-busy' ? 'Your node is busy. Please try again in a moment.' : 'That did not work. Please try again.');
         };
 
@@ -24535,8 +24622,8 @@
             var today = Math.max(0, Number(stats.txpowToday) || 0);
             var total = Math.max(0, Number(stats.txpowTotal) || 0);
             var rows = {
-                txpowToday: String(today),
-                txpowTotal: String(total),
+                txpowToday: today.toLocaleString('en-US'),
+                txpowTotal: total.toLocaleString('en-US'),
                 onlineToday: stablesFormatDuration(stats.onlineTodayMs),
                 hashRate: stablesFormatHashRate(stats.hashRate)
             };
@@ -24544,42 +24631,186 @@
             var fb = stats.foundBlocks && typeof stats.foundBlocks === 'object' ? stats.foundBlocks : null;
             var fbRecent = fb && Array.isArray(fb.recent) ? fb.recent : [];
             var fbLast = fbRecent.length ? fbRecent[fbRecent.length - 1] : null;
-            rows.blocksFound = String(Math.max(0, Number(fb && fb.total) || 0));
+            rows.blocksFound = Math.max(0, Number(fb && fb.total) || 0).toLocaleString('en-US');
             rows.lastBlockFound = fbLast && Number(fbLast.block) > 0
-                ? Number(fbLast.block).toLocaleString('en-US') + ' · ' + stablesFormatDayLabel(new Date(Number(fbLast.ms) || 0).toISOString().slice(0, 10))
+                ? Number(fbLast.block).toLocaleString('en-US') + ' · ' + stablesFormatDayLabel(stablesLocalDayKey(Number(fbLast.ms) || 0))
                 : 'None yet';
+            /* Blocks mined per day (founder 2026-10-13). The service keeps the latest blocks this phone mined with
+               their times (FoundBlocks, at most 50); the app adds its own longer local record of mined block times
+               (stablesMinedBlockTimes), so a busy fortnight is still counted in full. Counted by local calendar day,
+               the same day the service uses for TxPoW and time online. */
+            var minedTimes = stablesMinedBlockTimes(fbRecent);
+            var minedPerDay = {};
+            for (var b = 0; b < minedTimes.length; b++) {
+                var dk = stablesLocalDayKey(minedTimes[b]);
+                if (dk) minedPerDay[dk] = (minedPerDay[dk] || 0) + 1;
+            }
             var days = [];
             var hist = Array.isArray(stats.history) ? stats.history : [];
             for (var i = Math.max(0, hist.length - 13); i < hist.length; i++) {
                 var h = hist[i] || {};
                 if (!/^\d{4}-\d{2}-\d{2}$/.test(String(h.day || ''))) continue;
-                days.push({ day: String(h.day), txpow: Math.max(0, Number(h.txpow) || 0), onlineMs: Math.max(0, Number(h.onlineMs) || 0), today: false });
+                days.push({ day: String(h.day), txpow: Math.max(0, Number(h.txpow) || 0), onlineMs: Math.max(0, Number(h.onlineMs) || 0), blocks: minedPerDay[String(h.day)] || 0, today: false });
             }
-            days.push({ day: String(stats.day || ''), txpow: today, onlineMs: Math.max(0, Number(stats.onlineTodayMs) || 0), today: true });
-            return { rows: rows, days: days, showChart: days.length >= 2 };
+            days.push({ day: String(stats.day || ''), txpow: today, onlineMs: Math.max(0, Number(stats.onlineTodayMs) || 0), blocks: minedPerDay[String(stats.day || '')] || 0, today: true });
+            /* The blocks chart only once the phone has mined a block: fourteen empty days say nothing the
+               "Blocks mined 0" row does not. */
+            var blocksEver = Math.max(0, Number(fb && fb.total) || 0) > 0 || minedTimes.length > 0;
+            return { rows: rows, days: days, showChart: days.length >= 2, showBlocksChart: days.length >= 2 && blocksEver };
         }
-        function stablesDrawContributionBars(host, days, key, unit) {
+        /* Local calendar day of an instant as yyyy-MM-dd (the service's ContributionStats.dayKey). */
+        function stablesLocalDayKey(ms) {
+            var d = new Date(Number(ms) || 0);
+            if (!(Number(ms) > 0) || isNaN(d.getTime())) return '';
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        }
+        /* The app's own record of when this phone mined a block (founder 2026-10-13: a graph of blocks mined).
+           Fed from two places the app already learns it: the service's recent list on every Node refresh, and the
+           BLOCKFOUND event. One entry per block number; 60 days and 1,000 entries at most. Storage can be missing
+           or refuse (private window, gate): the service's own list is then used alone. Returns the times (ms). */
+        function stablesMinedBlockTimes(recent, extra) {
+            var STABLES_MINED_BLOCKS_KEY = 'stables_mined_blocks_v1';
+            var byBlock = {};
+            var add = function (ms, block) {
+                ms = Number(ms) || 0; block = Number(block) || 0;
+                if (!(ms > 0)) return;
+                var k = block > 0 ? 'b' + block : 't' + ms;
+                if (!byBlock[k] || byBlock[k].ms > ms) byBlock[k] = { ms: ms, block: block };
+            };
+            var store = null;
+            try { store = window.localStorage || null; } catch (_) { store = null; }
+            var saved = [];
+            if (store) { try { saved = JSON.parse(store.getItem(STABLES_MINED_BLOCKS_KEY) || '[]'); } catch (_) { saved = []; } }
+            if (!Array.isArray(saved)) saved = [];
+            for (var i = 0; i < saved.length; i++) if (Array.isArray(saved[i])) add(saved[i][0], saved[i][1]);
+            var list = Array.isArray(recent) ? recent : [];
+            for (var j = 0; j < list.length; j++) if (list[j]) add(list[j].ms, list[j].block);
+            if (extra) add(extra.ms, extra.block);
+            var cutoff = Date.now() - 60 * 24 * 3600 * 1000;
+            var kept = Object.keys(byBlock).map(function (k) { return byBlock[k]; })
+                .filter(function (e) { return e.ms >= cutoff; })
+                .sort(function (a, b) { return a.ms - b.ms; });
+            if (kept.length > 1000) kept = kept.slice(kept.length - 1000);
+            if (store) { try { store.setItem(STABLES_MINED_BLOCKS_KEY, JSON.stringify(kept.map(function (e) { return [e.ms, e.block]; }))); } catch (_) { /* the service's list still counts */ } }
+            return kept.map(function (e) { return e.ms; });
+        }
+        window.stablesRecordMinedBlock = function (block, ms) {
+            if (!(Number(block) > 0)) return;
+            try { stablesMinedBlockTimes([], { ms: Number(ms) || Date.now(), block: Number(block) }); } catch (_) { /* the Node refresh records it */ }
+        };
+        /* VIS-002, the one chart helper (founder 2026-10-13: "every graph full width of its card, no axis labels beside
+           the chart; the axes are named in the graph's title"). Two marks, and neither draws text: the chart's title names
+           both axes, and each mark carries its value as a tooltip and aria label (the text equivalent).
+           stablesChartBars(host, points): one column per point in a .ui-bar-strip, all from one baseline, scaled to the
+             largest; points = [{ value, label, strong }] (strong = the emphasised bar, e.g. today). Returns the maximum.
+           stablesChartLine(svg, series, opts): lines in a .ui-chart-svg sized to the element's own pixels (redrawn by
+             its own observer when the box changes); series = [{ points: [{ x: 0..1, y }], tone, area, dash }],
+             tone = accent | purple | muted | success; opts = { yMin, yMax, guideX, markX } (x as 0..1). */
+        function stablesChartBars(host, points) {
             if (!host) return 0;
             while (host.firstChild) host.removeChild(host.firstChild);
-            var max = 0;
-            for (var i = 0; i < days.length; i++) if (days[i][key] > max) max = days[i][key];
-            for (var j = 0; j < days.length; j++) {
-                var d = days[j];
+            var max = 0, i;
+            for (i = 0; i < points.length; i++) if (points[i].value > max) max = points[i].value;
+            for (i = 0; i < points.length; i++) {
+                var p = points[i];
                 var col = document.createElement('div');
                 col.className = 'ui-bar-col';
                 var bar = document.createElement('div');
-                bar.className = 'ui-bar' + (d.today ? ' ui-bar--today' : '');
-                var pct = max > 0 ? Math.round((d[key] / max) * 100) : 0;
+                bar.className = 'ui-bar' + (p.strong ? ' ui-bar--today' : '');
+                var pct = max > 0 ? Math.round((p.value / max) * 100) : 0;
                 bar.style.height = Math.max(2, pct) + '%';
-                var value = key === 'txpow' ? (d.txpow + ' TxPoW') : ('online ' + stablesFormatDuration(d.onlineMs));
-                var label = (d.today ? 'Today' : stablesFormatDayLabel(d.day)) + ' · ' + value;
-                col.title = label;
-                col.setAttribute('aria-label', label);
+                if (p.label) { col.title = p.label; col.setAttribute('aria-label', p.label); }
                 col.appendChild(bar);
                 host.appendChild(col);
             }
-            /* The scale the bars were drawn against, so the y axis cannot disagree with them. */
             return max;
+        }
+        function stablesChartLine(svg, series, opts) {
+            if (!svg) return false;
+            opts = opts || {};
+            svg.__stablesChart = { series: series, opts: opts };
+            if (!svg.__stablesChartRo && typeof ResizeObserver === 'function') {
+                svg.__stablesChartRo = new ResizeObserver(function () {
+                    var last = svg.__stablesChart;
+                    if (!last) return;
+                    var r = svg.getBoundingClientRect();
+                    var vb = String(svg.getAttribute('viewBox') || '').split(' ');
+                    if (Math.round(r.width) > 20 && (vb[2] !== String(Math.round(r.width)) || vb[3] !== String(Math.round(r.height)))) stablesChartLine(svg, last.series, last.opts);
+                });
+                svg.__stablesChartRo.observe(svg);
+            }
+            var box = svg.getBoundingClientRect();
+            var W = Math.round(box.width || 0), H = Math.round(box.height || 0);
+            if (W < 20 || H < 16) return false;                  // not laid out yet; the observer draws it
+            var ys = [];
+            series.forEach(function (s) { (s.points || []).forEach(function (p) { if (Number.isFinite(p.y)) ys.push(p.y); }); });
+            if (!ys.length) { svg.innerHTML = ''; return false; }
+            var lo = Number.isFinite(opts.yMin) ? opts.yMin : Math.min.apply(null, ys);
+            var hi = Number.isFinite(opts.yMax) ? opts.yMax : Math.max.apply(null, ys);
+            var span = (hi - lo) || Math.abs(hi) * 0.02 || 1;
+            if (!Number.isFinite(opts.yMin)) lo -= span * 0.1;
+            if (!Number.isFinite(opts.yMax)) hi += span * 0.1;
+            var padT = 2, padB = 2;
+            var x = function (t) { return Math.max(0, Math.min(1, t)) * W; };
+            var y = function (v) { return padT + (H - padT - padB) * (1 - (v - lo) / (hi - lo)); };
+            var tones = { accent: 'var(--c)', purple: 'var(--pu)', muted: 'var(--m)', success: 'var(--gr)' };
+            var gid = 'stchg-' + (svg.id || 'x');
+            var out = '<line x1="0" y1="' + (H - 0.5) + '" x2="' + W + '" y2="' + (H - 0.5) + '" stroke="currentColor" stroke-opacity="0.18" stroke-width="1"/>';
+            if (Number.isFinite(opts.guideX)) {
+                out += '<line x1="' + x(opts.guideX).toFixed(1) + '" y1="0" x2="' + x(opts.guideX).toFixed(1) + '" y2="' + H + '" stroke="currentColor" stroke-opacity="0.18" stroke-width="1" stroke-dasharray="4 4"/>';
+            }
+            var defs = '';
+            series.forEach(function (s, si) {
+                var pts = (s.points || []).filter(function (p) { return Number.isFinite(p.x) && Number.isFinite(p.y); });
+                if (pts.length < 2) return;
+                var colour = tones[s.tone] || tones.accent;
+                var d = pts.map(function (p, i) { return (i ? 'L' : 'M') + x(p.x).toFixed(1) + ' ' + y(p.y).toFixed(1); }).join(' ');
+                if (s.area) {
+                    defs += '<linearGradient id="' + gid + si + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + colour + '" stop-opacity="0.28"/><stop offset="1" stop-color="' + colour + '" stop-opacity="0"/></linearGradient>';
+                    out += '<path d="' + d + ' L' + x(pts[pts.length - 1].x).toFixed(1) + ' ' + H + ' L' + x(pts[0].x).toFixed(1) + ' ' + H + ' Z" fill="url(#' + gid + si + ')"/>';
+                }
+                out += '<path d="' + d + '" fill="none" stroke="' + colour + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"' + (s.dash ? ' stroke-dasharray="5 4"' : '') + '/>';
+            });
+            if (Number.isFinite(opts.markX)) {
+                out += '<line x1="' + x(opts.markX).toFixed(1) + '" y1="0" x2="' + x(opts.markX).toFixed(1) + '" y2="' + H + '" stroke="var(--c)" stroke-width="1"/>';
+            }
+            svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+            svg.setAttribute('preserveAspectRatio', 'none');
+            svg.innerHTML = (defs ? '<defs>' + defs + '</defs>' : '') + out;
+            return true;
+        }
+        window.stablesChartBars = stablesChartBars;
+        window.stablesChartLine = stablesChartLine;
+        /* DAT-001 direction mark, the one transaction direction mark (founder 2026-10-14: "the up and down 90 degree arrows beside the
+           transaction are not really having a visual impact ... clearly show if it's an incoming or outgoing transaction
+           without being too catchy"). Every transaction row draws its leading mark here (Wallet Recent activity, Activity,
+           the currency page, Treasury, Exchange lists), so no row carries a text glyph that renders differently per phone.
+           The mark follows the direction only, never a row's stored `icon` field. in = arrow down into a tray on a soft
+           accent tile (the incoming amount's colour); out = arrow up out of the tray on the neutral glass tile; self
+           (Add or Remove on the card, combining notes, an exchange) = two-way arrow on the neutral tile. Inline SVG line
+           icons; geometry and colours in app-ui-system.css (`.tx-dir`). Defined here, ahead of the boot renders. */
+        var STABLES_TX_DIR_PATHS = {
+            in: '<path d="M12 4v11"/><path d="M7.5 10.5 12 15l4.5-4.5"/><path d="M5 20h14"/>',
+            out: '<path d="M12 15V4"/><path d="M7.5 8.5 12 4l4.5 4.5"/><path d="M5 20h14"/>',
+            self: '<path d="M5 8h14"/><path d="m16 5 3 3-3 3"/><path d="M19 16H5"/><path d="m8 13-3 3 3 3"/>'
+        };
+        var STABLES_TX_DIR_LABEL = { in: 'Incoming', out: 'Outgoing', self: 'Between your accounts' };
+        window.stablesTxDirMarkHtml = function (dir) {
+            var k = dir === 'self' ? 'self' : (dir === 'in' ? 'in' : 'out');
+            return '<div class="tx-ic tx-dir tx-dir--' + k + '" role="img" aria-label="' + STABLES_TX_DIR_LABEL[k] + '">'
+                + '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"'
+                + ' stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'
+                + STABLES_TX_DIR_PATHS[k] + '</svg></div>';
+        };
+        /* One series of the Node section as bars: today emphasised, each bar its day and value. */
+        function stablesDrawContributionBars(host, days, key) {
+            var points = days.map(function (d) {
+                var value = key === 'txpow' ? (Number(d.txpow).toLocaleString('en-US') + ' TxPoW')
+                    : key === 'blocks' ? (Number(d.blocks).toLocaleString('en-US') + (d.blocks === 1 ? ' block mined' : ' blocks mined'))
+                    : ('online ' + stablesFormatDuration(d.onlineMs));
+                return { value: d[key], strong: d.today, label: (d.today ? 'Today' : stablesFormatDayLabel(d.day)) + ' · ' + value };
+            });
+            return stablesChartBars(host, points);
         }
         function stablesRefreshNetworkContributionStats() {
             var el = document.getElementById('stablesContributionStats');
@@ -24595,31 +24826,26 @@
                 var k = cells[i].getAttribute('data-contribution-stat');
                 if (k in view.rows) cells[i].textContent = view.rows[k];
             }
-            /* Two charts, each under the measure it charts, each labelling its own axes
-               (founder 2026-09-04). The y label is the maximum the bars were scaled against,
-               written in that chart's own unit; the x labels are the two ends of the range. */
+            /* Three charts, each under the measure it charts (founder 2026-09-04), each the card's full width with
+               no axis labels beside it: the title names both axes (founder 2026-10-13, VIS-002). */
             var charts = el.querySelectorAll('[data-contribution-chart]');
             var setText = function (key, text) {
                 var node = el.querySelector('[data-contribution-stat="' + key + '"]');
                 if (node) node.textContent = text;
             };
             if (view.showChart) {
-                var txpowMax = stablesDrawContributionBars(
-                    document.getElementById('stablesContributionBarsTxpow'), view.days, 'txpow');
-                var onlineMax = stablesDrawContributionBars(
-                    document.getElementById('stablesContributionBarsOnline'), view.days, 'onlineMs');
-                var range = 'Last ' + view.days.length + (view.days.length === 1 ? ' day' : ' days');
-                var firstLabel = stablesFormatDayLabel(view.days[0].day);
-                setText('chartTitle', range);
-                setText('chartTitleOnline', range);
-                setText('txpowMax', String(txpowMax) + ' TxPoW');
-                setText('onlineMax', stablesFormatDuration(onlineMax));
-                setText('firstDay', firstLabel);
-                setText('lastDay', 'Today');
-                setText('firstDayOnline', firstLabel);
-                setText('lastDayOnline', 'Today');
+                stablesDrawContributionBars(document.getElementById('stablesContributionBarsTxpow'), view.days, 'txpow');
+                stablesDrawContributionBars(document.getElementById('stablesContributionBarsBlocks'), view.days, 'blocks');
+                stablesDrawContributionBars(document.getElementById('stablesContributionBarsOnline'), view.days, 'onlineMs');
+                var range = ', last ' + view.days.length + ' days';
+                setText('txpowChartTitle', 'TxPoW per day' + range);
+                setText('blocksChartTitle', 'Blocks mined per day' + range);
+                setText('onlineChartTitle', 'Time online per day' + range);
             }
-            for (var c = 0; c < charts.length; c++) charts[c].hidden = !view.showChart;
+            for (var c = 0; c < charts.length; c++) {
+                var which = typeof charts[c].getAttribute === 'function' ? charts[c].getAttribute('data-contribution-chart') : '';
+                charts[c].hidden = which === 'blocks' ? !view.showBlocksChart : !view.showChart;
+            }
             el.hidden = false;
             return view;
         }
@@ -24724,7 +24950,9 @@
             // Banking language only (locked 2026-07-05): no chain jargon in the Network stage
             // copy — the sole blockchain term permitted anywhere is "block height".
             if (!L || !L.active) {
-                return { state: 'offline', label: 'Not connected', detail: 'Your bank is not running. Close and reopen the app, or check that background mode is on in Settings.' };
+                return { state: 'offline', label: 'Not connected', detail: (typeof stablesIsCoreShell === 'function' && stablesIsCoreShell())
+                    ? 'Minima Core is not answering. Open Minima Core, then come back to Stables.'
+                    : 'Your bank is not running. Close and reopen the app, or check that background mode is on in Settings.' };
             }
             if (!L.rpcOk) {
                 if (L.lastFail) {
@@ -24755,12 +24983,26 @@
             var h = Number(height);
             if (!isFinite(h) || h <= 0) return;
             var now = Date.now();
-            if (STABLES_CATCHUP.firstHeight == null) { STABLES_CATCHUP.firstHeight = h; STABLES_CATCHUP.firstAt = now; }
+            /* The height and when it last moved are kept across page loads (2026-10-14, Galaxy A25): Android reloads
+               the page after a while in the background, and the screen goes off within a minute, so a node stuck for an
+               hour was always "watched for less than ten minutes" and never resynced. */
+            var KEY = 'stables_catchup_v1';
+            if (STABLES_CATCHUP.firstHeight == null) {
+                var kept = null;
+                try { kept = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (_) { kept = null; }
+                if (kept && Number(kept.h) === h && Number(kept.movedAt) > 0 && Number(kept.since) > 0 && Number(kept.movedAt) <= now) {
+                    STABLES_CATCHUP.firstHeight = h; STABLES_CATCHUP.firstAt = Number(kept.since);
+                    STABLES_CATCHUP.height = h; STABLES_CATCHUP.lastMoveAt = Number(kept.movedAt);
+                } else {
+                    STABLES_CATCHUP.firstHeight = h; STABLES_CATCHUP.firstAt = now;
+                }
+            }
             if (STABLES_CATCHUP.height == null || h > STABLES_CATCHUP.height) {
                 STABLES_CATCHUP.height = h;
                 STABLES_CATCHUP.lastMoveAt = now;
             }
             STABLES_CATCHUP.at = now;
+            try { localStorage.setItem(KEY, JSON.stringify({ h: STABLES_CATCHUP.height, movedAt: STABLES_CATCHUP.lastMoveAt, since: STABLES_CATCHUP.firstAt })); } catch (_) { /* memory only */ }
         }
         function stablesFormatBehindSpan(ms) {
             var mins = Math.round(ms / 60000);
@@ -24775,7 +25017,10 @@
          * every peer it reaches. Measured on 2026-09-04 with a node about a month behind, which
          * made no progress in half an hour. Two days is a deliberately cautious line: well inside
          * the real limit, so the app never tells someone to repair a bank that would have caught
-         * up by itself. */
+         * up by itself.
+         * 2026-10-14: the line was not cautious enough on its own. A Galaxy A25 9 days behind caught
+         * up by itself, 15,824 blocks in about 12 minutes. So past this line the app also requires
+         * that the height has stood still (stablesNodeCatchUpIsStuck) before it resyncs. */
         var STABLES_TOO_FAR_BEHIND_MS = 2 * 24 * 60 * 60 * 1000;
 
         function stablesNodeIsTooFarBehind() {
@@ -24790,15 +25035,13 @@
             var parts = [];
             var behind = L.tipTimeMs != null ? (Date.now() - Number(L.tipTimeMs)) : null;
             if (behind != null && behind > STABLES_NODE_SYNCED_FRESH_MS) {
-                parts.push('The newest block your bank holds is ' + stablesFormatBehindSpan(behind) + ' old.');
+                parts.push(stablesFormatBehindSpan(behind).replace(/^less than a minute$/, 'A minute') + ' behind.');
             }
             /* Too far back to catch up at all: say that immediately instead of watching for a
                progress that cannot come (founder 2026-09-04: 66 days old, "Watching for progress",
                then long minutes of nothing). */
-            if (stablesNodeIsTooFarBehind()) {
-                parts.push('That is too long for it to catch up on its own, so waiting will not '
-                    + 'help. Resyncing with the network takes a few minutes and keeps your money '
-                    + 'and your settings.');
+            if (stablesNodeIsTooFarBehind() && stablesNodeCatchUpIsStuck()) {
+                parts.push('Not catching up: resyncing.');
                 return parts.join(' ');
             }
             /* Moving, stuck, or too early to say: three different situations and three answers. A
@@ -24809,15 +25052,12 @@
             var gained = (STABLES_CATCHUP.height != null && STABLES_CATCHUP.firstHeight != null)
                 ? (STABLES_CATCHUP.height - STABLES_CATCHUP.firstHeight) : 0;
             if (moved && gained > 0) {
-                parts.push('It is catching up: ' + gained.toLocaleString('en-US')
-                    + (gained === 1 ? ' block' : ' blocks') + ' gained since this page opened.');
+                parts.push('Catching up: ' + gained.toLocaleString('en-US') + (gained === 1 ? ' block' : ' blocks') + ' so far.');
             } else if (watchedFor > 10 * 60 * 1000 && gained <= 0) {
-                parts.push('It has not gained a block in ' + stablesFormatBehindSpan(watchedFor)
-                    + ', so waiting will not fix it. Use Resync below.');
+                parts.push('Not catching up. Use Resync below.');
             } else {
-                parts.push('Watching for progress.');
+                parts.push('Checking for progress.');
             }
-            parts.push('Balances and transactions stay on hold until it is up to date.');
             return parts.join(' ');
         }
         window.stablesNodeCatchUpReason = stablesNodeCatchUpReason;
@@ -24898,7 +25138,7 @@
         };
 
         function stablesUpdateNetworkUI() {
-            if (!window.__STABLES_ANDROID_APP) return;
+            if (!window.__STABLES_ANDROID_APP && !stablesIsCoreShell()) return;
             var status = stablesGetNetworkStatus();
             stablesMaybeFlashNetStatus(status.state);
             var L = window.__STABLES_LIVE_NODE;
@@ -24933,7 +25173,8 @@
             if (resyncRow) {
                 var stuck = status.state === 'syncing'
                     && typeof stablesNodeCatchUpIsStuck === 'function' && stablesNodeCatchUpIsStuck();
-                resyncRow.hidden = !stuck;
+                // With Minima Core, Core resyncs its own node: the Wallet card says to open Core.
+                resyncRow.hidden = !stuck || stablesIsCoreShell();
             }
             stablesUpdateNodeConnectionLine();
             try { stablesUpdateWalletResyncCard(); } catch (_) { /* the Network section still stands */ }
@@ -24987,7 +25228,10 @@
             if (running) return 'running';
             var hasChain = Number(L.block) > 0 && L.tipTimeMs != null;
             if (!hasChain) return 'none';               // first run, or nothing known yet
-            if (stablesNodeIsTooFarBehind()) return 'needed';       // offline too long (existing rule)
+            /* Behind and not gaining: 3 minutes when far behind, 10 otherwise (stablesNodeCatchUpIsStuck). The same A25,
+               after catching up 9 days, stopped at block 2,365,842 refusing the next one ("Invalid TxPoW Super Parents"),
+               30 minutes behind: under the two-day line, and stuck for good without a resync. */
+            if (stablesNodeCatchUpIsStuck()) return 'needed';
             if (stablesNetworkOutOfSync()) return 'needed';         // drifted onto a different chain
             return 'none';
         }
@@ -24995,10 +25239,18 @@
         /* Phase wording for a job that takes minutes. A spinner alone is why people close an app
            halfway through and end up worse off than when they started. */
         function stablesWalletResyncPhaseText(state) {
-            if (state === 'checking') return 'Checking the network…';
-            if (state === 'running') return 'Fetching the records and finding your money…';
-            if (state === 'restarting') return 'Almost done. Restarting your bank…';
-            return 'Working…';
+            var text = state === 'checking' ? 'Checking the network…'
+                : (state === 'running' ? 'Downloading…'
+                    : (state === 'restarting' ? 'Restarting…' : 'Working…'));
+            /* How long the step has taken (founder 2026-10-14, a phone left on "Checking the network" with no way to
+               tell whether anything was happening). The native side records when each state began. */
+            var since = 0;
+            try { since = Number(JSON.parse(window.StablesNative.getChainResyncState() || '{}').since) || 0; } catch (_) { since = 0; }
+            var mins = since > 0 ? Math.floor((Date.now() - since) / 60000) : 0;
+            if (mins >= 1) text += ' ' + mins + ' min.';
+            /* Far longer than a resync takes: the one thing that always ends it. Nothing is replaced while it checks. */
+            if (state === 'checking' && mins >= 6) text += ' Taking too long: restart the phone.';
+            return text;
         }
 
         /* Said once, so the card and the sheet can never drift apart. Two reasons reach the same
@@ -25011,13 +25263,10 @@
             var L = window.__STABLES_LIVE_NODE || {};
             if (typeof stablesNodeIsTooFarBehind === 'function' && stablesNodeIsTooFarBehind()) {
                 var behind = L.tipTimeMs != null ? (Date.now() - Number(L.tipTimeMs)) : null;
-                return 'It has been offline '
-                    + (behind != null ? stablesFormatBehindSpan(behind) : 'too long')
-                    + ', too long to catch up on its own. Your money is safe on the network. '
-                    + 'This phone needs a fresh copy of the records.';
+                // Founder 2026-10-14: "let's shorten that ... people have no time to read these days".
+                return (behind != null ? 'Offline ' + stablesFormatBehindSpan(behind) + '. ' : '') + 'Your money is safe.';
             }
-            return 'Your bank has fallen out of sync with the network, so it is paused. Your money is '
-                + 'safe on the network. This phone needs a fresh copy of the records to catch up.';
+            return 'Your money is safe.';
         }
 
         /* Once per app open, the message arrives as a pop-up (founder 2026-09-04: "I think the
@@ -25026,9 +25275,33 @@
            standing state does not deserve a dialog on every glance at the Wallet, and the card
            behind it carries the message for the rest of the session, so dismissing costs nothing. */
         var _stablesResyncSheetShown = false;
+        /* Founder 2026-10-14 ("nothing to tab is best", after a Galaxy A25 sat 9 days behind): the built-in node
+           resyncs by itself, nothing to tap or confirm. It replaces only the local chain copy; money, keys and
+           settings are untouched. Through stablesChainResyncAttempt, so a failed recovery node hands over to the other
+           known one. A node still starting refuses ("busy"): tried again a minute later, three times at most; after
+           that the card's button is the way. Minima Core resyncs its own node, so it keeps the pop-up that opens Core. */
+        var _stablesAutoResync = { tries: 0, at: 0 };
+        function stablesMaybeAutoResync() {
+            if (STABLES_CHAIN_RESYNC_RUNNING || _stablesAutoResync.tries >= 3) return;
+            if (Date.now() - _stablesAutoResync.at < 60000) return;
+            _stablesAutoResync.tries++; _stablesAutoResync.at = Date.now();
+            var endpoint = STABLES_CHAIN_RESYNC_DEFAULT_ENDPOINT;
+            try { var saved = stablesNormalizeChainResyncEndpoint(localStorage.getItem(STABLES_CHAIN_RESYNC_ENDPOINT_KEY) || ''); if (saved) endpoint = saved; } catch (_) { /* the default stands */ }
+            try { console.log('[STABLES-RESYNC] automatic resync, try ' + _stablesAutoResync.tries + ', ' + endpoint); } catch (_) { /* no console */ }
+            STABLES_CHAIN_RESYNC_TRIED = [];
+            stablesChainResyncAttempt(endpoint);
+        }
+        var _stablesResyncDecisionLogged = '';
         function stablesMaybeShowResyncSheet() {
+            var verdict = stablesWalletResyncState();
+            try {
+                var still = STABLES_CATCHUP.lastMoveAt ? Math.round((Date.now() - STABLES_CATCHUP.lastMoveAt) / 60000) : -1;
+                var line = verdict + ' h=' + STABLES_CATCHUP.height + ' still=' + still + 'min tooFar=' + stablesNodeIsTooFarBehind() + ' synced=' + stablesNodeIsSynced();
+                if (line !== _stablesResyncDecisionLogged) { _stablesResyncDecisionLogged = line; console.log('[STABLES-RESYNC] decision ' + line); }
+            } catch (_) { /* no console */ }
+            if (verdict !== 'needed') return;
+            if (stablesChainResyncAvailable() && !(typeof stablesIsCoreShell === 'function' && stablesIsCoreShell())) { stablesMaybeAutoResync(); return; }
             if (_stablesResyncSheetShown) return;
-            if (stablesWalletResyncState() !== 'needed') return;
             /* Never on top of something else the person is reading or deciding. */
             if (document.querySelector('.mback.open')) return;
             _stablesResyncSheetShown = true;
@@ -25050,8 +25323,9 @@
                of the sentence (founder 2026-09-04: "the eye makes the text reading difficult"). */
             var eye = document.getElementById('balHideBtn');
             if (eye) eye.hidden = show;
+            // Every pass: it logs the decision once per change, and acts only when a resync is needed.
+            stablesMaybeShowResyncSheet();
             if (!show) return;
-            if (mode === 'needed') stablesMaybeShowResyncSheet();
 
             var titleEl = document.getElementById('walletResyncNeededTitle');
             var bodyEl = document.getElementById('walletResyncNeededBody');
@@ -25062,14 +25336,9 @@
             if (mode === 'running') {
                 var phase = String(STABLES_CHAIN_RESYNC_LAST_STATE || 'running');
                 if (titleEl) titleEl.textContent = 'Resyncing with the network';
-                if (bodyEl) {
-                    var height = Number(L.block) > 0
-                        ? ' Block ' + Number(L.block).toLocaleString('en-US') + '.'
-                        : '';
-                    bodyEl.textContent = stablesWalletResyncPhaseText(phase) + height;
-                }
+                if (bodyEl) bodyEl.textContent = stablesWalletResyncPhaseText(phase);
                 if (btn) { btn.textContent = 'Resyncing…'; btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
-                if (noteEl) noteEl.textContent = 'Keep the app open and the phone charging. It restarts by itself when it is done.';
+                if (noteEl) noteEl.textContent = 'Keep Stables open.';
                 return;
             }
 
@@ -25081,21 +25350,24 @@
             }
             if (noteEl) noteEl.textContent = window.__STABLES_CORE_CONNECTED_APP
                 ? 'Re-sync Minima Core, then come back.'
-                : 'A few minutes. Keep the phone charging.';
+                : 'A few minutes.';
         }
         window.stablesUpdateWalletResyncCard = stablesUpdateWalletResyncCard;
 
         /* "Behind and not moving." Same ten-minute rule the catch-up sentence uses, in one place so
            the row and the words can never disagree with each other. */
+        /* Watched for at least ms, and the height has not moved in the last ms. */
+        function stablesNodeStillFor(ms) {
+            if (!STABLES_CATCHUP.firstAt || Date.now() - STABLES_CATCHUP.firstAt < ms) return false;
+            return !(STABLES_CATCHUP.lastMoveAt > 0 && Date.now() - STABLES_CATCHUP.lastMoveAt < ms);
+        }
+        /* Founder 2026-10-14: a Galaxy A25 9 days behind caught up ON ITS OWN, 15,824 blocks in about 12 minutes,
+           while the old rule ("over two days behind cannot catch up") had already sent it to a resync that hung.
+           Age alone no longer decides: a bank that gains blocks is left to catch up; one that stands still is resynced,
+           after 3 minutes when it is far behind, 10 minutes otherwise. */
         function stablesNodeCatchUpIsStuck() {
             if (typeof stablesNodeIsSynced === 'function' && stablesNodeIsSynced()) return false;
-            /* Past the window, waiting is not a state to observe: offer the repair at once. */
-            if (stablesNodeIsTooFarBehind()) return true;
-            if (!STABLES_CATCHUP.firstAt) return false;
-            var watchedFor = Date.now() - STABLES_CATCHUP.firstAt;
-            var gained = (STABLES_CATCHUP.height != null && STABLES_CATCHUP.firstHeight != null)
-                ? (STABLES_CATCHUP.height - STABLES_CATCHUP.firstHeight) : 0;
-            return watchedFor > 10 * 60 * 1000 && gained <= 0;
+            return stablesNodeStillFor(stablesNodeIsTooFarBehind() ? 3 * 60 * 1000 : 10 * 60 * 1000);
         }
         window.stablesNodeCatchUpIsStuck = stablesNodeCatchUpIsStuck;
 
@@ -25117,9 +25389,7 @@
             if (window.__STABLES_CORE_CONNECTED_APP) {
                 var okCore = await stablesConfirm({
                     title: stablesResyncNeededTitle(),
-                    message: stablesResyncNeededBody() + '\n\n'
-                        + 'Minima Core runs your bank, so the re-sync happens there. Open Minima Core, '
-                        + 're-sync it, then come back to Stables.',
+                    message: stablesResyncNeededBody() + ' Re-sync Minima Core, then come back.',
                     confirmText: 'Open Minima Core'
                 });
                 if (!okCore) return;
@@ -25135,11 +25405,7 @@
 
             var ok = await stablesConfirm({
                 title: stablesResyncNeededTitle(),
-                message: stablesResyncNeededBody() + '\n\n'
-                    + 'Stables will fetch a fresh copy of the records and find your money in it. '
-                    + 'It takes a few minutes and the app restarts when it is done.\n\n'
-                    + 'Your money, your Vault key and your settings are not touched. Keep the app '
-                    + 'open and the phone charging while it works.',
+                message: stablesResyncNeededBody() + ' A few minutes; keep Stables open.',
                 confirmText: 'Resync now'
             });
             if (!ok) return;
@@ -25499,7 +25765,7 @@
                 tone = 'accent';
             } else if (state === 'core-missing') {
                 title = 'Minima Core is not installed';
-                body = 'Install the supported Minima Core app before connecting Stables.';
+                body = 'Install Minima Core, or use the built-in node in Settings and updates, Your node.';
                 action = 'Check again';
                 tone = 'danger';
             } else if (state === 'core-waiting') {
@@ -25637,8 +25903,31 @@
             });
         }
 
+        /* The Android app using Minima Core (D128): the same Settings as the built-in node, read from Core's node. */
+        function stablesIsCoreShell() { return !!(window.__STABLES_ANDROID_SHELL && window.__STABLES_CORE_CONNECTED_APP); }
+        window.stablesIsCoreShell = stablesIsCoreShell;
         function stablesInitNetworkSection() {
             stablesApplyPlatformConnectionNavigation();
+            if (stablesIsCoreShell()) {
+                /* Founder 2026-10-14 (Graphene): "all the section node of Settings and updates is not visible, it seems
+                   to be replaced by Node connection". One app, one Node area: Your node, Network and Node, as with the
+                   built-in node. The web's Node connection row does not apply: Core is the connection. */
+                var webRow = document.getElementById('stablesNodeConnectionSection');
+                if (webRow) webRow.remove();
+                var net = document.getElementById('stablesNetworkSection');
+                if (net) net.style.display = '';
+                var nodeSec = document.getElementById('stablesBackgroundSection');
+                if (nodeSec) nodeSec.style.display = '';
+                var coreCard = document.getElementById('stablesNodeCoreCard');
+                if (coreCard) coreCard.hidden = false;
+                var builtIn = document.getElementById('stablesNodeBuiltInCard');
+                if (builtIn) builtIn.hidden = true;
+                stablesUpdateNetworkUI();
+                if (!window.__STABLES_CORE_NETWORK_JOB && typeof window.stablesRepeatWhileVisible === 'function') {
+                    window.__STABLES_CORE_NETWORK_JOB = window.stablesRepeatWhileVisible('core-network-ui', stablesUpdateNetworkUI, 15000);
+                }
+                return;
+            }
             if (!window.__STABLES_ANDROID_APP) return;
             document.body.classList.add('stables-standalone-app');
             var connection = document.getElementById('stablesNodeConnectionSection');
@@ -25678,10 +25967,11 @@
             var detail = r.indexOf(':') > 0 ? r.slice(r.indexOf(':') + 1).trim() : '';
             if (/^unreachable/.test(r)) return host + ' could not be reached' + (detail ? ' (' + detail + ')' : '') + '. Check the address and your connection, or try another MegaMMR node.';
             if (/^no-megammr/.test(r)) return host + ' answered, but not with MegaMMR data. It may not have MegaMMR enabled. Try another MegaMMR node.';
+            if (/^timeout/.test(r)) return host + ' took too long to answer. Nothing was replaced. Check your connection, then try again.';
             if (/^node-error/.test(r)) return host + ' was reached, but your bank stopped the resync with this error: ' + (detail || 'no details') + '.';
             if (/^not-completed/.test(r)) return host + ' was reached, but the resync did not finish. Try again in a moment.';
             if (/^interrupted/.test(r)) return 'The resync from ' + host + ' was interrupted before it finished. Nothing was replaced. Try again and keep the app open.';
-            if (/^busy/.test(r)) return 'Your bank is still starting, or a repair is already running. Try again in a moment.';
+            if (/^busy/.test(r)) return 'Your bank is still starting, or a resync is already running. Try again in a moment.';
             if (/^exception/.test(r)) return 'The resync from ' + host + ' stopped unexpectedly' + (detail ? ' (' + detail + ')' : '') + '. Try again.';
             return host + ' did not provide a valid MegaMMR response or could not complete the resync. Choose a MegaMMR-enabled Minima node and try again.';
         }
@@ -25736,7 +26026,7 @@
             if (status) {
                 status.hidden = !state || state === 'idle' || state === 'completed';
                 status.classList.toggle('ui-tone-danger', state === 'failed');
-                if (state === 'unavailable') status.textContent = 'This build has no node of its own to repair, so it cannot resync from here. Resync from MegaMMR is in the Stables Android app (Settings, Resync). On this build, resync the Minima node you are connected to and Stables follows it.';
+                if (state === 'unavailable') status.textContent = 'Stables is using another Minima node here, so it cannot resync from here. Resync the Minima node you are connected to and Stables follows it.';
                 else if (state === 'checking') status.textContent = 'Downloading and validating a MegaMMR response from ' + (normalized || 'this address') + '. Your local chain data has not been changed.';
                 else if (state === 'running') status.textContent = 'Replacing local chain data and recovering this wallet’s coins from ' + (normalized || 'the MegaMMR node') + '. Keep Stables open.';
                 else if (state === 'restarting') status.textContent = 'Chain data has been replaced. Restarting your bank now.';
@@ -25793,7 +26083,8 @@
         /* The next known node, when the one that failed was itself a known one and the failure
            happened before anything was replaced. Never for an address the person typed. */
         function stablesChainResyncNextKnown(failedEndpoint, reason) {
-            if (!/^(unreachable|no-megammr)/.test(String(reason || ''))) return '';
+            // A timeout also happened before anything was replaced (2026-10-14: a check that never returned).
+            if (!/^(unreachable|no-megammr|timeout)/.test(String(reason || ''))) return '';
             if (STABLES_CHAIN_RESYNC_KNOWN_ENDPOINTS.indexOf(failedEndpoint) < 0) return '';
             for (var i = 0; i < STABLES_CHAIN_RESYNC_KNOWN_ENDPOINTS.length; i++) {
                 var candidate = STABLES_CHAIN_RESYNC_KNOWN_ENDPOINTS[i];
@@ -28221,7 +28512,7 @@
                 if (pill) {
                     pill.classList.remove('sync-pill--placeholder', 'stables-node-cluster-pill--live', 'stables-node-cluster-pill--error');
                     pill.classList.add('stables-node-cluster-pill--pending');
-                    pill.setAttribute('title', 'Your bank is starting or repairing its local chain.');
+                    pill.setAttribute('title', 'Your bank is starting or resyncing with the network.');
                 }
                 if (typeof stablesUpdateNetworkUI === 'function') stablesUpdateNetworkUI();
                 return;
@@ -28289,7 +28580,7 @@
             }
             pill.title = L.block != null && Number.isFinite(Number(L.block)) && Number(L.block) > 0
                 ? 'Node live · block ' + Number(L.block).toLocaleString('en-US') + '. Tap for connection settings.'
-                : 'Your bank is starting or repairing its local chain.';
+                : 'Your bank is starting or resyncing with the network.';
             if (typeof stablesUpdateNetworkUI === 'function') stablesUpdateNetworkUI();
         }
 
@@ -28910,6 +29201,8 @@
                 if (ev === 'BLOCKFOUND') {
                     const n = Number(String(txpowId || '').replace(/[^0-9]/g, '')) || 0;
                     stablesCelebrateFoundBlock(n);
+                    /* Blocks mined per day (founder 2026-10-13): the app keeps its own record of when each block was mined. */
+                    try { if (typeof window.stablesRecordMinedBlock === 'function') window.stablesRecordMinedBlock(n, Date.now()); } catch (_) { /* the Node refresh records it from the service */ }
                     try { if (typeof stablesRefreshNetworkContributionStats === 'function') stablesRefreshNetworkContributionStats(); } catch (_) { /* the Node section refreshes on its next visit */ }
                     return;
                 }
@@ -29317,7 +29610,10 @@
         const STABLES_RPC_LONG_TIMEOUT_MS = 15 * 60 * 1000;
         /* Build 0.0.12.048: combining notes builds and mines a real transaction and often needs more than 45 s (the lab
            measured over a minute); the background notes tidy logged "timed out" for combines that then landed. */
-        const STABLES_RPC_SLOW_CMDS = /^consolidate/i;
+        // A send now waits for the node's real answer in the Android app (2026-10-15); its proof of work can take a while on
+        // a slow phone, so it gets the same patience as combining notes rather than the 45 s of a read. (The old pattern held a
+        // literal backspace where \b was meant, so consolidate never matched either.)
+        const STABLES_RPC_SLOW_CMDS = /^(consolidate|send)\b/i;
         const STABLES_RPC_SLOW_TIMEOUT_MS = 3 * 60 * 1000;
 
         /* Direct sends (the urgent reads) are counted here; queued ones are counted where they are
@@ -30532,24 +30828,25 @@
             try { hist = JSON.parse(localStorage.getItem(CR_HISTORY_KEY) || '[]'); } catch (_) { hist = []; }
             if (!Array.isArray(hist) || hist.length < 2) { block.style.display = 'none'; return; }
             block.style.display = '';
+            /* VIS-002 (founder 2026-10-13): full width, no axis text; the title names both axes and the range. Time
+               runs from the first reading to now, on the one chart helper. */
             const vals = hist.map(function (p) { return Number(p.cr) || 0; });
             const lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
             const pad = Math.max(2, Math.round((hi - lo) * 0.15));
-            const yMin = lo - pad, yMax = hi + pad;
-            const w = 300, h = 48;
-            const dx = w / (vals.length - 1);
-            const y = function (v) { return h - ((v - yMin) / (yMax - yMin)) * h; };
-            const pts = vals.map(function (v, i) { return (i * dx).toFixed(1) + ',' + y(v).toFixed(1); }).join(' ');
-            host.innerHTML = '<svg class="ui-w-full" viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" style="height:100%;display:block">'
-                + '<polyline points="0,' + h + ' ' + pts + ' ' + w + ',' + h + '" fill="rgba(103,232,249,.08)" stroke="none"/>'
-                + '<polyline points="' + pts + '" fill="none" stroke="var(--c)" stroke-width="1.5"/>'
-                + '<circle cx="' + ((vals.length - 1) * dx).toFixed(1) + '" cy="' + y(vals[vals.length - 1]).toFixed(1) + '" r="2.5" fill="var(--c)"/>'
-                + '</svg>';
-            const range = document.getElementById('treasuryCrHistRange');
-            if (range) {
-                const hrs = Math.max(1, Math.round((Date.now() - Number(hist[0].t)) / 3600000));
-                range.textContent = (hrs >= 48 ? Math.round(hrs / 24) + ' days' : hrs + 'h') + ' · ' + lo + '–' + hi + '%';
-            }
+            const t0 = Number(hist[0].t) || 0, tN = Math.max(Date.now(), t0 + 1);
+            const points = hist.map(function (p, i) {
+                const t = Number(p.t) || 0;
+                return { x: t > 0 && t0 > 0 ? (t - t0) / (tN - t0) : i / (hist.length - 1), y: Number(p.cr) || 0 };
+            });
+            const hrs = Math.max(1, Math.round((Date.now() - t0) / 3600000));
+            const span = hrs >= 48 ? ('last ' + Math.round(hrs / 24) + ' days') : (hrs === 1 ? 'last hour' : 'last ' + hrs + ' hours');
+            const title = 'Coverage ratio in percent, ' + span;
+            const titleEl = document.getElementById('treasuryCrHistTitle');
+            if (titleEl) titleEl.textContent = title;
+            const svg = host.querySelector('svg');
+            if (!svg) return;
+            if (typeof stablesChartLine === 'function') stablesChartLine(svg, [{ points: points, tone: 'accent', area: true }], { yMin: lo - pad, yMax: hi + pad });
+            svg.setAttribute('aria-label', title + ': latest ' + vals[vals.length - 1].toLocaleString('en-US') + '%, low ' + lo.toLocaleString('en-US') + '%, high ' + hi.toLocaleString('en-US') + '%');
         }
         /** Stress the LIVE balance sheet under a Winiwa price move: liabilities are USD-pegged,
          *  assets scale with the price. Values render in the wallet primary currency. */
@@ -30687,7 +30984,7 @@
                 const txHref = treasuryTxExplorerHref(x.txId);
                 const explorerTx = `<a data-size="compact" data-role="quiet" href="${escTreasuryHtml(txHref)}" target="_blank" rel="noopener noreferrer" class="btn btn-link-action btn-compact mx-action" onclick="event.stopPropagation()">Transaction in explorer</a>`;
                 const amtClass = x.dir === 'in' ? 'pos' : 'neg';
-                row.innerHTML = `<div class="tx-ic ${x.dir === 'in' ? 'in-ic' : 'out-ic'} ui-shrink-0">${x.dir === 'in' ? '↓' : '↑'}</div>
+                row.innerHTML = `${window.stablesTxDirMarkHtml(x.dir === 'in' ? 'in' : 'out')}
                     <div class="tx-info ui-min-w-0 ui-flex-1">
                         <div class="tx-t">${escTreasuryHtml(x.title)}</div>
                         <div class="tx-d">${escTreasuryHtml(x.date)} · ${badge}</div>
@@ -32800,7 +33097,7 @@
                 if (state === 'active') return '<span class="stables-qr-spinner stables-qr-spinner--sm" aria-hidden="true"></span>';
                 return '<span class="ui-status-ring"></span>';
             };
-            const minedSub = p.txid
+            let minedSub = p.txid
                 ? `<a class="ui-tone-accent ui-support-sm ui-emph-900 ui-underline ui-inline-block" href="${stablesTxExplorerHref(p.txid)}" target="_blank" rel="noopener noreferrer" title="${p.txid}">View transaction</a>`
                 : (p.sent ? 'Waiting for chain receipt' : 'Waiting for your node');
             // Each step reads in the present tense while it is in progress ("Sending to network") and
@@ -32841,6 +33138,9 @@
                confirmations are the depth, as the row's "Confirming n/3"). None is set by a Savings
                send, whose tracker reads exactly as before. */
             const onChainDone = (p.onChain != null) ? !!p.onChain : blocksIn >= 1;
+            /* Founder 2026-10-14 (the A25, a transaction at Broadcasted): "we should not make the view transaction clickable, it
+               should only be clickable when the transaction is available". The explorer has it once it is in a block. */
+            if (p.txid && !onChainDone) minedSub = 'Link once it is in a block.';
             /* THE SAME TRACKER FOR A PAYMENT THAT NEVER TOUCHES THE CHAIN (founder law 27, build 107: "we need the
                view progress for all transactions including the instant payments ones"). An Instant payments tap or
                QR payment has its own steps (instant-balance.js progressOf: backed on-chain first, then the payment on
@@ -32913,9 +33213,9 @@
              * honest count is the real one. */
             const confBlocks = Number(p.confirmations) || 0;
             const confSuffix = (Number(p.target) > 1 ? (' (' + confBlocks + '/' + p.target + ' blocks)') : '');
-            const txLink = p.txid
+            const txLink = (p.txid && (Number(p.confirmations) || 0) >= 1)
                 ? `<a class="ui-tone-accent ui-support-sm ui-emph-900 ui-underline ui-inline-block" href="${stablesTxExplorerHref(p.txid)}" target="_blank" rel="noopener noreferrer" title="${p.txid}">View transaction</a>`
-                : 'Waiting for chain receipt';
+                : (p.txid ? 'Link once it is in a block.' : 'Waiting for chain receipt');
             const steps = [
                 /* The receiver's first step IS the broadcast: the payment reached this node before
                    any block, which over a counter is the moment worth showing (founder 2026-09-02).
@@ -33947,7 +34247,7 @@
                         let pref = 'mx';
                         try { pref = String(localStorage.getItem(STABLES_MINIMA_RECV_FORMAT_KEY) || 'mx').toLowerCase(); } catch (_) { pref = 'mx'; }
                         if (addr && pair && pair.hex && !pair.mx && pref !== 'hex' && /^0x/i.test(String(addr))) {
-                            msg = 'Your node only exposed a 0x value in getaddress. Use Settings > Appearance > Native MINIMA receive format to keep 0x, or update Minima if you expect Mx.';
+                            msg = 'Your node only gave a 0x address. To keep 0x, choose it in Wallet management, Advanced, Minima address format, or update Minima if you expect Mx.';
                         }
                         hint.textContent = msg;
                         hint.style.display = msg ? 'block' : 'none';
@@ -34148,7 +34448,7 @@
                 stablesSetSendBusy(true);
                 if (typeof MDS === 'undefined' || !MDS.cmd) {
                     stablesSetSendBusy(false);
-                    showToast('Connect to your Minima node via the Connect option to send real MINIMA.');
+                    showToast('Connect your Minima node to send.');
                     return;
                 }
                 const L = window.__STABLES_LIVE_NODE;
@@ -34292,7 +34592,7 @@
                                             id: sendRowId,
                                             status: 'Confirmed',
                                             pendingIncoming: false,
-                                            note: 'Sent to your own address — the funds stayed in your wallet.'
+                                            note: 'Sent to your own address. The funds stayed in your wallet.'
                                         }]);
                                         try { if (typeof window.renderWalletRecentActivity === 'function') window.renderWalletRecentActivity(); } catch (_) { }
                                         try { if (typeof window.renderActivity === 'function') window.renderActivity(); } catch (_) { }
@@ -34315,7 +34615,12 @@
                             window.StablesPaymentSecurity.recordQuickPaySpend(ctx.fiatTotal);
                         }
                     } else {
-                        const err = stablesMdsSendErrorText(res);
+                        let err = stablesMdsSendErrorText(res);
+                        /* Not enough spendable: right after a payment its change is not spendable for a block or two. Said in
+                           plain words (founder: short messages), nothing was sent. */
+                        if (/insufficient|not enough|sendable|funds/i.test(err)) {
+                            err = 'Not sent: part of this amount is still settling from your last payment. Try again in a minute.';
+                        }
                         stablesAppendOutgoingSendRow(Object.assign({}, sendRowBase, {
                             title: outputs.length > 1 ? (sendTokenLabel + ' send failed') : (sendTokenLabel + ' send failed'),
                             status: 'Failed',
@@ -34344,7 +34649,13 @@
                 const rpcCfg = stablesGetRpcConfig();
                 if (rpcCfg) {
                     // Web / read-only MDS connection: route the WRITE (send) through the node's RPC.
-                    const sendPromise = /^send\b/i.test(cmd) && typeof stablesRpcFireAndForgetWriteCommand === 'function'
+                    /* Founder 2026-10-15 (the Pro, 333 xWiniwa to the Graphene, "Broadcasting" for minutes): the fire-and-forget
+                       write is for a browser talking to a node on another origin, whose answer it cannot read. In the Android
+                       app the node answers on the app's own origin, so the real answer is read: a payment the node refused
+                       (its coins still settling from the previous payment) reads "send failed" with the reason, never a
+                       "Broadcasting" that cannot end. */
+                    const sameOriginNode = !!(window.__STABLES_ANDROID_SHELL || window.__STABLES_ANDROID_APP);
+                    const sendPromise = !sameOriginNode && /^send\b/i.test(cmd) && typeof stablesRpcFireAndForgetWriteCommand === 'function'
                         ? stablesRpcFireAndForgetWriteCommand(cmd)
                         : stablesRpcSendCommand(cmd);
                     sendPromise.then(onSendResult).catch(function (e) {
@@ -34360,6 +34671,10 @@
                             note: e && e.message ? e.message : String(e || 'RPC send failed'),
                             pendingIncoming: false
                         }));
+                        if (window.__STABLES_ANDROID_SHELL || window.__STABLES_ANDROID_APP) {
+                            showToast('Your node did not answer. Check Activity in a minute before sending again.');
+                            return;
+                        }
                         showToast('Could not reach your node RPC to send. Check the RPC URL and password, that your node has RPC + CORS enabled, and that you opened the RPC URL once to accept its certificate. (' + (e && e.message ? e.message : e) + ')', { tone: 'amber', durationMs: 7000 });
                     });
                 } else {
@@ -34507,7 +34822,7 @@
                 const ta = Number(r.toAmt);
                 const fs = Number.isFinite(fa) ? fa.toLocaleString('en-US', { maximumFractionDigits: 8 }) : '-';
                 const ts = Number.isFinite(ta) ? ta.toLocaleString('en-US', { maximumFractionDigits: 8 }) : '-';
-                return '<div class="tx-row"><div class="tx-ic in-ic" aria-hidden="true">\u21C4</div><div class="tx-info"><div class="tx-t">Exchange</div><div class="tx-d">' +
+                return '<div class="tx-row">' + window.stablesTxDirMarkHtml('self') + '<div class="tx-info"><div class="tx-t">Exchange</div><div class="tx-d">' +
                     String(r.from || '') + ' \u2192 ' + String(r.to || '') + '</div></div><div class="tx-amt ui-text-right"><div>' + fs + '</div><div class="xs mu ui-mt-1">' + ts + '</div></div></div>';
             }).join('');
         }
@@ -35122,7 +35437,7 @@
                         }
                     }
                 } catch (_) { /* ignore */ }
-                setSrc(reason || 'MEXC unavailable — retrying');
+                setSrc(reason || 'MEXC unavailable, retrying');
                 if (typeof renderTreasuryConcentrationReview === 'function') renderTreasuryConcentrationReview();
                 if (typeof updateGlobalUI === 'function') updateGlobalUI();
                 return false;
@@ -35138,7 +35453,7 @@
                     applySpot(bsPrice, 'On-chain oracle (signed MEXC price)');
                     return;
                 }
-                applyPresentationCacheFallback('MEXC unavailable — retrying');
+                applyPresentationCacheFallback('MEXC unavailable, retrying');
             }
 
             function tryMexcBrowserThenFail() {
@@ -39720,23 +40035,21 @@
             const span = (maxVal - minVal) || 1;
             minVal -= span * 0.15;
             maxVal += span * 0.15;
-            
-            const scaleX = (pct) => ((pct - minPct) / (maxPct - minPct)) * w;
-            const scaleY = (val) => h - (((val - minVal) / (maxVal - minVal)) * h);
-            
-            const buildPath = (data) => data.map((d,i) => `${i===0?'M':'L'}${scaleX(d.x)},${scaleY(d.y)}`).join(' ');
-            const curPath = buildPath(curData);
-            const simPath = buildPath(simData);
-            
-            const cursorX = scaleX(curPctVal);
 
-            const svgHtml = `
-                <line x1="${scaleX(0)}" y1="0" x2="${scaleX(0)}" y2="${h}" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="4,4"/>
-                <path d="${curPath}" fill="none" stroke="var(--m)" stroke-width="2" stroke-linecap="round"/>
-                <path d="${simPath}" fill="none" stroke="var(--pu)" stroke-width="2" stroke-linecap="round"/>
-                <line x1="${cursorX}" y1="0" x2="${cursorX}" y2="${h}" stroke="var(--c)" stroke-width="1"/>
-            `;
-            svg.innerHTML = svgHtml;
+            /* VIS-002 (founder 2026-10-13): drawn by the one chart helper, full width, no axis text. x runs over the
+               price range (0..1), the dashed guide is today's price (0%), the accent line the slider position. */
+            const tOf = (pct) => (maxPct === minPct ? 0 : (pct - minPct) / (maxPct - minPct));
+            const toPts = (data) => data.map((d) => ({ x: tOf(d.x), y: d.y }));
+            if (typeof stablesChartLine === 'function') {
+                stablesChartLine(svg, [
+                    { points: toPts(curData), tone: 'muted' },
+                    { points: toPts(simData), tone: 'purple' }
+                ], { yMin: minVal, yMax: maxVal, guideX: tOf(0), markX: tOf(curPctVal) });
+            }
+            const usd = (v) => '$' + Number(v).toLocaleString('en-US', { maximumFractionDigits: 2 });
+            svg.setAttribute('aria-label', 'Portfolio value in USD by Winiwa price change, from ' + minPct + '% to ' + maxPct + '%: current '
+                + usd(curData[0].y) + ' to ' + usd(curData[curData.length - 1].y) + ', simulated '
+                + usd(simData[0].y) + ' to ' + usd(simData[simData.length - 1].y));
         }
         
         // Ensure graph draws when the drawer is opened or resized
@@ -39941,20 +40254,20 @@
         })();
     </script>
     <script src="assets/theme.js"></script>
-    <script src="assets/payment-security.js?v=tv81-1307"></script>
-    <script src="assets/routes/activity-contacts.js?v=tv81-1307"></script>
-    <script src="assets/instant-protocol.js?v=tv81-1307"></script>
-    <script src="assets/instant-chain.js?v=tv81-1307"></script>
-    <script src="assets/instant-route2.js?v=tv81-1307"></script>
-    <script src="assets/instant-balance.js?v=tv81-1307"></script>
-    <script src="assets/savings-ble.js?v=tv81-1307"></script>
+    <script src="assets/payment-security.js?v=tv81-1402"></script>
+    <script src="assets/routes/activity-contacts.js?v=tv81-1402"></script>
+    <script src="assets/instant-protocol.js?v=tv81-1402"></script>
+    <script src="assets/instant-chain.js?v=tv81-1402"></script>
+    <script src="assets/instant-route2.js?v=tv81-1402"></script>
+    <script src="assets/instant-balance.js?v=tv81-1402"></script>
+    <script src="assets/savings-ble.js?v=tv81-1402"></script>
     <script src="assets/routes/trust-retro.js"></script>
-    <script src="assets/mx-dropdown.js?v=tv81-1307"></script>
-    <script src="assets/desktop-web.js?v=tv81-1307"></script>
-    <script src="assets/vendor/stables-sealedbox.js?v=tv81-1307"></script>
-    <script src="assets/chat-onchain.js?v=tv81-1307"></script>
+    <script src="assets/mx-dropdown.js?v=tv81-1402"></script>
+    <script src="assets/desktop-web.js?v=tv81-1402"></script>
+    <script src="assets/vendor/stables-sealedbox.js?v=tv81-1402"></script>
+    <script src="assets/chat-onchain.js?v=tv81-1402"></script>
     <script src="assets/routes/feedback.js"></script>
-    <script src="assets/tx-mirror.js?v=tv81-1307"></script>
+    <script src="assets/tx-mirror.js?v=tv81-1402"></script>
     <script src="assets/tx-radar.js"></script>
 
     <script>

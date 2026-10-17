@@ -219,16 +219,78 @@
     mounted = false;
   }
 
+  /* Founder 2026-10-15: "On desktop we miss the eye to unblur, and let's have the home with the icons instead of the old
+     menu, let's replicate what we have on mobile". The desktop shell (right sidebar, More-drawer navigation) is no
+     longer mounted: a wide screen shows the same app as the phone, with Home's icons and the Wallet's eye. The shell
+     code stays for a later desktop design; DESKTOP_SHELL turns it back on. */
+  var DESKTOP_SHELL = false;
   function sync() {
     var wide = media ? media.matches : window.innerWidth >= 1024;
-    if (wide && surface() === 'webapp') mount();
+    if (DESKTOP_SHELL && wide && surface() === 'webapp') mount();
     else unmount();
+    syncHomeCols();
+  }
+
+  /* THE WIDE HOME (founder 2026-10-15: "use the full width of the screen"; and "on the desktop's home page we need to
+     have the same functionalities as on mobile, drag-drop page, create groups and so on"). Layout in desktop-wide.css.
+     index.html asks stablesHomeCols() for the number of Home columns in every slot computation (placing, collision,
+     the drop target under the pointer, Alt+arrows, the overview cards). On a phone it is 4. On a wide web window this
+     replaces it with the columns that fit the frame: (frame width + gap) / (128 px minimum column + gap), at least 4.
+     A slot is a place in reading order, so the saved arrangement reads row by row at either width, and every phone
+     gesture (hold to lift, drop on a free place, join, groups, Hide from Home, Alt+arrows) works unchanged with a
+     mouse; the mouse wiring (pointerType 'mouse', the same hold time) already exists in index.html.
+     The count is published as --dw2-home-cols on <html> for the grid; a change of count (window resized) redraws Home.
+     Phone and APK: wideHome() is false, the original function answers, nothing is published. */
+  var HOME_MIN_COL = 128;  /* px, the column minimum: a 60 px icon and its name keep the phone's breathing room */
+  var HOME_COL_GAP = 4;    /* px, the phone grid's own column gap (.page-grid gap: 18px 4px) */
+  var FRAME = 1440;        /* px, --dw2-frame in desktop-wide.css */
+  function wideHome() {
+    var wide = media ? media.matches : window.innerWidth >= 1024;
+    return wide && surface() === 'webapp';
+  }
+  function wideHomeCols() {
+    /* innerWidth, not clientWidth: Home hides the page scrollbar, and the count must not flip when it does. */
+    var vw = window.innerWidth;
+    var gutter = Math.min(64, Math.max(32, window.innerWidth * 0.04)); /* clamp(32px, 4vw, 64px) */
+    var frame = Math.min(FRAME, vw - 2 * gutter);
+    return Math.max(4, Math.floor((frame + HOME_COL_GAP) / (HOME_MIN_COL + HOME_COL_GAP)));
+  }
+  var phoneHomeCols = null;
+  var lastHomeCols = 4;
+  function patchHome() {
+    if (typeof window.stablesHomeCols !== 'function' || phoneHomeCols) return;
+    phoneHomeCols = window.stablesHomeCols;
+    window.stablesHomeCols = function () {
+      if (!wideHome()) return phoneHomeCols();
+      var cols = wideHomeCols();
+      /* The grid's column count and the slot math are always the same number: publish it as it is asked. */
+      if (document.documentElement.style.getPropertyValue('--dw2-home-cols') !== String(cols)) {
+        document.documentElement.style.setProperty('--dw2-home-cols', String(cols));
+      }
+      return cols;
+    };
+    syncHomeCols();
+  }
+  function syncHomeCols() {
+    if (!phoneHomeCols) return;
+    var cols = window.stablesHomeCols();
+    if (wideHome()) document.documentElement.style.setProperty('--dw2-home-cols', String(cols));
+    else document.documentElement.style.removeProperty('--dw2-home-cols');
+    if (cols === lastHomeCols) return;
+    lastHomeCols = cols;
+    var home = document.getElementById('pageCarousel');
+    if (home && home.classList.contains('open') && typeof window.stablesRenderHome === 'function') {
+      try { window.stablesRenderHome(); } catch (_) { /* drawn again on the next open */ }
+    }
   }
 
   function init() {
     stampTreatments();
+    patchHome();
     sync();
     if (media) {
+      /* The Home column count follows the window width, not only the 1024 px boundary. */
+      window.addEventListener('resize', syncHomeCols);
       if (typeof media.addEventListener === 'function') media.addEventListener('change', sync);
       else if (typeof media.addListener === 'function') media.addListener(sync);
     }

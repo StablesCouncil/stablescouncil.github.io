@@ -440,42 +440,35 @@
             vertical-align: middle;
         }
         /* Series-colour modifiers: a chart legend names its data series with a tone. */
-        .ui-legend-line--accent { border-top-color: rgba(103, 232, 249, .95); }
-        .ui-legend-line--purple { border-top-color: rgba(167, 139, 250, .95); }
-        .ui-legend-line--success { border-top-color: rgba(52, 211, 153, .95); }
-        .ui-chart-frame { position: relative; height: 96px; }
+        /* The same tokens the chart helper strokes its series with (stablesChartLine tone), so a legend
+           and its line can never disagree. */
+        .ui-legend-line--accent { border-top-color: var(--c); }
+        .ui-legend-line--purple { border-top-color: var(--pu); }
+        .ui-legend-line--success { border-top-color: var(--gr); }
+        .ui-legend-line--muted { border-top-color: var(--m); }
+        /* VIS-002 Chart (founder 2026-10-13: "every graph full width of its card, no axis labels
+           beside the chart; the axes are named in the graph's title, e.g. Blocks mined per day").
+           Anatomy: .ui-chart > .ui-chart__title (one line naming what is measured, its unit and
+           its time step: "<measure> [in <unit>] per <step>, last <range>") + .ui-chart-frame (the
+           plot, the card's full width). No tick text, no y scale, no date row: the title names the
+           axes and every mark carries its own value as a tooltip and aria label (the text
+           equivalent). Drawn by the one helper, stablesChartBars / stablesChartLine in index.html.
+           The y-axis column and x-axis date row of 2026-09-04 (.ui-chart-plot, .ui-chart-yaxis,
+           .ui-chart-xaxis) are retired by this direction. */
+        .ui-chart { display: block; width: 100%; min-width: 0; }
+        .ui-chart__title { display: block; margin-bottom: 4px; }
+        .ui-chart-frame { position: relative; height: 96px; padding: 10px 10px 0; overflow: hidden; box-sizing: border-box; }
+        .ui-chart-frame--short { height: 64px; }
+        .ui-chart-frame--tall { height: 160px; }
+        /* A line chart's SVG fills the frame inside its padding; the helper sizes the drawing to
+           the element's own pixels, so one unit is one pixel and nothing letterboxes. */
+        .ui-chart-svg { position: absolute; top: 10px; right: 10px; bottom: 0; left: 10px; width: calc(100% - 20px); height: calc(100% - 10px); display: block; overflow: visible; color: var(--m); }
         /* Daily bar strip inside a chart frame: one column per day, bars from a single baseline,
            one hue, today emphasised. Bar height is runtime geometry (inline). */
         .ui-bar-strip { display: flex; align-items: flex-end; justify-content: space-between; height: 100%; gap: 3px; }
         .ui-bar-col { flex: 1 1 0; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; min-width: 0; }
-        .ui-bar { width: 100%; min-height: 2px; border-radius: 2px 2px 0 0; background: rgba(103, 232, 249, .4); }
-        .ui-bar--today { background: rgba(103, 232, 249, .95); box-shadow: 0 0 8px rgba(103, 232, 249, .32); }
-
-        /* A chart says what it is measuring on both axes (founder 2026-09-04). The plot is the
-           strip plus a y scale beside it: the strip's own maximum at the top, 0 at the baseline,
-           in the same unit as the row the chart sits under. The x axis is the two ends of the
-           range, so the reader knows the bars run oldest to Today. Without these the two strips
-           were unlabelled rectangles that could have meant anything. */
-        .ui-chart-plot { display: flex; align-items: stretch; gap: 8px; }
-        .ui-chart-plot .ui-chart-frame { flex: 1 1 auto; min-width: 0; }
-        .ui-chart-yaxis {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: flex-end;
-            text-align: right;
-            flex: 0 0 auto;
-            min-width: 34px;
-            line-height: 1;
-            padding: 1px 0;
-            border-right: 1px solid rgba(255, 255, 255, .10);
-            padding-right: 6px;
-        }
-        .ui-chart-xaxis {
-            margin-top: 4px;
-            /* Line the dates up with the bars, not with the y scale beside them. */
-            padding-left: calc(34px + 14px);
-        }
+        .ui-bar { width: 100%; min-height: 2px; border-radius: 4px 4px 0 0; background: var(--c); opacity: .4; }
+        .ui-bar--today { opacity: 1; }
 
         /* Range controls share the accent tone. */
         .page input[type="range"],
@@ -1525,8 +1518,32 @@ html.stables-self-hosted-node [data-requires-node-connection] { display: none !i
 
         /* A transaction between this wallet and itself (combining or splitting notes): neither
            incoming nor outgoing, so neither the green nor the red, and no sign. */
-        .tx-ic.self-ic { background: rgba(103, 232, 249, .10); }
         .tx-amt.self { color: var(--t); }
+
+        /* DAT-001 direction mark, the transaction row's leading slot (founder 2026-10-14), drawn only by
+           window.stablesTxDirMarkHtml (index.html). A 36 px round tile at the row's start holding an
+           18 px line icon (inline SVG, stroke 2, round caps), so it reads the same on every phone.
+           Quiet by rule: tint, never a filled saturated disc, no motion.
+             --in    arrow down into a tray, soft accent tile, accent line: the incoming amount's colour.
+             --out   arrow up out of the tray, neutral glass tile, muted text line.
+             --self  two-way arrow, neutral glass tile (Add or Remove on the card, combining notes). */
+        .tx-ic.tx-dir {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border-accent);
+            background: var(--surface-elevated);
+            color: var(--m);
+            font-size: 0;
+            line-height: 0;
+        }
+        .tx-ic.tx-dir > svg { display: block; width: 18px; height: 18px; }
+        .tx-ic.tx-dir--in {
+            border-color: rgba(103, 232, 249, .40);
+            border-color: color-mix(in srgb, var(--c) 40%, transparent);
+            background: var(--surface-accent-soft);
+            color: var(--c);
+        }
 
 /* D052: centered narrative actions, discoverable updates, reachable Agent composer. */
 .card--prose-centered > .mx-action,

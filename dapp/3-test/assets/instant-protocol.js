@@ -470,6 +470,8 @@
       out.coinRequest = /^[A-Za-z0-9_-]{150,200}$/.test(String(fields['coin request'] || '')) ? String(fields['coin request']) : null;
       // The certificate chains the receiver already holds (up to four 32-byte ids): a payer leaves them out.
       out.coinChains = /^[A-Za-z0-9_-]{43,171}$/.test(String(fields['coin chains'] || '')) ? String(fields['coin chains']) : null;
+      // What the receiver takes (card hardening, R2Limits.Offer: 18 to 74 bytes): a payer refuses above it before signing.
+      out.coinLimit = /^[A-Za-z0-9_-]{24,99}$/.test(String(fields['coin limit'] || '')) ? String(fields['coin limit']) : null;
       out.address = null;
       if (fields.address != null && fields.address !== '') {
         if (!/^0x[0-9a-fA-F]{64}$/.test(String(fields.address))) throw InstantError('malformed');

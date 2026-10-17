@@ -629,11 +629,13 @@ body:has(.page.active[data-machinery-lit]) .topbar .brand-sub {
 /* Hover tinted the border, which no longer exists as an edge to tint. */
 [data-machinery-lit] .tx-row:hover { border-color: var(--mx-glass-line) !important; }
 
-/* The mark is uniform glass. Per-asset and per-direction tinting stands down,
- * because direction is already carried by the glyph and the sign. */
-[data-machinery-lit] .tx-ic,
-[data-machinery-lit] .tx-ic.in-ic,
-[data-machinery-lit] .tx-ic.out-ic {
+/* The mark is uniform glass. Per-asset tinting stands down. The transaction
+ * direction mark (DAT-001 direction mark, `.tx-dir`, founder 2026-10-14) is exempt: a text glyph
+ * and the sign alone did not say the direction clearly enough, so the incoming
+ * tile carries a soft accent tint (app-ui-system.css). */
+[data-machinery-lit] .tx-ic:not(.tx-dir),
+[data-machinery-lit] .tx-ic.in-ic:not(.tx-dir),
+[data-machinery-lit] .tx-ic.out-ic:not(.tx-dir) {
   border: 1px solid var(--mx-glass-line) !important;
   background: var(--mx-glass) !important;
 }

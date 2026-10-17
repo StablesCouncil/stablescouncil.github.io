@@ -80,6 +80,7 @@
       quickPayEnabled: saved.quickPayEnabled !== false,
       quickPayLimit: finiteNum(saved.quickPayLimit, DEFAULTS.quickPayLimit),
       cardLevels: normalizeCardLevels(saved.cardLevels),
+      cardReceive: normalizeCardReceive(saved.cardReceive),
       significantThreshold: finiteNum(saved.significantThreshold, DEFAULTS.significantThreshold),
       dailyQuickPayCap: finiteNum(saved.dailyQuickPayCap, DEFAULTS.dailyQuickPayCap),
       quickPayUndo: !!saved.quickPayUndo,
@@ -181,6 +182,7 @@
    * [data-card-levels] host: the card's own window and Payment security show the same values, saved on change.
    */
   function renderCardLevels() {
+    renderCardReceive();
     var hosts = document.querySelectorAll('[data-card-levels]');
     if (!hosts.length) return;
     var lv = getSettings().cardLevels, spent = cardSpend(), unit = displayPrimaryCcy();
@@ -210,6 +212,136 @@
           inp.blur();
           renderCardLevels();
           try { window.dispatchEvent(new CustomEvent('stables:card-levels')); } catch (_) { /* old WebView */ }
+        });
+      });
+    });
+  }
+
+  /*
+   * RECEIVING LIMITS AND THE FINGERPRINT AMOUNT (card hardening, founder 2026-10-15, CARD_HARDENING_PLAN.md items 4 and 6).
+   * What the card takes per payment and per paying phone a day (500 and 1,000 by default), and the amount from which a
+   * coin is held by a key that needs the fingerprint (100). Each currency counts in its own units; 0 sets no limit (and,
+   * for the fingerprint, never asks). The native engine enforces them (R2Engine "settings"); this page keeps the person's
+   * values and hands them over, with the one-touch payment level, which caps payments received while the phone's
+   * security list is out of date.
+   */
+  var CARD_RECEIVE_DEFAULTS = { perPayment: 500, perPhoneDay: 1000, fingerprintFrom: 100 };
+  function normalizeCardReceive(raw) {
+    var src = raw || {};
+    return {
+      perPayment: Math.max(0, finiteNum(src.perPayment, CARD_RECEIVE_DEFAULTS.perPayment)),
+      perPhoneDay: Math.max(0, finiteNum(src.perPhoneDay, CARD_RECEIVE_DEFAULTS.perPhoneDay)),
+      fingerprintFrom: Math.max(0, finiteNum(src.fingerprintFrom, CARD_RECEIVE_DEFAULTS.fingerprintFrom)),
+      // The quick purse (founder 2026-10-15): plain-key coins kept for payments below the fingerprint amount. null: twice it.
+      quickPurse: src.quickPurse == null || src.quickPurse === '' ? null : Math.max(0, finiteNum(src.quickPurse, 0)),
+      // CARD UPKEEP (founder 2026-10-16: "make the management of the wallet automatic for the user, there should be a setting
+      // for that"). When the card refreshes a coin whose history grew: auto (as soon as one needs it, any network), charging
+      // (only while charging on Wi-Fi) or off.
+      upkeep: UPKEEP_MODES.indexOf(src.upkeep) >= 0 ? src.upkeep : 'auto'
+    };
+  }
+  var UPKEEP_MODES = ['auto', 'charging', 'off'];
+  var UPKEEP_LABELS = { auto: 'Automatic', charging: 'When charging', off: 'Off' };
+  /** The card upkeep the person chose: 'auto' (default), 'charging' or 'off'. */
+  function cardUpkeep() { return getSettings().cardReceive.upkeep; }
+  /** The quick purse target as it applies: the person's value, or twice the fingerprint amount. */
+  function quickPurseOf(r) { return r.quickPurse == null ? 2 * r.fingerprintFrom : r.quickPurse; }
+  function unitsText(n) { return Number(n).toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 8 }); }
+  var lastCardSync = '';
+  /** Hands the card's limits to the engine (only when they changed since the last time). */
+  function syncCardToEngine(force) {
+    var R = window.StablesRoute2;
+    if (!R || typeof R.syncSettings !== 'function') return null;
+    var s = getSettings();
+    var args = { perPayment: unitsText(s.cardReceive.perPayment), perPhoneDay: unitsText(s.cardReceive.perPhoneDay),
+      strongAt: unitsText(s.cardReceive.fingerprintFrom), oneTouch: unitsText(s.cardLevels.tap.payment),
+      purse: s.cardReceive.quickPurse == null ? 'default' : unitsText(s.cardReceive.quickPurse) };
+    var key = JSON.stringify(args);
+    if (!force && key === lastCardSync) return null;
+    var r = null;
+    try { r = R.syncSettings(args); } catch (_) { r = null; }
+    if (r && r.ok) lastCardSync = key;
+    return r;
+  }
+  /** The card's security line: how old its security list is, and whether large coins can be fingerprint keys. */
+  function cardSecurityText(sec) {
+    if (!sec || !sec.ok) return '';
+    var lines = [];
+    var days = Math.floor(Number(sec.statusAgeMs) / 86400000);
+    if (sec.stale) lines.push('Security list out of date. Connect to the internet once. Until then the card takes payments up to one touch.');
+    else if (Number.isFinite(days)) lines.push('Security list updated ' + (days <= 0 ? 'today' : days === 1 ? 'yesterday' : days + ' days ago') + '.');
+    if (sec.deviceSecure === false) {
+      lines.push(Number(sec.fingerprintCoins) > 0
+        ? 'This phone has no screen lock now, so amounts held by fingerprint can no longer be paid.'
+        : 'This phone has no screen lock, so nothing on the card is held by fingerprint.');
+    } else if (sec.fingerprintKeys === false) lines.push('No fingerprint is set up on this phone, so large amounts on the card are not held by fingerprint.');
+    else if (Number(sec.fingerprintCoins) > 0) lines.push('Removing the screen lock loses the amounts held by fingerprint. Set Fingerprint from to 0 first.');
+    return lines.join(' ');
+  }
+  /** The three fields under "One touch and security" on the card's page, saved and handed to the engine on change. */
+  function renderCardReceive() {
+    var hosts = document.querySelectorAll('[data-card-receive]');
+    var sec = null;
+    try { if (window.StablesRoute2 && typeof window.StablesRoute2.canHold === 'function' && window.StablesRoute2.canHold()) sec = window.StablesRoute2.security(); } catch (_) { sec = null; }
+    syncCardToEngine(false);
+    if (!hosts.length) return;
+    var v = getSettings().cardReceive;
+    /* Founder 2026-10-15 ("Please make sure all texts and boxes are properly aligned and displayed"): one row per setting,
+       the words on the left and boxes of one width on the right, under two short headings; the notes span the width. */
+    var groups = [
+      ['Receiving limits', [['perPayment', 'Per payment'], ['perPhoneDay', 'Per day from one phone']]],
+      ['Fingerprint', [['fingerprintFrom', 'Asked from'], ['quickPurse', 'Quick payments up to']]]
+    ];
+    Array.prototype.forEach.call(hosts, function (host) {
+      if (host.contains(document.activeElement)) return;     // never redraw under the person's typing
+      var html = '<div class="card-recv">';
+      groups.forEach(function (g) {
+        html += '<div class="card-recv__group">' + g[0] + '</div>';
+        g[1].forEach(function (f) {
+          var id = 'cardRecv' + f[0].charAt(0).toUpperCase() + f[0].slice(1);
+          html += '<div class="card-recv__row"><label class="card-recv__label" for="' + id + '">' + f[1] + '</label>'
+            + '<input class="finput card-recv__in" data-financial-amount type="text" inputmode="decimal" autocomplete="off" id="' + id + '" data-card-receive-key="' + f[0] + '"'
+            + ' value="' + cardLevelsEsc(groupInputAmount(f[0] === 'quickPurse' ? quickPurseOf(v) : v[f[0]])) + '"></div>';
+        });
+      });
+      // The app draws its own choices (the Remove | Add segmented control), never the system's picker.
+      html += '<div class="card-recv__group">Card upkeep</div>'
+        + '<div class="ui-segmented card-recv__upkeep" role="radiogroup" aria-label="Card upkeep">'
+        + UPKEEP_MODES.map(function (m) { var on = v.upkeep === m;
+            return '<button class="ui-segment' + (on ? ' active' : '') + '" type="button" role="radio" aria-checked="' + on + '" tabindex="' + (on ? 0 : -1)
+              + '" data-card-upkeep="' + m + '">' + UPKEEP_LABELS[m] + '</button>'; }).join('')
+        + '</div>';
+      var note = 'Each currency counts in its own units. 0 sets no limit. Below the fingerprint amount, payments come from quick payments with no fingerprint.'
+        + ' Card upkeep keeps every payment small enough for a short touch: When charging waits for the charger and Wi-Fi.';
+      var secText = cardSecurityText(sec);
+      html += '</div><p class="xs mu card-levels__note">' + cardLevelsEsc(note) + '</p>'
+        + (secText ? '<p class="xs mu card-levels__note" data-card-security>' + cardLevelsEsc(secText) + '</p>' : '');
+      host.innerHTML = html;
+      Array.prototype.forEach.call(host.querySelectorAll('[data-card-upkeep]'), function (btn) {
+        btn.addEventListener('click', function () {
+          var next = getSettings().cardReceive;
+          var m = btn.getAttribute('data-card-upkeep');
+          if (UPKEEP_MODES.indexOf(m) >= 0) next.upkeep = m;
+          saveSettings({ cardReceive: next });
+          renderCardReceive();
+          if (window.StablesRoute2 && typeof window.StablesRoute2.settleNow === 'function') window.StablesRoute2.settleNow();
+        });
+      });
+      Array.prototype.forEach.call(host.querySelectorAll('[data-card-receive-key]'), function (inp) {
+        inp.addEventListener('change', function () {
+          var next = getSettings().cardReceive;
+          var key = inp.getAttribute('data-card-receive-key');
+          var n = finiteNum(inp.value, NaN);
+          if (Number.isFinite(n) && n >= 0) next[key] = n;
+          saveSettings({ cardReceive: next });
+          syncCardToEngine(true);
+          inp.blur();
+          renderCardReceive();
+          // Fingerprint off (before removing the screen lock): what is held by fingerprint moves back to plain keys,
+          // with one fingerprint.
+          if (key === 'fingerprintFrom' && n === 0 && sec && Number(sec.fingerprintCoins) > 0 && typeof window.StablesRoute2.unprotect === 'function') {
+            window.StablesRoute2.unprotect('Confirm moving the card off fingerprint').then(function () { renderCardReceive(); });
+          }
         });
       });
     });
@@ -854,6 +986,7 @@
       quickPayEnabled: !!(qe && qe.checked),
       quickPayLimit: finiteNum(ql && ql.value, DEFAULTS.quickPayLimit),
       cardLevels: cur.cardLevels,
+      cardReceive: cur.cardReceive,
       significantThreshold: finiteNum(sig && sig.value, DEFAULTS.significantThreshold),
       dailyQuickPayCap: finiteNum(cap && cap.value, DEFAULTS.dailyQuickPayCap),
       quickPayUndo: !!(undo && undo.checked),
@@ -901,7 +1034,7 @@
       + '<div class="paysec-rule-value paysec-rule-value--amount">'
       + '<input class="finput" data-financial-amount type="text" data-conf-upto inputmode="decimal" autocomplete="off" value="' + groupInputAmount(level.upTo)
       + '" aria-label="Amount threshold">'
-      + '<span class="paysec-input-unit" data-paysec-primary-unit>MINIMA</span>'
+      + '<span class="paysec-input-unit" data-paysec-primary-unit>Winiwa</span>'
       + '</div>'
       + '<div class="paysec-rule-value paysec-rule-value--blocks">' + blocksInput + '<span class="paysec-input-unit">blocks</span></div>'
       /* Founder 2026-09-03: "change the Remove for a X, I never understood what it was". This
@@ -1138,7 +1271,9 @@
     cardTapRoom: cardTapRoom,
     cardSpend: cardSpend,
     recordCardSpend: recordCardSpend,
+    cardUpkeep: cardUpkeep,
     renderCardLevels: renderCardLevels,
+    renderCardReceive: renderCardReceive,
     requiresPaymentCode: requiresPaymentCode,
     tierLabel: tierLabel,
     hasPaymentCode: hasPaymentCode,
