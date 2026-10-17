@@ -58,11 +58,11 @@ later Council decision and a completed handover.
 
 ## How to access the test channel
 
-1. **Android app, v0.0.13.007, testing release 2026-10-13.** One app, file `Stables_v0.0.13.007.apk`. Install from https://stablescouncil.org/payment-app/ or from the GitHub release `StablesCouncil/stables-app`, tag `app-v0.0.13.007`. Verify the SHA-256 published with the release. Install a new version over the old one and never uninstall: the wallet stays on the device.
+1. **Android app, v0.0.14.002, testing release 2026-10-17.** One app, file `Stables_v0.0.14.002.apk`. Install from https://stablescouncil.org/payment-app/ or from the GitHub release `StablesCouncil/stables-app`, tag `app-v0.0.14.002`. Verify the SHA-256 published with the release. Install a new version over the old one and never uninstall: the wallet stays on the device.
    The app uses the node built into Stables, or Minima Core on the same phone. On a new install, when Minima Core is present, Stables asks which one to use. Later, Settings and updates, Your node, offers the other one. Each node is its own wallet. Switching moves no funds and restarts Stables. To use Minima Core, allow Stables inside Core. A payment through Minima Core is not claimed for this release.
 2. **The separate Core-connected app is retired.** It is not offered. Someone who still has that old app installs Stables, chooses Minima Core, allows Stables in Core, and can then remove the old app.
-3. **MinimaOS MiniDapp, v0.0.13.007 testing release.** Install or update `Stables_v0.0.13.007.mds.zip` through the MinimaOS hub. It uses that node and its wallet. An existing installation does not update automatically when the download changes.
-4. **Web app, v0.0.13.007 testing release.** Open `https://stablescouncil.org/dapp/3-test/` and connect a node for chain operations. The browser does not contain an embedded node.
+3. **MinimaOS MiniDapp, v0.0.14.002 testing release.** Install or update `Stables_v0.0.14.002.mds.zip` through the MinimaOS hub. It uses that node and its wallet. An existing installation does not update automatically when the download changes.
+4. **Web app, v0.0.14.002 testing release.** Open `https://stablescouncil.org/dapp/3-test/` and connect a node for chain operations. The browser does not contain an embedded node.
 
 This coordinated update succeeds public v0.0.11.94. The web app, the MiniDapp and the one Android app are listed at https://stablescouncil.org/payment-app/.
 
