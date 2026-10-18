@@ -53,6 +53,20 @@
   .tokrow { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
   .tokrow .tn { font-size: 15px; font-weight: 800; letter-spacing: 0; color: var(--muted); }
   .hero .sub .tl { display: block; }
+  /* the card's one figure: money on cards, confirmed against the vault (founder 2026-10-18) */
+  .heroes.one { grid-template-columns: 1fr; }
+  .recon { display: flex; align-items: flex-start; gap: 10px; margin-top: 14px; padding: 10px 12px; border-radius: 12px; font-size: 14px; font-weight: 700; line-height: 1.4; }
+  .recon .ic { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 13px; font-weight: 900; }
+  .recon.ok { background: rgba(52,211,153,.10); color: var(--savers); } .recon.ok .ic { background: rgba(52,211,153,.18); }
+  .recon.bad { background: rgba(242,109,109,.12); color: var(--red); } .recon.bad .ic { background: rgba(242,109,109,.2); }
+  .recon.wait { background: rgba(255,255,255,.04); color: var(--dim); } .recon.wait .ic { background: rgba(255,255,255,.08); }
+  .recon-log { margin-top: 12px; border-top: 1px solid var(--hair); padding-top: 10px; }
+  .recon-log summary { cursor: pointer; font-size: 13px; font-weight: 800; color: var(--muted); }
+  .recon-log ol { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .recon-log li { font-size: 13px; color: var(--dim); line-height: 1.5; border-left: 3px solid var(--hair); padding-left: 10px; }
+  .recon-log li.open { border-left-color: var(--red); } .recon-log li.done { border-left-color: var(--savers); } .recon-log li.event { border-left-color: var(--amber); }
+  .recon-log li b { color: var(--ink); } .recon-log li .t { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .recon-log li .rm { display: block; margin-top: 2px; } .recon-log a { color: var(--winiwa); text-decoration: none; overflow-wrap: anywhere; }
   .card-ids { margin-top: 12px; }
   .note a { color: var(--winiwa); text-decoration: none; font-weight: 700; }
   .hero .track { height: 6px; border-radius: 999px; background: rgba(255,255,255,.07); overflow: hidden; margin-top: 12px; }
@@ -302,16 +316,13 @@
 
   <!-- the Stables card: money added to phones, paid by touch off chain, taken back to Savings -->
   <div class="section-t" id="card">Stables card</div>
-  <div class="heroes">
+  <div class="heroes one">
     <div class="card hero cardmoney">
       <div class="lbl">Money on cards</div>
       <div class="big tok" id="cardOn">N/A</div>
+      <div class="recon wait" id="cardMatch" role="status"><span class="ic">…</span><span>Checking the vault</span></div>
       <div class="sub" id="cardOnSub">added, minus Removes paid back to Savings, per token</div>
-    </div>
-    <div class="card hero cardvault">
-      <div class="lbl">In the card vault</div>
-      <div class="big tok" id="cardVault">N/A</div>
-      <div class="sub" id="cardVaultSub">held by the vault contract now, per token</div>
+      <details class="recon-log" id="cardRecon" hidden><summary id="cardReconSum">Reconciliation log</summary><ol id="cardReconList"></ol></details>
     </div>
   </div>
   <div class="grid" id="cardStats">
@@ -319,7 +330,7 @@
     <div class="stat"><div class="k">Removes</div><div class="v" id="cRemoves">N/A</div><div class="u" id="cRemovesSub">exit requests</div></div>
     <div class="stat"><div class="k">Refunds</div><div class="v" id="cRefunds">N/A</div><div class="u" id="cRefundsSub">payments the receiver refused, paid back to the payer</div></div>
     <div class="stat"><div class="k">Payouts</div><div class="v" id="cPayouts">N/A</div><div class="u" id="cPayoutsSub">Removes and refunds paid to Savings</div></div>
-    <div class="stat"><div class="k">Council seals</div><div class="v" id="cSeals">N/A</div><div class="u" id="cSealsSub">approvals signed 5 of 7</div></div>
+    <div class="stat"><div class="k">Council seals</div><div class="v" id="cSeals">N/A</div><div class="u" id="cSealsSub">approvals and heartbeats signed by the Council</div></div>
     <div class="stat"><div class="k">Rejections</div><div class="v" id="cRejects">N/A</div><div class="u" id="cRejectsSub">requests refused, nothing paid</div></div>
     <div class="stat"><div class="k">Fallback payouts</div><div class="v" id="cFallback">N/A</div><div class="u">paid with no Council, after the wait</div></div>
     <div class="stat"><div class="k">Longest off-chain run</div><div class="v" id="cLongest">N/A</div><div class="u" id="cLongestSub">hand-overs in one exit package</div></div>
@@ -673,7 +684,7 @@
     cRequestId: "0xB13ADD36D874B2E0640AEB1F06B9AC1B5B37EC784AAD318A1463CC13DF2ED3F7",
     cPackageId: "0xABA005476D2B3CD7F251B9783E64C124C9670BB358695F04D91B2057BB64CB49"
   };
-  var CARD_FIGS = ["cardOn", "cardVault", "cAdds", "cRemoves", "cRefunds", "cPayouts", "cSeals", "cRejects", "cFallback", "cLongest", "cAddrs", "cDevices", "cCarriers"];
+  var CARD_FIGS = ["cardOn", "cAdds", "cRemoves", "cRefunds", "cPayouts", "cSeals", "cRejects", "cFallback", "cLongest", "cAddrs", "cDevices", "cCarriers"];
   function amount8(v) { var n = Number(v); return isFinite(n) ? nf(n, 8) : "N/A"; }
   function plural(n, one, many) { return nf(n) + " " + (Number(n) === 1 ? one : many); }
   function idLink(base, id) {
@@ -726,18 +737,53 @@
     var esc = function (v) { return String(v).replace(/[&<>"]/g, function (ch) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]; }); };
     var rows = function (field) { return toks.length ? toks.map(function (t) { return '<span class="tokrow"><span>' + amount8(t[field]) + '</span><span class="tn">' + esc(t.name) + '</span></span>'; }).join("") : "N/A"; };
     $("cardOn").innerHTML = rows("on_cards");
-    $("cardVault").innerHTML = rows("vault");
+    /* ONE FIGURE, CONFIRMED (founder 2026-10-18: "instead of presenting these numbers twice, have it once with a confirmation
+       they match and a warning if they don't"). Money on cards is counted from Adds, payouts and returns; the vault from its
+       own coins. They must agree to the last unit, per token. */
+    var m = $("cardMatch");
+    var coinsOf = function (t) { return plural(t.vault_coins || 0, esc(t.name) + " coin", esc(t.name) + " coins"); };
+    if (!toks.length) { m.className = "recon wait"; m.innerHTML = '<span class="ic">…</span><span>Checking the vault</span>'; }
+    else if (!c.complete) { m.className = "recon wait"; m.innerHTML = '<span class="ic">…</span><span>Reading the chain: the vault is compared once every card transaction is counted.</span>'; }
+    else if (c.all_match) { m.className = "recon ok"; m.innerHTML = '<span class="ic">✓</span><span>The vault holds exactly this, to the last unit: ' + toks.map(coinsOf).join(", ") + ".</span>"; }
+    else {
+      m.className = "recon bad";
+      m.innerHTML = '<span class="ic">!</span><span>The vault and the cards differ: ' + toks.filter(function (t) { return !t.match; }).map(function (t) {
+        var gap = Number(t.on_cards) - Number(t.vault);
+        return esc(t.name) + ", the vault holds " + amount8(t.vault) + " (" + amount8(Math.abs(gap)) + (gap > 0 ? " less" : " more") + " than on cards)";
+      }).join("; ") + ". See the log below.</span>";
+    }
     $("cardOnSub").innerHTML = toks.map(function (t) {
+      var vaults = Array.isArray(t.by_vault) ? t.by_vault.filter(function (v) { return Number(v.amount) > 0; }) : [];
       return '<span class="tl">' + esc(t.name) + ": " + amount8(t.added) + " added, " + amount8(t.paid_out) + " paid back by Removes" +
         (Number(t.refunded) > 0 ? ", " + amount8(t.refunded) + " refunded" : "") +
-        (Number(t.returned_by_hand) > 0 ? ", " + amount8(t.returned_by_hand) + " returned by hand" : "") + "</span>";
-    }).join("") + '<span class="tl">Generation ' + esc(c.generation || "R2T3") + "</span>";
-    $("cardVaultSub").innerHTML = toks.map(function (t) {
-      // On cards and the vault are counted separately; they must agree. Any difference is named, never hidden.
-      var gap = Number(t.on_cards) - Number(t.vault);
-      return '<span class="tl">' + esc(t.name) + ": " + plural(t.vault_coins || 0, "coin", "coins") +
-        (gap === 0 ? ", the same as on cards" : gap > 0 ? ", " + amount8(gap) + " less than on cards" : ", " + amount8(-gap) + " more than on cards") + "</span>";
-    }).join("");
+        (Number(t.returned_by_hand) > 0 ? ", " + amount8(t.returned_by_hand) + " returned by hand" : "") +
+        (vaults.length > 1 ? "; in the vaults: " + vaults.map(function (v) { return esc(v.generation) + " " + amount8(v.amount); }).join(", ") : "") + "</span>";
+    }).join("") + '<span class="tl">Generations ' + esc(c.generation || "R2T3") + "</span>";
+    /* The log: every time the two figures parted, why, and the remedy adopted; and every vault move outside an Add or a
+       payout, with its explanation. Open by itself while anything is unresolved. */
+    var rc = c.reconciliation || { entries: [], events: [] };
+    var entries = Array.isArray(rc.entries) ? rc.entries : [], events = Array.isArray(rc.events) ? rc.events : [];
+    var openN = entries.filter(function (e) { return !e.resolved_at; }).length;
+    var day = function (iso) { return iso ? String(iso).slice(0, 16).replace("T", " ") + " UTC" : ""; };
+    var txLink = function (id) { return id ? ' <a href="https://explorer.minima.global/transactions/' + esc(id) + '" target="_blank" rel="noopener">' + esc(id) + "</a>" : ""; };
+    var items = entries.map(function (e) {
+      return '<li class="' + (e.resolved_at ? "done" : "open") + '"><b>' + esc(e.id) + " · " + (e.resolved_at ? "resolved" : "open") + "</b> <span class=\"t\">" + day(e.opened_at) +
+        (e.resolved_at ? " to " + day(e.resolved_at) : "") + "</span><br>" + esc(e.token_name || e.token) + ": on cards " + amount8(e.on_cards) + ", vault " + amount8(e.vault) +
+        " (" + esc(e.direction || "") + " " + amount8(e.difference) + ")" +
+        '<span class="rm"><b>Why:</b> ' + esc(e.explanation || "") + '</span><span class="rm"><b>Remedy:</b> ' + esc(e.remedy || "") + "</span>" +
+        (e.resolution ? '<span class="rm"><b>Outcome:</b> ' + esc(e.resolution) + "</span>" : "") + "</li>";
+    }).concat(events.map(function (e) {
+      return '<li class="event"><b>Explained move</b> <span class="t">block ' + nf(e.block) + (e.t ? ", " + day(e.t) : "") + "</span>" + txLink(e.txpowid) +
+        '<span class="rm">' + esc(e.explanation || "") + "</span></li>";
+    }));
+    var log = $("cardRecon");
+    if (items.length) {
+      log.hidden = false;
+      $("cardReconList").innerHTML = items.join("");
+      $("cardReconSum").textContent = "Reconciliation log: " + (openN ? plural(openN, "open difference", "open differences") : "no open difference") +
+        (entries.length - openN ? ", " + plural(entries.length - openN, "resolved", "resolved") : "") + (events.length ? ", " + plural(events.length, "explained move", "explained moves") : "");
+      if (openN) log.open = true;
+    } else log.hidden = true;
     set("cAdds", k.adds != null ? nf(k.adds) : "N/A");
     set("cRemoves", k.removes != null ? nf(k.removes) : "N/A");
     set("cRemovesSub", k.removes != null ? nf(k.removes_from_phones) + " from phones, " + nf(k.removes_lab_tests) + " lab contract tests" +
@@ -747,7 +793,7 @@
     var rt = Array.isArray(c.refund_tokens) ? c.refund_tokens : [];
     set("cRefundsSub", k.refunds != null ? (k.refunds ? nf(k.refunds_paid || 0) + " paid back to the payer" + (rt.length ? ", " + rt.map(function (t) { return amount8(t.amount) + " " + t.name; }).join(", ") + " asked for" : "") : "payments the receiver refused, paid back to the payer") : "payments the receiver refused, paid back to the payer");
     set("cSeals", k.council_seals != null ? nf(k.council_seals) : "N/A");
-    set("cSealsSub", k.council_seals_genesis ? "approvals signed 5 of 7, and " + plural(k.council_seals_genesis, "genesis seal", "genesis seals") : "approvals signed 5 of 7");
+    set("cSealsSub", "approvals and heartbeats, 5 of 7 keys in R2T3 and 7 of 11 in R2T5" + (k.council_seals_genesis ? ", and " + plural(k.council_seals_genesis, "genesis seal", "genesis seals") : ""));
     set("cPayouts", k.payouts != null ? nf(k.payouts) : "N/A");
     set("cPayoutsSub", k.payouts != null ? (k.removes_paid != null ? plural(k.removes_paid, "Remove", "Removes") + " and " + plural(k.refunds_paid || 0, "refund", "refunds") + "; " : "") + nf(k.payouts_sealed) + " approved by a seal, " + nf(k.payouts_fallback) + " by the fallback" : "Removes and refunds paid to Savings");
     set("cFallback", k.payouts_fallback != null ? nf(k.payouts_fallback) : "N/A");
@@ -877,8 +923,7 @@
     ocVaultIssued: ["xWiniwa the vault has issued against deposited Winiwa.", "Always one for one with the Winiwa deposited."],
     ocVaultMints: ["Times Winiwa was deposited for xWiniwa.", "Tests the issuing side of the vault contract."],
     ocVaultBurns: ["Times xWiniwa was returned for its Winiwa.", "Tests that redemption always works."],
-    cardOn: ["Money put on Stables cards and not yet taken back: Adds, minus Removes and refunds paid, minus anything returned by hand.", "This money moves from phone to phone by touch, off chain. It is counted without looking at the vault, so it can be checked against the vault."],
-    cardVault: ["Coins the card vault contract holds now, read from the chain.", "It must equal the money on cards: every card balance is backed by coins anyone can check."],
+    cardOn: ["Money put on Stables cards and not yet taken back: Adds, minus Removes and refunds paid, minus anything returned by hand. It is counted without looking at the vault, and then checked against the coins the card vaults hold on chain.", "This money moves from phone to phone by touch, off chain. The green line confirms every unit of it is held by the vault; a red line warns that they differ, and the log says why and what is being done."],
     cAdds: ["Deposits from a Savings account onto a card.", "Each one locks coins in the card vault, so card money is backed from the start."],
     cRemoves: ["Requests to take card money back to Savings. Each one carries the card's proof of where the money came from.", "The way out of the card. It must always work."],
     cRefunds: ["Payments the receiver's phone refused, signed by the receiver and paid back to the payer's Savings.", "Shows that a failed payment never strands the money."],
