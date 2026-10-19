@@ -1,6 +1,6 @@
 # Stables first community test: what is in scope and what is not
 
-*Authoritative scope boundary for StablesAgent and external AIs. Written 2026-08-01 for the first Stables test release (`TV81-P12-XR1`, decisions `TV81-D23` and `TV81-D24`); updated 2026-09-03 when the standalone Android app became the first published artifact. If any other
+*Authoritative scope boundary for StablesAgent and external AIs. Written 2026-08-01 for the first Stables test release (`TV81-P12-XR1`, decisions `TV81-D23` and `TV81-D24`); updated 2026-09-03 when the standalone Android app became the first published artifact; updated 2026-10-19 when the MiniDapp was retired and the Android app became the only public product. If any other
 document in this knowledge base describes a capability as available and this document says it is
 deferred, **this document wins.** Every statement below is about what a tester can actually do.*
 
@@ -8,6 +8,15 @@ deferred, **this document wins.** Every statement below is about what a tester c
 > created has now been settled by the Council and written down. It changes nothing here: stablecoins
 > remain **out of scope** for this test and switched off in the build. That plan describes a future
 > phase with no date and several numbers still undecided.
+
+## How to get Stables (2026-10-19)
+
+- **Stables is one Android app.** It has two connection modes: its own built-in Minima node, or Minima Core on the same phone (official Minima Core 1.7.2 and later, app `org.minima.core`, or the older Minima Core app `org.minimarex.minimacore`).
+- **Download it at https://stablescouncil.org/#download.** That is the one place to point people.
+- **A native desktop app is coming.** It has no date yet.
+- **The MiniDapp is retired.** v0.0.14.017 was the last release with a `.mds.zip`. Do not offer it to testers. If asked, say it was retired after v0.0.14.017 and that Stables is now the Android app.
+- **The web version is for internal testing only.** It is not a public product. Do not offer it to testers. If asked, say it is used by the team for internal testing and is not offered to the public.
+- **The Stables card is an experiment.** It needs a thorough security review by independent experts before it can be considered for production. Use it only with the valueless test tokens.
 
 ## The one-line answer
 
@@ -20,7 +29,7 @@ in the build.
 
 - Install the **Stables Android app** (v0.0.14.017). It is one app. It can run its own Minima node, or use Minima Core on the same phone (official Minima Core, app `org.minima.core`, version 1.7.2 and later, or the older Minima Core app `org.minimarex.minimacore`; with both installed, Settings and updates, Your node chooses). The person chooses on first open when Core is present, and later under Settings and updates, Your node. Each node is its own wallet. The separate Core-connected app is retired.
 - Claim **Winiwa** from the on-chain faucet covenant.
-- Put Winiwa or xWiniwa on the **Stables card** from Savings (Manage card), **pay another phone by holding the two phones together**, with no network needed, and take money back to Savings. Each coin on the card is held by a one-use key inside the phone's secure chip. The card needs an Android phone whose chip makes one-use keys; it was tested on a Pixel 7 Pro (stock Android) and a Pixel 7 (GrapheneOS). On any other device, and in the web app or MiniDapp, the card shows "Not on this device" and takes nothing. A withdrawal to Savings (a Remove) is checked by the test Council within a minute or two of reaching the chain, and the money reaches Savings about 2 hours after the approval: since the R2T5 card vault (October 2026) every approved withdrawal waits about 144 blocks, the window in which independent guardians can freeze a wrong approval. If the Council stays silent but alive, a withdrawal pays itself after about 3 days; if the Council disappears, withdrawals wait for a new Council instead of paying out, so nobody can empty the vault by removing the Council. Money still in the earlier R2T3 vault is approved within minutes and pays without the 2-hour wait. The on-chain evidence, every chip signature included, is public at https://stablescouncil.org/stables-card-evidence/.
+- Put Winiwa or xWiniwa on the **Stables card** from Savings (Manage card), **pay another phone by holding the two phones together**, with no network needed, and take money back to Savings. Each coin on the card is held by a one-use key inside the phone's secure chip. The card needs an Android phone whose chip makes one-use keys; it was tested on a Pixel 7 Pro (stock Android) and a Pixel 7 (GrapheneOS). On any other device the card shows "Not on this device" and takes nothing. The Stables card is an experiment: it needs a thorough security review by independent experts before it can be considered for production. A withdrawal to Savings (a Remove) is checked by the test Council within a minute or two of reaching the chain, and the money reaches Savings about 2 hours after the approval: since the R2T5 card vault (October 2026) every approved withdrawal waits about 144 blocks, the window in which independent guardians can freeze a wrong approval. If the Council stays silent but alive, a withdrawal pays itself after about 3 days; if the Council disappears, withdrawals wait for a new Council instead of paying out, so nobody can empty the vault by removing the Council. Money still in the earlier R2T3 vault is approved within minutes and pays without the 2-hour wait. The on-chain evidence, every chip signature included, is public at https://stablescouncil.org/stables-card-evidence/.
 - **Mint** Winiwa into **xWiniwa** at par, one for one, through the on-chain vault covenant.
 - **Burn** xWiniwa back into Winiwa at the same par rate, in whole or in part.
 - **Send and receive** Winiwa and xWiniwa using Minima addresses or a QR code.
@@ -76,7 +85,7 @@ test-token address. A tester needs a small amount of real MINIMA to pay signing 
 
 The Android artifact is one **Stables app** (v0.0.14.017, published 2026-10-19). It can run **its own Minima node inside the app**, or use **Minima Core** already on the phone. The person chooses on a new install when Core is present, and later in Settings and updates, Your node. Each choice is its own wallet. Switching moves no funds and restarts the app. The separate Core-connected download is retired.
 
-- Install from **https://stablescouncil.org/payment-app/** or from the GitHub release **StablesCouncil/stables-app, tag app-v0.0.14.017**, file `Stables_v0.0.14.017.apk`. Verify the SHA-256 published with the release before installing an APK from anywhere else.
+- Install from **https://stablescouncil.org/#download** or from the GitHub release **StablesCouncil/stables-app, tag app-v0.0.14.017**, file `Stables_v0.0.14.017.apk`. Verify the SHA-256 published with the release before installing an APK from anywhere else.
 - With the built-in node, nothing else has to be installed. There is no RPC address and no RPC password. With Minima Core, allow Stables inside Core. Stables does not ask for an RPC address in either case.
 - **Each node keeps its own wallet.** In the built-in mode the wallet lives inside Stables. In Minima Core mode, Minima Core holds the wallet and the seed. Stables never asks for a seed phrase or a vault key. Anyone asking a user for one is attacking them. Install a new version over the old one; **do not uninstall**.
 - Through official Minima Core 1.7.2 on a Pixel 7 (GrapheneOS), the test signed and posted a faucet claim, a mint and card Adds from the Core wallet, and card payments between two phones worked. That is the extent of the claim for Minima Core; the built-in node remains the reference.
@@ -86,9 +95,9 @@ The Android artifact is one **Stables app** (v0.0.14.017, published 2026-10-19).
   daily chart.
 - Because the app runs the node, it holds the Android network permission the node needs.
 
-The coordinated v0.0.14.017 release also includes `Stables_v0.0.14.017.mds.zip` for MinimaOS and the web app at `https://stablescouncil.org/dapp/3-test/`. MinimaOS uses its host node; the web app needs a connected node. The separate Core-connected app is retired.
+The public product is this one Android app. The MiniDapp is retired: v0.0.14.017 was the last release with a `.mds.zip`, and it is no longer offered. The web version is for the team's internal testing only and is not offered to testers. A native desktop app is coming, with no date yet. The separate Core-connected app is retired.
 
-Use the versioned downloads on the official access page and GitHub release.
+Point people to https://stablescouncil.org/#download.
 
 ## Balances tell the truth or say nothing
 
@@ -105,7 +114,7 @@ truthful about proof, not a bug.
 
 ## Status of the release itself
 
-Stables v0.0.14.017 is the coordinated testing release dated 2026-10-19 for the web app, MinimaOS and one Android app. It succeeds v0.0.14.002 from 2026-10-17. Its headline is the Stables card on its next vault and on official Minima Core:
+Stables v0.0.14.017 is the testing release dated 2026-10-19. It is the last release that also shipped a MiniDapp `.mds.zip`; from now on Stables is one Android app. It succeeds v0.0.14.002 from 2026-10-17. Its headline is the Stables card on its next vault and on official Minima Core:
 
 - **The R2T5 card vault.** New card money goes into the R2T5 vault on Minima mainnet. A withdrawal to Savings is checked by the test Council within a minute or two and reaches Savings about 2 hours after the approval: the window in which independent guardians can freeze a wrong approval. The chain refuses a second payout of the same coin. If the Council stays silent but alive, a withdrawal pays itself after about 3 days; if the Council disappears, withdrawals wait for a new Council. Guardians who stop showing up can be replaced by election. The app shows when the Council approved a withdrawal and when the money reaches Savings.
 - **Official Minima Core.** Stables links to official Minima Core 1.7.2 (`org.minima.core`) as well as the older Minima Core app; reads through Core take tens of milliseconds instead of seconds. Allow Stables inside Minima Core, Apps (Enable, and Admin to send). The first payment a new Core wallet signs can take about 20 seconds inside Core; later ones are faster.
@@ -113,8 +122,8 @@ Stables v0.0.14.017 is the coordinated testing release dated 2026-10-19 for the 
 - **Limits you can override.** A card payment above the receiving phone's own limit is explained on both phones; the receiver can accept it once with its fingerprint or payment code, then the phones are held together again.
 - **Smaller details.** MAX on the card shows the round figure; amount fields take at most 8 decimals; a phone answers taps as a card only while Get paid is open; Android's own Hold to reader screen no longer interrupts a payment.
 
-The evidence for the card, with the contracts and the code to check it, is at https://stablescouncil.org/stables-card-evidence/.
+The Stables card is an experiment. It needs a thorough security review by independent experts before it can be considered for production. The evidence for the card, with the contracts and the code to check it, is at https://stablescouncil.org/stables-card-evidence/.
 
-The release is `StablesCouncil/stables-app`, tag `app-v0.0.14.017`, with access through https://stablescouncil.org/payment-app/. It is an early testing update for the Minima community. Stablecoin issuance, trading, merchant business tools and production use remain outside this release. Winiwa and xWiniwa have no value. Report problems through the in-app feedback page.
+The release is `StablesCouncil/stables-app`, tag `app-v0.0.14.017`, with the download at https://stablescouncil.org/#download. It is an early testing update for the Minima community. Stablecoin issuance, trading, merchant business tools and production use remain outside this release. Winiwa and xWiniwa have no value. Report problems through the in-app feedback page.
 
 The app can appear while the node boots, but payments still require fresh status and wallet proofs. Card-speed checkout, guaranteed cold-payment readiness and isolated battery efficiency have not been established. A Minima Core resync (megammrsync) rebuilds that Core's chain data and can make the card's deposit proofs unavailable until the app repairs them; finish any card operation before resyncing Minima Core.

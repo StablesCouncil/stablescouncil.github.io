@@ -640,7 +640,7 @@
   <meta property="og:site_name" content="Stables">
   <meta property="og:url" content="https://stablescouncil.org/links.html">
   <meta property="og:title" content="Links · Stables">
-  <meta property="og:description" content="Links · Stables. Explore Stables, its testing apps and the Be your bank project.">
+  <meta property="og:description" content="Links · Stables. Explore Stables, its Android testing app and the Be your bank project.">
   <meta property="og:image" content="https://stablescouncil.org/brand/assets/stables-social-card-v1.png">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1774">
@@ -648,7 +648,7 @@
   <meta property="og:image:alt" content="Stables logo and wordmark, Be your bank, on a dark petrol background">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Links · Stables">
-  <meta name="twitter:description" content="Links · Stables. Explore Stables, its testing apps and the Be your bank project.">
+  <meta name="twitter:description" content="Links · Stables. Explore Stables, its Android testing app and the Be your bank project.">
   <meta name="twitter:image" content="https://stablescouncil.org/brand/assets/stables-social-card-v1.png">
   <meta name="twitter:image:alt" content="Stables logo and wordmark, Be your bank, on a dark petrol background">
 <!-- /Stables social card -->
@@ -764,7 +764,7 @@
     <div class="links-page-stack">
 
         <section class="links-section" id="sec-dapp" data-links-section>
-        <p class="section-label">MiniDapp release path</p>
+        <p class="section-label">Release path</p>
         <div class="links">
 
             <!-- Showcase -->
@@ -796,7 +796,7 @@
                         <span class="link-title">Demo Channel</span>
                         <span class="link-title-version" title="Demo track" data-demo-published-version>v0.0.0.3.45</span>
                     </div>
-                    <div class="link-description">Live native Minima send and receive, QR payments, and the full demo flow. Recommended install on MinimaOS, or open the web version and connect your node.</div>
+                    <div class="link-description">Live native Minima send and receive, QR payments, and the full demo flow. Retired.</div>
                 </div>
                 <span class="drafting-badge drafting-badge--phrase">Superseded</span>
             </div>
@@ -818,7 +818,8 @@
                 <span class="link-badge-active">Active</span>
             </a>
 
-            <!-- Prod channel: final prod path (last in path). Founder 2026-09-03: named Prod, not Live. -->
+            <!-- Prod channel: final prod path (last in path). Founder 2026-09-03: named Prod, not Live.
+                 2026-10-19: product = one Android app (built-in node or Minima Core) and the Stables card (experiment). Desktop app coming. MiniDapp retired, web app internal only. -->
             <div class="link-item drafting">
                 <div class="link-icon">
                     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -830,7 +831,7 @@
                         <span class="link-title">Prod channel</span>
                         <span class="link-title-version" title="Prod track (PM.Pn when live)">v0.1</span>
                     </div>
-                    <div class="link-description">Final live MiniDapp on the Minima network</div>
+                    <div class="link-description">One Android app and the Stables card, live on the Minima network. The app runs its own Minima node, or uses Minima Core if you choose. Desktop app coming.</div>
                 </div>
                 <span class="drafting-badge drafting-badge--phrase">To be announced</span>
             </div>
@@ -1183,22 +1184,16 @@
                 <p>This is a first release. There may be <strong>bugs and unexpected behavior</strong>. For early testing, use a <strong>dedicated test wallet</strong> or a wallet containing only <strong>funds you are willing to risk</strong>.</p>
                 <p class="muted">Using the app at this stage is a <strong>testing contribution to the whole community</strong>. Thank you for helping us harden it. We truly appreciate your contribution.</p>
                 <p class="muted">The code is fully open and accessible for you to review: <a href="https://github.com/StablesCouncil/stablescouncil.github.io" target="_blank" rel="noopener noreferrer" style="word-break:break-all;overflow-wrap:anywhere">github.com/StablesCouncil/stablescouncil.github.io</a>. If in doubt, please seek a third party opinion.</p>
+                <p class="muted">The Stables card is an experiment. It needs a thorough security review by independent experts before it can be used in production.</p>
             </div>
-            <p class="demo-launch-lead">The standalone Android app is released first. The other ways follow.</p>
+            <p class="demo-launch-lead">One Android app today. Desktop app coming.</p>
             <div class="demo-launch-options">
                 <div class="demo-launch-option">
-                    <p><strong>1. Android app</strong> <span class="demo-launch-badge">RECOMMENDED</span><br>The standalone Stables app for Android. It runs its own Minima node, so there is nothing else to install or set up: create or recover your wallet and you are ready.</p>
+                    <p><strong>1. Android app</strong> <span class="demo-launch-badge">RECOMMENDED</span><br>One Stables app for Android. On first open, and later in Settings, you choose: it runs its own Minima node, or it uses Minima Core if your phone already has it. Then create or recover your wallet and you are ready.</p>
                     <a href="https://github.com/StablesCouncil/stables-app/releases" data-android-test-download="standalone" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Get the Android app</a>
                 </div>
                 <div class="demo-launch-option">
-                    <p><strong>2. Minima Core companion.</strong> For phones that already run the official Minima Core Android app: this Stables app has no node of its own and uses Core's node and wallet. Test tokens only, no value.</p>
-                    <a href="https://github.com/StablesCouncil/stables-app/releases" data-android-test-download="core" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">Get the companion APK</a>
-                </div>
-                <div class="demo-launch-option">
-                    <p><strong>3. MinimaOS.</strong> Install the MiniDapp package on your existing Minima node. <span class="demo-launch-badge">COMING SOON</span></p>
-                </div>
-                <div class="demo-launch-option">
-                    <p><strong>4. Web version.</strong> Opens in your browser and connects to your running Minima node. <span class="demo-launch-badge">COMING SOON</span></p>
+                    <p><strong>2. Desktop app</strong> <span class="demo-launch-badge">COMING</span></p>
                 </div>
             </div>
             </div>

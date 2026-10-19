@@ -33,9 +33,9 @@ The payment code is hashed on device only. It is not sent to Stables servers. Co
 
 ## Android biometrics (standalone app only)
 
-On the Stables phone app, when the phone has fingerprint or face unlock set up, a protected send can be confirmed with fingerprint or face instead of typing the code. Payment code always works too. Web and MinimaOS hub use the payment code only.
+On the Stables phone app, when the phone has fingerprint or face unlock set up, a protected send can be confirmed with fingerprint or face instead of typing the code. Payment code always works too. (The retired MiniDapp and the internal web version use the payment code only.)
 
-Where it is (from v0.0.11.53): More, Security, Payment protection, in the block **How you confirm a protected send**. Two rows, always on screen: **Payment code** (Set, then Change) and **Fingerprint or face** (a checkbox). Set a payment code first; until then the Fingerprint or face row is greyed out and its own line says so ("Set a payment code first"). On a phone with no fingerprint or face enrolled it says "Not set up on this phone"; on web and the MinimaOS hub it says "Not available on this device". It saves as soon as you toggle it. On a protected send the phone's fingerprint or face sheet opens first, even if the phone is already unlocked; tap "Use payment code" there, or "Use fingerprint or face" on the code screen, to switch. Fingerprint or face data never leaves the phone.
+Where it is (from v0.0.11.53): More, Security, Payment protection, in the block **How you confirm a protected send**. Two rows, always on screen: **Payment code** (Set, then Change) and **Fingerprint or face** (a checkbox). Set a payment code first; until then the Fingerprint or face row is greyed out and its own line says so ("Set a payment code first"). On a phone with no fingerprint or face enrolled it says "Not set up on this phone"; on the internal web version it says "Not available on this device". It saves as soon as you toggle it. On a protected send the phone's fingerprint or face sheet opens first, even if the phone is already unlocked; tap "Use payment code" there, or "Use fingerprint or face" on the code screen, to switch. Fingerprint or face data never leaves the phone.
 
 ## StablesAgent help
 

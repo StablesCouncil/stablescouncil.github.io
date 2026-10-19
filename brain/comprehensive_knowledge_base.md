@@ -18,7 +18,7 @@ Minima was chosen because it is the only network where every user runs a full va
 ## 2. The Four Pillars of True Stable Money (The Grok Challenge)
 A resilient stablecoin must achieve four nearly impossible feats. Stables is designed explicitly to survive these exact challenges:
 1. **Perfect Economics:** Flawless peg stability and incentive design. Stables achieves this without fractional reserves by using massive over-collateralization of native Minima, backed by a 3-layer risk absorption structure.
-2. **Battle-Tested Code:** Secure, audited, exploit-resistant software. Stables heavily stress-tests its MiniDapp on Minima mainnet using a dedicated test asset ("Winiwa", practice Minima with no real value), so the software is hardened before any real value is involved. Stables only ever runs on Minima mainnet.
+2. **Battle-Tested Code:** Secure, audited, exploit-resistant software. Stables heavily stress-tests its Android app on Minima mainnet using a dedicated test asset ("Winiwa", practice Minima with no real value), so the software is hardened before any real value is involved. Stables only ever runs on Minima mainnet.
 3. **Massive Adoption:** Stablecoins need deep liquidity. Stables circumvents the "retail crypto" adoption hurdle by targeting Web2, non-crypto users—specifically merchants—as the entry point.
 4. **Surviving Regulation & Crashes:** By building a 100% on-chain, non-custodial, decentralized structure governed by code without a corporate issuer, Stables minimizes regulatory attack vectors while remaining mathematically robust against flash crashes.
 
@@ -140,7 +140,7 @@ Stables Academy is a practical education layer for users and merchants who want 
 
 ## 10. Active development channel: Test
 
-The **Test channel** (`dapp/3-test/`) is the sole active Stables MiniDapp development line. The earlier Demo channel (`dapp/2-demo/`) is frozen.
+The **Test channel** (`dapp/3-test/`) is the sole active Stables development line. It ships to the public as one Android app. The earlier Demo channel (`dapp/2-demo/`) is frozen.
 
 **The first community test is the Stables test release, and it is deliberately narrow.** Everything in sections 1 to 9 above is protocol design. Most of it is **not deployed** and is **not available to a tester**. Do not describe any of it as something a user can do today unless it appears in the list below.
 
@@ -148,7 +148,7 @@ The **Test channel** (`dapp/3-test/`) is the sole active Stables MiniDapp develo
 - **What ships:** the standalone Android app with its own Minima node on the phone, the trustless Winiwa faucet, **xWiniwa mint and burn at par (one for one, both directions)** through the vault covenant, Winiwa and xWiniwa send and receive, honest four-state balance truth, and the support pages.
 - **Trustless flows:** the faucet and the par vault run through KISS VM covenants; the issuer seeded the pools but does not sign user transactions and need not be online.
 - **Deferred out of this test:** USDw and every stablecoin, the fiat display currencies, all trading (Trade, Exchange, Bulk Orders, order books, liquidity), Coverage Funds, market-priced or forward xWiniwa issuance, merchant and Ambassador tools, the On/Off ramp, and Treasury and Council governance surfaces. Deferred means switched off in the build, not cancelled.
-- **Delivery:** the published test artifacts are one **Android app** (v0.0.14.017, GitHub release `StablesCouncil/stables-app` tag `app-v0.0.14.017`, Download on https://stablescouncil.org/payment-app/), the MiniDapp zip, and the web app. The Android app uses the built-in node or Minima Core. Each node is its own wallet. The separate Core-connected app is retired.
+- **Delivery:** the one public product is the **Android app** (v0.0.14.017, GitHub release `StablesCouncil/stables-app` tag `app-v0.0.14.017`, download at https://stablescouncil.org/#download). It has two connection modes: its built-in node, or Minima Core on the same phone. A native desktop app is coming. The MiniDapp is retired (v0.0.14.017 was the last `.mds.zip`), and the web version is for internal testing only, not offered to testers. The Stables card is an experiment that needs a thorough security review by independent experts before it can be considered for production. Each node is its own wallet. The separate Core-connected app is retired.
 - **Production phase:** substituting Winiwa for real Minima and enabling real stablecoin issuance is a future phase that begins only after this work is proven.
 
 For the binding scope statement see **`release_scope_boundary.md`**, and for detail see **`minidapp_test_channel_overview.md`**, both in this brain base.

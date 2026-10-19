@@ -24,4 +24,4 @@ All demo-hardened features (payment protection, QR scanner, live wallet, auto-sa
 - MiniDapp zip: `stablescouncil.org/dapp/latest-version/Stables_v0.0.0.3.45.mds.zip`
 - Android APK: GitHub Releases `app-v0.0.0.3.45`
 
-These demo URLs remain available for historical reference but should not be pointed to as the current Stables build.
+These demo URLs are history only and should not be pointed to as the current Stables build. The MiniDapp has since been retired (the last `.mds.zip` was v0.0.14.017). Today Stables is one Android app, at https://stablescouncil.org/#download.

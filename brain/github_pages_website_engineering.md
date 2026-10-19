@@ -24,7 +24,7 @@ The complete public website and Pages-hosted MiniDapp are authored directly in:
 | Layer | Path | Role |
 |-------|------|------|
 | **Public pages** | **`website/*.html`** | Root routes such as home, Resources, Playing Field, Banking System, Circular Economy, Council pages, and public tools. |
-| **MiniDapp** | **`website/dapp/`** | Showcase, frozen demo, active test, future prod, shared assets, and package surfaces. |
+| **App source (internal)** | **`website/dapp/`** | Showcase, frozen demo, active test, future prod and shared assets. The source of the Android app; the web build here is for the team's internal testing only and is not offered to testers. The MiniDapp package is retired (last `.mds.zip` in v0.0.14.017). |
 | **Shared website assets** | **`website/assets/`**, **`website/brand/`**, **`website/stables.css`** | Shared chrome, behavior, local Inter, and approved brand exports. |
 | **Root deployment files** | **`website/CNAME`**, **`website/favicon.png`**, **`website/stables_agent_avatar.png`** | Files copied to the GitHub Pages repository root. |
 | **Support and publish tooling** | **`1_development/stream_1_app/work/`** | Verifiers, evidence, tasks, dependencies, and the publish checkout. Not website source. |

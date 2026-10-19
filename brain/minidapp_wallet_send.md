@@ -1,10 +1,10 @@
-# Stables MiniDapp — Wallet & Send features
+# Stables app: wallet and send features
 
 ## Sending Minima
 
 The send flow lives in the wallet's Send modal. It supports single and multi-recipient sends.
 
-### How sending reaches the node (standalone app, web, MinimaOS)
+### How sending reaches the node (Android app)
 
 **In the published test release the app is the standalone Android app, and this is the case that
 matters for testers.** It runs its own Minima node on the phone; the wallet, the keys and the node
@@ -12,7 +12,7 @@ data live inside the app. There is no pairing step, no RPC address to enter and 
 user is being asked for one, they are not on the standalone app. The assets a tester can send in this
 test are **Winiwa and xWiniwa only**.
 
-The two cases below are development and parity surfaces, not the test artifact.
+In Minima Core mode, the Android app uses Minima Core on the same phone instead; allow Stables inside Core. The MiniDapp is retired (last `.mds.zip` in v0.0.14.017) and the web version is for internal testing only; neither is offered to testers. The two cases below are kept for the team's internal testing only.
 
 In the **web version**, the app connects to your Minima node over **RPC**, and both reads (balances, block height, activity) and **sends** go over that RPC. Enable the node's RPC with no password (`rpc enable:true`) and a browser can talk to it directly: enter the node's RPC address in Connect (the RPC port is the node's main port + 4) and leave the RPC password blank. (If the node runs RPC with a password, a small local CORS proxy is also needed, because a browser cannot send the auth header to Minima directly.) In the **MinimaOS-installed app**, sends run over MDS in write mode with no extra setup.
 

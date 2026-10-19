@@ -1,13 +1,13 @@
-# Stables MiniDapp, Test channel overview (active development line)
+# Stables test channel overview (active development line)
 
 *For StablesAgent and external AIs: what the Stables test channel is, what works on-chain today, how
-a tester reaches it, and how it relates to the frozen demo and to future production. Rewritten 2026-08-01 for the first Stables test release; updated 2026-09-12 for the coordinated v0.0.11.94 testing release. The binding scope statement is
+a tester reaches it, and how it relates to the frozen demo and to future production. Rewritten 2026-08-01 for the first Stables test release; updated 2026-09-12 for the coordinated v0.0.11.94 testing release; updated 2026-10-19 when the MiniDapp was retired and the Android app became the only public product. The binding scope statement is
 **`release_scope_boundary.md`**; where this document and that one disagree, that one wins.*
 
 ## What the test channel is
 
-The **Test channel** (`dapp/3-test/`, stage `test`) is the **sole active Stables MiniDapp
-development line**. The earlier Demo channel (`dapp/2-demo/`) is frozen. Production, meaning real
+The **Test channel** (`dapp/3-test/`, stage `test`) is the **sole active Stables
+development line**. It ships to the public as one Android app. The earlier Demo channel (`dapp/2-demo/`) is frozen. Production, meaning real
 Minima collateral and real stablecoin issuance, is a future phase that begins only after the test
 work is proven.
 
@@ -58,13 +58,16 @@ later Council decision and a completed handover.
 
 ## How to access the test channel
 
-1. **Android app, v0.0.14.017, testing release 2026-10-19.** One app, file `Stables_v0.0.14.017.apk`. Install from https://stablescouncil.org/payment-app/ or from the GitHub release `StablesCouncil/stables-app`, tag `app-v0.0.14.017`. Verify the SHA-256 published with the release. Install a new version over the old one and never uninstall: the wallet stays on the device.
+1. **Android app, v0.0.14.017, testing release 2026-10-19.** One app, file `Stables_v0.0.14.017.apk`. Install from https://stablescouncil.org/#download or from the GitHub release `StablesCouncil/stables-app`, tag `app-v0.0.14.017`. Verify the SHA-256 published with the release. Install a new version over the old one and never uninstall: the wallet stays on the device.
    The app uses the node built into Stables, or Minima Core on the same phone. On a new install, when Minima Core is present, Stables asks which one to use. Later, Settings and updates, Your node, offers the other one. Each node is its own wallet. Switching moves no funds and restarts Stables. To use Minima Core, allow Stables inside Core. A payment through Minima Core is not claimed for this release.
 2. **The separate Core-connected app is retired.** It is not offered. Someone who still has that old app installs Stables, chooses Minima Core, allows Stables in Core, and can then remove the old app.
-3. **MinimaOS MiniDapp, v0.0.14.017 testing release.** Install or update `Stables_v0.0.14.017.mds.zip` through the MinimaOS hub. It uses that node and its wallet. An existing installation does not update automatically when the download changes.
-4. **Web app, v0.0.14.017 testing release.** Open `https://stablescouncil.org/dapp/3-test/` and connect a node for chain operations. The browser does not contain an embedded node.
+3. **The MiniDapp is retired.** v0.0.14.017 was the last release with a `.mds.zip`. It is no longer offered to testers.
+4. **The web version is for internal testing only.** The team uses it to test; it is not a public product and is not offered to testers.
+5. **A native desktop app is coming.** It has no date yet.
 
-This coordinated update succeeds public v0.0.11.94. The web app, the MiniDapp and the one Android app are listed at https://stablescouncil.org/payment-app/.
+The one public download is the Android app at https://stablescouncil.org/#download.
+
+The Stables card is an experiment. It needs a thorough security review by independent experts before it can be considered for production.
 
 ## App maintenance and update checks in v0.0.11.94
 
@@ -261,10 +264,10 @@ unanswered in silence.
   them. It is an early build: use a dedicated test wallet or one holding only funds you are willing
   to risk, never send real value to test-token addresses, keep recovery details backed up, and
   update by installing over the old version, never by uninstalling.
-- **Where do I download the app?** From stablescouncil.org/payment-app: the standalone Android app
-  (its own Minima node on the phone) or the Minima Core companion (uses the official Minima Core
-  app's node), both from the GitHub release with SHA-256 checksums. The MiniDapp for MinimaOS and
-  the web version come later.
+- **Where do I download the app?** From https://stablescouncil.org/#download. Stables is one
+  Android app with two connection modes: its own built-in Minima node, or Minima Core on the same
+  phone. It is also on the GitHub release with a SHA-256 checksum. The MiniDapp was retired after
+  v0.0.14.017, the web version is for internal testing only, and a native desktop app is coming.
 
 ## Safety framing for users
 

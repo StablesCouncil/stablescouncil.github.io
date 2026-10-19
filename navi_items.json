@@ -2598,8 +2598,8 @@
       ],
       "workState": "active",
       "navigationRole": "later-work",
-      "nextStep": "Publish the MiniDapp package next; then the web build; then the Core companion; re-scope the onion mirror to standalone-first.",
-      "proof": "Standalone Android app published on GitHub Releases and the website. The MiniDapp package (claim, mint, burn, send proven on a MinimaOS hub), the web build and the Minima Core companion (pairing proven) follow one at a time. The onion mirror still serves the demo line.",
+      "nextStep": "Build the desktop app next; keep the onion mirror offering the one Android app.",
+      "proof": "One Android app published on GitHub Releases and the website. It runs its own Minima node, or uses Minima Core on the same phone. The MiniDapp is retired: v0.0.14.017 was the last release with a .mds.zip. The web build is for internal testing only. Desktop app coming. The onion page offers the Android app.",
       "phaseSummary": "Test"
     },
     {
@@ -8272,7 +8272,7 @@
       "kpis": [
         "Final Test token registry connected (V9): done",
         "Faucet, mint, burn, send and receive validated on Minima mainnet: done",
-        "Standalone Android app published; MiniDapp, web and Core companion follow one at a time",
+        "One Android app published (built-in node or Minima Core): done. MiniDapp retired after v0.0.14.017; web build internal only; desktop app coming",
         "Public Test Channel Monitor backed by a live collector: done"
       ],
       "dependencies": [],
@@ -8375,7 +8375,7 @@
       ],
       "workState": "active",
       "navigationRole": "active-work",
-      "nextStep": "Bring the MiniDapp package, the web build and the Minima Core companion to the standalone app's level, one at a time; observe the in-app update path on a real device; keep the monitor and the brain matching each release.",
+      "nextStep": "Build the desktop app; observe the in-app update path on a real device; keep the monitor and the brain matching each release.",
       "proof": "Test stage active. Published as the standalone Android app v0.0.11.53 (GitHub StablesCouncil/stables-app, tag app-v0.0.11.53, 2026-09-04), proven on Minima mainnet with valueless test tokens. The Test Channel Monitor is backed by a live collector reading the Minima archive (faucet claims, vault mints and burns, addresses holding). USDw, coverage and leverage are not part of this test (TV81-D23).",
       "phaseSummary": "Test"
     },

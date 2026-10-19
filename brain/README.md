@@ -34,9 +34,9 @@ To maintain full transparency with the community:
 | **`council_minima_devtools.md`** | Public **Minima dev tools** URLs (`/devtools/`, archive + query subpages), links page rule (single Council row), site chrome expectations. |
 | **`website_presentation.md`** | On-site marketing copy and StablesAgent / **`llms.txt`** links; points to the engineering doc for build and deploy. |
 | **`charter_overview.md`**, **`banking_system_overview.md`**, **`circular_economy_diagram.md`** | Topic-specific public summaries. |
-| **`minidapp_test_channel_overview.md`** | **Current active channel:** Test MiniDapp — on-chain Winiwa/USDw, trustless faucet, covenant mint/burn, access, safety framing. |
+| **`minidapp_test_channel_overview.md`** | **Current active channel:** the test channel, shipped as one Android app (built-in node or Minima Core). On-chain Winiwa and xWiniwa, trustless faucet, covenant mint and burn, access, safety framing. The MiniDapp is retired after v0.0.14.017; the web version is internal testing only. |
 | **`minidapp_demo_overview.md`** | Demo channel — **frozen / superseded** historical reference. |
-| **`minidapp_showcase_app.md`** | Showcase MiniDapp versions, feedback, and in-app behaviour notes. |
+| **`minidapp_showcase_app.md`** | App channels (showcase, demo, test), feedback, and in-app behaviour notes. |
 
 ## Where this knowledge lives (operators)
 

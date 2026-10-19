@@ -1,4 +1,4 @@
-# Stables MiniDapp channels: showcase, demo, test
+# Stables app channels: showcase, demo, test
 
 *For StablesAgent and external AIs when users ask which version of the Stables app is live, which
 one they should open, and what each one proves. Rewritten 2026-08-01. The previous version of this
@@ -14,7 +14,7 @@ Mint chart that is not in the product.*
 | **Test** (`dapp/3-test/`) | **Active** | The sole active development line and the basis of the first community test. Real Winiwa and xWiniwa on Minima mainnet, with **no value**. |
 
 If someone asks which they should use, the answer is the **test channel**, through the
-Android app (v0.0.14.017, one download on https://stablescouncil.org/payment-app/; it uses the built-in node or Minima Core, and the separate Core-connected app is retired). The frozen
+Android app (v0.0.14.017, one download at https://stablescouncil.org/#download; it uses the built-in node or Minima Core, and the separate Core-connected app is retired). The MiniDapp is retired after v0.0.14.017 and the web version is for internal testing only; neither is offered to testers. A native desktop app is coming. The frozen
 demo package `v0.0.0.3.45` is history, not something to point a new tester at.
 
 ## Do not assert a version from memory

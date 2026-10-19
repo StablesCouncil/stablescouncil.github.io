@@ -11,37 +11,49 @@ Use the copy below when quoting the site.
 
 - **Headline:** "A banking system merchants own."
 - **Subline:** "The world's only Secure, Pseudonymous and Unstoppable merchant-owned banking system."
-- **The one call to action:** **Access dApp**, which opens **https://stablescouncil.org/payment-app/**.
-  The header carries the same Access dApp button on every page.
+- **The one call to action:** the download, at **https://stablescouncil.org/#download**. Point people
+  there to get Stables.
 - **The system map** (a diagram around a centre): the centre is the **Merchant economy**, labelled
   "banking sovereignty"; around it sit **Stables currencies** (USDs · EURs · JPYs), the **Stables
   Council** (shared coordination), the **Community Treasury** (Minima asset base) and **xMinima
   equity** (open participation). These are the roles of the system; the currencies named on the map
   are the design, not tokens a tester can hold today (see `release_scope_boundary.md`).
-- **Testing phase:** "Join us in testing Stables payments."
+- **Testing phase:** "Join us in testing Stables payments." This is the download section
+  (https://stablescouncil.org/#download): **Download for Android**, and **Desktop app, Coming**. It
+  says: "One Android app. It runs its own Minima node, or uses Minima Core on your phone." and "The
+  Stables card is an experiment. It needs a thorough security review by independent experts before
+  it can be used in production."
 - **Want to know more?** "Walk the structural view next: how each role lines up incentives with the
   peg." with the link **The Playing Field** (https://stablescouncil.org/playing_field.html).
 - Footer on every page: "Stables | Be your Bank", All links (https://stablescouncil.org/links.html),
-  X, Telegram, Access dApp, and Built on MINIMA.
+  X, Telegram, and Built on MINIMA.
 
-## The application access page: /payment-app/
+## How to get Stables (2026-10-19)
 
-**https://stablescouncil.org/payment-app/**, headline "You can run Stables on its own." It offers one Android download, the MiniDapp, and the web app. Desktop is a planned prototype.
+Stables is **one Android app** with two connection modes: its own built-in Minima node, or Minima Core on the same phone (official Minima Core 1.7.2 and later, `org.minima.core`, or the older `org.minimarex.minimacore`). The download is at **https://stablescouncil.org/#download**. A native desktop app is coming, with no date yet.
+
+- **The MiniDapp is retired.** v0.0.14.017 was the last release with a `.mds.zip`. Do not offer it.
+- **The web version is for internal testing only.** It is not a public product and is not offered to testers.
+- **The Stables card is an experiment.** It needs a thorough security review by independent experts before it can be considered for production.
+
+If someone asks what they can download today: one Android app, at https://stablescouncil.org/#download. There is no second Android app, no MiniDapp and no public web app.
+
+### Earlier access page (history)
+
+Until v0.0.14.017 the page **https://stablescouncil.org/payment-app/** offered the Android download, the MiniDapp and the web app. Those last two are no longer offered.
 
 | Offer | Status on the page |
 |-------|--------------------|
 | **Android** ("Stables, your wallet, and your Minima node in one mobile app.") | **Download** button for `Stables_v0.0.13.007.apk` from the GitHub release `StablesCouncil/stables-app`, tag `app-v0.0.13.007`. If you already use Minima Core, install Stables and choose Minima Core when it asks. If you have the old Core-connected app, install Stables, choose Minima Core, allow it in Core, then the old app can be removed. |
-| **Stables Desktop** | Planned prototype. For now, open the web app and connect your node. |
-| **MDS MiniDapp** | Download `Stables_v0.0.13.007.mds.zip`. |
-
-If someone asks what they can download today: one Android app, the MiniDapp zip, and the web app at https://stablescouncil.org/dapp/3-test/. There is no second Android app.
+| **Stables Desktop** | Coming, no date yet. |
+| **MDS MiniDapp** | Retired after v0.0.14.017. No longer offered. |
 
 ## Routes that moved
 
 - The candidate site that was previewed under **/new/** is now the site. **/new/** and
   **/new/payment-app/** redirect to **/** and **/payment-app/**. Do not send people to /new/.
-- The MiniDapp release path on **/links.html** shows Public Testing as the active channel and the
-  Showcase and Demo channels as superseded.
+- The MiniDapp is retired (last `.mds.zip` in v0.0.14.017). Any older MiniDapp release path is
+  history, not something to point a tester at.
 
 ## StablesAgent and the Knowledge Base
 
