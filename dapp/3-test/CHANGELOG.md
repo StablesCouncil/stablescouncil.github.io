@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.0.14.017] - 2026-10-19
+
 ### Development log since 0.0.14.002
 
 - 2026-10-19 (0.0.14.017): Release build of the 0.0.14 line since 0.0.14.002. The transaction list stops reading the node every 3 seconds when nothing is in play (founder's Graphene through Minima Core: 100 history reads of 52 KB in five minutes): a pending row with no time no longer counts as recent, and the fast pace stops after ten minutes in a row unless the person acted in the last two minutes or a Savings receive waits on the chain.
