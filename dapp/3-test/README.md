@@ -4,12 +4,15 @@ Stables is an experimental, protocol-focused research project built on Winiwa.
 The project explores minting, burning, oracle, and collateralization mechanisms
 for a non-custodial, censorship-resistant monetary system.
 
-## What changed in this version (test v0.0.12.068)
+## What changed in this version (test v0.0.14.017)
 
-This test release is everything finished in the channel since public version .94.
+This test release is everything finished in the channel since v0.0.14.002. The changelog lists each step.
 
-- The public Stables download is one Android app. It uses the built-in node, or Minima Core if you choose that on first open or in Settings and updates, Your node. The separate Core-connected app is no longer offered. Each choice is its own wallet, and switching restarts Stables.
-- The Stables card, payments, Activity, and the pages reviewed since .94 are in this build. The changelog lists each one.
+- The Stables card uses the R2T5 vault: a withdrawal to Savings reaches it about 2 hours after the test Council approves it, the window in which independent guardians can freeze a wrong approval.
+- Stables links to official Minima Core 1.7.2 (`org.minima.core`) or the older Minima Core app, with a choice in Settings and updates, Your node.
+- Card Adds appear in the transaction list at once, wait their turn and retry; a failure stays listed with its reason.
+- A card payment above the receiving phone's limit can be accepted with a fingerprint or the payment code.
+- A built-in node that fell far behind updates and restarts by itself, with one progress line.
 
 ## Status
 

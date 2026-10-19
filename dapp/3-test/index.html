@@ -4911,8 +4911,8 @@
         }
 
         .drawer-version-status--update .drawer-version-status__dot {
-            background: #fbbf24;
-            box-shadow: 0 0 0 4px rgba(251, 191, 36, .15);
+            background: var(--am);
+            box-shadow: 0 0 0 4px color-mix(in srgb, var(--am) 18%, transparent);
         }
 
         .drawer-version-status--checking .drawer-version-status__dot {
@@ -8534,21 +8534,21 @@
     </style>
     <!-- App UI System layer: must load render-blocking AFTER the legacy styles above so
          documented component geometry wins in the cascade without a flash of unstyled UI. -->
-    <link rel="stylesheet" href="assets/app-ui-system.css?v=tv81-1402">
+    <link rel="stylesheet" href="assets/app-ui-system.css?v=tv81-1417">
     <!-- Machinery product adapter: reusable mx-* definitions, loaded after the legacy layer. -->
-    <link rel="stylesheet" href="assets/machinery-app.css?v=tv81-1402">
-    <link rel="stylesheet" href="assets/machinery-ui.css?v=tv81-1402">
-    <link rel="stylesheet" href="assets/machinery-shell.css?v=tv81-1402">
+    <link rel="stylesheet" href="assets/machinery-app.css?v=tv81-1417">
+    <link rel="stylesheet" href="assets/machinery-ui.css?v=tv81-1417">
+    <link rel="stylesheet" href="assets/machinery-shell.css?v=tv81-1417">
     <!-- The wallet legacy adapter loads before the final shared identity so it cannot override R001. -->
-    <link rel="stylesheet" href="assets/machinery-wallet.css?v=tv81-1402">
-    <link rel="stylesheet" href="assets/machinery-language.css?v=tv81-1402">
-    <link rel="stylesheet" href="assets/north-star-adoption.css?v=tv81-1402">
-<link rel="stylesheet" href="assets/page-patterns.css?v=tv81-1402">
+    <link rel="stylesheet" href="assets/machinery-wallet.css?v=tv81-1417">
+    <link rel="stylesheet" href="assets/machinery-language.css?v=tv81-1417">
+    <link rel="stylesheet" href="assets/north-star-adoption.css?v=tv81-1417">
+<link rel="stylesheet" href="assets/page-patterns.css?v=tv81-1417">
     <!-- D029 desktop composition. Gated on the web surface AND 1024px, so the MiniDapp and the
          APK keep the shipped mobile composition at every width. -->
-    <link rel="stylesheet" href="assets/desktop-web.css?v=tv81-1402">
+    <link rel="stylesheet" href="assets/desktop-web.css?v=tv81-1417">
     <!-- The wide window (founder 2026-10-15): the phone design across the full width. Web surface AND 1024px only. -->
-    <link rel="stylesheet" href="assets/desktop-wide.css?v=tv81-1402">
+    <link rel="stylesheet" href="assets/desktop-wide.css?v=tv81-1417">
     <script>
         /* Surface flag for the D029 desktop layer. The preview bootstrap above resolves the local
            preview channel; on the real web it returns early, and the web surface is the default.
@@ -11769,6 +11769,13 @@
                                 class="btn btn-w btn-secondary mx-action"
                                 onclick="stablesAskNodeModeSwitch()">Use Minima Core</button>
                         </div>
+                        <!-- Founder 2026-10-18: two Minima Core apps on the Graphene (official 1.7.2, org.minima.core, and the
+                             older org.minimarex.minimacore). Shown only in the Core mode with both installed. -->
+                        <div class="ui-text-center ui-mt-3" id="stablesCoreAppRow" hidden>
+                            <button id="stablesCoreAppBtn" data-size="compact" data-layout="full" data-role="secondary" type="button"
+                                class="btn btn-w btn-secondary mx-action"
+                                onclick="stablesAskCoreAppSwitch()">Use the other Minima Core</button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -14411,14 +14418,14 @@
                 </svg></span><span class="nlabel">Home</span></button>
     </nav>
 
-    <script src="assets/config/runtime-config.js?v=tv81-1402"></script>
-    <script src="assets/sand-maintenance.js?v=tv81-1402"></script>
-    <script src="assets/testv008-registry.js?v=tv81-1402"></script>
+    <script src="assets/config/runtime-config.js?v=tv81-1417"></script>
+    <script src="assets/sand-maintenance.js?v=tv81-1417"></script>
+    <script src="assets/testv008-registry.js?v=tv81-1417"></script>
     <!-- The budget must exist before anything that reads the node or repaints the wallet. -->
-    <script src="assets/node-read-budget.js?v=tv81-1402"></script>
-    <script src="assets/retail-payment.js?v=tv81-1402"></script>
+    <script src="assets/node-read-budget.js?v=tv81-1417"></script>
+    <script src="assets/retail-payment.js?v=tv81-1417"></script>
     <!-- Exact arithmetic and the app's wording for notes; every error path calls stablesHumanNodeError. -->
-    <script src="assets/notes-manager.js?v=tv81-1402"></script>
+    <script src="assets/notes-manager.js?v=tv81-1417"></script>
     <script>
         (function () {
             var s = String((window.STABLES_CONFIG || {}).APP_STAGE || 'test').trim().toLowerCase();
@@ -14917,11 +14924,11 @@
             setTimeout(function () { window.stablesReadiness.arm(); }, 1200);
         }
     </script>
-    <script src="assets/test-channel-bootstrap.js?v=tv81-1402"></script>
+    <script src="assets/test-channel-bootstrap.js?v=tv81-1417"></script>
     <!-- Minima MiniDapp hub does not inject a global MDS; ship mds.js in the package so hub URLs connect without Connect node. -->
     <script src="assets/lib/mds.js"></script>
-    <script src="assets/hosted-app-packages.js?v=tv81-1402"></script>
-    <script src="assets/hosted-apps-ui.js?v=tv81-1402"></script>
+    <script src="assets/hosted-app-packages.js?v=tv81-1417"></script>
+    <script src="assets/hosted-apps-ui.js?v=tv81-1417"></script>
     <script src="assets/qrcode.js"></script>
     <script src="assets/jsQR.min.js"></script>
     <script>
@@ -24534,8 +24541,45 @@
                 btn.disabled = false;
                 btn.textContent = core ? 'Use the built-in node' : 'Use Minima Core';
             }
+            /* Which Core, when there is a choice: the official app first, the older one named as such. */
+            var apps = stablesCoreApps();
+            var inUse = apps.filter(function (a) { return a.selected; })[0];
+            var other = apps.filter(function (a) { return !a.selected; })[0];
+            if (core && sub && inUse) sub.textContent = 'Stables uses your ' + stablesCoreAppName(inUse) + ' wallet';
+            var row = document.getElementById('stablesCoreAppRow');
+            var otherBtn = document.getElementById('stablesCoreAppBtn');
+            if (row) row.hidden = !(core && other);
+            if (otherBtn && other) { otherBtn.disabled = false; otherBtn.textContent = 'Use ' + stablesCoreAppName(other); }
         }
         window.stablesInitNodeModeSection = stablesInitNodeModeSection;
+
+        function stablesCoreApps() {
+            var n = window.StablesNative;
+            if (!n || typeof n.getCoreApps !== 'function') return [];
+            try { var a = JSON.parse(String(n.getCoreApps() || '[]')); return Array.isArray(a) ? a : []; } catch (_) { return []; }
+        }
+        function stablesCoreAppName(app) {
+            return 'Minima Core ' + String(app.version || '') + (app.official ? '' : ' (older app)');
+        }
+        function stablesAskCoreAppSwitch() {
+            var n = window.StablesNative;
+            var other = stablesCoreApps().filter(function (a) { return !a.selected; })[0];
+            if (!n || typeof n.setCoreApp !== 'function' || !other) return;
+            var name = stablesCoreAppName(other);
+            stablesConfirm({ popup: true, title: 'Use ' + name + '?', confirmText: 'Use ' + name,
+                message: 'Stables restarts and uses the wallet of ' + name + '. Allow Stables there if it asks. Nothing moves between the two wallets.' })
+                .then(function (yes) {
+                    if (!yes) return;
+                    var b = document.getElementById('stablesCoreAppBtn');
+                    var sub = document.getElementById('stablesNodeModeSub');
+                    if (b) b.disabled = true;
+                    if (sub) sub.textContent = 'Restarting Stables…';
+                    var ok = false;
+                    try { ok = !!n.setCoreApp(other.package); } catch (_) { ok = false; }
+                    if (!ok) window.stablesNodeModeSwitchFailed('not-saved');
+                });
+        }
+        window.stablesAskCoreAppSwitch = stablesAskCoreAppSwitch;
 
         function stablesAskNodeModeSwitch() {
             var n = stablesNodeModeBridge();
@@ -24949,6 +24993,10 @@
             var L = window.__STABLES_LIVE_NODE;
             // Banking language only (locked 2026-07-05): no chain jargon in the Network stage
             // copy — the sole blockchain term permitted anywhere is "block height".
+            // An update stops and restarts the node on purpose: never "Not connected" while it runs.
+            if (typeof STABLES_CHAIN_RESYNC_RUNNING !== 'undefined' && STABLES_CHAIN_RESYNC_RUNNING) {
+                return { state: 'syncing', label: 'Updating', detail: 'Your bank is updating. Stables restarts by itself when it is done.' };
+            }
             if (!L || !L.active) {
                 return { state: 'offline', label: 'Not connected', detail: (typeof stablesIsCoreShell === 'function' && stablesIsCoreShell())
                     ? 'Minima Core is not answering. Open Minima Core, then come back to Stables.'
@@ -25239,9 +25287,7 @@
         /* Phase wording for a job that takes minutes. A spinner alone is why people close an app
            halfway through and end up worse off than when they started. */
         function stablesWalletResyncPhaseText(state) {
-            var text = state === 'checking' ? 'Checking the network…'
-                : (state === 'running' ? 'Downloading…'
-                    : (state === 'restarting' ? 'Restarting…' : 'Working…'));
+            var text = 'Updating your bank, step ' + (state === 'checking' ? '1' : (state === 'restarting' ? '3' : '2')) + ' of 3.';
             /* How long the step has taken (founder 2026-10-14, a phone left on "Checking the network" with no way to
                tell whether anything was happening). The native side records when each state began. */
             var since = 0;
@@ -25333,12 +25379,16 @@
             var noteEl = document.getElementById('walletResyncNeededNote');
             var L = window.__STABLES_LIVE_NODE || {};
 
-            if (mode === 'running') {
+            /* One message while it runs (founder 2026-10-18: "now there are 4, resyncing, restarting, Resyncing again and
+               keep Stables open. All this should be one clear message"): the step, out of three, and the minutes. Nothing
+               to tap; the app restarts itself at the end. */
+            var running = mode === 'running';
+            if (bodyEl) bodyEl.hidden = running;
+            if (btn) btn.hidden = running;
+            if (noteEl) noteEl.hidden = running;
+            if (running) {
                 var phase = String(STABLES_CHAIN_RESYNC_LAST_STATE || 'running');
-                if (titleEl) titleEl.textContent = 'Resyncing with the network';
-                if (bodyEl) bodyEl.textContent = stablesWalletResyncPhaseText(phase);
-                if (btn) { btn.textContent = 'Resyncing…'; btn.disabled = true; btn.setAttribute('aria-busy', 'true'); }
-                if (noteEl) noteEl.textContent = 'Keep Stables open.';
+                if (titleEl) titleEl.textContent = stablesWalletResyncPhaseText(phase);
                 return;
             }
 
@@ -31340,7 +31390,11 @@
                credited shows no line at all, because there is nothing to add: it still pulses, so
                settling is still visible. The rule a person learns is simply "a +figure is on top of
                the balance; no +figure means everything is counted". */
-            const overlay = ready ? getVaultIncomingOverlay(ccy) : 0;
+            /* Founder 2026-10-18 supersedes 2026-09-09 for credits already counted: like the card ("the balance should be
+               updated as soon as possible, flashing, and the incoming amount flashing underneath"), a claim or mint shows
+               its +amount under the figure until it is spendable (getVaultSettlingApplied's latch). */
+            let overlay = ready ? getVaultIncomingOverlay(ccy) : 0;
+            if (!(overlay > 0) && ready) overlay = getVaultSettlingApplied(ccy);
             if (!(overlay > 0)) {
                 if (el) { el.hidden = true; el.textContent = ''; }
                 return;
@@ -31383,13 +31437,36 @@
         window.stablesSyncPrimaryCcyPendingDelta = stablesSyncPrimaryCcyPendingDelta;
 
         /** Settling amount that IS already inside the row figure (claims, mints: optimistic hold). */
+        /* Founder 2026-10-18, the Graphene: "+1000 was shown in Winiwa savings but disappeared after a couple of seconds,
+           make sure it stays up until the transaction is settled and the amount fully reflected in the balance". The
+           claim's row stopped counting as settling 7 s after the post (19:56:04 to 19:56:11), when the node first
+           reported the transaction, minutes before the coin could be spent. Once a credit is seen, its +X is latched and
+           stays until the node's balance is wholly spendable (owned equals spendable), at most 20 minutes. */
+        const STABLES_CREDIT_LATCH = {};
         function getVaultSettlingApplied(ccy) {
+            const key = vaultCcyToSettlingOverlayKey(ccy);
+            let fromRows = 0;
             try {
                 const state = typeof window.stablesGetWalletSettlingState === 'function'
                     ? window.stablesGetWalletSettlingState() : null;
-                if (!state || !state.appliedByCcy) return 0;
-                return Number(state.appliedByCcy[vaultCcyToSettlingOverlayKey(ccy)]) || 0;
-            } catch (_) { return 0; }
+                if (state && state.appliedByCcy) fromRows = Number(state.appliedByCcy[key]) || 0;
+            } catch (_) { fromRows = 0; }
+            const now = Date.now();
+            let latch = STABLES_CREDIT_LATCH[key];
+            // An incoming amount not yet in the figure (shown by the overlay itself) is latched too, so that when the node
+            // counts the coin and the overlay drops, its +X carries on here until the coin is spendable.
+            let incoming = 0;
+            try { incoming = Number(getVaultIncomingOverlay(ccy)) || 0; } catch (_) { incoming = 0; }
+            const seen = Math.max(fromRows, incoming);
+            if (seen > 0) {
+                if (!latch || seen > latch.amt) latch = STABLES_CREDIT_LATCH[key] = { amt: seen, at: now };
+                return fromRows;
+            }
+            if (!latch) return 0;
+            const d = getTestTokenBalanceDetailForCcy(ccy);
+            const settled = d && Number.isFinite(d.total) && Number.isFinite(d.available) && (d.total - d.available) <= 1e-8;
+            if (settled || now - latch.at > 20 * 60 * 1000) { delete STABLES_CREDIT_LATCH[key]; return 0; }
+            return latch.amt;
         }
 
         function getVaultBalance(ccy) {
@@ -33169,6 +33246,11 @@
             const times = Object.assign({}, stamped);
             if (p.knownTimes && typeof p.knownTimes === 'object') {
                 Object.keys(p.knownTimes).forEach(function (k) { if (!times[k] && Number(p.knownTimes[k]) > 0) times[k] = Number(p.knownTimes[k]); });
+            }
+            /* A time the chain itself names (the block a Council approval went into) overrides a watched stamp: the phone may
+               have seen that step long after it happened (founder 2026-10-18). */
+            if (p.exactTimes && typeof p.exactTimes === 'object') {
+                Object.keys(p.exactTimes).forEach(function (k) { if (Number(p.exactTimes[k]) > 0) times[k] = Number(p.exactTimes[k]); });
             }
             let activeIdx = -1;
             for (let i = 0; i < steps.length; i++) { if (!steps[i].done) { activeIdx = i; break; } }
@@ -40254,20 +40336,20 @@
         })();
     </script>
     <script src="assets/theme.js"></script>
-    <script src="assets/payment-security.js?v=tv81-1402"></script>
-    <script src="assets/routes/activity-contacts.js?v=tv81-1402"></script>
-    <script src="assets/instant-protocol.js?v=tv81-1402"></script>
-    <script src="assets/instant-chain.js?v=tv81-1402"></script>
-    <script src="assets/instant-route2.js?v=tv81-1402"></script>
-    <script src="assets/instant-balance.js?v=tv81-1402"></script>
-    <script src="assets/savings-ble.js?v=tv81-1402"></script>
+    <script src="assets/payment-security.js?v=tv81-1417"></script>
+    <script src="assets/routes/activity-contacts.js?v=tv81-1417"></script>
+    <script src="assets/instant-protocol.js?v=tv81-1417"></script>
+    <script src="assets/instant-chain.js?v=tv81-1417"></script>
+    <script src="assets/instant-route2.js?v=tv81-1417"></script>
+    <script src="assets/instant-balance.js?v=tv81-1417"></script>
+    <script src="assets/savings-ble.js?v=tv81-1417"></script>
     <script src="assets/routes/trust-retro.js"></script>
-    <script src="assets/mx-dropdown.js?v=tv81-1402"></script>
-    <script src="assets/desktop-web.js?v=tv81-1402"></script>
-    <script src="assets/vendor/stables-sealedbox.js?v=tv81-1402"></script>
-    <script src="assets/chat-onchain.js?v=tv81-1402"></script>
+    <script src="assets/mx-dropdown.js?v=tv81-1417"></script>
+    <script src="assets/desktop-web.js?v=tv81-1417"></script>
+    <script src="assets/vendor/stables-sealedbox.js?v=tv81-1417"></script>
+    <script src="assets/chat-onchain.js?v=tv81-1417"></script>
     <script src="assets/routes/feedback.js"></script>
-    <script src="assets/tx-mirror.js?v=tv81-1402"></script>
+    <script src="assets/tx-mirror.js?v=tv81-1417"></script>
     <script src="assets/tx-radar.js"></script>
 
     <script>
@@ -40432,12 +40514,16 @@
             return out;
         }
 
-        function groupAmount(raw) {
+        /* No more decimals than a coin has (founder 2026-10-18: "in the input box we can enter as many decimals as we
+           want, then it is not possible to click the button; the decimals should be limited to make sure the
+           transaction can go through"). Eight, one atom, unless the field says otherwise (data-max-decimals). */
+        function groupAmount(raw, maxDecimals) {
             var clean = amountCharacters(raw);
             if (!clean) return '';
             var dot = clean.indexOf('.');
             var whole = dot >= 0 ? clean.slice(0, dot) : clean;
-            var decimal = dot >= 0 ? clean.slice(dot) : '';
+            var cap = Number.isFinite(maxDecimals) && maxDecimals >= 0 ? maxDecimals : 8;
+            var decimal = dot >= 0 ? (cap > 0 ? clean.slice(dot, dot + 1 + cap) : '') : '';
             return whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + decimal;
         }
 
@@ -40467,7 +40553,8 @@
             /* A leading "." gains a "0" (".001" reads 0.001). The caret moves past that 0 too: left before
                it, the next digits went in front of the dot and ".001" became 1 (founder 2026-10-12). */
             if (shown.replace(/[^0-9.]/g, '').charAt(0) === '.') { start++; end++; }
-            var display = groupAmount(shown);
+            var capAttr = parseInt(el.getAttribute('data-max-decimals') || '', 10);
+            var display = groupAmount(shown, Number.isFinite(capAttr) ? capAttr : 8);
             el.value = display;
             if (typeof el.setSelectionRange === 'function') {
                 try { el.setSelectionRange(displayOffset(display, start), displayOffset(display, end)); }

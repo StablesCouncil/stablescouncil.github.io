@@ -1855,7 +1855,9 @@
          * earlier testing were still listed. Anything older than ten minutes is the settle sweep's
          * business (it runs every two minutes), not the fast path's. */
         var ts = Number(r && r.ts) || 0;
-        if (ts > 0 && (now - ts) > 600000) continue;
+        // A row with no time cannot prove it is recent (founder's Graphene, 2026-10-18: 100 history reads of 52 KB in
+        // five minutes through Minima Core with nothing in flight). Only a row known to be under ten minutes old counts.
+        if (!(ts > 0) || (now - ts) > 600000) continue;
         return true;
       }
     } catch (_) { /* ignore */ }
@@ -1864,8 +1866,18 @@
   /* Observable, because a cadence you cannot see is a cadence nobody will notice regressing.
      Counts the reads this poll actually issued and the rate it is currently running at. */
   window.__STABLES_TX_POLL__ = { fast: false, polls: 0, lastPollAt: 0, gapMs: POLL_IDLE_MS };
+  /* The fast pace has a ceiling: ten minutes in a row, unless the person acted in the last two minutes or a Savings
+     receive waits on the chain. Pushes (NEWTXPOW, NEWBLOCK) and the settle sweep carry anything slower. */
+  var _fastSince = 0;
   window.stablesRepeatWhileVisible('tx-mirror-poll', function () {
     var fast = paymentInPlay();
+    if (!fast) _fastSince = 0;
+    else if (!_fastSince) _fastSince = Date.now();
+    else if (Date.now() - _fastSince > 600000 && Date.now() - _lastUserActionAt > 120000) {
+      var waiting = false;
+      try { waiting = receiveWaitsOnChain(); } catch (_) { waiting = false; }
+      if (!waiting) fast = false;
+    }
     var gap = fast ? POLL_FAST_MS : pollIdleMs();
     window.__STABLES_TX_POLL__.fast = fast;
     window.__STABLES_TX_POLL__.gapMs = gap;

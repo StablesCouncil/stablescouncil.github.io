@@ -8262,8 +8262,20 @@
       const totalAnyDepth = all
         .filter(function (c) { return coinIsUnspent(c) && !isTestInfraCoinAddress(c.address) && !isTestInfraCoinAddress(c.miniaddress); })
         .reduce(function (s, c) { return s + stablesAtomsOf(c.tokenamount); }, 0);
+      /* Change still coming back counts too (founder 2026-10-18, the Graphene: "clicking 1/2 ends up saying that I
+         don't have enough funds"). An Add of 3 spent the 1,000 coin; its 997 change was unconfirmed for a block or two,
+         the coin list held only the ~500 confirmed, and an Add of 748.5 out of a shown 1,497 was refused. The node's
+         balance counts that change (unconfirmed); when confirmed plus unconfirmed covers the amount, wait for it. */
+      let comingBack = 0;
       if (!(totalAnyDepth >= stablesAtomsOf(target))) {
-        throw new Error('Not enough ' + tokenLabel + ' in your wallet for ' + target + '.' + (stablesFaucetTip('x') ? ' Claim from the faucet or lower the amount.' : ' Lower the amount.'));
+        try {
+          const b = await urgentMdsCmdData('balance tokenid:' + tokenId);
+          const row = (Array.isArray(b) ? b : []).find(function (r) { return r && String(r.tokenid || '').toLowerCase() === String(tokenId).toLowerCase(); });
+          if (row && Number(row.unconfirmed) > 0) comingBack = stablesAtomsOf(row.unconfirmed);
+        } catch (_) { comingBack = 0; }
+      }
+      if (!(totalAnyDepth + comingBack >= stablesAtomsOf(target))) {
+        throw new Error('Not enough ' + tokenLabel + ' in your wallet for ' + String(Number(Number(target).toFixed(6))) + '.' + (stablesFaucetTip('x') ? ' Claim from the faucet or lower the amount.' : ' Lower the amount.'));
       }
       if (Date.now() > deadline) {
         throw new Error('Your ' + tokenLabel + ' from a recent transaction is still settling. Try again in a minute.');

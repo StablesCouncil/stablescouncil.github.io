@@ -512,6 +512,9 @@ body:has(.page.active[data-machinery-lit]) .topbar .brand-sub {
   background: var(--mx-glass) !important;
   box-shadow: none !important;
 }
+/* Founder 2026-10-17: an available update reads clearly on the Home page: a yellow outline over the glass, the same yellow
+   as the update dots (the text colours live in app-ui-system.css). */
+[data-machinery-lit] .drawer-version-status.drawer-version-status--update { border: 1.5px solid var(--am) !important; background: color-mix(in srgb, var(--am) 14%, var(--mx-glass)) !important; }
 
 [data-machinery-lit] .drawer-version-status__version,
 [data-machinery-lit] .app-lang-globe-btn { color: var(--mx-ink) !important; }

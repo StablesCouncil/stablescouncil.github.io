@@ -1570,20 +1570,28 @@ html.stables-self-hosted-node [data-requires-node-connection] { display: none !i
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--c);
+    /* Founder 2026-10-17: the update dot on the Home tab and the one on the Home page are the same yellow. */
+    background: var(--am);
 }
-.drawer-version-status--update {
-    background: var(--c);
-    color: var(--bg);
-    border-color: var(--c);
+/* Founder 2026-10-17: "the new version has to be made much clearer on the home page, the text is not readable". The pill
+   stays dark with a yellow outline; the version in full white and "Get the new version" in bold yellow, normal case. */
+.drawer-version-status.drawer-version-status--update {
+    background: color-mix(in srgb, var(--am) 14%, transparent);
+    color: var(--t);
+    border: 1.5px solid var(--am);
 }
 .drawer-version-status--update .drawer-version-status__state {
-    color: var(--bg);
+    color: var(--am);
     white-space: normal;
-    font-size: 12px;
+    font-size: 14px;
+    letter-spacing: 0;
+    text-transform: none;
 }
-.drawer-version-status--update .drawer-version-status__version { color: var(--bg); }
+.drawer-version-status--update .drawer-version-status__version { color: var(--t); font-size: 13px; }
 
 /* Short screens must allow the entire conversation panel to scroll to its composer. */
 .agent-dlg-panel { overflow-y: auto; }
 .agent-dlg-bubbles { min-height: 0; }
+
+/* The card row while money moves (founder 2026-10-18): the "+X" or "-X" under the figure pulses with it. */
+.ccy-sec-row--settling .ccy-pending-delta { animation: w-total-settle-pulse 1.1s ease-in-out infinite; }

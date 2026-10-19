@@ -59,9 +59,9 @@ window.STABLES_CONFIG = {
    * (vote-vault, per-launch auction); stablecoins born later via pledge→vote→auction→pool. App
    * rebuilt to genesis-6 per V6_APP_WIRING_PLAN.md (slice 1: config + pool reader).
    */
-  APP_BUILD_ITERATION: 2,
+  APP_BUILD_ITERATION: 17,
   /** Date this build was published to GitHub (ISO YYYY-MM-DD). */
-  APP_BUILD_DATE: '2026-10-17',
+  APP_BUILD_DATE: '2026-10-19',
   /**
    * TX radar (dev instrument, test channel only): timestamps send FIRED, node event arrival,
    * and new relevant history rows to measure early incoming notification. true = on-screen
@@ -323,7 +323,7 @@ window.STABLES_CONFIG = {
    * Use the same segment count as APP_BUILD_VERSION so semver-like compare is meaningful.
    */
   APP_UPDATE_POLICY: {
-    latestPublishedVersion: '0.0.14.002',
+    latestPublishedVersion: '0.0.14.017',
     whenUpdateNeeded: {
       criticality: 'low',
       whatChanged:
@@ -338,12 +338,12 @@ window.STABLES_CONFIG = {
    */
   ANDROID_APK_UPDATE: {
     /** SHA-256 and signer fingerprint are filled from the exact signed artifact before publication. */
-    latestVersion: '0.0.14.002',
-    versionCode: 14002,
+    latestVersion: '0.0.14.017',
+    versionCode: 14017,
     expectedPackageName: 'org.stablescouncil.stables',
     downloadUrl:
-      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.14.002/Stables_v0.0.14.002.apk',
-    sha256: 'e3da64ecec2eff4c3f1c48ab1bfca185f7dd6a0c93df34c54138ee0cbc89c528',
+      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.14.017/Stables_v0.0.14.017.apk',
+    sha256: '9586d7303e9f03992eb0cb6f2a91351703808353f8d53dfc289e5d23307b5dcc',
     signerSha256: 'dabb1b2a79b134b6008e6401735d649c140b51f2c4a83eb001b2ffdad5ce5dd4',
     releasesPageUrl: 'https://github.com/StablesCouncil/stables-app/releases',
     /** Dedicated immutable-shape metadata used by hardened standalone builds. */
@@ -381,7 +381,7 @@ window.STABLES_CONFIG = {
   // was showing a phantom "next claim in…" with no recent claim.
   FAUCET_WINIWA_LAST_CLAIM_STORAGE_KEY: 'stables_test_faucet_winiwa_last_claim_tv81',
   /** Public test MiniDapp package download (target URL; not published until Council approves the test zip). */
-  MDS_ZIP_URL: 'https://stablescouncil.org/dapp/latest-version/Stables_v0.0.14.002.mds.zip',
+  MDS_ZIP_URL: 'https://stablescouncil.org/dapp/latest-version/Stables_v0.0.14.017.mds.zip',
   /**
    * Feedback page → Demo roadmap block (More → Feedback). Bump on every publish so reviewers
    * see the current build label, review focus, and next modules. Keep aligned with CHANGELOG.

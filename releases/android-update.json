@@ -2,11 +2,11 @@
   "schema": "org.stablescouncil.android-update.v1",
   "channel": "test",
   "packageName": "org.stablescouncil.stables",
-  "versionName": "0.0.14.002",
-  "versionCode": 14002,
-  "downloadUrl": "https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.14.002/Stables_v0.0.14.002.apk",
-  "sha256": "e3da64ecec2eff4c3f1c48ab1bfca185f7dd6a0c93df34c54138ee0cbc89c528",
+  "versionName": "0.0.14.017",
+  "versionCode": 14017,
+  "downloadUrl": "https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.14.017/Stables_v0.0.14.017.apk",
+  "sha256": "9586d7303e9f03992eb0cb6f2a91351703808353f8d53dfc289e5d23307b5dcc",
   "signerSha256": "dabb1b2a79b134b6008e6401735d649c140b51f2c4a83eb001b2ffdad5ce5dd4",
   "releasesPageUrl": "https://github.com/StablesCouncil/stables-app/releases",
-  "publishedAt": "2026-10-17T00:00:00Z"
+  "publishedAt": "2026-10-19T00:00:00Z"
 }

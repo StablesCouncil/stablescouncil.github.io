@@ -74,15 +74,25 @@
         try { console.log('[route2] watch off: nothing on its way'); } catch (_) { /* no console */ }
         stopWatching(); return;
       }
-      try { scanLoads(); } catch (e) { try { console.log('[route2] scanLoads failed: ' + e); } catch (_) { /* no console */ } }
+      // Adds with a known marker are credited by that one coin; the full scan only when one has none, or every fourth pass.
+      var unmarked = readLoads().some(function (l) { return l.status !== 'credited' && !l.marker; });
+      try { claimMarkers(); } catch (e) { try { console.log('[route2] claimMarkers failed: ' + e); } catch (_) { /* no console */ } }
+      if (unmarked || (markerTick++ % 4) === 0) {
+        try { scanLoads(); } catch (e) { try { console.log('[route2] scanLoads failed: ' + e); } catch (_) { /* no console */ } }
+      }
       try { scanExits(); } catch (e) { try { console.log('[route2] scanExits failed: ' + e); } catch (_) { /* no console */ } }
     }, 15000);
   }
   function stopWatching() { if (watch && typeof watch.stop === 'function') watch.stop(); watch = null; }
   /** True when this phone can hold coins: its TEE makes keys that pass the receivers' rules. */
+  // A yes is kept; a no is asked again after 30 s (a phone that was locked when first asked can hold a card once unlocked).
+  var holdingAt = 0;
   function canHold() {
-    if (holding == null) { var r = call('available'); holding = !!(r && r.ok && r.holding); }
-    return holding;
+    if (holding !== true && Date.now() - holdingAt > 30000) {
+      holdingAt = Date.now();
+      var r = call('available'); holding = !!(r && r.ok && r.holding);
+    }
+    return !!holding;
   }
   function isCoinPayment(text) { return String(text || '').replace(/^\s+/, '').indexOf(HEAD) === 0; }
   function fieldOf(text, label) {
@@ -308,7 +318,7 @@
         // Above what the receiving phone takes (its code says so): nothing signed, nothing paid.
         if (!r.ok && r.code === 'receiver-limit') {
           var e = err(P, 'receiver-limit', /^\d+$/.test(String(r.max)) && String(r.max) !== '0'
-            ? 'Max you can send here: ' + moneyOf(r.max, token, P) + '.' : 'That phone takes no more payments from this phone today.');
+            ? 'That phone takes up to ' + moneyOf(r.max, token, P) + ' per payment. It can accept this one with its fingerprint or code, then hold the phones together again.' : 'That phone takes no more payments from this phone today. It can accept this one with its fingerprint or code.');
           e.max = r.max;
           throw e;
         }
@@ -403,6 +413,17 @@
   var R2T4 = { tag: '0x52325434', gate: '0x084B1E939F497E46EA5107D3B29CB82E8E547FED26EDE45984FC3890352B7CC3',
     script: 'LET gen=0x52325434 LET anchoraddr=0x3DC4BD9985D5924FEFB11C8F97A01AAE5C8D88CA4C270F9FD9889DB4CF45EE60 LET vaultaddr=0xD7B367D654F20186DA21BE1B82BA1B4DF4FE0103CBDF12A50C7E4A7DC88F22B0 ASSERT @INPUT EQ 0 ASSERT STATE(0) EQ gen ASSERT STATE(2) GT 0 ASSERT STATE(5) EQ PREVSTATE(5)+1 ASSERT STATE(6) EQ PREVSTATE(6) ASSERT VERIFYOUT(0 @ADDRESS @AMOUNT @TOKENID TRUE) ASSERT VERIFYOUT(1 anchoraddr 0.00000001 STATE(3) TRUE) RETURN VERIFYOUT(2 vaultaddr STATE(2) STATE(3) FALSE)',
     laneToken: '0xD4F5DD3546F25D327CBF2B6867E193CE5DB6491AC9C65BBDCECACA1A6688063F', atoms: BigInt(1) };
+  /* Generation R2T5 (r2t5/R2T5_DESIGN.md, founder 2026-10-17: "let's implement all this"): the same gate rule, its own
+     gate, anchor (nothing can spend a marker) and vault, an exit record on chain, a Council heartbeat and guardians. New
+     Adds go through this gate; R2T3 money moves over by coin refresh (reason "vault"). */
+  var R2T5 = { tag: '0x52325435', gate: '0x9454F9DEC8C03CBA54179F2808934A3D65B281C42124B5BA567322F2497CE9A6',
+    anchor: '0x8E5DA67BE5D0E8E6E58238702B725F2BDBE982D3B264A55D8FC4A8D648E7071D',
+    vault: '0x5E2497EC163480AEC7C15B43A62FDBED9595FA38ED1DE2ACC4A0A4F0E1287791',
+    request: '0x5BFE17B989A7053037A3E565C42696481952295E20F2EE7128F61713176F907B',
+    script: 'LET gen=0x52325435 LET anchoraddr=0x8E5DA67BE5D0E8E6E58238702B725F2BDBE982D3B264A55D8FC4A8D648E7071D LET vaultaddr=0x5E2497EC163480AEC7C15B43A62FDBED9595FA38ED1DE2ACC4A0A4F0E1287791 ASSERT @INPUT EQ 0 ASSERT STATE(0) EQ gen ASSERT STATE(2) GT 0 ASSERT STATE(5) EQ PREVSTATE(5)+1 ASSERT STATE(6) EQ PREVSTATE(6) ASSERT VERIFYOUT(0 @ADDRESS @AMOUNT @TOKENID TRUE) ASSERT VERIFYOUT(1 anchoraddr 0.00000001 STATE(3) TRUE) RETURN VERIFYOUT(2 vaultaddr STATE(2) STATE(3) FALSE)',
+    laneToken: '0xD4F5DD3546F25D327CBF2B6867E193CE5DB6491AC9C65BBDCECACA1A6688063F', atoms: BigInt(1) };
+  /** The gate new Adds go through (R2T5 since 0.0.14.004), with its own anchor and vault. */
+  var GATE = { tag: R2T5.tag, gate: R2T5.gate, script: R2T5.script, laneToken: R2T5.laneToken, atoms: R2T5.atoms, anchor: R2T5.anchor, vault: R2T5.vault };
   var gateTracked = false;
   var lanesInFlight = {};                       // lane coin id -> when this phone spent it (another lane is used meanwhile)
   function coinState(c) {
@@ -418,9 +439,9 @@
   }
   function ensureGate(node) {
     if (gateTracked) return Promise.resolve();
-    return node.cmd('newscript trackall:true script:"' + R2T4.script + '"', 'Stables card', 60000).then(function (res) {
+    return node.cmd('newscript trackall:true script:"' + GATE.script + '"', 'Stables card', 60000).then(function (res) {
       var got = String((res && (res.address || (res.response && res.response.address))) || '');
-      if (got.toLowerCase() !== R2T4.gate.toLowerCase()) throw new Error('the deposit gate registered at another address: ' + got);
+      if (got.toLowerCase() !== GATE.gate.toLowerCase()) throw new Error('the deposit gate registered at another address: ' + got);
       gateTracked = true;
     });
   }
@@ -428,19 +449,19 @@
   function depositThroughGate(node, token, atoms, keyHash, attempt) {
     var C = W.StablesInstantChainCore;
     if (!C || typeof C.planCommands !== 'function' || typeof node.coinsAt !== 'function' || typeof node.gather !== 'function') return Promise.reject(new Error('the deposit builder is not available'));
-    var id = 'stables_r2t4_add';
+    var id = 'stables_gate_add';
     var amount = BigInt(atoms), now = Date.now();
     Object.keys(lanesInFlight).forEach(function (k) { if (now - lanesInFlight[k] > 10 * 60 * 1000) delete lanesInFlight[k]; });
-    return ensureGate(node).then(function () { return node.coinsAt(R2T4.gate); }).then(function (coins) {
+    return ensureGate(node).then(function () { return node.coinsAt(GATE.gate); }).then(function (coins) {
       var lanes = (coins || []).filter(function (c) {
         var st = coinState(c);
-        return c && !c.spent && String(c.address || '').toLowerCase() === R2T4.gate.toLowerCase() && hex(c.tokenid) === hex(R2T4.laneToken)
+        return c && !c.spent && String(c.address || '').toLowerCase() === GATE.gate.toLowerCase() && hex(c.tokenid) === hex(GATE.laneToken)
           && /^\d+$/.test(st['5'] || '') && /^\d+$/.test(st['6'] || '') && !lanesInFlight[String(c.coinid).toLowerCase()];
       });
       if (!lanes.length) throw new Error('no deposit lane is free right now');
       var lane = lanes[Math.floor(Math.random() * lanes.length)];
       var st = coinState(lane);
-      var need = amount + R2T4.atoms;               // the money and the marker's atom; the lane coin carries itself
+      var need = amount + GATE.atoms;               // the money and the marker's atom; the lane coin carries itself
       return Promise.resolve(node.gather('0x' + token.toUpperCase(), P_dec(need), 'Savings', 1, 4)).then(function (savings) {
         var total = BigInt(0), changeTo = '';
         (savings || []).forEach(function (c) {
@@ -451,12 +472,12 @@
         if (!savings || !savings.length || total < need) throw new Error('Savings does not hold enough');
         var change = total - need;
         var outputs = [
-          { address: R2T4.gate, amount: '0.00000001', tokenid: R2T4.laneToken, storestate: true },
-          { address: R2T3.anchor, amount: '0.00000001', tokenid: '0x' + token.toUpperCase(), storestate: true },
-          { address: R2T3.vault, amount: P_dec(amount), tokenid: '0x' + token.toUpperCase(), storestate: false }];
+          { address: GATE.gate, amount: '0.00000001', tokenid: GATE.laneToken, storestate: true },
+          { address: GATE.anchor, amount: '0.00000001', tokenid: '0x' + token.toUpperCase(), storestate: true },
+          { address: GATE.vault, amount: P_dec(amount), tokenid: '0x' + token.toUpperCase(), storestate: false }];
         if (change > BigInt(0)) outputs.push({ address: changeTo, amount: P_dec(change), tokenid: '0x' + token.toUpperCase(), storestate: false });
         var plan = { inputs: [lane.coinid].concat(savings.map(function (c) { return c.coinid; })), outputs: outputs,
-          state: { 0: R2T4.tag, 1: '0x' + keyHash.toUpperCase(), 2: P_dec(amount), 3: '0x' + token.toUpperCase(),
+          state: { 0: GATE.tag, 1: '0x' + keyHash.toUpperCase(), 2: P_dec(amount), 3: '0x' + token.toUpperCase(),
             5: String(Number(st['5']) + 1), 6: st['6'] } };
         var steps = C.planCommands(id, plan);
         return node.cmd('txndelete id:' + id, 'Stables card', 15000).catch(function () { return null; })
@@ -478,8 +499,12 @@
             try { if (typeof node.noteInFlight === 'function') node.noteInFlight(savings); } catch (_) { /* a convenience */ }
             var a = answerOf(res);
             var txpowid = String(a.txpowid || (a.txpow && a.txpow.txpowid) || (res && res.txpowid) || '');
-            console.log('[route2] Add through the gate: lane ' + st['6'] + ' deposit ' + (Number(st['5']) + 1) + ' posted ' + txpowid);
-            return { status: true, response: { txpowid: txpowid } };
+            // The marker is output 1; its coin id is final before mining (hash of the lane coin and the index), so the
+            // phone credits this Add by reading that one coin, never by listing every marker ever made (0.0.14.005).
+            var outs = (a.body && a.body.txn && a.body.txn.outputs) || (a.txpow && a.txpow.body && a.txpow.body.txn && a.txpow.body.txn.outputs) || [];
+            var marker = outs[1] && String(outs[1].address || '').toLowerCase() === GATE.anchor.toLowerCase() ? String(outs[1].coinid || '') : '';
+            console.log('[route2] Add through the gate: lane ' + st['6'] + ' deposit ' + (Number(st['5']) + 1) + ' posted ' + txpowid + (marker ? ' marker ' + marker.slice(0, 10) : ''));
+            return { status: true, response: { txpowid: txpowid, marker: marker } };
           });
       });
     }).catch(function (e) {
@@ -511,7 +536,7 @@
           var txpowid = String(resp.txpowid || (resp.txpow && resp.txpow.txpowid) || '');
           var list = readLoads();
           list.push({ keyHash: hex(r.keyHash), amount: String(atoms), tokenId: token, ts: Date.now(), status: 'posted', txpowid: txpowid, block: 0, depth: -1,
-            refresh: !!(opts && opts.refresh) });
+            marker: resp.marker ? hex(resp.marker) : '', refresh: !!(opts && opts.refresh) });
           writeLoads(list);
           res.coinLoadEntry = loadEntryOf(list[list.length - 1]);
         }
@@ -577,6 +602,38 @@
   // When the scan started (0: none). An answer that never comes back must not stop every later scan: after a minute
   // the next one goes ahead (founder's Pro, build 112: one scan at start, then none, and the rows stayed Broadcasted).
   var scanning = 0;
+  /* CREDIT BY MARKER (0.0.14.005, founder: "The Graphene phone is much slower than Pro"). An Add whose marker coin id is
+     known is credited by one coin read. The scan below lists every marker at the anchor addresses, which on Minima Core
+     took 4 to 13 seconds a pass; it now runs only when an Add has no known marker, and as a fallback every fourth pass. */
+  var markerTick = 0, claimingMarkers = false;
+  function claimMarkers() {
+    if (claimingMarkers || !canHold()) return Promise.resolve(false);
+    var open = readLoads().filter(function (l) { return l.status !== 'credited' && l.marker; });
+    if (!open.length) return Promise.resolve(false);
+    claimingMarkers = true;
+    var credited = [];
+    return open.reduce(function (pr, l) {
+      return pr.then(function () {
+        return callAsync('claim', { coinId: l.marker }).then(function (r) {
+          if (r && r.ok && r.coinId) credited.push({ keyHash: l.keyHash, coinId: r.coinId });
+          else {
+            var m = String((r && (r.detail || r.message)) || '').match(/has (\d+) confirmations/);
+            if (m) { var list = readLoads(), x = list.filter(function (y) { return y.keyHash === l.keyHash; })[0]; if (x && x.depth !== Number(m[1])) { x.depth = Number(m[1]); writeLoads(list); } }
+          }
+        }).catch(function () { /* not yet on this node: the next pass asks again */ });
+      });
+    }, Promise.resolve()).then(function () {
+      claimingMarkers = false;
+      if (!credited.length) return false;
+      var list = readLoads();
+      credited.forEach(function (c) { var x = list.filter(function (y) { return y.keyHash === c.keyHash; })[0]; if (x) { x.status = 'credited'; x.coinId = hex(c.coinId); x.depth = 3; } });
+      writeLoads(list);
+      try { console.log('[route2] loads: credited ' + credited.length + ' by marker'); } catch (_) { /* no console */ }
+      forgetRequests();
+      if (onChange) { try { onChange(credited); } catch (_) { /* the balance shows at the next refresh */ } }
+      return true;
+    });
+  }
   function scanLoads() {
     if (!canHold()) return Promise.resolve({ ok: false, code: 'unavailable' });
     if (scanning && Date.now() - scanning < 60000) return Promise.resolve({ ok: true, claimed: [] });
@@ -608,7 +665,7 @@
   function exitEntryOf(x) {
     return { id: ROW + 'EXIT-' + x.coinId, kind: 'offload', coinExit: true, amount: String(x.amount), tokenId: x.tokenId, ts: Number(x.ts),
       status: x.status === 'received' ? 'received' : (x.status === 'refused' ? 'restored' : (x.status === 'rejected' ? 'rejected' : 'posted')), txpowid: x.txpowid || '',
-      block: Number(x.block) || 0, depth: Number(x.depth), wait: Number(x.wait) || 20, settled: x.status === 'received', rejectedBlock: Number(x.rejectedBlock) || 0,
+      block: Number(x.block) || 0, depth: Number(x.depth), wait: Number(x.wait) || 20, generation: x.generation || '', approved: !!x.approved, approvedAt: Number(x.approvedAt) || 0, payableFrom: Number(x.payableFrom) || 0, tip: Number(x.tip) || 0, settled: x.status === 'received', rejectedBlock: Number(x.rejectedBlock) || 0,
       note: x.status === 'unposted' ? 'The request to Savings was not sent: ' + (x.error || 'no answer') : '' };
   }
   function exitEntries() { return canHold() ? readExits().filter(function (x) { return !x.refresh; }).map(exitEntryOf) : []; }
@@ -649,12 +706,16 @@
     }).then(function (to) {
       var args = { token: token, amount: String(atoms), payout: hex(to) };
       if (opts && opts.coinId) args.coinId = hex(opts.coinId);
-      var r = call('exit', args);
+      // Asynchronous (0.0.14.006): the engine may read the node first (each coin's vault), which through Minima Core takes
+      // seconds; the page never waits on it (the Graphene was killed twice during a Remove on 0.0.14.005).
+      return callAsync('exit', args);
+    }).then(function (r) {
+      r = r || { ok: false, code: 'unavailable' };
       if (!r.ok && r.code === 'auth') throw err(P, 'auth', 'Confirm with your fingerprint again. Nothing was moved.');
       if (r.ok) refill(token);                                             // within the same fingerprint, never a prompt
       // Money added before this version rests on the old vault, which has no way back yet: said plainly, nothing moved.
       if (!r.ok) throw err(P, r.code === 'pay' ? 'insufficient' : (r.code === 'exit-generation' ? 'exit-generation' : 'unavailable'), r.detail);
-      var x = { coinId: r.coinId, amount: String(r.amount), tokenId: token, payout: hex(to), ts: Date.now(), status: 'signed', wait: r.wait, refresh: !!(opts && opts.refresh) };
+      var x = { coinId: r.coinId, amount: String(r.amount), tokenId: token, payout: hex(r.payout || ''), ts: Date.now(), status: 'signed', wait: r.wait, generation: r.generation || '', refresh: !!(opts && opts.refresh) };
       var list = readExits(); list.push(x); writeExits(list);
       return postPackaged(node, r, token, P.atomsToDecimal(BigInt(r.amount)))
         .then(function (res) {
@@ -684,6 +745,9 @@
       var x = list.filter(function (l) { return hex(l.coinId) === hex(e.coinId) && l.status !== 'received'; })[0];
       if (!x) return;
       if (e.open && (x.block !== Number(e.block) || x.depth !== Number(e.depth))) { x.block = Number(e.block); x.depth = Number(e.depth); x.request = e.request; x.status = 'posted'; changed = true; }
+      // R2T5: approved by the Council (sealed after the request, still open) and the block it pays from.
+      if (e.open && e.approved && (x.payableFrom !== Number(e.payableFrom) || !x.approved || (!x.approvedAt && Number(e.approvedAt) > 0))) { x.approved = true; x.payableFrom = Number(e.payableFrom); if (Number(e.approvedAt) > 0) x.approvedAt = Number(e.approvedAt); changed = true; }
+      if (e.open && e.tip) x.tip = Number(e.tip);
       // The engine reports paid only once the request is spent and the amount sits at the payout address.
       if (!e.open && e.paid) { x.status = 'received'; if (e.paidCoin) x.paidCoin = e.paidCoin; changed = true; }
       if (!e.open && e.rejected && x.status !== 'rejected') { x.status = 'rejected'; changed = true; }
@@ -748,6 +812,8 @@
   function fbLog(m) { try { console.log('[route2] fallback ' + m); } catch (_) { /* no console */ } }
   function postFallback(node, e) {
     if (!node || typeof node.cmd !== 'function') return Promise.resolve(false);
+    // R2T5 requests: the payout needs a seal copy and the exit record's proofs, which the Council or a guardian builds.
+    if (e.generation === 'R2T5') return Promise.resolve(false);
     var tip = Number(e.tip) || 0;
     if (fallbackTried[e.coinId] && tip - fallbackTried[e.coinId] < 1) return Promise.resolve(false);
     fallbackTried[e.coinId] = tip;
@@ -1130,7 +1196,7 @@
   W.StablesRoute2 = { wrap: wrap, useTransport: useTransport, refreshEntries: refreshEntries, showTechnical: showTechnical, setShowTechnical: setShowTechnical,
     PACKAGE_ADDRESS: '0xABA005476D2B3CD7F251B9783E64C124C9670BB358695F04D91B2057BB64CB49', takeCardMessage: takeCardMessage, settleNow: settleNow,
     freshRequest: forgetRequests, QUESTION: QUESTION, ANSWER: ANSWER, toPorts: toPorts, TOUCH_ENDED: TOUCH_ENDED, canHold: canHold, isCoinPayment: isCoinPayment, scanLoads: scanLoads, load: load, loadEntries: loadEntries,
-    remove: remove, exitEntries: exitEntries, strayExitRows: strayExitRows, scanExits: scanExits, postFallback: postFallback, VAULT: VAULT, R2T3: R2T3, HEAD: HEAD,
+    remove: remove, exitEntries: exitEntries, strayExitRows: strayExitRows, scanExits: scanExits, postFallback: postFallback, VAULT: VAULT, R2T3: R2T3, R2T5: R2T5, HEAD: HEAD,
     needsFingerprint: needsFingerprint, fingerprintReason: fingerprintReason, refill: refill, unprotect: unprotect, REFILL_PROMPT: REFILL_PROMPT,
     /** Accept one payment above this card's own receiving limit (this token, up to these atoms, for 2 minutes). */
     acceptOnce: function (tokenId, atoms) { return callAsync('accept', { token: hex(tokenId), amount: String(atoms) }); },

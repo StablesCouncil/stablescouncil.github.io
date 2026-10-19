@@ -268,6 +268,11 @@
     return state.balances && state.balances[tokenId] != null ? state.balances[tokenId] : BigInt(0);
   }
   function money(atoms, cur) { return P.formatAmount(atoms) + ' ' + (cur ? cur.label : ''); }
+  /** One atom short of a round figure reads as the round figure: the Add's one-atom deposit marker, nothing more. */
+  function cleanAtoms(atoms) {
+    var a = BigInt(atoms), step = BigInt(1000000);
+    return (a >= step && (a + BigInt(1)) % step === BigInt(0)) ? a + BigInt(1) : a;
+  }
   function messageOf(e) {
     if (e && e.code === 'insufficient' && e.balance != null && e.amount != null) {
       var cur = currencyForToken(e.tokenId);
@@ -333,7 +338,13 @@
       // Founder 2026-10-16: "the amount should be updated and flashing while in process ... it should reflect already the
       // +1111 winiwa incoming". The figure counts what is on its way to the card (an Add, a card refresh) and the row pulses
       // until it is credited. Replaces the "+X" beside the figure (law 19 as built in 0.0.11.53).
+      // Founder 2026-10-18: "When a transaction is processing the balance should be updated as soon as possible, it should
+      // be flashing and the incoming or outgoing amount should also be flashing underneath." An Add counts the moment it is
+      // posted (+X under the figure), a Remove leaves it the moment it is signed (-X under it); both pulse until settled. A
+      // coin refresh is upkeep the app does by itself: its coin is counted throughout and nothing pulses for it.
       var pending = ready() ? pendingLoadAtoms(cur.tokenId) : BigInt(0);
+      var incoming = ready() ? pendingLoadAtoms(cur.tokenId, true) : BigInt(0);
+      var outgoing = ready() ? pendingExitAtoms(cur.tokenId) : BigInt(0);
       var atoms = balanceOf(cur.tokenId) + pending;
       var tag = row.querySelector('.ccy-sec-tag');
       if (tag) tag.innerHTML = (typeof W.currencyPrefixHtml === 'function' ? W.currencyPrefixHtml(cur.code, mode) : '') + cur.label;
@@ -352,19 +363,42 @@
       // The amount on its way is already in the figure (above); the row pulses until it is credited.
       var right = row.querySelector('.wallet-right');
       var delta = right ? right.querySelector('.ccy-pending-delta') : null;
-      if (delta) { delta.hidden = true; delta.textContent = ''; }
-      row.classList.toggle('ccy-sec-row--settling', pending > BigInt(0));
+      var moving = state.status !== 'unavailable' && (incoming > BigInt(0) || outgoing > BigInt(0));
+      if (moving && right && !delta) {
+        delta = document.createElement('div');
+        delta.className = 'ccy-pending-delta bal-amount';      // bal-amount: under the privacy eye like the figure
+        delta.setAttribute('aria-live', 'polite');
+        right.appendChild(delta);
+      }
+      if (delta) {
+        // Just the figures (law 19): the row names its currency, the pulse says it is moving.
+        var parts = [];
+        if (incoming > BigInt(0)) parts.push('+' + P.formatAmount(incoming));
+        if (outgoing > BigInt(0)) parts.push('−' + P.formatAmount(outgoing));
+        delta.textContent = moving ? parts.join(' ') : '';
+        delta.hidden = !moving;
+      }
+      row.classList.toggle('ccy-sec-row--settling', moving);
     });
   }
 
   /* ---------- loads and moves to Savings in flight (build 103) ---------- */
   /** A load's amount while it waits for its confirmations: posted, not yet credited or failed. */
-  function pendingLoadAtoms(tokenId) {
+  function pendingLoadAtoms(tokenId, addsOnly) {
     var sum = BigInt(0);
     chainEntries.forEach(function (e) {
       if (e.tokenId !== tokenId) return;
-      if (e.coinRefresh) { if (!e.refreshDone) sum += BigInt(e.amount); return; }   // a card refresh: its coin comes back
+      if (e.coinRefresh) { if (!e.refreshDone && !addsOnly) sum += BigInt(e.amount); return; }   // a card refresh: its coin comes back
       if (e.kind === 'load' && e.status === 'posted') sum += BigInt(e.amount);
+    });
+    return sum;
+  }
+  /** A Remove's amount from the moment it is signed until its payout or refusal: it has left the card's figure already. */
+  function pendingExitAtoms(tokenId) {
+    var sum = BigInt(0);
+    chainEntries.forEach(function (e) {
+      if (e.tokenId !== tokenId || !e.coinExit || e.status !== 'posted') return;
+      try { sum += BigInt(e.amount); } catch (_) { /* an unreadable amount is not counted */ }
     });
     return sum;
   }
@@ -619,6 +653,15 @@
   }
   /** A Remove from the card (founder 2026-10-13: "the progress sequence for withdrawals needs to reflect the council
    *  confirmation awaiting or for now the 20 blocks waiting time"): its own four steps, read from its record. */
+  /** When an approved R2T5 Remove reaches Savings: its payable block, at about 50 seconds a block, as a local time. */
+  function r2t5Arrival(e) {
+    if (!e.approved || !(Number(e.payableFrom) > 0)) return 'About 2 hours after the approval, the amount goes to your Savings.';
+    var left = Math.max(0, Number(e.payableFrom) - (Number(e.tip) || 0)) + 2;            // the payout itself takes a block or two
+    if (!(Number(e.tip) > 0)) return 'About 2 hours after the approval, the amount goes to your Savings.';
+    var at = new Date(Date.now() + left * 50000);
+    return left <= 3 ? 'The amount goes to your Savings in the next few minutes.'
+      : 'In your Savings at about ' + at.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + '.';
+  }
   function progressOfExit(e) {
     var block = Number(e.block) || 0, done = e.status === 'received';
     /* Refused by the Council (founder 2026-10-13): the request was spent with only its 1-atom refund. The last step says
@@ -634,21 +677,29 @@
             sub: 'The money did not come back, to the card or to your Savings.' + (at > 0 ? ' Refused in block ' + at.toLocaleString('en-US') + '.' : '') }
         ] };
     }
+    // R2T5: an approval pays about 2 hours later (144 blocks, the guardians' window); its fallback is days away and needs no countdown.
+    var r2t5 = e.generation === 'R2T5';
     var wait = Number(e.wait) || 20, payBlock = block > 0 ? block + wait + 1 : 0;
     var left = block > 0 ? Math.max(0, wait + 1 - (Number(e.depth) || 0)) : 0;
     var steps = [
       { key: 'built', past: 'Signed on this phone', done: true, sub: 'The card’s chip signed it: the money has left the card.' },
       { key: 'sent', present: 'Sending the request', past: 'Request on chain', done: done || block > 0,
         sub: block > 0 ? 'In block ' + block.toLocaleString('en-US') + '.' : 'On the network, on its way into a block.' },
-      { key: 'council', present: 'Waiting for the Council', past: 'Approved', done: done,
+      // R2T5: the step is done once the Council has sealed its approval; the next step says when the money arrives.
+      { key: 'council', present: 'Waiting for the Council', past: 'Approved', done: done || (r2t5 && !!e.approved),
         sub: done ? 'Approved by the Council, or paid after the wait.'
+          : r2t5 && e.approved ? 'Approved by the Council.'
+          : r2t5 ? (block <= 0 ? 'Next: the Council checks it, usually within a few minutes.' : 'The Council checks it, usually within a few minutes.')
           : (block <= 0 ? 'Next: the Council checks it, usually within minutes.'
             : (left > 0 ? 'The Council checks it, usually within minutes. If it stays silent, it pays itself at block ' + payBlock.toLocaleString('en-US') + ': ' + left + (left === 1 ? ' block' : ' blocks') + ' to go.'
               : 'The wait is over: it can be paid now, with or without the Council.')) },
       { key: 'paid', present: 'Waiting for the payout', past: 'In Savings', done: done,
-        sub: done ? 'The amount is in your Savings.' : 'Then the amount goes to your Savings.' }
+        sub: done ? 'The amount is in your Savings.' : r2t5 ? r2t5Arrival(e) : 'Then the amount goes to your Savings.' }
     ];
+    // The approval's time is the Council seal's block time, never the moment this phone noticed it (founder 2026-10-18:
+    // a 4-second approval read 1.5 hours on the Pro).
     return { found: true, failed: false, instantChain: e.kind, steps: steps, knownTimes: { built: Number(e.ts) || 0 },
+      exactTimes: r2t5 && Number(e.approvedAt) > 0 ? { council: Number(e.approvedAt) } : null,
       confirmed: done, built: true, sent: block > 0 || done, mined: block > 0 || done, onChain: block > 0 || done, confirmations: 0, target: 0,
       txid: block > 0 && e.txpowid ? String(e.txpowid) : '', pendingTxnId: '', rowId: e.id, startedAt: Number(e.ts) || 0 };
   }
@@ -665,7 +716,8 @@
     var sub = e.awaitingApproval ? 'Waiting for your approval'
       : (!preparing ? '' : (e.status === 'merging' ? 'Combining coins first' : 'Registering on the chain'));
     // A coin exit: the council approves within minutes; if it stays silent, the request pays itself at the fallback block.
-    if (e.coinExit && e.status === 'posted' && block > 0) sub = 'Approval in minutes, or paid by block ' + (block + (Number(e.wait) || 20) + 1) + ' at the latest';
+    if (e.coinExit && e.status === 'posted' && block > 0) sub = e.generation === 'R2T5' ? 'Paid about 2 hours after the Council approves'
+      : 'Approval in minutes, or paid by block ' + (block + (Number(e.wait) || 20) + 1) + ' at the latest';
     var p = {
       found: true, failed: failed, instantChain: e.kind,
       built: posted || !!e.txnid, sent: posted, mined: posted,
@@ -1103,11 +1155,17 @@
     s.fromShown = dir === 'add' ? savingsFigure(sav) : inst;
     var fromAddr = dir === 'add' ? addFromAtoms(cur) : null;          // D103: the picked Savings address
     if (fromAddr != null) { s.from = fromAddr; s.fromShown = savingsFigure(fromAddr); }
+    // A card Add also sends its one-atom deposit marker: MAX and the check leave room for it (the figure shown is unchanged).
+    if (dir === 'add' && s.from != null && W.StablesRoute2 && W.StablesRoute2.canHold())
+      s.from = s.from > BigInt(1) ? s.from - BigInt(1) : BigInt(0);
     s.toShown = dir === 'add' ? inst : savingsFigure(sav);
     try { s.atoms = P.parseAmount(((el('instantMoveAmt') || {}).value) || ''); } catch (_) { s.atoms = null; }
     var avail = chainAvailability();
     if (!avail.ok) { s.reason = avail.reason; return s; }
     if (s.from != null && s.from <= BigInt(0)) { s.reason = names.from + ' holds no ' + cur.label + '.'; return s; }
+    // MAX shows the round figure (cleanAtoms); one atom over what can move means "all of it" (founder 2026-10-18: "with
+    // 500 xWiniwa, max on card is 499.99999999, this will create interrogations").
+    if (s.atoms != null && s.from != null && s.atoms === s.from + BigInt(1)) s.atoms = s.from;
     if (s.atoms != null && s.from != null && s.atoms > s.from) {
       s.reason = names.from + ' holds ' + money(s.fromShown, cur) + '. This is ' + money(s.atoms, cur) + '.';
       return s;
@@ -1241,7 +1299,9 @@
     var input = el('instantMoveAmt');
     var s = moveState();
     if (!input || !s.cur || s.from == null) return;
-    input.value = s.from > BigInt(0) ? P.atomsToDecimal(s.from) : '';
+    // The figure a person expects (500, not 499.99999999 because of the Add's one-atom marker); moveState takes an
+    // amount one atom over what can move as "all of it".
+    input.value = s.from > BigInt(0) ? P.atomsToDecimal(cleanAtoms(s.from)) : '';
     try { if (typeof W.stablesFormatFinancialAmountInput === 'function') W.stablesFormatFinancialAmountInput(input); } catch (_) { /* ignore */ }
     moveInput();
   }
@@ -1270,21 +1330,74 @@
   }
 
   /** Add on a coin phone: a Savings send into the coin vault naming a fresh coin key; the coins show once it confirms. */
+  /* The Wallet within 2 s (founder 2026-10-18, the Graphene: an Add of 3 took "somewhat like 30 sec before moving back
+     to wallet page"). Of those 21 s, 20.4 were Minima Core 1.7.2 signing (txnsign), the new wallet's first signature;
+     Stables' own part took under a second. Refusals found before signing (the amount, the coins) arrive well within 2 s
+     and still show in place. Past 2 s the person is on the Wallet with Savings already lowered; the card's +X follows
+     when the Add posts, and a late failure gives the Savings figure back and says so. */
+  /* Queued, shown, retried (founder 2026-10-18: "the transactions should be queued and retried and importantly shown in
+     process in the transaction list for the user to keep track; if they then fail it is not dramatic ... communication is
+     key always, never let the user guess"). Two Adds made while a mint's change was still unconfirmed waited 2.5 minutes
+     each, then failed with only a pop-up, and never appeared in the list. Now an Add is a row at once ("Add to Stables
+     card", In process, with what it waits for), the person is back on the Wallet at once, Adds run one after the other,
+     an Add waiting for coins tries again every 20 s for up to 10 minutes, and a final failure stays in the list as
+     Failed with its reason, Savings given back. A posted Add hands over to its own card row. */
+  var COIN_LOAD_RETRY_MS = 20000, COIN_LOAD_PATIENCE_MS = 10 * 60 * 1000;
+  var coinLoadQueue = Promise.resolve();
+  var COIN_LOAD_WAITING = /still settling|not enough|busy|in flight|mempool|spent|unavailable right now|timed? ?out/i;
+  function coinHoldKey(cur) { return String(cur && cur.label || ''); }   // the hold is kept by the display name (Winiwa, xWiniwa)
   function startCoinLoad(atoms, cur) {
-    move.busy = true;
-    drawMove();
-    W.StablesRoute2.load(atoms, cur.tokenId, W.__STABLES_INSTANT_NODE__, P).then(function (res) {
-      if (!res || res.status === false) throw P.InstantError('unavailable', (res && res.error) || 'The send was not accepted. Nothing was moved.');
-      move.busy = false;
-      closeMove();
-      if (typeof W.navigate === 'function') W.navigate('wallet');   // law 1
-      if (res.coinLoadEntry) chainChanged(res.coinLoadEntry);       // the row and the card's "+X" at once
-      try { if (typeof W.stablesApplySavingsSpend === 'function') W.stablesApplySavingsSpend(cur.code, Number(P.atomsToDecimal(atoms)), cur.label); } catch (_) { /* node truth follows */ }
-    }).catch(function (e) {
-      log('coin load not sent: ' + (e && (e.code || e.message)));
-      move.busy = false;
-      if (moveOpen()) { move.reason = (e && e.message) || 'Something went wrong. Nothing was moved.'; drawMove(); }
-    });
+    var started = Date.now();
+    var rowId = 'CARD-ADD-' + started;
+    var amountNum = Number(P.atomsToDecimal(atoms));
+    var d = new Date(started);
+    var dateText = d.toLocaleString('en-GB', { month: 'short', day: '2-digit' }) + ' · '
+      + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+    function row(status, note) {
+      try {
+        if (typeof W.stablesUpsertUserActivityRows === 'function') W.stablesUpsertUserActivityRows([{
+          id: rowId, dir: 'out', icon: '↗', title: 'Add to Stables card', counterparty: 'Stables card',
+          category: cur.label, date: dateText, amt: amountNum, ccy: cur.label, fee: 0, status: status, note: note,
+          directionLabel: 'To your Stables card', localOrigin: true, minimaOnChain: false, cardAddQueued: true, ts: started
+        }]);
+        if (typeof W.renderActivity === 'function') W.renderActivity();
+        if (typeof W.renderWalletRecentActivity === 'function') W.renderWalletRecentActivity();
+      } catch (_) { /* the card still shows it */ }
+    }
+    function dropRow() { try { if (typeof W.stablesRemoveActivityRowById === 'function') W.stablesRemoveActivityRowById(rowId); } catch (_) { /* ignore */ } }
+    function giveBack() {
+      try { if (typeof W.stablesClearOptimisticBalance === 'function') W.stablesClearOptimisticBalance(coinHoldKey(cur)); } catch (_) { /* ignore */ }
+      try { if (typeof W.stablesRefreshLiveNodeBalances === 'function') W.stablesRefreshLiveNodeBalances({ attempts: 3, reason: 'user-action' }); } catch (_) { /* ignore */ }
+      try { if (typeof W.updateGlobalUI === 'function') W.updateGlobalUI(); } catch (_) { /* ignore */ }
+    }
+    // At once: the row, the Wallet, Savings lowered (law 1; the row is the feedback, law 3).
+    row('Pending', 'In process: waiting its turn to be signed.');
+    closeMove();
+    if (typeof W.navigate === 'function') W.navigate('wallet');
+    try { if (typeof W.stablesApplySavingsSpend === 'function') W.stablesApplySavingsSpend(cur.code, amountNum, cur.label); } catch (_) { /* node truth follows */ }
+
+    function attempt(n) {
+      row('Pending', n === 1 ? 'In process: signing and sending.'
+        : 'In process: waiting for coins from your last transaction to settle. Try ' + n + '.');
+      return W.StablesRoute2.load(atoms, cur.tokenId, W.__STABLES_INSTANT_NODE__, P).then(function (res) {
+        if (!res || res.status === false) throw P.InstantError('unavailable', (res && res.error) || 'The send was not accepted.');
+        dropRow();                                                    // the card's own row takes over
+        if (res.coinLoadEntry) chainChanged(res.coinLoadEntry);       // the row and the card's "+X"
+      }, function (e) {
+        var why = String((e && e.message) || (e && e.code) || '');
+        log('coin load try ' + n + ' not sent: ' + why);
+        if (COIN_LOAD_WAITING.test(why) && Date.now() - started < COIN_LOAD_PATIENCE_MS) {
+          row('Pending', 'In process: waiting for coins from your last transaction to settle. Trying again shortly.');
+          return new Promise(function (r) { setTimeout(r, COIN_LOAD_RETRY_MS); }).then(function () { return attempt(n + 1); });
+        }
+        row('Failed', (why ? why.replace(/\s*Lower the amount\.?$/, '') + ' ' : '') + 'Nothing was moved; your Savings are as before.');
+        giveBack();
+        if (typeof W.showToast === 'function') {
+          try { W.showToast('The Add of ' + money(atoms, cur) + ' did not go through. Nothing was moved.', { tone: 'amber' }); } catch (_) { /* the row says it */ }
+        }
+      });
+    }
+    coinLoadQueue = coinLoadQueue.then(function () { return attempt(1); }).catch(function () { /* each Add reports its own outcome */ });
   }
 
   /**
@@ -4016,11 +4129,25 @@
     renderNfc();
   }
   /** The receiver accepts one payment above their own limit: then the phones are held together again. */
+  /* Founder 2026-10-19: "if we are breaching a limit, we just need to be informed and have the possibility to override it
+     with a code or fingerprint". The refusal says which limit; Accept asks the payment code or the fingerprint first. Then
+     the code this phone answers taps with is drawn again, so it carries the accepted amount (R2Wallet.limitOffer): the
+     Pro paying 666.666 was refused "receiver-limit" by its own check against the Graphene's old 500 after the Graphene
+     had accepted it. */
   function acceptOnce(tokenId, atoms, cur) {
+    var S = W.StablesPaymentSecurity;
+    if (S && typeof S.requestPaymentCode === 'function') {
+      try { S.requestPaymentCode(function (ok) { if (ok !== false) acceptOnceConfirmed(tokenId, atoms, cur); }); return; }
+      catch (_) { /* fall through: the native side still bounds it to this amount and two minutes */ }
+    }
+    acceptOnceConfirmed(tokenId, atoms, cur);
+  }
+  function acceptOnceConfirmed(tokenId, atoms, cur) {
     var R = W.StablesRoute2;
     R.acceptOnce(tokenId, atoms).then(function () {
       log('tap: the person accepted ' + money(atoms, cur) + ' once');
       recv.limitBanner = { icon: HOLD, title: 'Accepted ' + money(atoms, cur), body: 'Hold the phones together again.' };
+      try { drawReceiverCode(); } catch (_) { /* the next drawing carries it */ }
       renderNfc();
     }, function (e) {
       log('tap: accept failed: ' + (e && e.message));

@@ -263,6 +263,11 @@
   }
   /** Display text: commas for thousands (UX law 18a), at least two decimals, never more than eight. */
   function formatAmount(atoms) {
+    // One atom short of a round figure is shown as that figure (founder 2026-10-18: "499.99999999 will create
+    // interrogations"): a card Add keeps one atom as its deposit marker. Display only; amounts moved stay exact.
+    var a0 = BigInt(atoms), step = BigInt(1000000), one = BigInt(1);
+    if (a0 >= step && (a0 + one) % step === BigInt(0)) atoms = a0 + one;
+    else if (-a0 >= step && (-a0 + one) % step === BigInt(0)) atoms = a0 - one;
     var dec = atomsToDecimal(atoms);
     var neg = dec.charAt(0) === '-';
     if (neg) dec = dec.slice(1);
