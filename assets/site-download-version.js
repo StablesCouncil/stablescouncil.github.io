@@ -67,12 +67,12 @@
     }
     var androidVersionNodes = document.querySelectorAll('[data-android-test-version]');
     for (var b = 0; b < androidVersionNodes.length; b++) {
-      androidVersionNodes[b].textContent = 'Test channel v' + ANDROID_TEST_VERSION + '. Test tokens only, no value, no risk!';
+      // Only the latest version, nothing else (founder 2026-10-20).
+      androidVersionNodes[b].textContent = 'Latest version v' + ANDROID_TEST_VERSION;
     }
     var testVersionNodes = document.querySelectorAll('[data-test-channel-version]');
     for (var m = 0; m < testVersionNodes.length; m++) {
-      testVersionNodes[m].textContent =
-        'Test channel v' + TEST_CHANNEL_VERSION + '. Test tokens only, no value, no risk!';
+      testVersionNodes[m].textContent = 'Latest version v' + TEST_CHANNEL_VERSION;
     }
   }
 
