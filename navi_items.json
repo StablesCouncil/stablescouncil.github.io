@@ -2717,8 +2717,8 @@
       ],
       "links": [
         {
-          "label": "Test Dapp channel status",
-          "url": "dapp/3-test/"
+          "label": "Test channel: get the Android app",
+          "url": "/#download"
         },
         {
           "label": "Demo Dapp faucet screen",
@@ -2748,8 +2748,8 @@
       "linkGroups": {
         "dapp": [
           {
-            "label": "Test Dapp channel status",
-            "url": "dapp/3-test/"
+            "label": "Test channel: get the Android app",
+            "url": "/#download"
           },
           {
             "label": "Demo Dapp faucet screen",
@@ -3239,8 +3239,8 @@
       ],
       "links": [
         {
-          "label": "Test Dapp channel status",
-          "url": "dapp/3-test/"
+          "label": "Test channel: get the Android app",
+          "url": "/#download"
         },
         {
           "label": "Demo Dapp faucet screen",
@@ -3274,8 +3274,8 @@
       "linkGroups": {
         "dapp": [
           {
-            "label": "Test Dapp channel status",
-            "url": "dapp/3-test/"
+            "label": "Test channel: get the Android app",
+            "url": "/#download"
           },
           {
             "label": "Demo Dapp faucet screen",
@@ -3371,8 +3371,8 @@
       ],
       "links": [
         {
-          "label": "Test Dapp channel status",
-          "url": "dapp/3-test/"
+          "label": "Test channel: get the Android app",
+          "url": "/#download"
         },
         {
           "label": "Demo Dapp faucet screen",
@@ -3406,8 +3406,8 @@
       "linkGroups": {
         "dapp": [
           {
-            "label": "Test Dapp channel status",
-            "url": "dapp/3-test/"
+            "label": "Test channel: get the Android app",
+            "url": "/#download"
           },
           {
             "label": "Demo Dapp faucet screen",
@@ -3503,8 +3503,8 @@
       ],
       "links": [
         {
-          "label": "Test Dapp channel status",
-          "url": "dapp/3-test/"
+          "label": "Test channel: get the Android app",
+          "url": "/#download"
         },
         {
           "label": "Demo Dapp faucet screen",
@@ -3550,8 +3550,8 @@
       "linkGroups": {
         "dapp": [
           {
-            "label": "Test Dapp channel status",
-            "url": "dapp/3-test/"
+            "label": "Test channel: get the Android app",
+            "url": "/#download"
           },
           {
             "label": "Demo Dapp faucet screen",
@@ -8282,8 +8282,8 @@
           "url": "test-dashboard.html"
         },
         {
-          "label": "Test Dapp",
-          "url": "dapp/3-test/"
+          "label": "Test channel: get the Android app",
+          "url": "/#download"
         },
         {
           "label": "Public Dapp release path",
@@ -8305,8 +8305,8 @@
       "linkGroups": {
         "dapp": [
           {
-            "label": "Test Dapp",
-            "url": "dapp/3-test/"
+            "label": "Test channel: get the Android app",
+            "url": "/#download"
           }
         ],
         "charter": [

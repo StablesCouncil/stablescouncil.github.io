@@ -13,16 +13,15 @@
 // One published test version drives the coordinated downloads. DEMO_FROZEN_VERSION
 // labels the historical demo separately; its name must not be used for current links.
 //
-// Bump PUBLISHED_DEMO_VERSION at publication, and keep the zip present at
-// the path below. Elements are marked:
+// Bump PUBLISHED_DEMO_VERSION at publication; it names the published Android APK. The MiniDapp zip is
+// retired (v0.0.14.017 was the last), so the site carries no zip link. Elements are marked:
 //   [data-demo-download]          a Download control, routed to the homepage download section
 //   [data-demo-published-version] shows the demo label, e.g. the links hub badge
-//   [data-test-channel-download]  a real link to the current test package
 //   [data-test-channel-version]   the current test label and its truth statement
 (function () {
-  var PUBLISHED_DEMO_VERSION = '0.0.14.017';
+  var PUBLISHED_DEMO_VERSION = '0.0.14.046';
   var TEST_CHANNEL_VERSION = PUBLISHED_DEMO_VERSION;
-  /* The coordinated test release is three surfaces: one Android app, the MiniDapp and the web app.
+  /* The release is one Android app (built-in node or Minima Core).
      This one version drives the Android download
      ([data-android-test-download="standalone"]) and its version line
      ([data-android-test-version]). */
@@ -33,7 +32,6 @@
   var ANDROID_APK_URL = 'https://github.com/StablesCouncil/stables-app/releases/download/app-v'
     + ANDROID_TEST_VERSION + '/Stables_v' + ANDROID_TEST_VERSION + '.apk';
   var ACCESS_PAGE = '/#download';
-  var TEST_ZIP_PATH = '/dapp/latest-version/Stables_v' + TEST_CHANNEL_VERSION + '.mds.zip';
 
   function apply() {
     // A general Download control opens the homepage section. The Android button is a direct APK link.
@@ -49,11 +47,6 @@
     var versionNodes = document.querySelectorAll('[data-demo-published-version]');
     for (var j = 0; j < versionNodes.length; j++) {
       versionNodes[j].textContent = 'v' + DEMO_FROZEN_VERSION;
-    }
-
-    var testDownloadNodes = document.querySelectorAll('[data-test-channel-download]');
-    for (var k = 0; k < testDownloadNodes.length; k++) {
-      testDownloadNodes[k].setAttribute('href', TEST_ZIP_PATH);
     }
 
     var androidNodes = document.querySelectorAll('[data-android-test-download="standalone"]');

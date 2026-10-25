@@ -6,12 +6,12 @@
 window.STABLES_CONFIG = {
   ANDROID_APK_UPDATE: {
     /** SHA-256 and signer fingerprint are filled from the exact signed artifact before publication. */
-    latestVersion: '0.0.14.017',
-    versionCode: 14017,
+    latestVersion: '0.0.14.046',
+    versionCode: 14046,
     expectedPackageName: 'org.stablescouncil.stables',
     downloadUrl:
-      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.14.017/Stables_v0.0.14.017.apk',
-    sha256: '9586d7303e9f03992eb0cb6f2a91351703808353f8d53dfc289e5d23307b5dcc',
+      'https://github.com/StablesCouncil/stables-app/releases/download/app-v0.0.14.046/Stables_v0.0.14.046.apk',
+    sha256: '49c2ef3fa05e47e3227ac9672c294cae2269102b6c978483049c3855a98f48e2',
     signerSha256: 'dabb1b2a79b134b6008e6401735d649c140b51f2c4a83eb001b2ffdad5ce5dd4',
     releasesPageUrl: 'https://github.com/StablesCouncil/stables-app/releases',
     /** Dedicated immutable-shape metadata used by hardened standalone builds. */

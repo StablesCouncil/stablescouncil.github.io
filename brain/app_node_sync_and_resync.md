@@ -73,6 +73,25 @@ in some minutes, and offers **Repair with Resync**.
 - It **cannot invent history it never had.** App records for activity it never saw, or covenant
   state it was never tracking, do not come back.
 - It is **not** a factory reset, and it does not require your recovery phrase.
+- **Stables card money survives it** (from v0.0.14.046). A resync makes the node forget the small
+  deposit proofs the card's money needs. The phone keeps its own copy of each proof and gives it back
+  to the node once the resync is done; meanwhile the card shows its last figures in a muted tone with
+  "Updating after the resync". This works when the phone ran within about a day before the resync;
+  for older copies the money still comes back to Savings through the Council, which takes longer.
+
+## Resyncing Minima Core (Minima Core mode)
+
+When Stables uses Minima Core on the same phone, the resync happens inside Minima Core, and Stables
+guides it one step at a time, one button per step (from v0.0.14.046):
+
+1. If both Minima Core apps are installed (official Minima Core and the older one), Stables first opens
+   the other one's settings: tap Force stop. Only one can run at a time.
+2. Stables opens Minima Core: tap the three dots at the top right, Resync Node, then Resync Node again.
+   No such menu item? Open Terminal and paste the command Stables copied for you.
+3. When Minima Core asks to restart, Stables opens its settings for Force stop, then starts Minima Core
+   again by itself, reconnects and updates the card.
+
+Android lets no app resync or stop another app, so those taps stay with the person.
 
 ## How to avoid needing it
 
