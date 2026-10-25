@@ -1,42 +1,25 @@
 {
-  "version": "0.2",
-  "generatedAt": "2026-09-10",
-  "builtAt": "2026-09-10",
+  "version": "0.3",
+  "generatedAt": "2026-10-25",
+  "builtAt": "2026-10-25",
   "bcpStatus": "normal-standby",
   "onionAddress": "ipgrd3e7jwwkk7yzay4k2ft3vwbsgig62v6mdaqws3mato64hfwwr7yd.onion",
-  "threeStreams": {
-    "webapp": {
-      "path": "webapp/index.html",
-      "stage": "test",
-      "version": "v0.0.11.88"
-    },
-    "minidapp": {
-      "file": "downloads/Stables_v0.0.11.88.mds.zip",
-      "stage": "test",
-      "version": "v0.0.11.88",
-      "sha256": "98F1B79B1A0635205F5FAC25E21C6586AFA3C116BB2E305352CABA8AF94F4C64",
-      "source": "1_development/stream_1_app/website/dapp/latest-version/Stables_v0.0.11.88.mds.zip"
-    },
+  "streams": {
     "androidApk": {
-      "file": "downloads/Stables_v0.0.11.88.apk",
-      "version": "v0.0.11.88",
-      "sha256": "40473756C22BDA8427316D928CCE618948193AB476488DFC9AD1991482462658",
-      "source": "1_development/stream_1_app/website/dapp/latest-version/Stables_v0.0.11.88.apk"
+      "file": "downloads/Stables_v0.0.14.046.apk",
+      "version": "v0.0.14.046",
+      "sha256": "49C2EF3FA05E47E3227AC9672C294CAE2269102B6C978483049C3855A98F48E2",
+      "source": "1_development/stream_1_app/work/standalone-android/stables-android/dist/Stables_v0.0.14.046.apk"
     },
-    "coreAndroidApk": {
-      "file": "downloads/StablesCore_v0.0.11.88.apk",
-      "version": "v0.0.11.88",
-      "sha256": "ACE662D0B97A9A687358A178463573FC26A417A2A208277C650654E69853479D",
-      "source": "1_development/stream_1_app/website/dapp/latest-version/StablesCore_v0.0.11.88.apk"
+    "desktopApp": {
+      "status": "planned"
     }
   },
-  "approvedMiniDapp": {
-    "file": "downloads/Stables_v0.0.11.88.mds.zip",
-    "stage": "test",
-    "version": "v0.0.11.88",
-    "source": "1_development/stream_1_app/website/dapp/latest-version/Stables_v0.0.11.88.mds.zip"
+  "retired": {
+    "minidapp": "Retired 2026-10-19. The last MiniDapp package was v0.0.14.017.",
+    "webapp": "Retired 2026-10-19. The web app is an internal development preview, not a public download."
   },
-  "essentialsArchive": "downloads/Stables_essentials_2026-09-10.zip",
+  "essentialsArchive": "downloads/Stables_essentials_2026-10-25.zip",
   "files": [
     {
       "path": "assets/brand/master_wordmark_transparent.png",
@@ -79,9 +62,9 @@
       "sha256": "94B538B136AD7EDB5975E52A230154413DFFAD01614D9891D4411648B28FEADA"
     },
     {
-      "path": "downloads/Stables_essentials_2026-09-10.zip",
-      "bytes": 20419517,
-      "sha256": "D73908CEBF9B9F106540D369CE45637E2CE7DB8ED80E2F3C6A1ECF7EB6734C02"
+      "path": "downloads/Stables_essentials_2026-10-25.zip",
+      "bytes": 15156662,
+      "sha256": "279B94D8705453575139FB0F84619FD1F3722C77CC4E9B117CDF912B774BA22D"
     },
     {
       "path": "downloads/Stables_v0.0.0.3.31.apk.sha256",
@@ -99,19 +82,14 @@
       "sha256": "7D25245DDD9F1369F7E5F790A660F3C9917FE2C05BBCEB38BEF62B584062F7F4"
     },
     {
-      "path": "downloads/Stables_v0.0.11.88.apk",
-      "bytes": 23143005,
-      "sha256": "40473756C22BDA8427316D928CCE618948193AB476488DFC9AD1991482462658"
+      "path": "downloads/Stables_v0.0.11.94.apk.sha256",
+      "bytes": 89,
+      "sha256": "902A05C66E49178F4BE18D35696330A1603B52B09C47947D07DBE4956343AD26"
     },
     {
-      "path": "downloads/Stables_v0.0.11.88.mds.zip",
-      "bytes": 2193928,
-      "sha256": "98F1B79B1A0635205F5FAC25E21C6586AFA3C116BB2E305352CABA8AF94F4C64"
-    },
-    {
-      "path": "downloads/StablesCore_v0.0.11.88.apk",
-      "bytes": 6618545,
-      "sha256": "ACE662D0B97A9A687358A178463573FC26A417A2A208277C650654E69853479D"
+      "path": "downloads/Stables_v0.0.14.046.apk",
+      "bytes": 25174033,
+      "sha256": "49C2EF3FA05E47E3227AC9672C294CAE2269102B6C978483049C3855A98F48E2"
     },
     {
       "path": "downloads/VERIFY.txt",
@@ -120,8 +98,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 24278,
-      "sha256": "CF2880B9053625B888F79CD0167637C1A9A67104370460CD745B1DBC023EF74E"
+      "bytes": 21339,
+      "sha256": "7E0DE9AEBF299B876CE7C14663F7F00433C9270E8DEBF66C62C6AC87D174FE5B"
     },
     {
       "path": "knowledge/communication_plan_overview.md",
@@ -145,18 +123,18 @@
     },
     {
       "path": "knowledge/llms.txt",
-      "bytes": 131990,
-      "sha256": "C23D8714BC1F74F969BF42AEBD418708B8B92C4B8ACE52EF5F55B58046AFBBC5"
+      "bytes": 147739,
+      "sha256": "6560C0750D8147779F99A4B9B000C2DD5679A23DC8FB3853630011AD474BBF7A"
     },
     {
       "path": "knowledge/minidapp_demo_overview.md",
-      "bytes": 1577,
-      "sha256": "975284AEE571C1FCFE39E8FA94FA898CA6D23F40DA97418DE5F81C267FF998B0"
+      "bytes": 1702,
+      "sha256": "9252FA5EC7AB2A56DA82435F3B6D520115937A6A76158C2C4A0C33A6A856C7F3"
     },
     {
       "path": "knowledge/minidapp_latest_README.md",
-      "bytes": 2284,
-      "sha256": "F50B7770FE78AB8C03037AB7360705C2B6EBBB9FAD2F332BC1849A0360DF1B61"
+      "bytes": 2529,
+      "sha256": "3534FC558FD57B9B1F3FA24F2953B56A790C4B78B7C354BB98C7B58D067B895B"
     },
     {
       "path": "knowledge/minidapp_showcase_app.md",
@@ -180,13 +158,13 @@
     },
     {
       "path": "knowledge/website_presentation.md",
-      "bytes": 4574,
-      "sha256": "0D6ED8A0851AF3D0BCF4FBAE1863A28EAF385C5620AA4D25C5CCCAB6BE398D96"
+      "bytes": 5227,
+      "sha256": "6B9B87CCEB50A8B220D90C04C32F0FC1D6CA2A264845D337CAE08C0309FCB048"
     },
     {
       "path": "minima_continuity.html",
-      "bytes": 3259,
-      "sha256": "8C7FA25CC68AFD4372C215906A90C4E762D7E5B433CE81B36D563D6FACA19769"
+      "bytes": 3151,
+      "sha256": "EE50623FEA99B355B2F7BE727758467CC06270F798D1265A5610B7819BBA8AF2"
     },
     {
       "path": "notices/index.json",
@@ -217,336 +195,6 @@
       "path": "tools/README_DAILY_MIRROR.txt",
       "bytes": 1387,
       "sha256": "6CE0C68704B9954A2B8B4E8315DFE48E78743BBC79DD638B391017F0A243CF8C"
-    },
-    {
-      "path": "webapp/agent.png",
-      "bytes": 382407,
-      "sha256": "BEF6B9A24FBEA282AFD853DB5D3B35D18E58D2F19924A32245C8E7F96422AC35"
-    },
-    {
-      "path": "webapp/assets/app-ui-system.css",
-      "bytes": 62092,
-      "sha256": "BB76F8D537775A4776C98C08F943BB0DAA72B8ADF69F903227220FE1A99F0556"
-    },
-    {
-      "path": "webapp/assets/app.js",
-      "bytes": 22794,
-      "sha256": "71228ECD6C94F96D3F4E701F0AB63AA82A1F819BDF78581971F17B4D109DAAA3"
-    },
-    {
-      "path": "webapp/assets/bottom-nav.js",
-      "bytes": 718,
-      "sha256": "86400E1791141F519FD0ADE6BAE1B55D6D12A8E7F36CD07E8CABB80A96A30495"
-    },
-    {
-      "path": "webapp/assets/chat-onchain.js",
-      "bytes": 42838,
-      "sha256": "EB174A19B98F672471E47BC1DE176B376A4AD71BD3E6DE7F24647D254F6D1797"
-    },
-    {
-      "path": "webapp/assets/config/genesis3-registry.json",
-      "bytes": 9328,
-      "sha256": "BEC6025B389BBCDE09000B78A09352803BFDD6AF46015A7C8862911373D83ADB"
-    },
-    {
-      "path": "webapp/assets/config/genesis5-registry.json",
-      "bytes": 2322,
-      "sha256": "A3051ADE9419B48F25044A29B87FE210333BF1A37B273F582BEDE8E93D70F790"
-    },
-    {
-      "path": "webapp/assets/config/genesis6-registry.json",
-      "bytes": 2473,
-      "sha256": "4D9B7001687F731F4A825FC33EDDC5DF23475CE7956B4FF41371CB3E4439AA47"
-    },
-    {
-      "path": "webapp/assets/config/runtime-config.js",
-      "bytes": 36982,
-      "sha256": "0AEB0D3961ED028844C94BD47391E92A2438C4A08A1A426AFC7FE051C842D3BF"
-    },
-    {
-      "path": "webapp/assets/config/testv008-v0.0.8.1-app-registry.json",
-      "bytes": 37561,
-      "sha256": "66E02D0FA001E202788A528DD0C05C8E03EB0347DED24310282994F44CA77A48"
-    },
-    {
-      "path": "webapp/assets/constants.js",
-      "bytes": 1787,
-      "sha256": "DD121B1EA47D5A9014F8713AC4D1731CD3267E90B79881B3594EB70290F0005B"
-    },
-    {
-      "path": "webapp/assets/data/feedback_submission.v1.schema.json",
-      "bytes": 2852,
-      "sha256": "A63550339C87DE50F5D2FA7148833715067215A2E825A913BCC5C6EADB963FCC"
-    },
-    {
-      "path": "webapp/assets/desktop-web.css",
-      "bytes": 38780,
-      "sha256": "6B133779B6D54E37DCC23B30E3D77D35BE65EEDC9B0F2581703F1B3446DFF18F"
-    },
-    {
-      "path": "webapp/assets/desktop-web.js",
-      "bytes": 11222,
-      "sha256": "C441094CBDC6EE3FBF571F1BDF1BB42DEE74D88B1BBA17B499F0CED08B71B638"
-    },
-    {
-      "path": "webapp/assets/desktop-webapp.css",
-      "bytes": 20263,
-      "sha256": "3D0022618BF4F8E031B056F8EE77496905651670301C460BD2066FBFCAAB7A5E"
-    },
-    {
-      "path": "webapp/assets/hamburger.js",
-      "bytes": 1662,
-      "sha256": "D642FE9ECA4D2F82E4718756D57DA7B210CE2D958AA8775BA83AED41F75C087A"
-    },
-    {
-      "path": "webapp/assets/jsQR.min.js",
-      "bytes": 130601,
-      "sha256": "1F76F91F977BBA2C44998E9929B3BFFF0E102C90044C4FCFB3EBF52322FE4C99"
-    },
-    {
-      "path": "webapp/assets/lib/mds.js",
-      "bytes": 22352,
-      "sha256": "7E4724C7726371B6C3411F2713003CB02744A4F8C2289474084C0410D246FA25"
-    },
-    {
-      "path": "webapp/assets/libs/qrcode.js",
-      "bytes": 15984,
-      "sha256": "DD4B1DCA41E35DBE42F461AB73F416953D16760E1CF1381F9F19F2A12B56016E"
-    },
-    {
-      "path": "webapp/assets/machinery-app.css",
-      "bytes": 14297,
-      "sha256": "74BBA14DFB23BA07BC22C6495C3B18DBC21A1B85AAA5840B2A084C3BA22C4F0A"
-    },
-    {
-      "path": "webapp/assets/machinery-language.css",
-      "bytes": 46091,
-      "sha256": "25AC06E4A03F84652E7551CD936833A35283AF63C0F2F10C8FB62B93A725EB1B"
-    },
-    {
-      "path": "webapp/assets/machinery-shell.css",
-      "bytes": 1692,
-      "sha256": "F014569219609AA08A8ECA144078F9519AE67BD1499709AD24FB0B11A42DFD38"
-    },
-    {
-      "path": "webapp/assets/machinery-ui.css",
-      "bytes": 12850,
-      "sha256": "287BA1EEE15ED73F9EFD273FA1F137C1BCADEE368B06574EA01B9F8953F401BB"
-    },
-    {
-      "path": "webapp/assets/machinery-wallet.css",
-      "bytes": 27576,
-      "sha256": "57F6BE01E1ED8A566A11861C0EC840D82D424346EFE55325354C61CE56DFD57B"
-    },
-    {
-      "path": "webapp/assets/minima_explorer_favicon.ico",
-      "bytes": 3511,
-      "sha256": "C5915D34A68CBE7555664DEDDF032E461A3EB1189FCDDBA087A4054B44ADD0CC"
-    },
-    {
-      "path": "webapp/assets/minima-integration.js",
-      "bytes": 4280,
-      "sha256": "2E248078E785CA9F0DF2D3C1B96C02B7DB1B34B09A720A87BC9974F4F40AE8E5"
-    },
-    {
-      "path": "webapp/assets/mx-dropdown.js",
-      "bytes": 11636,
-      "sha256": "061203D0708934917D6D0993608AF279D2896E75EDEB881F9FEC16EED5015585"
-    },
-    {
-      "path": "webapp/assets/node-read-budget.js",
-      "bytes": 15734,
-      "sha256": "F4B447A772B5B1222E3178570A4141649F2977617B3031A4CEBFA646C80CB5A7"
-    },
-    {
-      "path": "webapp/assets/north-star-adoption.css",
-      "bytes": 15879,
-      "sha256": "B402830CCEC0A4FECD16B5AB6D662548F49C29471F8AF25EDE0212A7C22F24CE"
-    },
-    {
-      "path": "webapp/assets/notes-manager.js",
-      "bytes": 7629,
-      "sha256": "4499A838B35C0F7AAC6C14D996CBD1C657A8FDD59273B6C355FC852FFA5F2375"
-    },
-    {
-      "path": "webapp/assets/payment-security.js",
-      "bytes": 37620,
-      "sha256": "B6BE9B88B88BF38B6AE3E4F8A8DC6D1D91D0DB1BE9F90B31E0DA299D351F8A1E"
-    },
-    {
-      "path": "webapp/assets/price-oracle.js",
-      "bytes": 8988,
-      "sha256": "25AD52C4AF51E260ACCC4D6283AE501E48B6DBBED3130F7647AA19A398C8C00B"
-    },
-    {
-      "path": "webapp/assets/qrcode.js",
-      "bytes": 15984,
-      "sha256": "DD4B1DCA41E35DBE42F461AB73F416953D16760E1CF1381F9F19F2A12B56016E"
-    },
-    {
-      "path": "webapp/assets/retail-payment.js",
-      "bytes": 6071,
-      "sha256": "D6ACDD6703F08ED855B9E1C782859F39A7EACBD03346B418CAC64A08F13BC33A"
-    },
-    {
-      "path": "webapp/assets/routes/activity-contacts.js",
-      "bytes": 342440,
-      "sha256": "089F6A0923A8ADC65D8A8FFCE3CA53F9D1E9F3FE850F3CB3BFB40EE447CAA4E1"
-    },
-    {
-      "path": "webapp/assets/routes/council.js",
-      "bytes": 6736,
-      "sha256": "DD0F2EDDB30A041F051DEC9A59A43EA601874C8F5D4B2B4C94B331E126824D66"
-    },
-    {
-      "path": "webapp/assets/routes/factory.js",
-      "bytes": 23457,
-      "sha256": "12CC3E1BE57A5EE318D419CC7CBBFC9D8C9551D08599B2ED563AAFAB48E290F2"
-    },
-    {
-      "path": "webapp/assets/routes/faucet.js",
-      "bytes": 4307,
-      "sha256": "A503EC9D098E106694B85D5DEEFBC7B13189A6CA99F43DC38C0437847DE4D352"
-    },
-    {
-      "path": "webapp/assets/routes/feedback.js",
-      "bytes": 29435,
-      "sha256": "AB41AB725957D4DC395446E3D79B55E7EA6898AA7393195F346E83DB25221CD2"
-    },
-    {
-      "path": "webapp/assets/routes/investment.js",
-      "bytes": 5802,
-      "sha256": "5C814B05994D29942B7CD6983BF7B4016768FCF271FB3707BD96B2C780D51FFE"
-    },
-    {
-      "path": "webapp/assets/routes/protocol.js",
-      "bytes": 3842,
-      "sha256": "C86BFA146CA806A878D1B49512E84425F1E9B442BD9AE004E1D180CFDB137A9A"
-    },
-    {
-      "path": "webapp/assets/routes/trust-retro.js",
-      "bytes": 9322,
-      "sha256": "6FCB6EF1F7653906872A37CE215BE82F3DF3B32621BF690C6C02E39C6E1ACAA0"
-    },
-    {
-      "path": "webapp/assets/routes/wallet_new.js",
-      "bytes": 5449,
-      "sha256": "F44F246716B0506701B27C5DD11250BFEC057E9F1C8149F9C3C01A7A22C852EA"
-    },
-    {
-      "path": "webapp/assets/routes/wallet.js",
-      "bytes": 5510,
-      "sha256": "F7C42BA32E55553E4C846B47657A5FB35F391E8899EEF338918358423EB0FC3C"
-    },
-    {
-      "path": "webapp/assets/snippets.js",
-      "bytes": 6227,
-      "sha256": "870B02685677471A26A9CDB8D0D9365CCA4750C078F08B156B76EACF7ACDDD02"
-    },
-    {
-      "path": "webapp/assets/styles.css",
-      "bytes": 8409,
-      "sha256": "EEA94FA7C9E2903EFA0A137658D32E26C17F59CE2C80A4EEC944B9DE6E11E595"
-    },
-    {
-      "path": "webapp/assets/test-channel-bootstrap.js",
-      "bytes": 719002,
-      "sha256": "B2E18305B4962C2A6F444A2D6CA10538C4ED7EE6FA141D5C62BAAE59964C401B"
-    },
-    {
-      "path": "webapp/assets/testv008-registry.js",
-      "bytes": 2656,
-      "sha256": "D1B4E5C27C4651CAB22BA8B34A3D40C305BE99CDA59FD78454C42D9EBD939237"
-    },
-    {
-      "path": "webapp/assets/theme.js",
-      "bytes": 3438,
-      "sha256": "06BC4038F517DD97D3943C75BC66015044907A6CE5E79CC0D43C6473DE2571C9"
-    },
-    {
-      "path": "webapp/assets/tx-mirror.js",
-      "bytes": 92698,
-      "sha256": "3882A8BE9EC0DC490A72515D65147CDF7FD67655B07F3C5E5987BDB354C00DC7"
-    },
-    {
-      "path": "webapp/assets/tx-radar.js",
-      "bytes": 7744,
-      "sha256": "E51C267A600D9DBB17E30D7B9481EDCD0DAA7242B447B2A384794583935E9778"
-    },
-    {
-      "path": "webapp/assets/vendor/stables-sealedbox.js",
-      "bytes": 46310,
-      "sha256": "CE6DD40C14CB99B7B80BB89694D6898A1DDF81E62960EB834E501AA538942567"
-    },
-    {
-      "path": "webapp/CHANGELOG.md",
-      "bytes": 752140,
-      "sha256": "D293681DEE5D7A8B256FBCD4BA7C7F84111F21F29359203C500DA3213FE3B45D"
-    },
-    {
-      "path": "webapp/CHARTER_DEMO_TRACEABILITY.md",
-      "bytes": 13600,
-      "sha256": "E8272AF17AD991993DCD748238BCC0108BBF26468BFA39871F839EB274CCF2EF"
-    },
-    {
-      "path": "webapp/component_browser.html",
-      "bytes": 28445,
-      "sha256": "150C6E4DE36A222E7748234D236C3360E3CE65A748FBA20C16596FE666EB2867"
-    },
-    {
-      "path": "webapp/dapp.conf",
-      "bytes": 372,
-      "sha256": "8B01328AE598B1D71CF06D11FA54D43432127755DC530E61BAED971CEEF78294"
-    },
-    {
-      "path": "webapp/DEMO_RELEASE_REVIEW_PACKAGE.md",
-      "bytes": 3703,
-      "sha256": "FFA2B89CD4AED26A9EF12EBB6743D9372E6E0C4ECA0919E391769BD81FA1A7EF"
-    },
-    {
-      "path": "webapp/index.html",
-      "bytes": 2051739,
-      "sha256": "A867BEF15F33F39F92B5AC0748239AFA8B177999612F80E8D0797415BC5ABD74"
-    },
-    {
-      "path": "webapp/license",
-      "bytes": 729,
-      "sha256": "3842754CED589C3B02716667652160BDF351C1F2E1F27060406D0DAB9915F661"
-    },
-    {
-      "path": "webapp/README.md",
-      "bytes": 2284,
-      "sha256": "F50B7770FE78AB8C03037AB7360705C2B6EBBB9FAD2F332BC1849A0360DF1B61"
-    },
-    {
-      "path": "webapp/shop_sticker_minimal_v0.0.01.png",
-      "bytes": 490316,
-      "sha256": "45F352CA414C6FE3F591A06E7F619A690B07B72BFBA3893CBBC1236798B22979"
-    },
-    {
-      "path": "webapp/stables_icon.png",
-      "bytes": 6434,
-      "sha256": "61A2A5097559E918DC963805DE240235A335014D1F885F588F5420EB6917B168"
-    },
-    {
-      "path": "webapp/template_complete.html",
-      "bytes": 18070,
-      "sha256": "96905A952AA83C5DDF1D8D40689169788088443642026413B58AD2B1AD473A41"
-    },
-    {
-      "path": "webapp/template_demo.html",
-      "bytes": 13396,
-      "sha256": "94865EA2AE28AE9577C0E4CE5217B519AE32CE8DA26A8E79E7CEAD813E3C54EB"
-    },
-    {
-      "path": "webapp/test-mds-connection.html",
-      "bytes": 6802,
-      "sha256": "A4B363296C85CBDC36CECB777E3A38E32B572D67DE7526FBAE8FA4412211F445"
-    },
-    {
-      "path": "webapp/treasure-chest.svg",
-      "bytes": 736,
-      "sha256": "12D8CCEEE6E6E7E81F661A89FC319D62B5C7E0B1AF02777F71FDA3B12798778F"
     }
   ]
 }

@@ -4,19 +4,18 @@ Stables is an experimental, protocol-focused research project built on Winiwa.
 The project explores minting, burning, oracle, and collateralization mechanisms
 for a non-custodial, censorship-resistant monetary system.
 
-## What changed in this version (test v0.0.11.88)
+## What changed in this version (test v0.0.14.046)
 
-This coordinated testing update includes the changes since public version .63:
+One Android app: it uses its built-in node, or Minima Core on the same phone. The MiniDapp is retired; a desktop app is coming. The changelog lists each step since v0.0.14.017.
 
-- Notes grouped by address, retaining amount, age and selection across groups.
-- Four xWiniwa vault lanes and corrected coordination of concurrent mint and burn operations.
-- MAX uses spendable funds; arriving amounts and privacy states are clearer.
-- Retail testing groundwork binds QR payment matching to recipient, token, exact amount and invoice identity, with fresh confirmation checks. Merchant business tools remain deferred from the public test scope.
-- Failed wallet proofs remain retryable, and concurrent receive-address requests share one node read.
-- Standalone Android loads the app while its node starts. Payment actions still require fresh node proof.
-- Clearer recovery errors, rate displays, unavailable-asset states and proof-sharing diagnostics.
-
-This is a testing release. Faster screen loading does not establish cold-payment readiness. End-to-end card-speed checkout and isolated battery efficiency remain under measurement.
+- Pay with the Stables card by scanning a code: the payment goes to the other phone over the Minima network, without Bluetooth, and is confirmed back within about a minute.
+- A payment by code and its settle-up messages are encrypted for the receiver; the screens say plainly what stays visible on the network.
+- A tap that breaks is finished by itself over the network 20 seconds later; a payment that never arrived is refunded.
+- The screen lock while paying: Get paid locks at the first touch, a tap on the panel locks earlier, the slider always opens it; turning the phone no longer restarts a payment.
+- Every coin is always counted in the Wallet total, also while the card reads or money is on its way to Savings.
+- Card money survives a resync of the node: the phone keeps a copy of each deposit proof and gives it back to the node after a resync (proven on Minima Core 1.7.2).
+- Resyncing Minima Core is guided step by step, one button per step; Stables does every step it can by itself.
+- The Stables card is an experiment awaiting an independent security review, and the app says so.
 
 ## Status
 
