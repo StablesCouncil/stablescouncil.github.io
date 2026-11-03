@@ -184,7 +184,7 @@
         <div class="col-t">What keeps it safe and unstoppable</div>
         <ul class="unstop">
           <li><b>Every payout is checked twice.</b> First by the approvers, then by the nine guardians during the 2-hour wait. One guardian stops a wrong payout; three freeze everything.</li>
-          <li><b>If the approvers do not answer, your money still comes back.</b> A request they neither approve nor refuse pays itself after 3 days, with no approver key.</li>
+          <li><b>If the approvers do not answer, the vault still lets your money come back.</b> After 3 days, a request they neither approve nor refuse can be paid with no approver key. The guardian program that will post that payout by itself is being built; until then it is posted by hand.</li>
           <li><b>If the approvers disappear, nobody can steal through their absence.</b> Payouts pause instead of opening. After 3 days of silence, six of the nine guardians install new approvers, and payouts resume.</li>
           <li><b>Known limit, fix designed:</b> if the approvers explicitly refuse a valid request, that money stays locked in the vault. Until the fix, the Stables lab pays it back by hand. The fix lets five guardians overrule a refusal.</li>
         </ul>
@@ -448,7 +448,7 @@
         var h = (Date.now() - Date.parse(seal.t)) / 3600000;
         el("aLast").textContent = ago(seal.t);
         el("aLastSub").innerHTML = 'block <a href="https://explorer.minima.global/transactions/' + esc(seal.txpowid) + '" target="_blank" rel="noopener noreferrer">' + esc(nf(seal.block)) + "</a>";
-        var beat = h <= 7 ? ["On time", "unanswered requests still pay after 3 days"] : h <= 24 ? ["Late", "under a day: the 3-day rule still works"] : ["Silent", "over a day: payouts pause until the approvers return or are replaced"];
+        var beat = h <= 7 ? ["On time", "the 3-day rule stays open"] : h <= 24 ? ["Late", "under a day: the 3-day rule still works"] : ["Silent", "over a day: payouts pause until the approvers return or are replaced"];
         el("aBeat").textContent = beat[0];
         el("aBeat").style.color = h <= 7 ? "var(--savers)" : h <= 24 ? "var(--amber)" : "var(--red)";
         el("aBeatSub").textContent = beat[1];
