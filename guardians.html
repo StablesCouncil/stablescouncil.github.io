@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stables | Card Guardians</title>
+<link rel="icon" type="image/png" href="brand/assets/logo-symbol.png">
+<meta name="description" content="The Stables card's nine guardians: who they are, what they watch, their seats and check-ins on Minima mainnet. Test tokens, no value.">
+<style>
+  /* Same tokens and building blocks as the Test Channel Monitor (test-dashboard.html), so the two read as one site. */
+  :root {
+    --ground: #070a12; --panel: #0e1422; --panel-2: #131a2b; --hair: rgba(255,255,255,.08);
+    --ink: #e9edf6; --muted: #8f9cb3; --dim: #5c6982;
+    --winiwa: #57d6ef; --savers: #34d399; --owners: #a78bfa; --amber: #f5b544; --red: #f26d6d;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 16px 40px rgba(0,0,0,.45);
+    --mono: "SFMono-Regular", ui-monospace, "Cascadia Mono", "Consolas", monospace;
+    --sans: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background:
+      radial-gradient(1200px 700px at 15% -10%, rgba(87,214,239,.08), transparent 60%),
+      radial-gradient(1000px 600px at 100% 0%, rgba(167,139,250,.07), transparent 55%),
+      var(--ground);
+    color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; line-height: 1.5;
+    min-height: 100vh;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 30px 20px 70px; }
+
+  section.top { display: flex; align-items: flex-end; justify-content: space-between; gap: 22px 40px; flex-wrap: wrap; margin: 6px 0 30px; }
+  .brand { display: flex; flex-direction: column; gap: 12px; }
+  h1 { font-size: clamp(24px, 3.6vw, 34px); font-weight: 850; letter-spacing: -.02em; margin: 0; line-height: 1.15; }
+  .status { display: flex; align-items: center; gap: 12px 28px; flex-wrap: wrap; font-size: 13px; line-height: 1.6; color: var(--muted); padding-bottom: 4px; }
+  .status b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .tag { display: inline-flex; align-items: center; gap: 7px; font-weight: 800; color: var(--amber); }
+  .tag .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--amber); }
+
+  .card { background: var(--panel); border: 1px solid var(--hair); border-radius: 16px; box-shadow: var(--shadow); padding: 20px; }
+
+  /* what a guardian is: the page's one explanation */
+  .role p { margin: 0 0 10px; font-size: 15px; line-height: 1.6; color: var(--ink); max-width: 760px; }
+  .role p.quiet { color: var(--muted); font-size: 14px; }
+  .roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 860px) { .roles { grid-template-columns: 1fr; } }
+  .rolecard .r-name { font-size: 18px; font-weight: 850; }
+  .rolecard .r-count { font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--winiwa); margin: 4px 0 10px; }
+  .rolecard p { margin: 0 0 8px; font-size: 14px; line-height: 1.55; color: var(--ink); }
+  .rolecard p.r-today { color: var(--dim); font-size: 13px; margin: 10px 0 0; }
+  .vaultcard { border-color: rgba(87,214,239,.25); }
+  .stat .v .tl { display: block; font-size: 16px; }
+  .role ul.unstop { margin: 0 0 12px; padding: 0 0 0 20px; max-width: 760px; }
+  .role ul.unstop li { margin: 0 0 6px; font-size: 15px; line-height: 1.6; color: var(--ink); }
+  .role p.lead { max-width: none; font-size: 16px; }
+  .role-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 36px; margin: 6px 0 4px; }
+  @media (max-width: 900px) { .role-cols { grid-template-columns: 1fr; } }
+  .role-cols .col-t { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--winiwa); margin: 8px 0 10px; }
+  .role-cols ul.unstop { max-width: none; }
+  .role p.quiet { max-width: none; }
+  .rolecard .r-link { display: inline-block; margin-top: 10px; color: var(--winiwa); font-size: 13px; font-weight: 800; text-decoration: none; }
+  .rolecard .r-link:hover { text-decoration: underline; }
+  .role-links { display: flex; flex-wrap: wrap; gap: 10px 14px; margin-top: 14px; }
+  .role-links a { display: inline-flex; align-items: center; padding: 9px 14px; border: 1px solid var(--hair); border-radius: 999px; color: var(--winiwa); font-size: 13px; font-weight: 800; text-decoration: none; }
+  .role-links a:hover { border-color: rgba(87,214,239,.42); }
+
+  .heroes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 14px 0; }
+  @media (max-width: 720px) { .heroes { grid-template-columns: 1fr; } }
+  .hero .lbl { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .hero .big { font-size: clamp(38px, 6vw, 52px); font-weight: 880; letter-spacing: -.03em; line-height: 1; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .hero .sub { font-size: 13px; color: var(--dim); margin-top: 8px; }
+  .hero.seats .big { color: var(--savers); } .hero.seal .big { color: var(--winiwa); }
+
+  .section-t { font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 26px 0 10px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 14px; }
+  @media (max-width: 460px) { .grid { grid-template-columns: 1fr 1fr; } }
+  .stat { background: var(--panel); border: 1px solid var(--hair); border-radius: 14px; padding: 15px 16px; }
+  .stat .k { font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+  .stat .v { font-size: 21px; font-weight: 850; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .stat .u { font-size: 12px; color: var(--dim); margin-top: 2px; }
+
+  /* one card per guardian, like the Bridge's validators */
+  .guards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; margin-top: 14px; }
+  @media (max-width: 460px) { .guards { grid-template-columns: 1fr; } }
+  .g-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .g-name { font-size: 19px; font-weight: 850; letter-spacing: -.01em; }
+  .g-tag { font-size: 13px; color: var(--dim); margin-top: 2px; }
+  .g-seat { flex: none; font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); padding: 4px 9px; border: 1px solid var(--hair); border-radius: 999px; }
+  .chip { display: inline-flex; align-items: center; gap: 7px; margin-top: 12px; padding: 5px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 800; }
+  .chip .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .chip.ok { background: rgba(52,211,153,.10); color: var(--savers); }
+  .chip.warn { background: rgba(245,181,68,.10); color: var(--amber); }
+  .chip.off { background: rgba(242,109,109,.12); color: var(--red); }
+  .g-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; margin-top: 14px; }
+  .g-row { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .g-row .k { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .g-row .v { font-size: 14px; font-weight: 750; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .g-row .v.dim { color: var(--dim); font-weight: 600; }
+  .g-row .v a { color: var(--winiwa); text-decoration: none; }
+  .g-row .v .tl { display: block; }
+
+  /* the seats as they are set: names and holders, no figures */
+  .seatlist { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-top: 14px; }
+  .seat { border: 1px solid var(--hair); border-radius: 14px; padding: 14px 16px; background: transparent; }
+  .seat .g-name { font-size: 17px; }
+  .seat .s-meta { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+  .seat .s-meta b { color: var(--ink); font-weight: 750; }
+
+  .keylist { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px 12px; margin-top: 14px; }
+  .keyitem { display: flex; align-items: baseline; gap: 10px; border: 1px solid var(--hair); border-radius: 10px; padding: 9px 12px; }
+  .keyitem .n { font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); flex: none; }
+  .keyitem .mono { color: var(--ink); }
+
+  /* live: everything that changes, in its own panel, marked as such */
+  .live { margin-top: 34px; padding: 22px 20px 24px; border: 1px solid rgba(52,211,153,.30); border-radius: 18px; background: linear-gradient(180deg, rgba(52,211,153,.06), rgba(52,211,153,0) 220px); }
+  .live-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px; }
+  .live-t { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 22px; font-weight: 850; letter-spacing: -.01em; color: var(--ink); }
+  .live-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--savers); box-shadow: 0 0 0 0 rgba(52,211,153,.6); animation: livepulse 2.4s ease-out infinite; }
+  @keyframes livepulse { 0% { box-shadow: 0 0 0 0 rgba(52,211,153,.55); } 70% { box-shadow: 0 0 0 9px rgba(52,211,153,0); } 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0); } }
+  @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+  .live-sub { margin: 6px 0 0; font-size: 13.5px; color: var(--muted); line-height: 1.55; max-width: 720px; }
+  .live-when { display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
+  .live-when .k { font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+  .live .section-t { color: var(--savers); }
+  .g-src { font-size: 11.5px; color: var(--dim); margin-top: 12px; }
+  .g-src a, .stat .u a { color: var(--winiwa); text-decoration: none; font-weight: 700; }
+  @media (max-width: 460px) { .live { padding: 18px 14px 20px; } }
+
+  .note { font-size: 11.5px; color: var(--dim); margin-top: 14px; line-height: 1.5; max-width: 760px; }
+  .note a { color: var(--winiwa); text-decoration: none; font-weight: 700; }
+  .mono { font-family: var(--mono); font-size: 11.5px; overflow-wrap: anywhere; }
+  .err { background: rgba(242,109,109,.1); border: 1px solid rgba(242,109,109,.3); color: #fca5a5; border-radius: 12px; padding: 14px 16px; font-size: 13px; margin-top: 14px; display: none; }
+</style>
+<link rel="stylesheet" href="stables.css">
+<link rel="stylesheet" href="assets/stables-visual-authority.css">
+<link rel="stylesheet" href="assets/site-map-nav.css">
+  <link rel="stylesheet" href="/assets/secondary-page-chrome.css">
+<!-- Stables social card -->
+  <link rel="canonical" href="https://stablescouncil.org/guardians.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Stables">
+  <meta property="og:url" content="https://stablescouncil.org/guardians.html">
+  <meta property="og:title" content="Stables | Card Guardians">
+  <meta property="og:description" content="The Stables card's nine guardians: who they are, what they watch, their seats and check-ins on Minima mainnet. Test tokens, no value.">
+  <meta property="og:image" content="https://stablescouncil.org/brand/assets/stables-social-card-v1.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1774">
+  <meta property="og:image:height" content="887">
+  <meta property="og:image:alt" content="Stables logo and wordmark, Be your bank, on a dark petrol background">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Stables | Card Guardians">
+  <meta name="twitter:description" content="The Stables card's nine guardians: who they are, what they watch, their seats and check-ins on Minima mainnet. Test tokens, no value.">
+  <meta name="twitter:image" content="https://stablescouncil.org/brand/assets/stables-social-card-v1.png">
+  <meta name="twitter:image:alt" content="Stables logo and wordmark, Be your bank, on a dark petrol background">
+<!-- /Stables social card -->
+</head>
+<body class="d028-page north-star-website-page north-star-tool-page secondary-chrome-page">
+<header class="secondary-chrome-header" role="banner">
+  <div class="secondary-chrome-header__inner secondary-chrome-frame">
+    <a class="secondary-chrome-brand" href="/" aria-label="Stables homepage">
+      <img src="/brand/assets/logo-symbol.png" width="44" height="44" alt="">
+      <span>
+        <span class="secondary-chrome-brand__name">STABLES</span>
+        <span class="secondary-chrome-brand__role">Be your bank</span>
+      </span>
+    </a>
+  </div>
+</header>
+<div class="wrap">
+  <section class="top" aria-labelledby="guardians-title">
+    <div class="brand">
+      <h1 id="guardians-title">Card Guardians</h1>
+    </div>
+    <div class="status">
+      <span class="tag"><span class="dot"></span> Test tokens, lab keys</span>
+      <span>Vault <b id="vaultGen">R2T5</b></span>
+    </div>
+  </section>
+
+  <!-- the role, in a few lines; the full documentation lives on GitHub -->
+  <div class="card role" id="role">
+    <p class="lead">The money behind every Stables card sits in a vault on Minima. Guardians are independent programs, each run by a different person with their own key, that watch that vault day and night. <b>Any one guardian can stop a payout it finds wrong.</b> Guardians can never pay anyone.</p>
+    <div class="role-cols">
+      <div>
+        <div class="col-t">When everything works</div>
+        <ul class="unstop">
+          <li><b>Paying needs no one.</b> Card money moves from phone to phone by touch, offline, with no server.</li>
+          <li><b>Your money is back in Savings within hours.</b> You ask from the app, the approvers check and approve, and after a 2-hour safety wait the vault pays. Recent requests took about 2 to 4 hours in all.</li>
+          <li><b>Nobody holds the money.</b> The vault is a script with no key. It pays only by its own rules, so neither the approvers, nor the guardians, nor the Stables lab can take money out.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="col-t">What keeps it safe and unstoppable</div>
+        <ul class="unstop">
+          <li><b>Every payout is checked twice.</b> First by the approvers, then by the nine guardians during the 2-hour wait. One guardian stops a wrong payout; three freeze everything.</li>
+          <li><b>If the approvers do not answer, your money still comes back.</b> A request they neither approve nor refuse pays itself after 3 days, with no approver key.</li>
+          <li><b>If the approvers disappear, nobody can steal through their absence.</b> Payouts pause instead of opening. After 3 days of silence, six of the nine guardians install new approvers, and payouts resume.</li>
+          <li><b>Known limit, fix designed:</b> if the approvers explicitly refuse a valid request, that money stays locked in the vault. Until the fix, the Stables lab pays it back by hand. The fix lets five guardians overrule a refusal.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="quiet">All of this is written in the vault's script on Minima, not in a server.</p>
+    <p class="quiet">Today every seat holds a key kept by the Stables lab, and the tokens have no value. The first independent guardians will run on a phone, a personal computer and a separate server, none of them the approvers' server.</p>
+    <div class="role-links">
+      <a href="https://github.com/StablesCouncil/stables-card-evidence/blob/main/docs/GUARDIANS.md" target="_blank" rel="noopener noreferrer">Full guardian documentation on GitHub</a>
+      <a href="https://github.com/StablesCouncil/stables-card-evidence/blob/main/docs/SECURITY_PLAN.md" target="_blank" rel="noopener noreferrer">Security plan</a>
+      <a href="https://github.com/StablesCouncil/stables-card-evidence/tree/main/programs" target="_blank" rel="noopener noreferrer">The guardians' and approvers' code, test version 0.1</a>
+      <a href="/test-dashboard.html#card">The Stables card, live figures</a>
+    </div>
+  </div>
+
+  <div class="section-t" id="structure">Who does what</div>
+  <div class="roles">
+    <div class="card rolecard vaultcard">
+      <div class="r-name">The vault</div>
+      <div class="r-count">A script on Minima, no key</div>
+      <p><b>Holds:</b> the money behind every card.</p>
+      <p><b>Pays only:</b> an approved request once its wait is over, or a request left unanswered for 3 days.</p>
+      <p class="r-today">Nobody can change it or take money out any other way.</p>
+      <a class="r-link" href="https://explorer.minima.global/address/0x5E2497EC163480AEC7C15B43A62FDBED9595FA38ED1DE2ACC4A0A4F0E1287791" target="_blank" rel="noopener noreferrer">See the vault on the Minima explorer</a>
+    </div>
+    <div class="card rolecard">
+      <div class="r-name">The approvers</div>
+      <div class="r-count">11 keys, 7 must sign</div>
+      <p><b>Do:</b> approve or refuse each request to move card money back to Savings, and confirm every 6 hours that they are alive.</p>
+      <p><b>Cannot:</b> pay before the wait, lift a freeze, or choose the guardians.</p>
+      <p class="r-today">Today: one server, held by the Stables lab.</p>
+      <a class="r-link" href="https://github.com/StablesCouncil/stables-card-evidence/tree/main/programs/approvers" target="_blank" rel="noopener noreferrer">The approvers' program on GitHub (test version 0.1)</a>
+    </div>
+    <div class="card rolecard">
+      <div class="r-name">The guardians</div>
+      <div class="r-count">9 seats</div>
+      <p><b>Do:</b> re-check every request and every approval. 1 stops a payout, 3 freeze all, 5 lift a freeze, 6 replace silent approvers.</p>
+      <p><b>Cannot:</b> pay anyone or approve anything.</p>
+      <p class="r-today">Today: every seat held by the Stables lab.</p>
+      <a class="r-link" href="https://github.com/StablesCouncil/stables-card-evidence/tree/main/programs/guardian" target="_blank" rel="noopener noreferrer">The guardian program on GitHub (test version 0.1)</a>
+    </div>
+  </div>
+  <p class="note">The rules these groups follow are written into the vault when it is created. Today the Stables lab sets them; the Stables Council, the community, will decide them.</p>
+
+  <div class="err" id="err"></div>
+
+  <div class="section-t" id="rules">The rules, written in the vault's script</div>
+  <div class="grid" id="rulesGrid">
+    <div class="stat"><div class="k">Stop a payout</div><div class="v" id="rStop">N/A</div><div class="u">guardian is enough</div></div>
+    <div class="stat"><div class="k">Freeze all</div><div class="v" id="rFreeze">N/A</div><div class="u">guardians together</div></div>
+    <div class="stat"><div class="k">Lift a freeze</div><div class="v" id="rRelease">N/A</div><div class="u">guardians together</div></div>
+    <div class="stat"><div class="k">New approvers</div><div class="v" id="rCouncil">N/A</div><div class="u">guardians, after 3 days of silence</div></div>
+    <div class="stat"><div class="k">Payout wait</div><div class="v" id="rWait">N/A</div><div class="u">after an approval</div></div>
+    <div class="stat"><div class="k">Election</div><div class="v" id="rSeat">N/A</div><div class="u">for a seat with no check-in</div></div>
+  </div>
+
+  <div class="section-t" id="seats">The nine seats</div>
+  <div class="seatlist" id="seatList"></div>
+
+  <div class="section-t" id="approverKeys">The eleven approver keys</div>
+  <div class="keylist" id="keyList"></div>
+  <p class="note" id="keyNote">Any 7 of these keys sign a seal. They are written into the vault's seal head, so an approver can be replaced key by key without a new vault.</p>
+
+  <!-- everything that changes over time, below everything that does not -->
+  <section class="live" id="live" aria-labelledby="liveT">
+    <div class="live-head">
+      <div>
+        <h2 class="live-t" id="liveT"><span class="live-dot" aria-hidden="true"></span>Live status</h2>
+        <p class="live-sub">These figures change. Each guardian that publishes its own log is read directly from its own repository when this page opens. The rest is read from the chain by hand, on the date shown.</p>
+      </div>
+      <div class="live-when"><span class="k">Chain data recorded</span><b id="updatedH">N/A</b></div>
+    </div>
+
+  <div class="heroes">
+    <div class="card hero seats">
+      <div class="lbl">Active seats</div>
+      <div class="big" id="activeSeats">N/A</div>
+      <div class="sub" id="activeSeatsSub">checked in within the last 30 days</div>
+    </div>
+    <div class="card hero seal">
+      <div class="lbl">Last approval checked</div>
+      <div class="big" id="lastSeal">N/A</div>
+      <div class="sub" id="lastSealSub">rebuilt from the chain by a guardian</div>
+    </div>
+  </div>
+
+  <div class="section-t" id="work">Work done by the guardians</div>
+  <div class="grid" id="workGrid">
+    <div class="stat"><div class="k">Guardians publishing</div><div class="v" id="wPub">N/A</div><div class="u" id="wPubSub">their own public log</div></div>
+    <div class="stat"><div class="k">Requests checked</div><div class="v" id="wReq">N/A</div><div class="u" id="wReqSub">payout requests re-checked</div></div>
+    <div class="stat"><div class="k">Money checked</div><div class="v" id="wAmt">N/A</div><div class="u" id="wAmtSub">in the requests they checked</div></div>
+    <div class="stat"><div class="k">Approvals checked</div><div class="v" id="wSeal">N/A</div><div class="u" id="wSealSub">rebuilt from the chain</div></div>
+    <div class="stat"><div class="k">Payouts stopped</div><div class="v" id="wStop">N/A</div><div class="u">found wrong and stopped</div></div>
+    <div class="stat"><div class="k">Hours watched</div><div class="v" id="wHours">N/A</div><div class="u" id="wHoursSub">all guardians together</div></div>
+  </div>
+
+  <div class="section-t">The approvers, now</div>
+  <div class="grid" id="apprGrid">
+    <div class="stat"><div class="k">Last seal</div><div class="v" id="aLast">N/A</div><div class="u" id="aLastSub">their latest signed decision</div></div>
+    <div class="stat"><div class="k">Heartbeat</div><div class="v" id="aBeat">N/A</div><div class="u" id="aBeatSub">a seal at least every 6 hours</div></div>
+    <div class="stat"><div class="k">Seals made</div><div class="v" id="aSeals">N/A</div><div class="u">since the card began</div></div>
+    <div class="stat"><div class="k">Payouts approved</div><div class="v" id="aPaid">N/A</div><div class="u" id="aPaidSub">paid after a seal</div></div>
+    <div class="stat"><div class="k">Requests refused</div><div class="v" id="aRefused">N/A</div><div class="u">refused in a seal</div></div>
+    <div class="stat"><div class="k">Requests open</div><div class="v" id="aOpen">N/A</div><div class="u">waiting for a decision</div></div>
+  </div>
+  <p class="g-src" id="apprSrc">Read from the chain by the card figures service of the Stables lab.</p>
+
+  <div class="section-t">Each guardian seat, now</div>
+  <div class="guards" id="guards"></div>
+  </section>
+
+  <p class="note" id="sourceNote">Data: <a href="guardians.json">guardians.json</a>. Edited by hand. A guardian that publishes its own log has its card read from its own repository, never through the approvers' server. Check-in dates can be checked on chain against the seal head <span class="mono" id="sealHead"></span>.</p>
+</div>
+<script>
+(function () {
+  "use strict";
+  var DAY = 86400000;
+  function el(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function day(iso) { return new Date(iso + "T00:00:00Z"); }
+  function fmt(d) { return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }); }
+
+  function program(g, s) {
+    if (s) return "Running, " + s.mode;
+    if (g.runsOn) return "Running on " + g.runsOn;
+    if (g.plannedFor) return "Planned for " + g.plannedFor;
+    return "No guardian program yet";
+  }
+
+  /* A guardian that publishes its own log (publish-log.mjs) has a status.json in its own repository; its card then reads
+     that file directly. The check-in block becomes a date from the guardian's last pass, at about 50 seconds a block. */
+  function checkInFromStatus(s) {
+    if (!s || s.seatLastCheckInBlock == null || !s.lastPass) return null;
+    var d = new Date(Date.parse(s.lastPass.at) - (s.lastPass.block - s.seatLastCheckInBlock) * 50000);
+    return d.toISOString().slice(0, 10);
+  }
+
+  function cardHtml(g, rules, now, s, recorded) {
+    var lastIso = checkInFromStatus(s) || g.lastCheckIn;
+    var last = lastIso ? day(lastIso) : null;
+    var ago = last ? Math.floor((now - last) / DAY) : null;
+    var quiet = s && s.lastPass ? Math.floor((now - Date.parse(s.lastPass.at)) / 3600000) : null;
+    var chip = quiet != null && quiet >= 2 ? ["off", "Silent for " + quiet + " hours"]
+      : ago == null ? ["off", "No check-in recorded"]
+      : ago <= rules.activeWithinDays ? ["ok", s ? "Watching, active seat" : "Active seat"]
+      : ago < rules.seatOpenAfterDays ? ["warn", "Seated, not active"]
+      : ["off", "Seat open to election"];
+    function row(k, v, dim) { return '<div class="g-row"><span class="k">' + k + '</span><span class="v' + (dim ? " dim" : "") + '">' + v + "</span></div>"; }
+    var repo = (s && s.repo) || g.log;
+    var log = repo ? '<a href="' + esc(repo) + '" target="_blank" rel="noopener noreferrer">' + (s ? esc(s.log.lines) + " lines" + (s.log.intact ? "" : ", chain broken") : "Open") + "</a>" : "Not published yet";
+    var stops = s ? s.counts.stopsPosted : g.stops;
+    var src = s ? "Read from its own log, updated " + fmt(new Date(s.updated)) : "Recorded from the chain on " + fmt(new Date(recorded));
+    return '<article class="card" aria-label="' + esc(g.name) + ', now">' +
+      '<div class="g-head"><div><div class="g-name">' + esc(g.name) + '</div></div><span class="g-seat">Seat ' + g.seat + "</span></div>" +
+      '<span class="chip ' + chip[0] + '"><span class="dot"></span>' + chip[1] + "</span>" +
+      '<div class="g-rows">' +
+        (s ? row("Guardian program", esc(program(g, s))) : "") +
+        row("Last check-in", last ? fmt(last) + (ago != null ? " (" + ago + " days)" : "") : "N/A") +
+        (s ? row("Last check", s.lastPass ? fmt(new Date(s.lastPass.at)) + ", block " + esc(s.lastPass.block) : "N/A") +
+             row("Requests checked", esc(s.counts.requestsChecked)) +
+             row("Approvals checked", esc(s.counts.sealsMatched) + " of " + esc(s.counts.sealsChecked) + " match") +
+             row("Money checked", s.amounts && s.amounts.length ? amountLines(s.amounts) : "0") : "") +
+        row("Stops made", stops == null ? "N/A" : esc(stops), stops == null) +
+        row("Public log", log, !repo) +
+      '</div><div class="g-src">' + src + "</div></article>";
+  }
+
+  /* The seat as it is set: name, tagline, who holds the key, where its program runs or will run. Nothing here moves. */
+  function seatHtml(g) {
+    return '<article class="seat" aria-label="' + esc(g.name) + '">' +
+      '<div class="g-head"><div><div class="g-name">' + esc(g.name) + '</div><div class="g-tag">' + esc(g.tagline) + '</div></div><span class="g-seat">Seat ' + g.seat + "</span></div>" +
+      '<div class="s-meta">Key held by <b>' + (g.holder === "lab" ? "Stables lab" : esc(g.holder)) + "</b><br>" + esc(program(g, null)) + "</div></article>";
+  }
+
+  function amountLines(list) {
+    return list.map(function (t) { return '<span class="tl">' + esc(nf(t.checked)) + " " + esc(t.token) + "</span>"; }).join("");
+  }
+  function nf(x) { return Number(x).toLocaleString("en-GB", { maximumFractionDigits: 8 }); }
+
+  /* The guardians' cumulative work, added up from every guardian that publishes; amounts per token, never across tokens. */
+  function work(list, seats) {
+    el("wPub").textContent = list.length + " of " + seats;
+    if (!list.length) {
+      ["wReq", "wAmt", "wSeal", "wStop", "wHours"].forEach(function (id) { el(id).textContent = "N/A"; });
+      el("wPubSub").textContent = "no guardian publishes its log yet";
+      return;
+    }
+    el("wPubSub").textContent = "their own public log";
+    var sum = function (f) { return list.reduce(function (a, s) { return a + (f(s) || 0); }, 0); };
+    var tokens = {};
+    list.forEach(function (s) { (s.amounts || []).forEach(function (t) { tokens[t.token] = (tokens[t.token] || 0) + Number(t.checked); }); });
+    var amt = Object.keys(tokens).map(function (k) { return { token: k, checked: tokens[k] }; });
+    el("wReq").textContent = nf(sum(function (s) { return s.counts.requestsChecked; }));
+    el("wReqSub").textContent = nf(sum(function (s) { return s.counts.requestsPassed; })) + " passed, " + nf(sum(function (s) { return s.counts.requestsFoundBad; })) + " found wrong";
+    el("wAmt").innerHTML = amt.length ? amountLines(amt) : "0";
+    el("wSeal").textContent = nf(sum(function (s) { return s.counts.sealsChecked; }));
+    el("wSealSub").textContent = nf(sum(function (s) { return s.counts.sealsMatched; })) + " matched the chain";
+    el("wStop").textContent = nf(sum(function (s) { return s.counts.stopsPosted; }));
+    var hours = sum(function (s) { return s.watching && s.lastPass ? (Date.parse(s.lastPass.at) - Date.parse(s.watching.since)) / 3600000 : 0; });
+    el("wHours").textContent = nf(Math.round(hours));
+  }
+
+  function render(d) {
+    var r = d.rules, now = Date.now();
+    var hours = Math.round(r.payoutWaitBlocks * 50 / 360) / 10;
+    el("updatedH").textContent = fmt(new Date(d.updated));
+    el("vaultGen").textContent = d.vault.generation;
+    el("sealHead").textContent = d.vault.sealHead;
+    el("rStop").textContent = r.stop;
+    el("rFreeze").textContent = r.freeze + " of " + r.seats;
+    el("rRelease").textContent = r.release + " of " + r.seats;
+    el("rCouncil").textContent = r.newCouncil + " of " + r.seats;
+    el("rWait").textContent = "about " + hours + " h";
+    el("rSeat").textContent = "after " + r.seatOpenAfterDays + " days";
+    var active = d.guardians.filter(function (g) { return g.lastCheckIn && (now - day(g.lastCheckIn)) / DAY <= r.activeWithinDays; }).length;
+    el("activeSeats").textContent = active + " of " + r.seats;
+    el("activeSeatsSub").textContent = "checked in within the last " + r.activeWithinDays + " days; an election needs 3";
+    el("lastSeal").textContent = d.council.lastSealChecked != null ? "Seal " + d.council.lastSealChecked : "N/A";
+    el("lastSealSub").textContent = d.council.matched ? "rebuilt from the chain by a guardian: it matches" : "rebuilt from the chain by a guardian: it does not match";
+    el("seatList").innerHTML = d.guardians.map(seatHtml).join("");
+    if (d.approvers) {
+      el("keyList").innerHTML = d.approvers.keys.map(function (k, i) {
+        return '<div class="keyitem" title="' + esc(k) + '"><span class="n">Key ' + (i + 1) + '</span><span class="mono">' + esc(k.slice(0, 8) + "…" + k.slice(-4)) + "</span></div>";
+      }).join("");
+      el("keyNote").textContent = "Any " + d.approvers.quorum + " of these keys sign a seal. Today all " + d.approvers.keys.length + " are held by the Stables lab, on " + d.approvers.runsOn + ". They are written into the vault's seal head, so an approver can be replaced key by key without a new vault.";
+    }
+    approvers();
+    el("guards").innerHTML = d.guardians.map(function (g) { return cardHtml(g, r, now, null, d.updated); }).join("");
+    work([], r.seats);
+    // Then each guardian's own status, straight from its own repository; a card stays as recorded if it cannot be read.
+    Promise.all(d.guardians.map(function (g) {
+      if (!g.status) return Promise.resolve(null);
+      return fetch(g.status, { cache: "no-store" }).then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (s) { return s && s.schema === "stables-guardian-status/v1" ? s : null; }).catch(function () { return null; });
+    })).then(function (statuses) {
+      work(statuses.filter(Boolean), r.seats);
+      if (!statuses.some(Boolean)) return;
+      el("guards").innerHTML = d.guardians.map(function (g, i) { return cardHtml(g, r, now, statuses[i], d.updated); }).join("");
+    });
+  }
+
+  /* The approvers' activity, from the same chain reading as the card figures page (fixture on a local preview). */
+  var CARD_ENDPOINT = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname)
+    ? "assets/data/test-channel-monitor.fixture.json" : "https://agent.stablescouncil.org/test-dashboard";
+  function approvers() {
+    fetch(CARD_ENDPOINT, { cache: "no-store" }).then(function (res) { if (!res.ok) throw new Error(); return res.json(); }).then(function (j) {
+      var c = j.card || {}, n = c.counts || {};
+      var seal = (c.recent || []).filter(function (x) { return x.kind === "council seal"; })
+        .sort(function (a, b) { return b.block - a.block; })[0];
+      if (seal) {
+        var h = (Date.now() - Date.parse(seal.t)) / 3600000;
+        el("aLast").textContent = h < 1 ? Math.round(h * 60) + " min ago" : Math.round(h) + " h ago";
+        el("aLastSub").innerHTML = 'block <a href="https://explorer.minima.global/transactions/' + esc(seal.txpowid) + '" target="_blank" rel="noopener noreferrer">' + esc(Number(seal.block).toLocaleString("en-GB")) + "</a>";
+        var beat = h <= 7 ? ["On time", "unanswered requests still pay after 3 days"] : h <= 24 ? ["Late", "under a day: the 3-day rule still works"] : ["Silent", "over a day: payouts pause until the approvers return or are replaced"];
+        el("aBeat").textContent = beat[0];
+        el("aBeat").style.color = h <= 7 ? "var(--savers)" : h <= 24 ? "var(--amber)" : "var(--red)";
+        el("aBeatSub").textContent = beat[1];
+      }
+      if (n.council_seals != null) el("aSeals").textContent = Number(n.council_seals).toLocaleString("en-GB");
+      if (n.payouts_sealed != null) el("aPaid").textContent = Number(n.payouts_sealed).toLocaleString("en-GB");
+      if (n.payouts_fallback != null) el("aPaidSub").textContent = "paid after a seal; " + n.payouts_fallback + " more paid by the 3-day rule";
+      if (n.rejections != null) el("aRefused").textContent = Number(n.rejections).toLocaleString("en-GB");
+      if (n.requests_open != null) el("aOpen").textContent = Number(n.requests_open).toLocaleString("en-GB");
+      el("apprSrc").innerHTML = (j.source === "fixture" || CARD_ENDPOINT.indexOf("fixture") > -1 ? "Development sample, not live. " : "") +
+        'Read from the chain by the Stables lab\'s card figures service, up to block ' + esc(Number(c.current_to || 0).toLocaleString("en-GB")) +
+        '. Which keys signed each seal is not shown yet. <a href="/test-dashboard.html#card">All card figures</a>';
+    }).catch(function () { el("apprSrc").textContent = "The approvers' figures could not be read just now."; });
+  }
+
+  fetch("guardians.json", { cache: "no-store" })
+    .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
+    .then(render)
+    .catch(function (e) { var x = el("err"); x.textContent = "The guardian data could not be loaded (" + e.message + "). It is in guardians.json beside this page."; x.style.display = "block"; });
+})();
+</script>
+<footer class="secondary-chrome-footer" role="contentinfo">
+  <div class="secondary-chrome-footer__inner secondary-chrome-frame">
+    <p><a class="secondary-chrome-footer__signature" href="/">Stables | Be your Bank</a></p>
+    <nav class="secondary-chrome-footer__links" aria-label="Supporting links">
+      <a href="/links.html">All links</a>
+      <a href="https://x.com/StablesCouncil" target="_blank" rel="noopener noreferrer">X</a>
+      <a href="https://t.me/stablescommunity" target="_blank" rel="noopener noreferrer">Telegram</a>
+      <a class="secondary-chrome-minima" href="https://minima.global" target="_blank" rel="noopener noreferrer">Built on MINIMA</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>

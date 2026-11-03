@@ -16,6 +16,7 @@ These top-level names are stable because they map directly to public URLs and th
 | `council_navigation_system.html` | `/council_navigation_system.html` |
 | `onchain-watch.html` | `/onchain-watch.html` public data tool |
 | `test-dashboard.html` | `/test-dashboard.html` development-only Test Channel Monitor |
+| `guardians.html` | `/guardians.html` the Stables card's guardians (data in `guardians.json`) |
 | `onion-resilience/` | Development-only resilience package |
 | `dapp/` | Pages-hosted MiniDapp area |
 | `assets/` | Shared JS/CSS for document pages |

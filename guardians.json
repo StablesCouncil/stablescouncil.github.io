@@ -1,0 +1,57 @@
+{
+  "schema": "stables-card-guardians/v1",
+  "note": "The Stables card's guardians as the site shows them. Edited by hand. A guardian that publishes its own log gets its status.json address under status (a raw file URL in its own repository); the page then reads it directly, never through the approvers' server. Location is city level at most, never an address.",
+  "updated": "2026-11-03T12:00:00Z",
+  "source": "Read from Minima mainnet on 2 November 2026 (block 2,399,448) by the guardian program, read only: the seal head's guardian seats and their last check-ins, and the Council's seal 104, whose approved and rejected lists the program rebuilt from the chain and found matching.",
+  "vault": {
+    "generation": "R2T5",
+    "sealHead": "0xD6462FFC684A99C146D0FFE4D1681FF61BD7DB99122ECBDD64E7F702AF425561",
+    "tokens": "Winiwa and xWiniwa, valueless test tokens"
+  },
+  "rules": {
+    "seats": 9,
+    "stop": 1,
+    "freeze": 3,
+    "release": 5,
+    "newCouncil": 6,
+    "payoutWaitBlocks": 144,
+    "seatOpenAfterDays": 60,
+    "activeWithinDays": 30
+  },
+  "council": {
+    "lastSealChecked": 104,
+    "matched": true,
+    "openRequests": 0
+  },
+  "approvers": {
+    "_note": "The 11 approver public keys as set in the seal head (state ports 60 to 70), read from mainnet. Any 7 sign a seal. Replaced key by key without a new vault.",
+    "quorum": 7,
+    "holder": "lab",
+    "runsOn": "one server",
+    "heartbeatHours": 6,
+    "keys": [
+      "0x069231DF65323F4BA4C8B74C6A30F03997B2FD743FF4501D8F4C3448FC701B85",
+      "0xBDEC0ADEB8861863B84422DAB868501963DBA8FBCB3AC1CFFF8A2EA89611A7F3",
+      "0x887A0DF5D25DBB9AE3DD7A0557EDF9A5DD34BFC73B8C3275B9BC918DA61F7A85",
+      "0x5F0B841BFCE057DD63A31AE743927F630D40E5E5A5BEAE2EA182D1B7FD785AC1",
+      "0x5ED62C1867F650437926C4036E3C1891E05A87BDE46932DD7DE680E9D278AE7D",
+      "0x9F73C9E609B34301BA279A09AC64F78110195FFAAC567DF520519C58E8B73C2B",
+      "0x3D5A2E110C788B3C1F695C62B7E6D8147DF060641E8BE3FDC365FF84A0B8697E",
+      "0x7882F712D5831C46395010EF3C0D4F7A5FDDA5B3EF6114082FEB154783BF3872",
+      "0x5F3E5A2050940F16BDE19DC26287CD0FD4638F1B585551FBD6ECC5FB9ADEB75A",
+      "0xBFB19F1A4F8BFC6ECC322928D4A87658259A972AC302366A2F04863B2F897E6D",
+      "0x5E52AADF77CFB04DCD34F3879FC16D6B749D85E56E3FD912652AF6D697D1CE33"
+    ]
+  },
+  "guardians": [
+    { "seat": 0, "name": "Farrier",  "tagline": "Checks every shoe",       "runsOn": null, "plannedFor": null,               "holder": "lab",  "program": "not running", "lastCheckIn": "2026-10-24", "checkIns": null, "stops": null, "log": null, "status": null },
+    { "seat": 1, "name": "Bridle",   "tagline": "Holds the reins",         "runsOn": null, "plannedFor": null,               "holder": "lab",  "program": "not running", "lastCheckIn": "2026-11-03", "checkIns": null, "stops": null, "log": null, "status": null },
+    { "seat": 2, "name": "Paddock",  "tagline": "Fenced ground",           "runsOn": null, "plannedFor": null,               "holder": "lab",  "program": "not running", "lastCheckIn": "2026-10-18", "checkIns": null, "stops": null, "log": null, "status": null },
+    { "seat": 3, "name": "Halter",   "tagline": "Leads, never rides",      "runsOn": null, "plannedFor": null,               "holder": "lab",  "program": "not running", "lastCheckIn": "2026-10-18", "checkIns": null, "stops": null, "log": null, "status": null },
+    { "seat": 4, "name": "Stirrup",  "tagline": "Steady footing",          "runsOn": null, "plannedFor": null,               "holder": "lab",  "program": "not running", "lastCheckIn": "2026-10-18", "checkIns": null, "stops": null, "log": null, "status": null },
+    { "seat": 5, "name": "Tackroom", "tagline": "Everything in its place", "runsOn": null, "plannedFor": null,               "holder": "lab",  "program": "not running", "lastCheckIn": "2026-10-18", "checkIns": null, "stops": null, "log": null, "status": null },
+    { "seat": 6, "name": "Lantern",  "tagline": "Night watch",             "runsOn": null, "plannedFor": "a phone",          "holder": "lab",  "program": "being built", "lastCheckIn": "2026-10-18", "checkIns": null, "stops": null, "log": null, "status": null },
+    { "seat": 7, "name": "Hayloft",  "tagline": "The high view",           "runsOn": null, "plannedFor": "a personal computer", "holder": "lab", "program": "being built", "lastCheckIn": "2026-10-18", "checkIns": null, "stops": null, "log": null, "status": null },
+    { "seat": 8, "name": "Gatepost", "tagline": "Stands at the gate",      "runsOn": null, "plannedFor": "a separate server", "holder": "lab",  "program": "being built", "lastCheckIn": "2026-10-18", "checkIns": null, "stops": null, "log": null, "status": null }
+  ]
+}
