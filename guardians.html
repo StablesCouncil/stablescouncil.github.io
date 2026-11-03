@@ -91,25 +91,14 @@
   .chip.ok { background: rgba(52,211,153,.10); color: var(--savers); }
   .chip.warn { background: rgba(245,181,68,.10); color: var(--amber); }
   .chip.off { background: rgba(242,109,109,.12); color: var(--red); }
+  .chip.idle { background: rgba(255,255,255,.06); color: var(--muted); }
   .g-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; margin-top: 14px; }
   .g-row { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .g-row .k { font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
   .g-row .v { font-size: 14px; font-weight: 750; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
   .g-row .v.dim { color: var(--dim); font-weight: 600; }
-  .g-row .v a { color: var(--winiwa); text-decoration: none; }
+  .g-row .v a { color: var(--winiwa); text-decoration: none; display: inline; padding: 0; margin: 0; line-height: inherit; min-height: 0; }
   .g-row .v .tl { display: block; }
-
-  /* the seats as they are set: names and holders, no figures */
-  .seatlist { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-top: 14px; }
-  .seat { border: 1px solid var(--hair); border-radius: 14px; padding: 14px 16px; background: transparent; }
-  .seat .g-name { font-size: 17px; }
-  .seat .s-meta { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
-  .seat .s-meta b { color: var(--ink); font-weight: 750; }
-
-  .keylist { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px 12px; margin-top: 14px; }
-  .keyitem { display: flex; align-items: baseline; gap: 10px; border: 1px solid var(--hair); border-radius: 10px; padding: 9px 12px; }
-  .keyitem .n { font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); flex: none; }
-  .keyitem .mono { color: var(--ink); }
 
   /* live: everything that changes, in its own panel, marked as such */
   .live { margin-top: 34px; padding: 22px 20px 24px; border: 1px solid rgba(52,211,153,.30); border-radius: 18px; background: linear-gradient(180deg, rgba(52,211,153,.06), rgba(52,211,153,0) 220px); }
@@ -122,6 +111,8 @@
   .live-when { display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
   .live-when .k { font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
   .live .section-t { color: var(--savers); }
+  .live-group { margin: 30px 0 4px; font-size: 18px; font-weight: 850; letter-spacing: -.01em; color: var(--ink); padding-top: 18px; border-top: 1px solid var(--hair); }
+  .live-group:first-of-type { border-top: 0; padding-top: 0; }
   .g-src { font-size: 11.5px; color: var(--dim); margin-top: 12px; }
   .g-src a, .stat .u a { color: var(--winiwa); text-decoration: none; font-weight: 700; }
   @media (max-width: 460px) { .live { padding: 18px 14px 20px; } }
@@ -250,23 +241,29 @@
     <div class="stat"><div class="k">Election</div><div class="v" id="rSeat">N/A</div><div class="u">for a seat with no check-in</div></div>
   </div>
 
-  <div class="section-t" id="seats">The nine seats</div>
-  <div class="seatlist" id="seatList"></div>
-
-  <div class="section-t" id="approverKeys">The eleven approver keys</div>
-  <div class="keylist" id="keyList"></div>
-  <p class="note" id="keyNote">Any 7 of these keys sign a seal. They are written into the vault's seal head, so an approver can be replaced key by key without a new vault.</p>
-
   <!-- everything that changes over time, below everything that does not -->
   <section class="live" id="live" aria-labelledby="liveT">
     <div class="live-head">
       <div>
         <h2 class="live-t" id="liveT"><span class="live-dot" aria-hidden="true"></span>Live status</h2>
-        <p class="live-sub">These figures change. Each guardian that publishes its own log is read directly from its own repository when this page opens. The rest is read from the chain by hand, on the date shown.</p>
+        <p class="live-sub">These figures change. The approvers' activity is read from the chain when this page opens. Each guardian that publishes its own log is read directly from its own repository; the rest is read from the chain by hand, on the date shown.</p>
       </div>
       <div class="live-when"><span class="k">Chain data recorded</span><b id="updatedH">N/A</b></div>
     </div>
 
+  <h3 class="live-group" id="approvers">The approvers</h3>
+  <div class="grid" id="apprGrid">
+    <div class="stat"><div class="k">Last seal</div><div class="v" id="aLast">N/A</div><div class="u" id="aLastSub">their latest signed decision</div></div>
+    <div class="stat"><div class="k">Heartbeat</div><div class="v" id="aBeat">N/A</div><div class="u" id="aBeatSub">a seal at least every 6 hours</div></div>
+    <div class="stat"><div class="k">Seals made</div><div class="v" id="aSeals">N/A</div><div class="u">since the card began</div></div>
+    <div class="stat"><div class="k">Payouts approved</div><div class="v" id="aPaid">N/A</div><div class="u" id="aPaidSub">paid after a seal</div></div>
+    <div class="stat"><div class="k">Requests refused</div><div class="v" id="aRefused">N/A</div><div class="u">refused in a seal</div></div>
+    <div class="stat"><div class="k">Requests open</div><div class="v" id="aOpen">N/A</div><div class="u">waiting for a decision</div></div>
+  </div>
+  <div class="guards" id="apprCards"></div>
+  <p class="g-src" id="apprSrc">Read from the chain by the card figures service of the Stables lab.</p>
+
+  <h3 class="live-group" id="guardiansNow">The guardians</h3>
   <div class="heroes">
     <div class="card hero seats">
       <div class="lbl">Active seats</div>
@@ -279,8 +276,6 @@
       <div class="sub" id="lastSealSub">rebuilt from the chain by a guardian</div>
     </div>
   </div>
-
-  <div class="section-t" id="work">Work done by the guardians</div>
   <div class="grid" id="workGrid">
     <div class="stat"><div class="k">Guardians publishing</div><div class="v" id="wPub">N/A</div><div class="u" id="wPubSub">their own public log</div></div>
     <div class="stat"><div class="k">Requests checked</div><div class="v" id="wReq">N/A</div><div class="u" id="wReqSub">payout requests re-checked</div></div>
@@ -289,19 +284,6 @@
     <div class="stat"><div class="k">Payouts stopped</div><div class="v" id="wStop">N/A</div><div class="u">found wrong and stopped</div></div>
     <div class="stat"><div class="k">Hours watched</div><div class="v" id="wHours">N/A</div><div class="u" id="wHoursSub">all guardians together</div></div>
   </div>
-
-  <div class="section-t">The approvers, now</div>
-  <div class="grid" id="apprGrid">
-    <div class="stat"><div class="k">Last seal</div><div class="v" id="aLast">N/A</div><div class="u" id="aLastSub">their latest signed decision</div></div>
-    <div class="stat"><div class="k">Heartbeat</div><div class="v" id="aBeat">N/A</div><div class="u" id="aBeatSub">a seal at least every 6 hours</div></div>
-    <div class="stat"><div class="k">Seals made</div><div class="v" id="aSeals">N/A</div><div class="u">since the card began</div></div>
-    <div class="stat"><div class="k">Payouts approved</div><div class="v" id="aPaid">N/A</div><div class="u" id="aPaidSub">paid after a seal</div></div>
-    <div class="stat"><div class="k">Requests refused</div><div class="v" id="aRefused">N/A</div><div class="u">refused in a seal</div></div>
-    <div class="stat"><div class="k">Requests open</div><div class="v" id="aOpen">N/A</div><div class="u">waiting for a decision</div></div>
-  </div>
-  <p class="g-src" id="apprSrc">Read from the chain by the card figures service of the Stables lab.</p>
-
-  <div class="section-t">Each guardian seat, now</div>
   <div class="guards" id="guards"></div>
   </section>
 
@@ -347,10 +329,11 @@
     var stops = s ? s.counts.stopsPosted : g.stops;
     var src = s ? "Read from its own log, updated " + fmt(new Date(s.updated)) : "Recorded from the chain on " + fmt(new Date(recorded));
     return '<article class="card" aria-label="' + esc(g.name) + ', now">' +
-      '<div class="g-head"><div><div class="g-name">' + esc(g.name) + '</div></div><span class="g-seat">Seat ' + g.seat + "</span></div>" +
+      '<div class="g-head"><div><div class="g-name">' + esc(g.name) + '</div><div class="g-tag">' + esc(g.tagline) + '</div></div><span class="g-seat">Seat ' + g.seat + "</span></div>" +
       '<span class="chip ' + chip[0] + '"><span class="dot"></span>' + chip[1] + "</span>" +
       '<div class="g-rows">' +
-        (s ? row("Guardian program", esc(program(g, s))) : "") +
+        row("Key held by", g.holder === "lab" ? "Stables lab" : esc(g.holder)) +
+        row("Guardian program", esc(program(g, s)), !s && !g.runsOn) +
         row("Last check-in", last ? fmt(last) + (ago != null ? " (" + ago + " days)" : "") : "N/A") +
         (s ? row("Last check", s.lastPass ? fmt(new Date(s.lastPass.at)) + ", block " + esc(s.lastPass.block) : "N/A") +
              row("Requests checked", esc(s.counts.requestsChecked)) +
@@ -359,13 +342,6 @@
         row("Stops made", stops == null ? "N/A" : esc(stops), stops == null) +
         row("Public log", log, !repo) +
       '</div><div class="g-src">' + src + "</div></article>";
-  }
-
-  /* The seat as it is set: name, tagline, who holds the key, where its program runs or will run. Nothing here moves. */
-  function seatHtml(g) {
-    return '<article class="seat" aria-label="' + esc(g.name) + '">' +
-      '<div class="g-head"><div><div class="g-name">' + esc(g.name) + '</div><div class="g-tag">' + esc(g.tagline) + '</div></div><span class="g-seat">Seat ' + g.seat + "</span></div>" +
-      '<div class="s-meta">Key held by <b>' + (g.holder === "lab" ? "Stables lab" : esc(g.holder)) + "</b><br>" + esc(program(g, null)) + "</div></article>";
   }
 
   function amountLines(list) {
@@ -413,14 +389,7 @@
     el("activeSeatsSub").textContent = "checked in within the last " + r.activeWithinDays + " days; an election needs 3";
     el("lastSeal").textContent = d.council.lastSealChecked != null ? "Seal " + d.council.lastSealChecked : "N/A";
     el("lastSealSub").textContent = d.council.matched ? "rebuilt from the chain by a guardian: it matches" : "rebuilt from the chain by a guardian: it does not match";
-    el("seatList").innerHTML = d.guardians.map(seatHtml).join("");
-    if (d.approvers) {
-      el("keyList").innerHTML = d.approvers.keys.map(function (k, i) {
-        return '<div class="keyitem" title="' + esc(k) + '"><span class="n">Key ' + (i + 1) + '</span><span class="mono">' + esc(k.slice(0, 8) + "…" + k.slice(-4)) + "</span></div>";
-      }).join("");
-      el("keyNote").textContent = "Any " + d.approvers.quorum + " of these keys sign a seal. Today all " + d.approvers.keys.length + " are held by the Stables lab, on " + d.approvers.runsOn + ". They are written into the vault's seal head, so an approver can be replaced key by key without a new vault.";
-    }
-    approvers();
+    approvers(d.approvers);
     el("guards").innerHTML = d.guardians.map(function (g) { return cardHtml(g, r, now, null, d.updated); }).join("");
     work([], r.seats);
     // Then each guardian's own status, straight from its own repository; a card stays as recorded if it cannot be read.
@@ -435,31 +404,72 @@
     });
   }
 
-  /* The approvers' activity, from the same chain reading as the card figures page (fixture on a local preview). */
-  var CARD_ENDPOINT = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname)
-    ? "assets/data/test-channel-monitor.fixture.json" : "https://agent.stablescouncil.org/test-dashboard";
-  function approvers() {
+  /* The approvers' activity, from the same chain reading as the card figures page. Each approver's own figures come
+     from the seals' signatures (card.approver_activity). A local preview reads the live figures too, and, until the
+     collector publishes signatures, a preview file read from a lab node (never published). */
+  var LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname);
+  var CARD_ENDPOINT = "https://agent.stablescouncil.org/test-dashboard";
+  function ago(t) {
+    var h = (Date.now() - Date.parse(t)) / 3600000;
+    return h < 1 ? Math.max(1, Math.round(h * 60)) + " min ago" : h < 48 ? Math.round(h) + " h ago" : Math.round(h / 24) + " days ago";
+  }
+
+  function approverCard(m, quorum, act) {
+    var k = (act && act.keys && act.keys[m.key.toUpperCase()]) || null;
+    var signs = m.n <= quorum;
+    function row(label, v, dim) { return '<div class="g-row"><span class="k">' + label + '</span><span class="v' + (dim ? " dim" : "") + '">' + v + "</span></div>"; }
+    var hrs = k && k.last_t ? (Date.now() - Date.parse(k.last_t)) / 3600000 : null;
+    var chip = !act ? ["warn", "Activity not read yet"]
+      : k ? (hrs <= 7 ? ["ok", "Signing"] : hrs <= 24 ? ["warn", "Signed " + Math.round(hrs) + " h ago"] : ["off", "Quiet for " + Math.round(hrs / 24) + " days"])
+      : signs ? ["off", "No signature read"] : ["idle", "Spare key"];
+    return '<article class="card" aria-label="' + esc(m.name) + ', approver">' +
+      '<div class="g-head"><div><div class="g-name">' + esc(m.name) + '</div><div class="g-tag">' + esc(m.tagline) + '</div></div><span class="g-seat">Key ' + m.n + "</span></div>" +
+      '<span class="chip ' + chip[0] + '"><span class="dot"></span>' + chip[1] + "</span>" +
+      '<div class="g-rows">' +
+        row("Seals signed", k ? esc(nf(k.signed)) + (act.seals_with_signers ? " of " + esc(nf(act.seals_with_signers)) : "") : (act ? "0" : "N/A"), !k) +
+        row("Last signed", k && k.last_t ? '<a href="https://explorer.minima.global/transactions/' + esc(k.last_txpowid) + '" target="_blank" rel="noopener noreferrer">' + ago(k.last_t) + "</a>" : "Never", !k) +
+        row("Key held by", "Stables lab") +
+        row("Public key", '<span class="mono" title="' + esc(m.key) + '">' + esc(m.key.slice(0, 10) + "…" + m.key.slice(-6)) + "</span>") +
+      "</div></article>";
+  }
+
+  function approvers(cfg) {
+    if (!cfg) return;
+    var paint = function (act, preview) {
+      el("apprCards").innerHTML = cfg.members.map(function (m) { return approverCard(m, cfg.quorum, act); }).join("");
+      return preview;
+    };
+    paint(null);
     fetch(CARD_ENDPOINT, { cache: "no-store" }).then(function (res) { if (!res.ok) throw new Error(); return res.json(); }).then(function (j) {
       var c = j.card || {}, n = c.counts || {};
       var seal = (c.recent || []).filter(function (x) { return x.kind === "council seal"; })
         .sort(function (a, b) { return b.block - a.block; })[0];
       if (seal) {
         var h = (Date.now() - Date.parse(seal.t)) / 3600000;
-        el("aLast").textContent = h < 1 ? Math.round(h * 60) + " min ago" : Math.round(h) + " h ago";
-        el("aLastSub").innerHTML = 'block <a href="https://explorer.minima.global/transactions/' + esc(seal.txpowid) + '" target="_blank" rel="noopener noreferrer">' + esc(Number(seal.block).toLocaleString("en-GB")) + "</a>";
+        el("aLast").textContent = ago(seal.t);
+        el("aLastSub").innerHTML = 'block <a href="https://explorer.minima.global/transactions/' + esc(seal.txpowid) + '" target="_blank" rel="noopener noreferrer">' + esc(nf(seal.block)) + "</a>";
         var beat = h <= 7 ? ["On time", "unanswered requests still pay after 3 days"] : h <= 24 ? ["Late", "under a day: the 3-day rule still works"] : ["Silent", "over a day: payouts pause until the approvers return or are replaced"];
         el("aBeat").textContent = beat[0];
         el("aBeat").style.color = h <= 7 ? "var(--savers)" : h <= 24 ? "var(--amber)" : "var(--red)";
         el("aBeatSub").textContent = beat[1];
       }
-      if (n.council_seals != null) el("aSeals").textContent = Number(n.council_seals).toLocaleString("en-GB");
-      if (n.payouts_sealed != null) el("aPaid").textContent = Number(n.payouts_sealed).toLocaleString("en-GB");
+      if (n.council_seals != null) el("aSeals").textContent = nf(n.council_seals);
+      if (n.payouts_sealed != null) el("aPaid").textContent = nf(n.payouts_sealed);
       if (n.payouts_fallback != null) el("aPaidSub").textContent = "paid after a seal; " + n.payouts_fallback + " more paid by the 3-day rule";
-      if (n.rejections != null) el("aRefused").textContent = Number(n.rejections).toLocaleString("en-GB");
-      if (n.requests_open != null) el("aOpen").textContent = Number(n.requests_open).toLocaleString("en-GB");
-      el("apprSrc").innerHTML = (j.source === "fixture" || CARD_ENDPOINT.indexOf("fixture") > -1 ? "Development sample, not live. " : "") +
-        'Read from the chain by the Stables lab\'s card figures service, up to block ' + esc(Number(c.current_to || 0).toLocaleString("en-GB")) +
-        '. Which keys signed each seal is not shown yet. <a href="/test-dashboard.html#card">All card figures</a>';
+      if (n.rejections != null) el("aRefused").textContent = nf(n.rejections);
+      if (n.requests_open != null) el("aOpen").textContent = nf(n.requests_open);
+      var act = c.approver_activity && c.approver_activity.seals_with_signers ? c.approver_activity : null;
+      var more = act || !LOCAL ? Promise.resolve(act)
+        : fetch("assets/data/approver-activity.preview.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+      return more.then(function (a) {
+        var preview = !act && !!a;
+        paint(a);
+        var note = 'Read from the chain by the Stables lab\'s card figures service, up to block ' + esc(nf(c.current_to || 0)) + ". ";
+        if (a) note += "Each approver's figures count the " + esc(nf(a.seals_with_signers)) + " seals of vault " + esc(a.generation) + " read with their signatures, from block " + esc(nf(a.from_block)) +
+          (a.seals_without_signers ? " (" + esc(nf(a.seals_without_signers)) + " older seals were read before signatures were kept)" : "") + ". ";
+        note += "The approvers' program always signs with keys 1 to " + cfg.quorum + "; keys " + (cfg.quorum + 1) + " to " + cfg.members.length + " are spares. ";
+        el("apprSrc").innerHTML = (preview ? "<b>Local preview:</b> each approver's figures are a sample read from a lab node. " : "") + note + '<a href="/test-dashboard.html#card">All card figures</a>';
+      });
     }).catch(function () { el("apprSrc").textContent = "The approvers' figures could not be read just now."; });
   }
 
