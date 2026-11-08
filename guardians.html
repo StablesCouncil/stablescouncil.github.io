@@ -113,6 +113,16 @@
   .live .section-t { color: var(--savers); }
   .live-group { margin: 30px 0 4px; font-size: 18px; font-weight: 850; letter-spacing: -.01em; color: var(--ink); padding-top: 18px; border-top: 1px solid var(--hair); }
   .live-group:first-of-type { border-top: 0; padding-top: 0; }
+  .live-desc { margin: 8px 0 0; font-size: 14.5px; line-height: 1.55; color: var(--muted); max-width: 760px; }
+
+  /* The "?" beside a figure: drawn small, with a 44px touch area around it. The body prefix outweighs the shared button rule. */
+  body.d028-page button.hint { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; min-width: 18px; min-height: 18px; margin: 0 0 0 6px; padding: 0; vertical-align: 3px; border: 1px solid rgba(87,214,239,.5) !important; border-radius: 50% !important; background: transparent !important; color: var(--winiwa) !important; font: 800 11px/1 var(--sans); letter-spacing: 0; cursor: pointer; }
+  body.d028-page button.hint::after { content: ""; position: absolute; inset: -13px; }
+  body.d028-page button.hint:hover, body.d028-page button.hint[aria-expanded="true"] { background: rgba(87,214,239,.18) !important; }
+  /* One explanation per group of cards: the first card carries the "?" marks for the cards after it. */
+  body.d028-page .guards .card:not(:first-child) button.hint { display: none; }
+  .hint-pop { display: none; position: fixed; z-index: 900; width: min(300px, calc(100vw - 24px)); padding: 12px 14px; border: 1px solid rgba(87,214,239,.42); border-radius: 12px; background: var(--vf-ground-deep, #102b45); box-shadow: var(--shadow); color: var(--ink); font-size: 14px; font-weight: 500; line-height: 1.5; }
+
   .g-src { font-size: 11.5px; color: var(--dim); margin-top: 12px; }
   .g-src a, .stat .u a { color: var(--winiwa); text-decoration: none; font-weight: 700; }
   @media (max-width: 460px) { .live { padding: 18px 14px 20px; } }
@@ -170,23 +180,23 @@
 
   <!-- the role, in a few lines; the full documentation lives on GitHub -->
   <div class="card role" id="role">
-    <p class="lead">The money behind every Stables card sits in a vault on Minima. Guardians are independent programs, each run by a different person with their own key, that watch that vault day and night. <b>Any one guardian can stop a payout it finds wrong.</b> Guardians can never pay anyone.</p>
+    <p class="lead">The money behind every Stables card sits in a vault on Minima. Guardians are independent programs, each run by a different operator with their own key, that watch that vault day and night. <b>Any one guardian can stop a payout it finds wrong.</b> Guardians can never pay anyone.</p>
     <div class="role-cols">
       <div>
         <div class="col-t">When everything works</div>
         <ul class="unstop">
           <li><b>Paying needs no one.</b> Card money moves from phone to phone by touch, offline, with no server.</li>
-          <li><b>Your money is back in Savings within hours.</b> You ask from the app, the approvers check and approve, and after a 2-hour safety wait the vault pays. Recent requests took about 2 to 4 hours in all.</li>
+          <li><b>Your money is back in Savings within hours.</b> You ask from the app, the approvers check and approve, and after a safety wait of about 3 hours the vault pays.</li>
           <li><b>Nobody holds the money.</b> The vault is a script with no key. It pays only by its own rules, so neither the approvers, nor the guardians, nor the Stables lab can take money out.</li>
         </ul>
       </div>
       <div>
         <div class="col-t">What keeps it safe and unstoppable</div>
         <ul class="unstop">
-          <li><b>Every payout is checked twice.</b> First by the approvers, then by the nine guardians during the 2-hour wait. One guardian stops a wrong payout; three freeze everything.</li>
+          <li><b>Every payout is checked twice.</b> First by the approvers, then by the nine guardians during the wait, which always leaves them at least 2 hours. One guardian stops a wrong payout; three freeze everything.</li>
           <li><b>If the approvers do not answer, the vault still lets your money come back.</b> After 3 days, a request they neither approve nor refuse can be paid with no approver key. The guardian program that will post that payout by itself is being built; until then it is posted by hand.</li>
-          <li><b>If the approvers disappear, nobody can steal through their absence.</b> Payouts pause instead of opening. After 3 days of silence, six of the nine guardians install new approvers, and payouts resume.</li>
-          <li><b>Known limit, fix designed:</b> if the approvers explicitly refuse a valid request, that money stays locked in the vault. Until the fix, the Stables lab pays it back by hand. The fix lets five guardians overrule a refusal.</li>
+          <li><b>If the approvers disappear, nobody can steal through their absence.</b> Payouts pause instead of opening. After 3 days of silence, six of the nine guardians can announce a handover to backup approvers fixed when the vault was created. After a 7-day public wait anyone can carry it out, and payouts resume.</li>
+          <li><b>If the approvers refuse a valid request, the guardians can overrule them.</b> Five of the nine can have it paid after 3 days. A refusal becomes final only if the approvers confirm it after 7 days.</li>
         </ul>
       </div>
     </div>
@@ -206,28 +216,28 @@
       <div class="r-name">The vault</div>
       <div class="r-count">A script on Minima, no key</div>
       <p><b>Holds:</b> the money behind every card.</p>
-      <p><b>Pays only:</b> an approved request once its wait is over, or a request left unanswered for 3 days.</p>
+      <p><b>Pays only:</b> an approved request once its wait is over, a request left unanswered for 3 days, or a refused request that five guardians overrule.</p>
       <p class="r-today">Nobody can change it or take money out any other way.</p>
-      <a class="r-link" href="https://explorer.minima.global/address/0x5E2497EC163480AEC7C15B43A62FDBED9595FA38ED1DE2ACC4A0A4F0E1287791" target="_blank" rel="noopener noreferrer">See the vault on the Minima explorer</a>
+      <a class="r-link" href="https://explorer.minima.global/address/0xABE3A0418FE472C2A96325B1939A9FAB74A927873B26A5CC5F389EFB68656429" target="_blank" rel="noopener noreferrer">See the vault on the Minima explorer</a>
     </div>
     <div class="card rolecard">
       <div class="r-name">The approvers</div>
       <div class="r-count">11 keys, 7 must sign</div>
       <p><b>Do:</b> approve or refuse each request to move card money back to Savings, and confirm every 6 hours that they are alive.</p>
       <p><b>Cannot:</b> pay before the wait, lift a freeze, or choose the guardians.</p>
-      <p class="r-today">Today: one server, held by the Stables lab.</p>
+      <p class="r-today">Today: three machines, all held by the Stables lab.</p>
       <a class="r-link" href="https://github.com/StablesCouncil/stables-card-evidence/tree/main/programs/approvers" target="_blank" rel="noopener noreferrer">The approvers' program on GitHub (test version 0.1)</a>
     </div>
     <div class="card rolecard">
       <div class="r-name">The guardians</div>
       <div class="r-count">9 seats</div>
-      <p><b>Do:</b> re-check every request and every approval. 1 stops a payout, 3 freeze all, 5 lift a freeze, 6 replace silent approvers.</p>
+      <p><b>Do:</b> re-check every request and every approval. 1 stops a payout, 3 freeze all, 5 lift a freeze or overrule a refusal, 6 hand over from silent approvers to backup ones.</p>
       <p><b>Cannot:</b> pay anyone or approve anything.</p>
       <p class="r-today">Today: every seat held by the Stables lab.</p>
       <a class="r-link" href="https://github.com/StablesCouncil/stables-card-evidence/tree/main/programs/guardian" target="_blank" rel="noopener noreferrer">The guardian program on GitHub (test version 0.1)</a>
     </div>
   </div>
-  <p class="note">The rules these groups follow are written into the vault when it is created. Today the Stables lab sets them; the Stables Council, the community, will decide them.</p>
+  <p class="note">The rules these groups follow are written into the vault when it is created. Today the Stables lab sets them and operates every role. The Stables Council, the community, will decide them, and will choose who operates each role, by bidding and for a fixed term, with pay that rises with the quality of the service.</p>
 
   <div class="err" id="err"></div>
 
@@ -236,7 +246,7 @@
     <div class="stat"><div class="k">Stop a payout</div><div class="v" id="rStop">N/A</div><div class="u">guardian is enough</div></div>
     <div class="stat"><div class="k">Freeze all</div><div class="v" id="rFreeze">N/A</div><div class="u">guardians together</div></div>
     <div class="stat"><div class="k">Lift a freeze</div><div class="v" id="rRelease">N/A</div><div class="u">guardians together</div></div>
-    <div class="stat"><div class="k">New approvers</div><div class="v" id="rCouncil">N/A</div><div class="u">guardians, after 3 days of silence</div></div>
+    <div class="stat"><div class="k">New approvers</div><div class="v" id="rCouncil">N/A</div><div class="u">guardians, after 3 days of silence and a 7-day public wait</div></div>
     <div class="stat"><div class="k">Payout wait</div><div class="v" id="rWait">N/A</div><div class="u">after an approval</div></div>
     <div class="stat"><div class="k">Election</div><div class="v" id="rSeat">N/A</div><div class="u">for a seat with no check-in</div></div>
   </div>
@@ -246,16 +256,17 @@
     <div class="live-head">
       <div>
         <h2 class="live-t" id="liveT"><span class="live-dot" aria-hidden="true"></span>Live status</h2>
-        <p class="live-sub">These figures change. The approvers' activity is read from the chain when this page opens. Each guardian that publishes its own log is read directly from its own repository; the rest is read from the chain by hand, on the date shown.</p>
+        <p class="live-sub">These figures change. They are read from the chain and the approvers' own log by hand, on the date shown, until the live service follows this vault. Each guardian that publishes its own log is read directly from its own repository.</p>
       </div>
       <div class="live-when"><span class="k">Chain data recorded</span><b id="updatedH">N/A</b></div>
     </div>
 
   <h3 class="live-group" id="approvers">The approvers</h3>
+  <p class="live-desc">Eleven keys that decide each request to move card money back to Savings. Seven must sign every decision, called a seal, and a seal must appear at least every 6 hours to show they are alive. They approve or refuse. They can never pay before the wait or lift a freeze.</p>
   <div class="grid" id="apprGrid">
     <div class="stat"><div class="k">Last seal</div><div class="v" id="aLast">N/A</div><div class="u" id="aLastSub">their latest signed decision</div></div>
     <div class="stat"><div class="k">Heartbeat</div><div class="v" id="aBeat">N/A</div><div class="u" id="aBeatSub">a seal at least every 6 hours</div></div>
-    <div class="stat"><div class="k">Seals made</div><div class="v" id="aSeals">N/A</div><div class="u">since the card began</div></div>
+    <div class="stat"><div class="k">Seals made</div><div class="v" id="aSeals">N/A</div><div class="u" id="aSealsSub">since the card began</div></div>
     <div class="stat"><div class="k">Payouts approved</div><div class="v" id="aPaid">N/A</div><div class="u" id="aPaidSub">paid after a seal</div></div>
     <div class="stat"><div class="k">Requests refused</div><div class="v" id="aRefused">N/A</div><div class="u">refused in a seal</div></div>
     <div class="stat"><div class="k">Requests open</div><div class="v" id="aOpen">N/A</div><div class="u">waiting for a decision</div></div>
@@ -264,6 +275,7 @@
   <p class="g-src" id="apprSrc">Read from the chain by the card figures service of the Stables lab.</p>
 
   <h3 class="live-group" id="guardiansNow">The guardians</h3>
+  <p class="live-desc">Nine seats, each a key and a program meant to be run by a different operator. They re-check every request and every approval against the chain. One guardian can stop a wrong payout and three together can freeze all payouts. They can never pay anyone.</p>
   <div class="heroes">
     <div class="card hero seats">
       <div class="lbl">Active seats</div>
@@ -298,6 +310,81 @@
   function day(iso) { return new Date(iso + "T00:00:00Z"); }
   function fmt(d) { return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }); }
 
+  /* What each figure means, by its label. One list for the fixed tiles and the cards drawn from data. */
+  var HINTS = {
+    "Stop a payout": "How many guardians it takes to stop one payout they find wrong. That payout cannot go ahead while the stop stands.",
+    "Freeze all": "How many guardians together can pause every payout from the vault, for example if the approvers look compromised.",
+    "Lift a freeze": "How many guardians together can end a freeze. The approvers cannot lift one.",
+    "New approvers": "How many guardians together can start a handover once the approvers have been silent for 3 days. Only backup approvers fixed when the vault was created can take over, and only after a 7-day public wait.",
+    "Payout wait": "The time between an approval and the moment the vault may pay. It gives the guardians time to re-check the approval and stop it if it is wrong.",
+    "Election": "A seat whose guardian has not checked in for this long can be given to someone new by election.",
+    "Chain data recorded": "The date these figures were last read by hand from the chain and the approvers' own log.",
+    "Last seal": "A seal is a decision signed by the approvers and written on Minima. It lists the requests they approved and refused. This shows the latest one.",
+    "Heartbeat": "Whether the approvers are showing they are alive. A seal must appear at least every 6 hours, even with nothing to decide. On time: the last seal is under 7 hours old. Late: under a day. Silent: over a day, and payouts pause.",
+    "Seals made": "How many seals have been written on Minima for this vault. A guardian check-in, freeze or release also moves the seal forward, and those are counted here too.",
+    "Payouts approved": "Requests to move card money back to Savings that the vault paid after an approval in a seal. Payouts made under the 3-day rule are counted separately.",
+    "Requests refused": "Requests the approvers refused in a seal.",
+    "Requests open": "Requests posted on chain that have no decision yet.",
+    "Active seats": "Guardian seats whose holder has checked in on chain recently. A check-in is a small signed transaction that says the guardian is still there.",
+    "Last approval checked": "The latest seal a guardian rebuilt by itself from the chain and compared with what the approvers published.",
+    "Guardians publishing": "How many guardians publish their own work log in a public repository, where anyone can read it.",
+    "Requests checked": "Requests to move card money back to Savings that a guardian re-checked for itself.",
+    "Money checked": "The total amount in the requests guardians re-checked, per token.",
+    "Approvals checked": "Seals a guardian rebuilt from the chain and compared with its own verdicts.",
+    "Payouts stopped": "Payouts guardians found wrong and stopped on chain.",
+    "Hours watched": "The hours of watching added up across every guardian that publishes its log.",
+    "Key held by": "Who holds this key today. During testing the Stables lab holds them all. Before any real money, they must be held by independent operators.",
+    "Guardian program": "The program that does this guardian's checking, and where it runs.",
+    "Last check-in": "When this guardian last confirmed on chain that it is still there.",
+    "Last check": "When this guardian's program last finished a pass over the chain, and at which block.",
+    "Stops made": "How many payouts this guardian has stopped on chain.",
+    "Public log": "This guardian's own record of what it checked and decided, in its own public repository.",
+    "Seals signed": "How many seals this key has signed, out of the seals read with their signatures.",
+    "Last signed": "When this key last signed a seal.",
+    "Public key": "This approver's public identity on chain. The vault accepts only signatures that match the keys written into it."
+  };
+  function hintBtn(label) {
+    return HINTS[label] ? '<button type="button" class="hint" data-hint="' + esc(label) + '" aria-label="What this means: ' + esc(label) + '" aria-expanded="false">?</button>' : "";
+  }
+  (function hints() {
+    var pop = document.createElement("div"), open = null;
+    pop.className = "hint-pop";
+    pop.setAttribute("role", "status");
+    document.body.appendChild(pop);
+    function close() {
+      if (!open) return;
+      open.setAttribute("aria-expanded", "false");
+      open = null;
+      pop.style.display = "none";
+    }
+    function show(b) {
+      close();
+      pop.textContent = HINTS[b.getAttribute("data-hint")];
+      pop.style.display = "block";
+      var r = b.getBoundingClientRect(), w = pop.offsetWidth, h = pop.offsetHeight;
+      var top = r.bottom + 10;
+      if (top + h > window.innerHeight - 12) top = Math.max(12, r.top - h - 10);
+      pop.style.left = Math.max(12, Math.min(r.left + r.width / 2 - w / 2, window.innerWidth - w - 12)) + "px";
+      pop.style.top = top + "px";
+      b.setAttribute("aria-expanded", "true");
+      open = b;
+    }
+    document.addEventListener("click", function (e) {
+      var b = e.target.closest ? e.target.closest("button.hint") : null;
+      if (b) { if (b === open) close(); else show(b); return; }
+      /* The first tap outside only closes the explanation (UX law 20). */
+      if (open && !pop.contains(e.target)) { e.preventDefault(); e.stopPropagation(); close(); }
+    }, true);
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && open) { var b = open; close(); b.focus(); }
+    });
+    window.addEventListener("scroll", close, { passive: true });
+    window.addEventListener("resize", close);
+    document.querySelectorAll(".stat .k, .hero .lbl, .live-when .k").forEach(function (n) {
+      n.insertAdjacentHTML("beforeend", hintBtn(n.textContent.trim()));
+    });
+  })();
+
   function program(g, s) {
     if (s) return "Running, " + s.mode;
     if (g.runsOn) return "Running on " + g.runsOn;
@@ -323,7 +410,7 @@
       : ago <= rules.activeWithinDays ? ["ok", s ? "Watching, active seat" : "Active seat"]
       : ago < rules.seatOpenAfterDays ? ["warn", "Seated, not active"]
       : ["off", "Seat open to election"];
-    function row(k, v, dim) { return '<div class="g-row"><span class="k">' + k + '</span><span class="v' + (dim ? " dim" : "") + '">' + v + "</span></div>"; }
+    function row(k, v, dim) { return '<div class="g-row"><span class="k">' + k + hintBtn(k) + '</span><span class="v' + (dim ? " dim" : "") + '">' + v + "</span></div>"; }
     var repo = (s && s.repo) || g.log;
     var log = repo ? '<a href="' + esc(repo) + '" target="_blank" rel="noopener noreferrer">' + (s ? esc(s.log.lines) + " lines" + (s.log.intact ? "" : ", chain broken") : "Open") + "</a>" : "Not published yet";
     var stops = s ? s.counts.stopsPosted : g.stops;
@@ -334,7 +421,7 @@
       '<div class="g-rows">' +
         row("Key held by", g.holder === "lab" ? "Stables lab" : esc(g.holder)) +
         row("Guardian program", esc(program(g, s)), !s && !g.runsOn) +
-        row("Last check-in", last ? fmt(last) + (ago != null ? " (" + ago + " days)" : "") : "N/A") +
+        row("Last check-in", last ? fmt(last) + (ago != null ? " (" + ago + (ago === 1 ? " day)" : " days)") : "") : "N/A") +
         (s ? row("Last check", s.lastPass ? fmt(new Date(s.lastPass.at)) + ", block " + esc(s.lastPass.block) : "N/A") +
              row("Requests checked", esc(s.counts.requestsChecked)) +
              row("Approvals checked", esc(s.counts.sealsMatched) + " of " + esc(s.counts.sealsChecked) + " match") +
@@ -389,7 +476,7 @@
     el("activeSeatsSub").textContent = "checked in within the last " + r.activeWithinDays + " days; an election needs 3";
     el("lastSeal").textContent = d.council.lastSealChecked != null ? "Seal " + d.council.lastSealChecked : "N/A";
     el("lastSealSub").textContent = d.council.matched ? "rebuilt from the chain by a guardian: it matches" : "rebuilt from the chain by a guardian: it does not match";
-    approvers(d.approvers);
+    approvers(d.approvers, d.vault.generation);
     el("guards").innerHTML = d.guardians.map(function (g) { return cardHtml(g, r, now, null, d.updated); }).join("");
     work([], r.seats);
     // Then each guardian's own status, straight from its own repository; a card stays as recorded if it cannot be read.
@@ -417,31 +504,55 @@
   function approverCard(m, quorum, act) {
     var k = (act && act.keys && act.keys[m.key.toUpperCase()]) || null;
     var signs = m.n <= quorum;
-    function row(label, v, dim) { return '<div class="g-row"><span class="k">' + label + '</span><span class="v' + (dim ? " dim" : "") + '">' + v + "</span></div>"; }
-    var hrs = k && k.last_t ? (Date.now() - Date.parse(k.last_t)) / 3600000 : null;
+    function row(label, v, dim) { return '<div class="g-row"><span class="k">' + label + hintBtn(label) + '</span><span class="v' + (dim ? " dim" : "") + '">' + v + "</span></div>"; }
+    /* Figures read by hand are judged at the moment they were read, so they do not look worse as the page ages. */
+    var ref = act && act.at ? Date.parse(act.at) : Date.now();
+    var hrs = k && k.last_t ? (ref - Date.parse(k.last_t)) / 3600000 : null;
     var chip = !act ? ["warn", "Activity not read yet"]
+      : !signs && (!k || hrs > 7) ? ["idle", "Spare key"]
       : k ? (hrs <= 7 ? ["ok", "Signing"] : hrs <= 24 ? ["warn", "Signed " + Math.round(hrs) + " h ago"] : ["off", "Quiet for " + Math.round(hrs / 24) + " days"])
-      : signs ? ["off", "No signature read"] : ["idle", "Spare key"];
+      : ["off", "No signature read"];
+    var lastSigned = !k || !k.last_t ? "Never"
+      : k.last_txpowid ? '<a href="https://explorer.minima.global/transactions/' + esc(k.last_txpowid) + '" target="_blank" rel="noopener noreferrer">' + ago(k.last_t) + "</a>"
+      : fmt(new Date(k.last_t));
     return '<article class="card" aria-label="' + esc(m.name) + ', approver">' +
       '<div class="g-head"><div><div class="g-name">' + esc(m.name) + '</div><div class="g-tag">' + esc(m.tagline) + '</div></div><span class="g-seat">Key ' + m.n + "</span></div>" +
       '<span class="chip ' + chip[0] + '"><span class="dot"></span>' + chip[1] + "</span>" +
       '<div class="g-rows">' +
         row("Seals signed", k ? esc(nf(k.signed)) + (act.seals_with_signers ? " of " + esc(nf(act.seals_with_signers)) : "") : (act ? "0" : "N/A"), !k) +
-        row("Last signed", k && k.last_t ? '<a href="https://explorer.minima.global/transactions/' + esc(k.last_txpowid) + '" target="_blank" rel="noopener noreferrer">' + ago(k.last_t) + "</a>" : "Never", !k) +
+        row("Last signed", lastSigned, !k) +
         row("Key held by", "Stables lab") +
         row("Public key", '<span class="mono" title="' + esc(m.key) + '">' + esc(m.key.slice(0, 10) + "…" + m.key.slice(-6)) + "</span>") +
       "</div></article>";
   }
 
-  function approvers(cfg) {
+  function approvers(cfg, generation) {
     if (!cfg) return;
     var paint = function (act, preview) {
       el("apprCards").innerHTML = cfg.members.map(function (m) { return approverCard(m, cfg.quorum, act); }).join("");
       return preview;
     };
-    paint(null);
+    /* Until the card figures service follows this vault, the figures are the ones read by hand in guardians.json. */
+    var rec = cfg.recorded;
+    if (rec) {
+      var read = fmt(new Date(rec.at)), sealH = (Date.parse(rec.at) - Date.parse(rec.lastSeal.t)) / 3600000;
+      el("aLast").textContent = "Seal " + nf(rec.lastSeal.number);
+      el("aLastSub").textContent = fmt(new Date(rec.lastSeal.t)) + ", block " + nf(rec.lastSeal.block);
+      el("aBeat").textContent = sealH <= 7 ? "On time" : sealH <= 24 ? "Late" : "Silent";
+      el("aBeat").style.color = sealH <= 7 ? "var(--savers)" : sealH <= 24 ? "var(--amber)" : "var(--red)";
+      el("aBeatSub").textContent = "when read on " + read;
+      el("aSeals").textContent = nf(rec.seals);
+      el("aSealsSub").textContent = "on this vault, " + rec.guardianActs + " of them guardian actions";
+      el("aPaid").textContent = nf(rec.payoutsPaid);
+      el("aPaidSub").textContent = rec.payoutsFallback ? "paid after a seal; " + rec.payoutsFallback + " more paid by the 3-day rule" : "paid after a seal";
+      el("aRefused").textContent = nf(rec.refused);
+      el("aOpen").textContent = nf(rec.open);
+      paint(rec.activity);
+      el("apprSrc").innerHTML = "Read by hand on " + esc(read) + ", at block " + esc(nf(rec.tip)) + ", from the chain and the approvers' own log. Each approver's figures count the " + esc(nf(rec.activity.seals_with_signers)) + " seals the approvers made on vault " + esc(generation) + ". The usual signers are keys 1 to " + cfg.quorum + "; keys " + (cfg.quorum + 1) + " to " + cfg.members.length + " are a third machine that can stand in. " + '<a href="/test-dashboard.html#card">All card figures</a>';
+    } else paint(null);
     fetch(CARD_ENDPOINT, { cache: "no-store" }).then(function (res) { if (!res.ok) throw new Error(); return res.json(); }).then(function (j) {
       var c = j.card || {}, n = c.counts || {};
+      if (rec && String(c.generation || "").indexOf(generation) < 0) return;
       var seal = (c.recent || []).filter(function (x) { return x.kind === "council seal"; })
         .sort(function (a, b) { return b.block - a.block; })[0];
       if (seal) {
@@ -470,7 +581,7 @@
         note += "The approvers' program always signs with keys 1 to " + cfg.quorum + "; keys " + (cfg.quorum + 1) + " to " + cfg.members.length + " are spares. ";
         el("apprSrc").innerHTML = (preview ? "<b>Local preview:</b> each approver's figures are a sample read from a lab node. " : "") + note + '<a href="/test-dashboard.html#card">All card figures</a>';
       });
-    }).catch(function () { el("apprSrc").textContent = "The approvers' figures could not be read just now."; });
+    }).catch(function () { if (!rec) el("apprSrc").textContent = "The approvers' figures could not be read just now."; });
   }
 
   fetch("guardians.json", { cache: "no-store" })

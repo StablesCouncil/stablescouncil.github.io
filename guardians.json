@@ -1,11 +1,12 @@
 {
   "schema": "stables-card-guardians/v1",
   "note": "The Stables card's guardians as the site shows them. Edited by hand. A guardian that publishes its own log gets its status.json address under status (a raw file URL in its own repository); the page then reads it directly, never through the approvers' server. Location is city level at most, never an address.",
-  "updated": "2026-11-03T12:00:00Z",
-  "source": "Read from Minima mainnet on 2 November 2026 (block 2,399,448) by the guardian program, read only: the seal head's guardian seats and their last check-ins, and the Council's seal 104, whose approved and rejected lists the program rebuilt from the chain and found matching.",
+  "updated": "2026-11-08T20:30:00Z",
+  "source": "Read on 8 November 2026 (block 2,409,689): the seal head of vault R2T6 from a Minima node, read only, by a watch-only guardian program; the approvers' figures from the approvers' own log and the guardian program's records.",
   "vault": {
-    "generation": "R2T5",
-    "sealHead": "0xD6462FFC684A99C146D0FFE4D1681FF61BD7DB99122ECBDD64E7F702AF425561",
+    "generation": "R2T6",
+    "sealHead": "0x2EF19A1992254D658332085AAAEA09AEC0245D711F4A9756C3F12E107723E88D",
+    "vault": "0xABE3A0418FE472C2A96325B1939A9FAB74A927873B26A5CC5F389EFB68656429",
     "tokens": "Winiwa and xWiniwa, valueless test tokens"
   },
   "rules": {
@@ -14,89 +15,158 @@
     "freeze": 3,
     "release": 5,
     "newCouncil": 6,
-    "payoutWaitBlocks": 144,
+    "payoutWaitBlocks": 216,
     "seatOpenAfterDays": 60,
     "activeWithinDays": 30
   },
   "council": {
-    "lastSealChecked": 104,
+    "lastSealChecked": 39,
     "matched": true,
-    "openRequests": 0
+    "openRequests": 1
   },
   "approvers": {
-    "_note": "The 11 approver public keys as set in the seal head (state ports 60 to 70), read from mainnet. Any 7 sign a seal; the approvers program always signs with keys 1 to 7, so 8 to 11 are spares. Replaced key by key without a new vault. Names are for people to follow them.",
+    "_note": "The 11 approver public keys of vault R2T6 (seal head ports 60 to 70), read from mainnet. Any 7 sign a seal. Spread over three machines; every key is still held by the Stables lab. Names are for people to follow them.",
     "quorum": 7,
     "holder": "lab",
-    "runsOn": "one server",
+    "runsOn": "three machines",
     "heartbeatHours": 6,
     "members": [
       {
         "n": 1,
         "name": "Saddle",
         "tagline": "Carries the load",
-        "key": "0x069231DF65323F4BA4C8B74C6A30F03997B2FD743FF4501D8F4C3448FC701B85"
+        "key": "0x056E28A69849860FFB175759B3E18B98164ADE92B6FABA40BA6EA8629A350DED"
       },
       {
         "n": 2,
         "name": "Harness",
         "tagline": "Pulls together",
-        "key": "0xBDEC0ADEB8861863B84422DAB868501963DBA8FBCB3AC1CFFF8A2EA89611A7F3"
+        "key": "0xA8FB13E4DBEEF7E1F38CE0440A93179429658A8AED9D9E14CFEA19C932AC4A2E"
       },
       {
         "n": 3,
         "name": "Canter",
         "tagline": "Steady pace",
-        "key": "0x887A0DF5D25DBB9AE3DD7A0557EDF9A5DD34BFC73B8C3275B9BC918DA61F7A85"
+        "key": "0xEBC6C1579AA24BA1A5B3F1C91F14A125818E52B68E86C6B15D64835894801912"
       },
       {
         "n": 4,
         "name": "Gallop",
         "tagline": "Answers fast",
-        "key": "0x5F0B841BFCE057DD63A31AE743927F630D40E5E5A5BEAE2EA182D1B7FD785AC1"
+        "key": "0x5EB5FA80CFCCB7558F0FAEBC0329913E02C5885C0B5739087384BB7F9C07FACB"
       },
       {
         "n": 5,
         "name": "Trot",
         "tagline": "Never skips a beat",
-        "key": "0x5ED62C1867F650437926C4036E3C1891E05A87BDE46932DD7DE680E9D278AE7D"
+        "key": "0xB78F82E783B7E98CD41FA4D2F8C45B55D789C899B212969760532AA1372ADE35"
       },
       {
         "n": 6,
         "name": "Mane",
         "tagline": "Seen from afar",
-        "key": "0x9F73C9E609B34301BA279A09AC64F78110195FFAAC567DF520519C58E8B73C2B"
+        "key": "0x49A8EB5AD1701B6AC542F7A3A9A4C1C90D8AE24E78BF7B2677EF4CA66514C2DB"
       },
       {
         "n": 7,
         "name": "Spur",
         "tagline": "Keeps things moving",
-        "key": "0x3D5A2E110C788B3C1F695C62B7E6D8147DF060641E8BE3FDC365FF84A0B8697E"
+        "key": "0x5BDE0DCE7D808251C9AEB00D5C9F62CD4D49AF41C68D455964F647E21ED21AE0"
       },
       {
         "n": 8,
         "name": "Blaze",
         "tagline": "Marked for all to see",
-        "key": "0x7882F712D5831C46395010EF3C0D4F7A5FDDA5B3EF6114082FEB154783BF3872"
+        "key": "0xD6AAD2105B68FDC4E19BBFDCF1B4242613B81CC0F8DD7FFEDDBD39443784287B"
       },
       {
         "n": 9,
         "name": "Fetlock",
         "tagline": "Takes the strain",
-        "key": "0x5F3E5A2050940F16BDE19DC26287CD0FD4638F1B585551FBD6ECC5FB9ADEB75A"
+        "key": "0x3D3A36FD790A22EE872004BD1184DDFFF8AEF5973BA57F9F0ABF242851371EAA"
       },
       {
         "n": 10,
         "name": "Withers",
         "tagline": "Stands tall",
-        "key": "0xBFB19F1A4F8BFC6ECC322928D4A87658259A972AC302366A2F04863B2F897E6D"
+        "key": "0xFF61CE4BA0614CD32B3458EF5B76E77A2C43D4C4A05D5E9A4D4A0120AA32A505"
       },
       {
         "n": 11,
         "name": "Forelock",
         "tagline": "First to look",
-        "key": "0x5E52AADF77CFB04DCD34F3879FC16D6B749D85E56E3FD912652AF6D697D1CE33"
+        "key": "0x585FAB4AE58D52D2E1FAAD843B9B03B1EDD4F2ACA38B665C79503930E6973EE8"
       }
-    ]
+    ],
+    "recorded": {
+      "_note": "Read by hand until the live figures service follows this vault. The page uses the live service by itself once it reports this generation.",
+      "at": "2026-11-08T20:30:00Z",
+      "tip": 2409689,
+      "lastSeal": {
+        "number": 39,
+        "t": "2026-11-08T20:25:54.142Z",
+        "block": 2409689
+      },
+      "seals": 39,
+      "guardianActs": 3,
+      "payoutsPaid": 4,
+      "payoutsFallback": 0,
+      "refused": 1,
+      "open": 1,
+      "activity": {
+        "generation": "R2T6",
+        "at": "2026-11-08T20:30:00Z",
+        "seals_with_signers": 36,
+        "seals_without_signers": 0,
+        "from_block": 2402473,
+        "keys": {
+          "0X056E28A69849860FFB175759B3E18B98164ADE92B6FABA40BA6EA8629A350DED": {
+            "signed": 36,
+            "last_t": "2026-11-08T20:25:54.142Z"
+          },
+          "0XA8FB13E4DBEEF7E1F38CE0440A93179429658A8AED9D9E14CFEA19C932AC4A2E": {
+            "signed": 36,
+            "last_t": "2026-11-08T20:25:54.142Z"
+          },
+          "0XEBC6C1579AA24BA1A5B3F1C91F14A125818E52B68E86C6B15D64835894801912": {
+            "signed": 36,
+            "last_t": "2026-11-08T20:25:54.142Z"
+          },
+          "0X5EB5FA80CFCCB7558F0FAEBC0329913E02C5885C0B5739087384BB7F9C07FACB": {
+            "signed": 36,
+            "last_t": "2026-11-08T20:25:54.142Z"
+          },
+          "0XB78F82E783B7E98CD41FA4D2F8C45B55D789C899B212969760532AA1372ADE35": {
+            "signed": 33,
+            "last_t": "2026-11-08T20:25:54.142Z"
+          },
+          "0X49A8EB5AD1701B6AC542F7A3A9A4C1C90D8AE24E78BF7B2677EF4CA66514C2DB": {
+            "signed": 33,
+            "last_t": "2026-11-08T20:25:54.142Z"
+          },
+          "0X5BDE0DCE7D808251C9AEB00D5C9F62CD4D49AF41C68D455964F647E21ED21AE0": {
+            "signed": 33,
+            "last_t": "2026-11-08T20:25:54.142Z"
+          },
+          "0XD6AAD2105B68FDC4E19BBFDCF1B4242613B81CC0F8DD7FFEDDBD39443784287B": {
+            "signed": 3,
+            "last_t": "2026-11-06T02:12:17.368Z"
+          },
+          "0X3D3A36FD790A22EE872004BD1184DDFFF8AEF5973BA57F9F0ABF242851371EAA": {
+            "signed": 3,
+            "last_t": "2026-11-06T02:12:17.368Z"
+          },
+          "0XFF61CE4BA0614CD32B3458EF5B76E77A2C43D4C4A05D5E9A4D4A0120AA32A505": {
+            "signed": 3,
+            "last_t": "2026-11-06T02:12:17.368Z"
+          },
+          "0X585FAB4AE58D52D2E1FAAD843B9B03B1EDD4F2ACA38B665C79503930E6973EE8": {
+            "signed": 3,
+            "last_t": "2026-11-06T02:12:17.368Z"
+          }
+        }
+      }
+    }
   },
   "guardians": [
     {
@@ -107,7 +177,7 @@
       "plannedFor": null,
       "holder": "lab",
       "program": "not running",
-      "lastCheckIn": "2026-10-24",
+      "lastCheckIn": "2026-11-07",
       "checkIns": null,
       "stops": null,
       "log": null,
@@ -121,7 +191,7 @@
       "plannedFor": null,
       "holder": "lab",
       "program": "not running",
-      "lastCheckIn": "2026-11-03",
+      "lastCheckIn": "2026-11-07",
       "checkIns": null,
       "stops": null,
       "log": null,
@@ -135,7 +205,7 @@
       "plannedFor": null,
       "holder": "lab",
       "program": "not running",
-      "lastCheckIn": "2026-11-03",
+      "lastCheckIn": "2026-11-07",
       "checkIns": null,
       "stops": null,
       "log": null,
@@ -149,7 +219,7 @@
       "plannedFor": null,
       "holder": "lab",
       "program": "not running",
-      "lastCheckIn": "2026-10-18",
+      "lastCheckIn": "2026-11-07",
       "checkIns": null,
       "stops": null,
       "log": null,
@@ -163,7 +233,7 @@
       "plannedFor": null,
       "holder": "lab",
       "program": "not running",
-      "lastCheckIn": "2026-10-18",
+      "lastCheckIn": "2026-11-07",
       "checkIns": null,
       "stops": null,
       "log": null,
@@ -177,7 +247,7 @@
       "plannedFor": null,
       "holder": "lab",
       "program": "not running",
-      "lastCheckIn": "2026-10-18",
+      "lastCheckIn": "2026-11-04",
       "checkIns": null,
       "stops": null,
       "log": null,
@@ -191,7 +261,7 @@
       "plannedFor": "a phone",
       "holder": "lab",
       "program": "being built",
-      "lastCheckIn": "2026-10-18",
+      "lastCheckIn": "2026-11-04",
       "checkIns": null,
       "stops": null,
       "log": null,
@@ -205,7 +275,7 @@
       "plannedFor": "a personal computer",
       "holder": "lab",
       "program": "being built",
-      "lastCheckIn": "2026-10-18",
+      "lastCheckIn": "2026-11-04",
       "checkIns": null,
       "stops": null,
       "log": null,
@@ -219,7 +289,7 @@
       "plannedFor": "a separate server",
       "holder": "lab",
       "program": "being built",
-      "lastCheckIn": "2026-10-18",
+      "lastCheckIn": "2026-11-04",
       "checkIns": null,
       "stops": null,
       "log": null,
