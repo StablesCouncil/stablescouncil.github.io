@@ -186,7 +186,7 @@
         <div class="col-t">When everything works</div>
         <ul class="unstop">
           <li><b>Paying needs no one.</b> Card money moves from phone to phone by touch, offline, with no server.</li>
-          <li><b>Your money is back in Savings within hours.</b> You ask from the app, the approvers check and approve, and after a safety wait of about 3 hours the vault pays.</li>
+          <li><b>Your money is back in Savings within hours.</b> You ask from the app, the approvers check and approve, and after a safety wait of about 4 hours the vault pays.</li>
           <li><b>Nobody holds the money.</b> The vault is a script with no key. It pays only by its own rules, so neither the approvers, nor the guardians, nor the Stables lab can take money out.</li>
         </ul>
       </div>
@@ -256,7 +256,7 @@
     <div class="live-head">
       <div>
         <h2 class="live-t" id="liveT"><span class="live-dot" aria-hidden="true"></span>Live status</h2>
-        <p class="live-sub">These figures change. They are read from the chain and the approvers' own log by hand, on the date shown, until the live service follows this vault. Each guardian that publishes its own log is read directly from its own repository.</p>
+        <p class="live-sub" id="liveSub">These figures change. They are read from the chain and the approvers' own log by hand, on the date shown, until the live service follows this vault. Each guardian that publishes its own log is read directly from its own repository.</p>
       </div>
       <div class="live-when"><span class="k">Chain data recorded</span><b id="updatedH">N/A</b></div>
     </div>
@@ -502,7 +502,7 @@
   }
 
   function approverCard(m, quorum, act) {
-    var k = (act && act.keys && act.keys[m.key.toUpperCase()]) || null;
+    var k = (act && act.keys && (act.keys["0x" + m.key.slice(2).toUpperCase()] || act.keys[m.key.toUpperCase()])) || null;
     var signs = m.n <= quorum;
     function row(label, v, dim) { return '<div class="g-row"><span class="k">' + label + hintBtn(label) + '</span><span class="v' + (dim ? " dim" : "") + '">' + v + "</span></div>"; }
     /* Figures read by hand are judged at the moment they were read, so they do not look worse as the page ages. */
@@ -552,8 +552,15 @@
     } else paint(null);
     fetch(CARD_ENDPOINT, { cache: "no-store" }).then(function (res) { if (!res.ok) throw new Error(); return res.json(); }).then(function (j) {
       var c = j.card || {}, n = c.counts || {};
-      if (rec && String(c.generation || "").indexOf(generation) < 0) return;
-      var seal = (c.recent || []).filter(function (x) { return x.kind === "council seal"; })
+      var cur = c.current_generation && c.current_generation.generation === generation ? c.current_generation : null;
+      /* Live only once the service has read this vault to the end; until then the figures read by hand stay. */
+      if (rec && !(cur && c.complete)) return;
+      if (cur) {
+        n = { council_seals: cur.seals + cur.guardian_acts, payouts_sealed: cur.payouts_sealed, payouts_fallback: cur.payouts_fallback, rejections: cur.rejections, requests_open: cur.requests_open };
+        el("aSealsSub").textContent = "on this vault, " + cur.guardian_acts + " of them guardian actions";
+        el("liveSub").textContent = "These figures change. The approvers' activity is read from the chain when this page opens. Each guardian that publishes its own log is read directly from its own repository; the rest is read from the chain by hand, on the date shown.";
+      }
+      var seal = cur && cur.last_seal ? cur.last_seal : (c.recent || []).filter(function (x) { return x.kind === "council seal"; })
         .sort(function (a, b) { return b.block - a.block; })[0];
       if (seal) {
         var h = (Date.now() - Date.parse(seal.t)) / 3600000;
@@ -578,7 +585,7 @@
         var note = 'Read from the chain by the Stables lab\'s card figures service, up to block ' + esc(nf(c.current_to || 0)) + ". ";
         if (a) note += "Each approver's figures count the " + esc(nf(a.seals_with_signers)) + " seals of vault " + esc(a.generation) + " read with their signatures, from block " + esc(nf(a.from_block)) +
           (a.seals_without_signers ? " (" + esc(nf(a.seals_without_signers)) + " older seals were read before signatures were kept)" : "") + ". ";
-        note += "The approvers' program always signs with keys 1 to " + cfg.quorum + "; keys " + (cfg.quorum + 1) + " to " + cfg.members.length + " are spares. ";
+        note += "The usual signers are keys 1 to " + cfg.quorum + "; keys " + (cfg.quorum + 1) + " to " + cfg.members.length + " are a third machine that can stand in. ";
         el("apprSrc").innerHTML = (preview ? "<b>Local preview:</b> each approver's figures are a sample read from a lab node. " : "") + note + '<a href="/test-dashboard.html#card">All card figures</a>';
       });
     }).catch(function () { if (!rec) el("apprSrc").textContent = "The approvers' figures could not be read just now."; });

@@ -15,7 +15,7 @@
     "freeze": 3,
     "release": 5,
     "newCouncil": 6,
-    "payoutWaitBlocks": 216,
+    "payoutWaitBlocks": 288,
     "seatOpenAfterDays": 60,
     "activeWithinDays": 30
   },
