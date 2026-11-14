@@ -59,7 +59,7 @@ later Council decision and a completed handover.
 ## How to access the test channel
 
 1. **Android app, v0.0.14.046, testing release 2026-10-25.** One app, file `Stables_v0.0.14.046.apk`. Install from https://stablescouncil.org/#download or from the GitHub release `StablesCouncil/stables-app`, tag `app-v0.0.14.046`. New in this release: pay with the Stables card by scanning a code, over the Minima network and encrypted for the receiver (see `stables_card.md`); a broken tap is finished by itself; card money survives a resync of the node, and resyncing Minima Core is guided step by step (see `app_node_sync_and_resync.md`). Verify the SHA-256 published with the release. Install a new version over the old one and never uninstall: the wallet stays on the device.
-   The app uses the node built into Stables, or Minima Core on the same phone. On a new install, when Minima Core is present, Stables asks which one to use. Later, Settings and updates, Your node, offers the other one. Each node is its own wallet. Switching moves no funds and restarts Stables. To use Minima Core, allow Stables inside Core. A payment through Minima Core is not claimed for this release.
+   The app uses the node built into Stables, or Minima Core on the same phone. On a new install, when Minima Core is present, Stables asks which one to use. Later, Settings and updates, Node, offers the other one. Each node is its own wallet. Switching moves no funds and restarts Stables. To use Minima Core, allow Stables inside Core. A payment through Minima Core is not claimed for this release.
 2. **The separate Core-connected app is retired.** It is not offered. Someone who still has that old app installs Stables, chooses Minima Core, allows Stables in Core, and can then remove the old app.
 3. **The MiniDapp is retired.** v0.0.14.017 was the last release with a `.mds.zip`. It is no longer offered to testers.
 4. **The web version is for internal testing only.** The team uses it to test; it is not a public product and is not offered to testers.
@@ -268,6 +268,21 @@ unanswered in silence.
   Android app with two connection modes: its own built-in Minima node, or Minima Core on the same
   phone. It is also on the GitHub release with a SHA-256 checksum. The MiniDapp was retired after
   v0.0.14.017, the web version is for internal testing only, and a native desktop app is coming.
+- **Which language? Which languages does Stables speak?** The app is in English for now. Its
+  language menu lists Chinese, French, Spanish, German, Japanese, Korean, Portuguese and Russian as
+  coming soon. StablesAgent, on Telegram and on the website, answers in the language of the
+  question. Asked about programming languages: the app's screens are written in HTML and
+  JavaScript, inside an Android app written in Java; the vault rules are written in KISS VM,
+  Minima's on-chain script language; the card's approvers' and guardians' programs are written in
+  JavaScript and run with Node.js.
+- **Is Stables live?** Yes, as a test: the Android app runs on Minima mainnet today, and every
+  claim, mint, burn and send is a real transaction, made with Winiwa and xWiniwa, test tokens that
+  have no value. Stablecoins and real money come later: the Stables Council decides when production
+  starts.
+- **What are the fees?** In the test, each transaction needs a small amount of real MINIMA for
+  Minima's own signing fee, and the mint and the burn are one for one. In the design, fees and
+  listing fees go to shared funds that serve the system, and the Stables Council votes the fee
+  structure.
 
 ## Safety framing for users
 

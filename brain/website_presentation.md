@@ -23,8 +23,9 @@ Use the copy below when quoting the site.
   says: "One Android app. It runs its own Minima node, or uses Minima Core on your phone." and "The
   Stables card is an experiment. It needs a thorough security review by independent experts before
   it can be used in production."
-- **Want to know more?** "Walk the structural view next: how each role lines up incentives with the
-  peg." with the link **The Playing Field** (https://stablescouncil.org/playing_field.html).
+- **Want to know more?** "What Stables is for, how it works, where it stands and how to take part."
+  with the link **About Stables** (https://stablescouncil.org/about.html). See
+  `about_stables_presentation.md`. The Playing Field is now under that page's "To dig deeper".
 - Footer on every page: "Stables | Be your Bank", All links (https://stablescouncil.org/links.html),
   X, Telegram, and Built on MINIMA.
 

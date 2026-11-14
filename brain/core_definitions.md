@@ -27,6 +27,9 @@ binding statement of what ships is **`release_scope_boundary.md`**.
   directions**, enforced by an on-chain vault covenant. That par rule holds while no stablecoin has
   been issued against the pool. A market or net-asset-value rate for xWiniwa is later work and is
   **not** in this test.
+- For the later USDw rehearsal (planned, no date), a **new xWiniwa token** will be created as the one
+  equity token of the stablecoin vault, and the app will show that one. The current xWiniwa is a test token
+  like any other; nobody needs to do anything with it.
 
 ## The Multiplicator
 

@@ -35,6 +35,8 @@ To maintain full transparency with the community:
 | **`website_presentation.md`** | On-site marketing copy and StablesAgent / **`llms.txt`** links; points to the engineering doc for build and deploy. |
 | **`charter_overview.md`**, **`banking_system_overview.md`**, **`circular_economy_diagram.md`** | Topic-specific public summaries. |
 | **`minidapp_test_channel_overview.md`** | **Current active channel:** the test channel, shipped as one Android app (built-in node or Minima Core). On-chain Winiwa and xWiniwa, trustless faucet, covenant mint and burn, access, safety framing. The MiniDapp is retired after v0.0.14.017; the web version is internal testing only. |
+| **`card_guardians_and_approvers.md`** | The Stables card's approvers and guardians: what they are technically (keys and programs), the code on GitHub (version 0.1.0-test, testing phase), the security plan and the Card Guardians page. |
+| **`stables_council_one_structure.md`** | The one structure (the card, Minima Bay with The Pool and The Rapids, the Bridge) held by the Stables Council; no Minima Bay DAO; what the Council decides for Minima Bay. |
 | **`minidapp_demo_overview.md`** | Demo channel — **frozen / superseded** historical reference. |
 | **`minidapp_showcase_app.md`** | App channels (showcase, demo, test), feedback, and in-app behaviour notes. |
 
